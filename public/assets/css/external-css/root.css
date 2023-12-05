@@ -1,0 +1,225 @@
+
+:root {
+    --body-bg-rgb:	240 ,240, 245;
+    --primary-rgb:	108, 95, 252;
+    --secondary-rgb:	5, 195, 251;
+    --warning-rgb:	247, 183, 49;
+    --info-rgb:	17, 112, 228;
+    --success-rgb:	9, 173, 149;
+    --danger-rgb:	232, 38, 70;
+    --light-rgb:	246, 246, 251;
+    --dark-rgb:	52, 58, 64;
+    --orange-rgb:	252, 115, 3;
+    --pink-rgb:	236, 130, 239;
+    --teal-rgb:	28, 175, 159;
+    --purple-rgb:	137, 39, 236;
+    --default-body-bg-color:	#F8F8F8;
+    --primary-color:	rgb(var(--primary-rgb));
+    --primary-rgb: 48, 201, 106;
+    --primary-border:	#0d99ff;
+    --primary01:	rgba(var(--primary-rgb), 0.1);
+    --primary02:	rgba(var(--primary-rgb), 0.2);
+    --primary03:	rgba(var(--primary-rgb), 0.3);
+    --primary04:	rgba(var(--primary-rgb), 0.4);
+    --primary05:	rgba(var(--primary-rgb), 0.5);
+    --primary06:	rgba(var(--primary-rgb), 0.6);
+    --primary07:	rgba(var(--primary-rgb), 0.7);
+    --primary08:	rgba(var(--primary-rgb), 0.8);
+    --primary09:	rgba(var(--primary-rgb), 0.9);
+    --primary005:	rgba(var(--primary-rgb), 0.05);
+    --default-font-family:	"Nunito Sans", sans-serif;
+    --default-font-weight:	400;
+    --default-text-color:	#202124;
+    --default-border:	#e9edf4;
+    --default-background:	#f7f8f9;
+    --menu-bg:	#fff;
+    --menu-prime-color:	#1f2f3e;
+    --menu-border-color:	#e9edf4;
+    --header-bg: #fff;
+    --header-prime-color:	rgb(var(--primary-rgb));
+    --header-border-color:	#e9edf4;
+    --custom-white:	#fff;
+    --custom-black:	#000;
+    --bootstrap-card-border:	#e9edf4;
+    --list-hover-focus-bg:	#f5f6f7;
+    --text-muted:	#74829c;
+    --input-border:	#e9edf6;
+    --form-control-bg:	#ffffff;
+    --shadow-color:	rgba(168, 180, 208, 0.1);
+    /* Gray set */
+    --gray-1:	#f9fafb;
+    --gray-2:	#f2f4f5;
+    --gray-3:	#e6eaeb;
+    --gray-4:	#dbdfe1;
+    --gray-5:	#949eb7;
+    --gray-6:	#7987a1;
+    --gray-7:	#4d5875;
+    --gray-8:	#383853;
+    --gray-9:	#323251;
+    /* White set */
+    --white-1:	rgba(255,255,255, 0.1);
+    --white-2:	rgba(255,255,255, 0.2);
+    --white-3:	rgba(255,255,255, 0.3);
+    --white-4:	rgba(255,255,255, 0.4);
+    --white-5:	rgba(255,255,255, 0.5);
+    --white-6:	rgba(255,255,255, 0.6);
+    --white-7:	rgba(255,255,255, 0.7);
+    --white-8:	rgba(255,255,255, 0.8);
+    --white-9:	rgba(255,255,255, 0.9);
+    /* Black set */
+    --black-1:	rgba(0,0,0, 0.1);
+    --black-2:	rgba(0,0,0, 0.2);
+    --black-3:	rgba(0,0,0, 0.3);
+    --black-4:	rgba(0,0,0, 0.4);
+    --black-5:	rgba(0,0,0, 0.5);
+    --black-6:	rgba(0,0,0, 0.6);
+    --black-7:	rgba(0,0,0, 0.7);
+    --black-8:	rgba(0,0,0, 0.8);
+    --black-9:	rgba(0,0,0, 0.9);
+    --bg-gradiant-primary:linear-gradient(to right, #37B34A 0%, #8BC53F 100%);
+  }
+  
+  [data-theme-mode=dark] {
+    --body-bg-rgb:	26, 26, 60;
+    --body-bg-rgb2:	42, 42, 74;
+    --menu-bg:	rgb(var(--body-bg-rgb2));
+    --menu-border-color:	rgba(255,255,255,0.1);
+    --menu-prime-color:	rgba(255,255,255);
+    --header-bg:	rgb(var(--body-bg-rgb2));
+    --header-prime-color:	rgba(255,255,255);
+    --header-border-color:	rgba(255,255,255,0.1);
+    --custom-white:	rgb(var(--body-bg-rgb2));
+    --custom-black:	#fff;
+    --default-border:	rgba(255,255,255,0.1);
+    --default-text-color:	#dedefd;
+    --light-rgb:	31, 31, 65;
+    --dark-rgb:	240 ,245 ,248;
+    --bootstrap-card-border:	rgba(255,255,255,0.1);
+    --list-hover-focus-bg:	rgba(255,255,255,0.1);
+    --default-background:	rgba(255,255,255,0.1);
+    --default-body-bg-color:	rgb(var(--body-bg-rgb));
+    --text-muted:	#9595b5;
+    --input-border:	rgba(255,255,255,0.1);
+    --form-control-bg:	rgb(var(--body-bg-rgb2));
+    --shadow-color:	rgba(28, 28, 51, 0.15);
+    /* Gray Set */
+    --gray-100:	#110f0f;
+    --gray-200:	#17171c;
+    --gray-300:	#393946;
+    --gray-400:	#505062;
+    --gray-500:	#73738c;
+    --gray-600:	#8f8fa3;
+    --gray-700:	#ababba;
+    --gray-800:	#c7c7d1;
+    --gray-900:	#e3e3e8;
+    /* white set */
+    --white-1:	rgba(0,0,0,0.1);
+    --white-2:	rgba(0,0,0,0.2);
+    --white-3:	rgba(0,0,0,0.3);
+    --white-4:	rgba(0,0,0,0.4);
+    --white-5:	rgba(0,0,0,0.5);
+    --white-6:	rgba(0,0,0,0.6);
+    --white-7:	rgba(0,0,0,0.7);
+    --white-8:	rgba(0,0,0,0.8);
+    --white-9:	rgba(0,0,0,0.9);
+    /* black set */
+    --black-1:	rgba(255,255,255,0.05);
+    --black-2:	rgba(255,255,255,0.2);
+    --black-3:	rgba(255,255,255,0.3);
+    --black-4:	rgba(255,255,255,0.4);
+    --black-5:	rgba(255,255,255,0.5);
+    --black-6:	rgba(255,255,255,0.6);
+    --black-7:	rgba(255,255,255,0.7);
+    --black-8:	rgba(255,255,255,0.8);
+    --black-9:	rgba(255,255,255,0.9);
+  }
+
+
+  /* Scrolling Bar start */
+ 
+
+/* width */
+ ::-webkit-scrollbar {
+  width: 6px;
+background:#010203;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 3px #222222; 
+  border-radius: 0px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:var(--primary-color);
+border-radius: 40px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color); 
+}
+/* Scrolling Bar end */
+
+
+/* width */
+.select2-container--default .select2-box-dropdown .select2-results>.select2-results__options::-webkit-scrollbar {
+  width: 4px;
+background:#F6F6F6;
+}
+
+.select2-container--default .select2-box-dropdown .select2-results>.select2-results__options::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #F6F6F6; 
+  border-radius: 0px;
+}
+/* Handle */
+.select2-container--default .select2-box-dropdown .select2-results>.select2-results__options::-webkit-scrollbar-thumb {
+  background:var(--primary-color);
+border-radius: 40px;
+}
+/* Handle on hover */
+.select2-container--default .select2-box-dropdown .select2-results>.select2-results__options::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color); 
+}
+/* Scrolling Bar end */
+
+/* width */
+.notifications .noti-content::-webkit-scrollbar {
+  width: 4px;
+background:#F6F6F6;
+}
+
+.notifications .noti-content::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #F6F6F6; 
+  border-radius: 0px;
+}
+/* Handle */
+.notifications .noti-content::-webkit-scrollbar-thumb {
+  background:var(--primary-color);
+border-radius: 40px;
+}
+/* Handle on hover */
+.notifications .noti-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color); 
+}
+/* Scrolling Bar end */
+/* width */
+.table-responsive::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+background:#F6F6F6;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px #F6F6F6; 
+  border-radius: 0px;
+}
+/* Handle */
+.table-responsive::-webkit-scrollbar-thumb {
+  background:var(--primary-color);
+border-radius: 40px;
+}
+/* Handle on hover */
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color); 
+}
+/* Scrolling Bar end */
+

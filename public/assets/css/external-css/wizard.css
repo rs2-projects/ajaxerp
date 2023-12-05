@@ -1,0 +1,674 @@
+/*--- WIZARD ELEMENTS ---*/
+.wizard {
+    border: 1px dashed #77c14157;
+    background-color: transparent;
+    border-radius: 5px;
+}
+.wizard>.steps {
+    padding: 20px;
+}
+
+.wizard>.steps>ul {
+    padding: 0;
+    margin-block-end: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.wizard>.steps>ul li {
+    float: none;
+    display: block;
+    width: auto;
+}
+
+.wizard>.steps>ul li .current-info {
+    display: none;
+}
+
+.wizard>.steps>ul li .title {
+    margin-inline-start: 5px;
+    white-space: nowrap;
+    transition: all 0.2s ease-in-out;
+    margin: 0;
+    min-height: auto;
+}
+
+.wizard>.steps>ul li+li {
+    margin-inline-start: 5px;
+}
+
+.wizard>.steps a {
+    color: var(--button-bg-color);
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wizard>.steps a:hover, .wizard>.steps a:active {
+    color: var(--button-bg-color);
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wizard>.steps a .number, .wizard>.steps a:hover .number, .wizard>.steps a:active .number {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    display: block;
+    text-align: center;
+    line-height: 2;
+    width: 30px;
+    height: 30px;
+    background-color: rgb(187 187 187 / 10%);
+    border-radius: 100%;
+    transition: all 0.2s ease-in-out;
+    margin-inline-end: 5px;
+}
+
+.wizard>.steps .disabled a {
+    color: rgb(0 0 0 / 45%);
+}
+
+.wizard>.steps .disabled a:hover,
+.wizard>.steps .disabled a:active {
+    color: var(--primary06);
+}
+
+.wizard>.steps .current a {
+    color: var(--primary-color);
+}
+
+.wizard>.steps .current a:hover, .wizard>.steps .current a:active {
+    color: var(--primary-color);
+}
+
+.wizard>.steps .current a .title,
+.wizard>.steps .current a:hover .title,
+.wizard>.steps .current a:active .title {
+    display: inline-block;
+}
+
+.wizard>.steps .current a .number, .wizard>.steps .current a:hover .number, .wizard>.steps .current a:active .number {
+    background: var(--bg-gradiant-primary);
+    color: #fff;
+}
+
+.wizard>.steps .done a {
+    color: rgb(127 108 251);
+}
+
+.wizard>.steps .done a:hover,
+.wizard>.steps .done a:active {
+    color: rgb(127 108 251);
+}
+
+.wizard>.steps .done a .title,
+.wizard>.steps .done a:hover .title,
+.wizard>.steps .done a:active .title {
+    display: none;
+}
+
+.wizard>.steps .done a .number, .wizard>.steps .done a:hover .number, .wizard>.steps .done a:active .number {
+    background: linear-gradient(to right,rgb(108,95,252) 0,#8e77fa 100%)!important;
+    color: #fff;
+}
+
+.wizard>.content {
+    border-block-start: 1px solid #e9edf4;
+    border-block-end: 1px solid #e9edf4;
+    min-height: 150px;
+    padding: 20px;
+}
+
+.wizard>.content>.title {
+    font-size: 18px;
+    color: #282f53;
+    font-weight: 600;
+    padding-block-end: 15px;
+    display: none;
+    margin: 0;
+}
+
+.wizard>.content>.title.current {
+    display: block;
+}
+
+.wizard>.content>.body {
+    float: none;
+    position: static;
+    width: auto;
+    height: auto;
+}
+
+.wizard>.content>.body input.parsley-error {
+    border-color: #ff5c77;
+}
+
+.wizard>.content>.body input.parsley-error+ul {
+    list-style: none !important;
+}
+
+.wizard>.actions {
+    padding: 20px;
+}
+
+.wizard>.actions>ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.wizard>.actions>ul>li:last-child a {
+    background: var(--bg-gradiant-primary);
+    color: #fff;
+}
+
+.wizard>.actions a {
+    display: block;
+    background: var(--bg-gradiant-primary);
+    color: #fff;
+    padding: 5px 25px;
+    line-height: 1.573;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.wizard>.actions a:hover,
+.wizard>.actions a:active {
+    display: block;
+    background-color: var(--button-bg-color);
+    padding: 5px 25px;
+    line-height: 1.573;
+    color: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.wizard>.actions .disabled a {
+    background: linear-gradient(to right,rgb(232,38,70) 0,#fd4a68 100%);
+    color: #fff;
+}
+
+.wizard>.actions .disabled a:hover,
+.wizard>.actions .disabled a:active {
+    background: linear-gradient(to right,rgb(232,38,70) 0,#fd4a68 100%);
+    color: #fff;
+}
+
+.wizard.vertical>.steps {
+    padding: 20px;
+}
+
+.wizard.vertical>.steps ul li+li {
+    margin-inline-start: 10px;
+}
+
+.wizard.vertical>.steps ul li .title {
+    display: none;
+}
+
+.wizard.vertical>.steps .current a .title {
+    display: inline-block;
+}
+
+.wizard.vertical>.content {
+    margin: 0;
+    padding: 20px;
+}
+
+.wizard.vertical>.actions {
+    padding: 20px;
+}
+
+.wizard.vertical>.actions ul {
+    float: none;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 768px) {
+    .wizard>.steps {
+        padding: 25px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard>.steps {
+        padding: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wizard>.steps>ul li .title {
+        transition: none;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard>.steps>ul li .title {
+        display: none;
+        margin-inline-start: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard>.steps>ul li .title {
+        display: inline-block;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard>.steps>ul li+li {
+        margin-inline-start: 20px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard>.steps>ul li+li {
+        margin-inline-start: 30px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .wizard>.steps a {
+        justify-content: flex-start;
+    }
+
+    .wizard>.steps a:hover,
+    .wizard>.steps a:active {
+        justify-content: flex-start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .wizard>.steps a .number,
+    .wizard>.steps a:hover .number,
+    .wizard>.steps a:active .number {
+        transition: none;
+    }
+}
+
+@media (min-width: 576px) {
+
+    .wizard>.steps a .number, .wizard>.steps a:hover .number, .wizard>.steps a:active .number {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 2;
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard>.steps .disabled {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .wizard>.steps>ul li .title {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+
+    .wizard>.steps .done a .title,
+    .wizard>.steps .done a:hover .title,
+    .wizard>.steps .done a:active .title {
+        display: inline-block;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard>.content {
+        padding: 25px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard>.content {
+        padding: 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard>.actions {
+        padding: 25px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard>.actions {
+        padding: 20px;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.steps {
+        float: var(--float-left);
+        width: 20%;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard.vertical>.steps {
+        width: 15%;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.steps {
+        padding: 20px;
+        width: 35%;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.steps ul {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.steps ul li+li {
+        margin-block-start: 10px;
+        margin-inline-start: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard.vertical>.steps ul li+li {
+        margin-block-start: 20px;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.steps ul li .title {
+        display: block;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.steps a {
+        justify-content: flex-start;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.steps .current a .title {
+        display: none;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.steps .current a .title {
+        display: inline-block;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.content {
+        border-block-start-width: 0;
+        border-block-end-width: 0;
+        width: 80%;
+        float: var(--float-right);
+        border-inline-start: 1px solid #e9edf4;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard.vertical>.content {
+        width: 85%;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.content {
+        width: 65%;
+        padding: 25px;
+    }
+}
+
+@media (min-width: 576px) {
+    .wizard.vertical>.actions {
+        width: 80%;
+        float: var(--float-right);
+        border-inline-start: 1px solid #e9edf4;
+    }
+}
+
+@media (min-width: 768px) {
+    .wizard.vertical>.actions {
+        width: 85%;
+    }
+}
+
+@media (min-width: 992px) {
+    .wizard.vertical>.actions {
+        width: 65%;
+        padding: 25px;
+    }
+}
+
+/****** EQUAL COLUMN WIDTH STEP INDICATOR *****/
+.step-equal-width>.steps>ul {
+    display: flex;
+    display: flex;
+}
+
+.step-equal-width>.steps>ul>li {
+    flex: 1;
+    width: auto;
+    float: none;
+    flex: 1;
+    width: auto;
+    float: none;
+}
+
+/****** EQUAL COLUMN WIDTH STEP INDICATOR *****/
+/***** CUSTOM STYLES *****/
+.wizard-style-1>.steps>ul a {
+    padding: 0;
+    height: 50px;
+}
+
+.wizard-style-1>.steps>ul a:hover,
+.wizard-style-1>.steps>ul a:active {
+    padding: 0;
+    height: 50px;
+}
+
+.wizard-style-1>.steps>ul a .number,
+.wizard-style-1>.steps>ul a:hover .number,
+.wizard-style-1>.steps>ul a:active .number {
+    width: 50px;
+    height: 100%;
+    border: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #737688;
+    background-color: #f3f7fd;
+    border-radius: 0;
+}
+
+.wizard-style-1>.steps>ul a .title,
+.wizard-style-1>.steps>ul a:hover .title,
+.wizard-style-1>.steps>ul a:active .title {
+    margin-inline-end: 20px;
+    margin-inline-start: 20px;
+}
+
+.wizard-style-1>.steps>ul .current a .number,
+.wizard-style-1>.steps>ul .current a:hover .number,
+.wizard-style-1>.steps>ul .current a:active .number {
+    background-color: var(--button-bg-color);
+    color: #fff;
+}
+
+.wizard-style-1>.steps>ul .done a .number,
+.wizard-style-1>.steps>ul .done a:hover .number,
+.wizard-style-1>.steps>ul .done a:active .number {
+    background-color: #643ab0;
+    color: #fff;
+}
+
+.wizard-style-2>.steps>ul a {
+    padding: 0;
+    height: 50px;
+    border-radius: 50px;
+}
+
+.wizard-style-2>.steps>ul a:hover,
+.wizard-style-2>.steps>ul a:active {
+    padding: 0;
+    height: 50px;
+    border-radius: 50px;
+}
+
+.wizard-style-2>.steps>ul a .number,
+.wizard-style-2>.steps>ul a:hover .number,
+.wizard-style-2>.steps>ul a:active .number {
+    width: 50px;
+    height: 100%;
+    border: 2px solid #f3f7fd;
+    font-size: 18px;
+    font-weight: bold;
+    color: #737688;
+    background-color: #fff;
+}
+
+.wizard-style-2>.steps>ul a .title,
+.wizard-style-2>.steps>ul a:hover .title,
+.wizard-style-2>.steps>ul a:active .title {
+    margin-inline-end: 20px;
+}
+
+.wizard-style-2>.steps>ul .current a .number,
+.wizard-style-2>.steps>ul .current a:hover .number,
+.wizard-style-2>.steps>ul .current a:active .number {
+    border-color: var(--button-bg-color);
+    color: var(--button-bg-color);
+}
+
+.wizard-style-2>.steps>ul .done a .number,
+.wizard-style-2>.steps>ul .done a:hover .number,
+.wizard-style-2>.steps>ul .done a:active .number {
+    border-color: #8c3feb;
+    color: #8c3feb;
+}
+
+/*--- WIZARD ELEMENTS ---*/
+.wizard-card .moving-tab {
+    margin-block-start: 5px;
+    background-color: var(--button-bg-color) !important;
+}
+
+.form-group label.control-label {
+    color: var(--button-bg-color);
+}
+
+.wizard-card.form-group .form-control {
+    background-image: linear-gradient(#c4c4c4, #c4c4c4, linear-gradient(#e1e1e2, #e1e1e2));
+}
+
+.wizard-container .wizard-navigation {
+    background: #ebeff8;
+}
+
+.wizard-card .choice:hover .icon,
+.wizard-card .choice.active .icon {
+    border-color: var(--button-bg-color) !important;
+    color: var(--button-bg-color) !important;
+}
+
+@media (max-width: 1279px) and (min-width: 992px) {
+    #smartwizard-3 .nav-tabs .nav-link {
+        padding: 1rem 1.8rem;
+    }
+}
+
+@media (max-width: 575px) {
+
+    .wizard>.steps .current a .title,
+    .wizard>.steps .current a:hover .title,
+    .wizard>.steps .current a:active .title {
+        display: none;
+    }
+
+    .wizard>.steps>ul li .title {
+        display: none;
+    }
+
+    .wizard.vertical>.steps ul li .title {
+        display: none !important;
+    }
+}
+
+.widgets-cards .wrp.icon-circle {
+    width: 73px;
+    height: 73px;
+    border-radius: 50px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding: 0;
+    margin-inline-end: 15px;
+}
+
+.widgets-cards .wrp.icon-circle i {
+    font-size: 1.6rem;
+    color: #fff;
+}
+
+.widgets-cards .wrp p {
+    margin-block-end: 0;
+    line-height: 1;
+    margin-block-end: 10px;
+}
+
+.widgets-cards .wrp p:first-child {
+    font-weight: 600;
+    font-size: 25px;
+}
+
+/**widgets*/
+.widgets {
+    font-size: 35px;
+    padding: 20px;
+}
+
+.widgets-cards .widgets-cards-data {
+    margin-block-start: 8px;
+}
+
+.widgets-cards .widgets-cards-data .wrp p:first-child {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+
+.wizard>.steps .current a:active .number{
+    background: var(--bg-gradiant-primary);
+    color: #fff;
+}
+.wizard>.steps .current a:active  {
+    color: var(--primary-color);
+}
+
+.wizard>.actions a[href="#previous"]{
+    background: linear-gradient(to right,rgb(232,38,70) 0,#fd4a68 100%);
+    color: #fff;
+}
