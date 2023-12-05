@@ -1,5 +1,5 @@
 @extends('auth.layouts.layout')
-@section('contents')
+@section('content')
     <div class="account-content">
 
         <div class="container">

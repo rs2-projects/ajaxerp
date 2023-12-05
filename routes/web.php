@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('login', [\App\Http\Controllers\Auth\LoginController::class, 'showLogin'])->name('login');
+
+
+Route::get('/', [\App\Http\Controllers\Dashboard\DashboardController::class, 'showDashboard'])->name('dashboard');
+Route::get('home', [\App\Http\Controllers\Dashboard\DashboardController::class, 'showDashboard'])->name('home');

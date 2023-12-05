@@ -6,7 +6,7 @@
 
 <!-- Main Wrapper -->
 <div class="main-wrapper">
-    @yield('contents')
+    @yield('content')
 </div>
 <!-- /Main Wrapper -->
 
