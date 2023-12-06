@@ -7,38 +7,38 @@ use Illuminate\Support\Facades\View;
 
 class BackendController extends Controller
 {
-    public string $pageTitle = 'Dashboard';
-    public string $pageHeaderTitle = 'Dashboards';
-    public string $mainMenu = '';
-    public string $subMenu = '';
-    public string $activeMenu = 'dashboard';
-    public array $pageBreadcrumbs = [];
+    private string $pageTitle = 'Dashboards';
+    private string $pageHeaderTitle = 'Dashboards';
+    private string $mainMenu = '';
+    private string $subMenu = '';
+    private string $activeMenu = 'dashboard';
+    private array $pageBreadcrumbs = [];
 
-    public function setPageTitle(string $pageTitle, bool $setPageHeader=true): void
+    protected function setPageTitle(string $pageTitle, bool $setPageHeader=true): void
     {
         $this->pageTitle = $pageTitle;
         if ($setPageHeader) {
             $this->setPageHeaderTitle($pageTitle);
         }
     }
-    public function setPageHeaderTitle(string $pageHeaderTitle): void
+    protected function setPageHeaderTitle(string $pageHeaderTitle): void
     {
         $this->pageHeaderTitle = $pageHeaderTitle;
     }
-    public function setMainMenu(string $mainMenu): void
+    protected function setMainMenu(string $mainMenu): void
     {
         $this->mainMenu = $mainMenu;
     }
-    public function setSubMenu(string $subMenu): void
+    protected function setSubMenu(string $subMenu): void
     {
         $this->subMenu = $subMenu;
     }
-    public function setActiveMenu(string $activeMenu): void
+    protected function setActiveMenu(string $activeMenu): void
     {
         $this->activeMenu = $activeMenu;
     }
 
-    public function addBreadcrumbs($text,$link=null,$icon=null,$icon_custom=false) {
+    protected function addBreadcrumbs($text,$link=null,$icon=null,$icon_custom=false) {
         $this->pageBreadcrumbs[] = [
             'text' => $text,
             'link' => $link,
@@ -46,13 +46,13 @@ class BackendController extends Controller
             'icon_custom' => $icon_custom,
         ];
     }
-    public function setBreadcrumbs(array $breadcrumbs) {
+    protected function setBreadcrumbs(array $breadcrumbs) {
         foreach ($breadcrumbs as $breadcrumb) {
             $this->addBreadcrumbs($breadcrumb);
         }
     }
 
-    public function view($view): \Illuminate\Contracts\View\View
+    protected function view($view): \Illuminate\Contracts\View\View
     {
         return view($view)->with([
             'pageTitle' => $this->pageTitle,

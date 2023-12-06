@@ -17,6 +17,7 @@ class DashboardController extends BackendController
         $this->setPageTitle("Dashboard");
         $this->setPageHeaderTitle("Dashboard");
         $this->addBreadcrumbs('Home');
+        $this->setActiveMenu('dashboard');
 
         return $this->view('pages.index');
     }
