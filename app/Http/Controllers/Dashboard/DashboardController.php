@@ -9,14 +9,15 @@ class DashboardController extends BackendController
 {
     public function __construct()
     {
-        $this->addBreadcrumbs('Dashboard', route('dashboard'), 'fa fa-home');
+        $this->addBreadcrumbs('HR', route('dashboard'), 'fa fa-home');
+        $this->addBreadcrumbs('Employee', route('dashboard'));
     }
 
     public function showDashboard()
     {
         $this->setPageTitle("Dashboard");
         $this->setPageHeaderTitle("Dashboard");
-        $this->addBreadcrumbs('Home');
+        $this->addBreadcrumbs('Details');
         $this->setActiveMenu('dashboard');
 
         return $this->view('pages.index');
