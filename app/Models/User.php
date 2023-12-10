@@ -56,6 +56,21 @@ class User extends Authenticatable
         self::MARITAL_STATUS_WIDOWED => 'Widowed',
     ];
 
+    const RESIGNED_NO = 0;
+    const RESIGNED_YES = 1;
+    const RESIGNEDS = [
+        self::RESIGNED_NO => 'No',
+        self::RESIGNED_YES => 'Yes',
+    ];
+
+    const TERMINATED_NO = 0;
+    const TERMINATED_YES = 1;
+    const TERMINATEDS = [
+        self::TERMINATED_NO => 'No',
+        self::TERMINATED_YES => 'Yes',
+    ];
+
+
     protected $fillable = [
         'name',
         'email',

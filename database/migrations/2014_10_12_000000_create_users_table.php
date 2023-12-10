@@ -40,6 +40,10 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
 
+            $table->boolean('resigned')->default(false)->comment('0=No, 1=Yes');
+            $table->date('resign_date')->nullable();
+            $table->boolean('terminated')->default(false)->comment('0=No, 1=Yes');
+            $table->date('terminate_date')->nullable();
             MigrationHelper::getCommonColumns($table);
         });
     }
