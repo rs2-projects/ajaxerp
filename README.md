@@ -13,3 +13,7 @@
 - ``php artisan migrate --seed``
 
 Installation Complete
+
+
+## Create New Service 
+``php artisan make:services ServiceName``

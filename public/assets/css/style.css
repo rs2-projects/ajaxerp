@@ -2,7 +2,7 @@
 /*------------------------------------------------------------------
 [Master Stylesheet]
 
-Project                            :   Ajax - ERP 
+Project                            :   Ajax - ERP
 Author & Copyright Ownership       :   Retina Soft
 Author URL                         :   https://retinasoft.com.bd
 ------------------------------------------------------------------*/
@@ -13415,7 +13415,7 @@ h5#offcanvasRightLabel {
 
 .erp-import-employee {
   background-color: #fff;
-  box-shadow: 0 10px 60px rgb(218, 229, 255); 
+  box-shadow: 0 10px 60px rgb(218, 229, 255);
   border: 1px solid rgb(223 218 218);
   border-radius: 20px;
   padding: 2rem 0.7rem 0.7rem 0.7rem;
@@ -13547,7 +13547,7 @@ h5#offcanvasRightLabel {
 .erp-th:hover .erp-tooltip {
   border: 1px solid #222;
   color: #222;
-  cursor: pointer;  
+  cursor: pointer;
 
 }
 
@@ -13814,6 +13814,11 @@ a.em-profile-wrap:hover {
   box-sizing: border-box;
 }
 
+.ie-span {
+    color: #ab0000;
+    display: none;
+}
+
 /* Media QUERY Start*/
 @media only screen and (max-width: 766px) {
   .my-attendance-wrapper .my-attendance-box-item:nth-child(1) {
@@ -13829,6 +13834,4 @@ a.em-profile-wrap:hover {
   }
 
 }
-
-
 /* Media QUERY end*/

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
-    public $timestamps = true;
+    public $timestamps = false;
 
     const TYPE_ADMIN = 0;
     const TYPE_EMPLOYEE = 1;
@@ -32,8 +33,15 @@ class User extends Authenticatable
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
     const STATUSES = [
-        self::STATUS_ACTIVE => 'Active',
         self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
+
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    const DELETEDS = [
+        self::DELETED_NO => 'No',
+        self::DELETED_YES => 'Yes',
     ];
 
     const GENDER_MALE = 0;
@@ -72,9 +80,42 @@ class User extends Authenticatable
 
 
     protected $fillable = [
-        'name',
+        'employee_id',
+        'type',
+        'role',
+        'department_id',
+        'designation_id',
+        'first_name',
+        'last_name',
         'email',
+        'phone',
+        'joining_date',
+        'nid_no',
+        'nid_image',
+        'passport_no',
+        'passport_expiry_date',
+        'passport_image',
+        'date_of_birth',
+        'gender',
+        'religion',
+        'marital_status',
+        'marriage_date',
+        'present_address',
+        'permanent_address',
+        'email_verified_at',
         'password',
+        'resigned',
+        'resign_date',
+        'terminated',
+        'terminate_date',
+        'status',
+        'created_at',
+        'created_by',
+        'updated_at',
+        'updated_by',
+        'deleted',
+        'deleted_at',
+        'deleted_by',
     ];
 
     protected $hidden = [
@@ -86,4 +127,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->created_at = Carbon::now();
+        });
+        static::created(function ($model) {
+            $model->employee_id = 1000 + $model->id;
+            $model->save();
+        });
+    }
 }

@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="{{ asset('assets') }}/css/line-awesome.min.css">
 
     <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ asset('assets') }}/css/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/css/style.css">
+    <meta name="csrf_token" content="{{ csrf_token() }}">
 
 </head>

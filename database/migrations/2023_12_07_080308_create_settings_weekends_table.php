@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings_weekends', function (Blueprint $table) {
+        /*Schema::create('settings_weekends', function (Blueprint $table) {
             $table->id();
             $table->date('start_date');
             $table->date('end_date')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('friday')->default(0)->comment('0: No, 1: Yes');
 
             MigrationHelper::getCommonColumns($table);
-        });
+        });*/
     }
 
     /**
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings_weekends');
+//        Schema::dropIfExists('settings_weekends');
     }
 };

@@ -153,7 +153,7 @@
                 </li>
 
                 <li>
-                    <a href="salary-setting.html"><i class="la la-cog"></i> <span>Settings</span></a>
+                    <a href="{{ route('settings.office-time') }}"><i class="la la-cog"></i> <span>Settings</span></a>
                 </li>
 
             </ul>

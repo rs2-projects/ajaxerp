@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email', 128)->nullable();
             $table->string('phone', 32)->nullable();
             $table->string('relation', 128)->index();
+            $table->unsignedTinyInteger('status')->default(1)->comment('0=inactive,1=active');
         });
     }
 

@@ -16,10 +16,12 @@
                     <p class="account-subtitle">Access to your dashboard</p>
 
                     <!-- Account Form -->
-                    <form action="#">
+                    <form action="{{ route('login') }}" id="loginForm">
+                        @csrf
                         <div class="input-block mb-4">
                             <label class="col-form-label">Email Address</label>
-                            <input class="form-control" type="text" value="admin@dreamguystech.com">
+                            <input class="form-control" type="email" name="email" value="" required>
+                            <span class="email_error ie-span"></span>
                         </div>
                         <div class="input-block mb-4">
                             <div class="row align-items-center">
@@ -33,9 +35,10 @@
                                 </div>
                             </div>
                             <div class="position-relative">
-                                <input class="form-control" type="password" value="123456" id="password">
+                                <input class="form-control" type="password" name="password" value="" id="password" required>
                                 <span class="fa-solid fa-eye-slash" id="toggle-password"></span>
                             </div>
+                            <span class="password_error ie-span"></span>
                         </div>
                         <div class="input-block mb-4 text-center">
                             <button class="btn btn-primary account-btn" type="submit">Login</button>
@@ -48,4 +51,30 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js_plugins')
+
+@endsection
+@section('js')
+    <script>
+        $(document).ready(function(){
+            $("#loginForm").on('submit', function (e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+                formPost(url,formData,'redirect', function (xhr) {
+                    if(xhr.status == 422){
+                        $.each(xhr.responseJSON.errors, function(key, value){
+                            $("."+key+"_error").text(value).show();
+                            toastr.error(value);
+                        });
+                    }else{
+                        toastr.error(xhr.message);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

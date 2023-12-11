@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('settings_overtime_type_id')->nullable();
             $table->unsignedBigInteger('settings_absent_penalty_id')->nullable();
             $table->unsignedBigInteger('settings_late_penalty_id')->nullable();
+            $table->unsignedBigInteger('settings_office_time_type_id')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });

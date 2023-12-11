@@ -64,4 +64,21 @@ class BackendController extends Controller
         ]);
     }
 
+
+
+    protected function returnAjaxException($exception)
+    {
+        return response()->json([
+            'status' => 500,
+            'message' => $exception->getMessage(),
+        ]);
+    }
+
+    protected function returnAjaxSuccess(array $data, $message='Success')
+    {
+        $data['status'] = 200;
+        $data['message'] = $message;
+        return response()->json($data);
+    }
+
 }

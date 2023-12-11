@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('office_time_type_id');
             $table->string('day', 16)->comment('saturday, sunday, monday, tuesday, wednesday, thursday, friday');
-            $table->time('start_time');
-            $table->time('end_time');
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->boolean('is_weekend')->default(0)->comment('0: No, 1: Yes');
             $table->unsignedSmallInteger('working_hour')->default(0);
 
