@@ -81,4 +81,11 @@ class BackendController extends Controller
         return response()->json($data);
     }
 
+    protected function returnAjaxError(array $data, $message='Error')
+    {
+        $data['status'] = 404;
+        $data['message'] = $message;
+        return response()->json($data);
+    }
+
 }

@@ -27,6 +27,7 @@ class SettingsOfficeTimeType extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'status',
         'created_at',
         'created_by',
@@ -36,4 +37,9 @@ class SettingsOfficeTimeType extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function officeTimes()
+    {
+        return $this->hasMany(SettingsOfficeTime::class, 'office_time_type_id', 'id');
+    }
 }

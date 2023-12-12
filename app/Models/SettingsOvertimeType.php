@@ -46,4 +46,13 @@ class SettingsOvertimeType extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'salary_type_text',
+    ];
+
+    public function getSalaryTypeTextAttribute()
+    {
+        return self::SALARY_TYPES[$this->salary_type] ?? self::SALARY_TYPES[0];
+    }
 }

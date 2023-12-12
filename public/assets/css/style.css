@@ -13818,6 +13818,22 @@ a.em-profile-wrap:hover {
     color: #ab0000;
     display: none;
 }
+.erp-child-office-time-body {
+    margin-bottom: 15px;
+}
+.erp-child-office-time-body:last-child {
+    margin-bottom: 0px;
+}
+
+.erp-child-office-time-wrapper {
+    padding: 12px;
+    border: 1px dashed #65d640;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+.flex-17{
+    flex-basis: 17%;
+}
 
 /* Media QUERY Start*/
 @media only screen and (max-width: 766px) {

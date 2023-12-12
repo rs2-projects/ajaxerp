@@ -26,4 +26,9 @@ class SettingsOfficeTime extends Model
         'is_weekend',
         'working_hour',
     ];
+
+    public function officeTimeType()
+    {
+        return $this->belongsTo(SettingsOfficeTimeType::class, 'office_time_type_id', 'id');
+    }
 }

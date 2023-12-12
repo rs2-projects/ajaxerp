@@ -25,6 +25,7 @@
 
     @yield('css_plugins')
     <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ asset('assets') }}/css/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/css/style.css">
     @yield('css')
 </head>
