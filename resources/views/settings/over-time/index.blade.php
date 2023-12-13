@@ -20,86 +20,11 @@
                         </div>
 
                         <div class="big-table pt-4">
-                            <div class="de-table-wrapper">
-                                <div class="table-responsive">
-                                    <table class="table mb-0 erp-table">
-                                        <thead class="erp-thead">
-                                            <tr class="erp-tr">
-                                                <th class="erp-th">SL</th>
-                                                <th class="erp-th">Title </th>
-                                                <th class="erp-th text-center">Description </th>
-                                                {{--<th class="erp-th text-center">Interval Time <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></th>--}}
-                                                <th class="erp-th text-center">Salary Type </th>
-                                                <th class="erp-th text-center">Hourly Rate </th>
-                                                <th class="text-end erp-th">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="erp-tbody">
-                                            @foreach($over_time_types as $key=> $item)
-                                                <tr class="erp-tbody-tr">
-                                                    <td class="erp-tbody-td">
-                                                        <h4 class="d-table-title">{{$loop->iteration}}</h4>
-                                                    </td>
-                                                    <td class="erp-tbody-td">
-                                                        <h4 class="text-start d-table-title">{{$item->title??'N/A'}} </h4>
-                                                    </td>
-                                                    <td class="erp-tbody-td text-center">
-                                                        <h4 class="text-center d-table-title">{!! $item->description??'N/A' !!}</h4>
-                                                    </td>
-                                                    {{--<td class="erp-tbody-td text-center">
-                                                        <h4 class="text-center d-table-title">30 min</h4>
+                            <div class="de-table-wrapper" id="ajax-data-load">
 
-                                                    </td>--}}
-                                                    <td class="erp-tbody-td text-center">
-                                                        <h4 class="text-center d-table-title">{{$item->salary_type_text}}</h4>
-                                                    </td>
-                                                    <td class="erp-tbody-td text-center">
-                                                        <h4 class="text-center d-table-title">{{$item->rate}}% of {{$item->salary_type_text}}</h4>
-                                                    </td>
-                                                    <td class="text-end erp-tbody-td">
-                                                        <div class="erp-action-t">
-                                                            <div class="dropdown dropdown-action">
-                                                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-
-                                                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$item->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                    <a class="dropdown-item" href="{{ route('settings.over-time-type.delete', $item->id) }}" onclick="return confirm('Are you sure to delete?')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
 
-                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                            <div class="erp-pagi-item">
-                                <div class="showing-date-box">
-                                    <p>Showing 1 to 7 of 7 entries
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="erp-pagi-item">
-                                <ul class="pagination">
-                                    <li class="page-item disabled">
-                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item active">
-                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">Next</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -131,25 +56,51 @@
 @section('js')
     <script>
         $(document).ready(function(){
-
+            getData();
             $("#OverTimeStoreForm").on('submit', function (e) {
+                var self = this;
                 e.preventDefault();
-                var formData = new FormData($(this)[0]);
+                var formData = new FormData($(self)[0]);
                 $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
+                var url = $(self).attr('action');
 
-                formPost(url, formData, 'reload', 'show_input_error');
+                formPost(url, formData, function (res){
+                    $("#add_over_time_type_modal").modal('hide');
+                    $(self)[0].reset();
+                    showSuccessAlert('Success',res.message);
+                    getData()
+                }, 'show_input_error');
             });
 
             $(document).on("submit", "#overTimeStoreFormEdit", function(e) {
+
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
                 var url = $(this).attr('action');
 
-                formPost(url, formData, 'reload', 'show_input_error');
+                formPost(url, formData, function (res){
+                    $("#edit_over_time_type_modal").modal('hide');
+                    showSuccessAlert('Success',res.message);
+                    getData();
+                }, 'show_input_error');
             });
         });
+
+        function initializeEditSelect() {
+            $('#edit_over_time_modal_body .select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+        function getData(){
+            getPaginatedListData("{{ route('settings.over-time.filtered') }}", "#ajax-data-load");
+        }
+
+        function getPaginatedData(button) {
+            getPaginatedListData($(button).attr('data-href'), "#ajax-data-load");
+        }
 
         function editItem(id){
             let url = "{{route('settings.over-time-type.edit', ':id')}}";
@@ -158,6 +109,7 @@
                 if (response.status == 200) {
                     $("#edit_over_time_modal_body").html(response.view);
                     $("#edit_over_time_type_modal").modal('show');
+                    initializeEditSelect();
                 } else {
                     toastr.error(response.message);
                 }

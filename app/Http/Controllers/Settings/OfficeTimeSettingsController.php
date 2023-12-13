@@ -7,6 +7,7 @@ use App\Http\Requests\Settings\OfficeTime\StoreOfficeTimeSettingsRequest;
 use App\Http\Requests\Settings\OfficeTime\UpdateOfficeTimeSettingsRequest;
 use App\Models\SettingsOfficeTimeType;
 use App\Services\Settings\OfficeTimeSettingsService;
+use Illuminate\Http\Request;
 
 class OfficeTimeSettingsController extends BackendController
 {
@@ -25,6 +26,15 @@ class OfficeTimeSettingsController extends BackendController
         return $this->view('settings.office-time.index')->with($data);
     }
 
+    public function filteredOfficeTimeSettings(Request $request, OfficeTimeSettingsService $officeTimeSettingsService)
+    {
+        $data = $officeTimeSettingsService->getIndexFilteredData($request);
+
+        $view = $this->view('settings.office-time._index_filtered')->with($data)->render();
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
     public function storeOfficeTimeSettings(StoreOfficeTimeSettingsRequest $request, OfficeTimeSettingsService $officeTimeSettingsService)
     {
 
@@ -35,7 +45,7 @@ class OfficeTimeSettingsController extends BackendController
         } catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
-        session()->flash('success', 'Create Success');
+        /*session()->flash('success', 'Create Success');*/
         return $this->returnAjaxSuccess([
             'status' => 200,
             'message' => 'Create Success',
@@ -76,11 +86,12 @@ class OfficeTimeSettingsController extends BackendController
             $officeTimeSettingsService->delete($id);
 
         } catch (\Exception $exception) {
-            session()->flash('error', $exception->getMessage());
-            return redirect()->back()->with('error', $exception->getMessage());
+
+            return $this->returnAjaxException($exception);
         }
-        session()->flash('success', 'Delete Success');
-        return redirect()->back()->with('success', 'Delete Success');
+        return $this->returnAjaxSuccess([], "Delete Success");
+//        session()->flash('success', 'Delete Success');
+//        return redirect()->back()->with('success', 'Delete Success');
     }
 
 }

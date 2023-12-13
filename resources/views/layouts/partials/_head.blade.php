@@ -4,6 +4,7 @@
     <meta name="description" content="Smarthr - Bootstrap Admin Template">
     <meta name="keywords" content="erp">
     <meta name="author" content="Retinasoft">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $pageTitle }} - {{ __(config('app.name')) }}</title>
 
     <!-- Favicon -->

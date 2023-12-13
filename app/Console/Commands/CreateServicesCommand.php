@@ -55,6 +55,7 @@ class CreateServicesCommand extends Command
     {
         // Customize this method to generate the content of your service class
         // For example, you can use a stub file or manually generate the content
-        return "<?php\n\nnamespace App\Services\\{$name};\n\nclass {$name}\n{\n    // Your code here\n}\n";
+        $namespace = implode('\\', explode('/', $name));
+        return "<?php\n\nnamespace App\Services\\{$namespace};\n\nclass {$name}\n{\n    // Your code here\n}\n";
     }
 }

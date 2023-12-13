@@ -27,6 +27,15 @@ class OverTimeSettingsController extends BackendController
         return $this->view('settings.over-time.index')->with($data);
     }
 
+    public function filteredOverTimeSettings(Request $request, OverTimeSettingsService $overTimeSettingsService)
+    {
+        $data = $overTimeSettingsService->getIndexFilteredData($request);
+
+        $view = $this->view('settings.over-time._index_filtered')->with($data)->render();
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
     public function storeOverTimeSettings(StoreOverTimeTypeSettingsRequest $request, OverTimeSettingsService $officeTimeSettingsService)
     {
 
@@ -36,7 +45,7 @@ class OverTimeSettingsController extends BackendController
         } catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
-        session()->flash('success', 'Create Success');
+        /*session()->flash('success', 'Create Success');*/
         return $this->returnAjaxSuccess([
             'status' => 200,
             'message' => 'Create Success',
@@ -63,7 +72,7 @@ class OverTimeSettingsController extends BackendController
         } catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
-        session()->flash('success', 'Update Success');
+        /*session()->flash('success', 'Update Success');*/
         return $this->returnAjaxSuccess([
             'status' => 200,
             'message' => 'Update Success',
@@ -77,11 +86,11 @@ class OverTimeSettingsController extends BackendController
             $overTimeSettingsService->delete($id);
 
         } catch (\Exception $exception) {
-            session()->flash('error', $exception->getMessage());
-            return redirect()->back()->with('error', $exception->getMessage());
+
+            return $this->returnAjaxException($exception);
         }
-        session()->flash('success', 'Delete Success');
-        return redirect()->back()->with('success', 'Delete Success');
+
+        return $this->returnAjaxSuccess([],"Delete Success");
     }
 
 

@@ -13,6 +13,7 @@ class OfficeTimeSettingsService
     public function __construct()
     {
         $this->weekDays = config('commonData.week_days');
+        $this->paginate_limit = config('commonData.paginate_limit');
     }
 
     public function getWeekDays()
@@ -25,6 +26,18 @@ class OfficeTimeSettingsService
         $data = [];
         $data['week_days'] = $this->getWeekDays();
         $data['office_time_types'] = $this->getOfficeTimeTypes();
+        return $data;
+    }
+
+    public function getIndexFilteredData(Request $request)
+    {
+
+        $data['office_time_types'] = SettingsOfficeTimeType::with('officeTimes')
+            ->where('status', SettingsOfficeTimeType::STATUS_ACTIVE)
+            ->where('deleted', SettingsOfficeTimeType::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->paginate($this->paginate_limit);
+
         return $data;
     }
 

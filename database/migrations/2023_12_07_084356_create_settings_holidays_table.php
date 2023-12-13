@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('settings_holidays', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('settings_holiday_type_id');
             $table->string('title', 255);
             $table->text('description')->nullable();
             $table->date('start_date');

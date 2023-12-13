@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class OverTimeSettingsService
 {
+    public function __construct()
+    {
+        $this->paginate_limit = config('commonData.paginate_limit');
+    }
 
     public function getIndexData()
     {
@@ -22,6 +26,17 @@ class OverTimeSettingsService
             ->where('deleted', SettingsOvertimeType::DELETED_NO)
             ->get();
         return $over_time_types;
+    }
+
+    public function getIndexFilteredData(Request $request)
+    {
+
+        $data['over_time_types'] =  SettingsOvertimeType::where('status', SettingsOvertimeType::STATUS_ACTIVE)
+            ->where('deleted', SettingsOvertimeType::DELETED_NO)
+            ->orderBy('title', 'asc')
+            ->paginate($this->paginate_limit);
+
+        return $data;
     }
 
     public function store(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,7 +28,6 @@ class SettingsHoliday extends Model
     ];
 
     protected $fillable = [
-        'settings_holiday_type_id',
         'title',
         'description',
         'start_date',
@@ -41,4 +41,16 @@ class SettingsHoliday extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'days'
+    ];
+
+    public function getDaysAttribute()
+    {
+        $start_date = Carbon::make($this->start_date);
+        $end_date = Carbon::make($this->end_date);
+        $days = $start_date->diffInDays($end_date);
+        return $days;
+    }
 }

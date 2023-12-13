@@ -19,6 +19,8 @@
 <script src="{{ asset('assets') }}/js/app.js"></script>
 <script src="{{ asset('assets') }}/js/custom-script.js"></script>
 <script src="{{ asset('assets') }}/js/toastr.min.js"></script>
+<script src="{{ asset('assets') }}/js/alert.js"></script>
+<script src="{{ asset('assets') }}/js/sweetalert2@11.js"></script>
 <script src="{{ asset('assets') }}/js/ajax-request.js"></script>
 <script>
     $(document).ready(function () {

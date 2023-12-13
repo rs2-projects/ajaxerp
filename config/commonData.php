@@ -10,4 +10,6 @@ return [
         'friday',
         'saturday'
     ],
+
+    'paginate_limit' => env('PAGINATE_LIMIT',20)
 ];

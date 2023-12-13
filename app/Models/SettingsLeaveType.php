@@ -40,4 +40,14 @@ class SettingsLeaveType extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'status_label',
+    ];
+
+    public function getStatusLabelAttribute()
+    {
+        return self::STATUSES[$this->status] ?? self::STATUSES[0];
+    }
+
 }

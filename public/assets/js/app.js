@@ -188,18 +188,6 @@ $(document).ready(function() {
 
 	// Date Time Picker
 
-	if($('.datetimepicker').length > 0) {
-		$('.datetimepicker').datetimepicker({
-			//format: 'DD/MM/YYYY',
-			format: 'DD-MM-YYYY',
-			icons: {
-				up: "fa fa-angle-up",
-				down: "fa-solid fa-angle-down",
-				next: 'fa-solid fa-angle-right',
-				previous: 'fa-solid fa-angle-left'
-			}
-		});
-	}
 
 	if($('.timepicker').length > 0) {
 		$('.timepicker').datetimepicker({

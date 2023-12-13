@@ -16,14 +16,14 @@
                 <li>
                     <a href="{{ route('settings.over-time') }}" class="{{ ($activeMenu == 'settings.over-time')?'active':'' }}"><i class="la la-clock-o"></i> <span>Overtime</span></a>
                 </li>
-                <li>
+                {{--<li>
                     <a href="weekend-setting.html"><i class="la la-building"></i> <span>Weekend</span></a>
+                </li>--}}
+                <li>
+                    <a href="{{ route('settings.holidays') }}" class="{{ ($activeMenu == 'settings.holidays')?'active':'' }}"><i class="la la-object-ungroup"></i> <span>Holidays</span></a>
                 </li>
                 <li>
-                    <a href="holiday-setting.html"><i class="la la-object-ungroup"></i> <span>Holidays</span></a>
-                </li>
-                <li>
-                    <a href="leave-type-setting.html"><i class="la la-cogs"></i> <span>Leave Type</span></a>
+                    <a href="{{ route('settings.leave-type') }}" class="{{ ($activeMenu == 'settings.leave-type')?'active':'' }}"><i class="la la-cogs"></i> <span>Leave Type</span></a>
                 </li>
                 <li>
                     <a href="geo-setting.html"><i class="la la-globe"></i> <span>GEO Location</span></a>
@@ -42,7 +42,7 @@
                     <a href="late-penalty-setting.html"><i class="la la-crosshairs"></i> <span>Late Penalty</span></a>
                 </li>
                 <li>
-                    <a href="bonus-setting.html"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
+                    <a href="{{ route('settings.bonus-type') }}" class="{{ ($activeMenu == 'settings.bonus-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
                 </li>
 
 
