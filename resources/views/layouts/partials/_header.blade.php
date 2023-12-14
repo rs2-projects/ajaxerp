@@ -259,10 +259,9 @@
 
         <li class="nav-item dropdown has-arrow main-drop">
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-							<span class="user-img"><img src="{{ asset('assets') }}/img/profiles/man.png" alt="User Image">
+							<span class="user-img"><img src="{{ auth()->user()->show_image }}" alt="User Image">
 							<span class="status online"></span></span>
-                <span class="ms-2">Jeson Roy
-							</span>
+                <span class="ms-2"> {{ auth()->user()->full_name }} </span>
             </a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="profile.html">My Profile</a>

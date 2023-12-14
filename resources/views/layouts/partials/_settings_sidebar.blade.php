@@ -26,7 +26,7 @@
                     <a href="{{ route('settings.leave-type') }}" class="{{ ($activeMenu == 'settings.leave-type')?'active':'' }}"><i class="la la-cogs"></i> <span>Leave Type</span></a>
                 </li>
                 <li>
-                    <a href="geo-setting.html"><i class="la la-globe"></i> <span>GEO Location</span></a>
+                    <a href="{{ route('settings.geo-location') }}" class="{{ ($activeMenu == 'settings.geo-location')?'active':'' }}"><i class="la la-globe"></i> <span>GEO Location</span></a>
                 </li>
                 <li class="menu-title">
                     <span>Payroll</span>
@@ -44,7 +44,9 @@
                 <li>
                     <a href="{{ route('settings.bonus-type') }}" class="{{ ($activeMenu == 'settings.bonus-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
                 </li>
-
+                <li>
+                    <a href="{{ route('settings.bonus-type') }}" class="{{ ($activeMenu == 'settings.bonus-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
+                </li>
 
             </ul>
         </div>

@@ -35,7 +35,12 @@ class SettingsGeoLocation extends Model
         self::DELETED_YES => 'Yes',
     ];
 
-
+    const IS_DEFAULT_NO = 0;
+    const IS_DEFAULT_YES = 1;
+    const IS_DEFAULTS = [
+        self::IS_DEFAULT_NO => 'No',
+        self::IS_DEFAULT_YES => 'Yes',
+    ];
 
     protected $fillable = [
         'title',
@@ -52,4 +57,13 @@ class SettingsGeoLocation extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'status_label',
+    ];
+
+    public function getStatusLabelAttribute()
+    {
+        return self::STATUSES[$this->status];
+    }
 }

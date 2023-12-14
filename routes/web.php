@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
+use App\Http\Controllers\Settings\GeoLocationSettingsController;
 use App\Http\Controllers\Settings\HolidaySettingsController;
 use App\Http\Controllers\Settings\LeaveTypeSettingsController;
 use App\Http\Controllers\Settings\OfficeTimeSettingsController;
@@ -90,6 +91,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [BonusTypeSettingsController::class, 'statusUpdate'])->name('settings.bonus-type.change-status');
         });
         // bonus type settings end
+
+        // geo location settings start
+        Route::group(['prefix' => 'geo-location'], function () {
+            Route::get('/', [GeoLocationSettingsController::class, 'index'])->name('settings.geo-location');
+            Route::post('/filtered', [GeoLocationSettingsController::class, 'indexFiltered'])->name('settings.geo-location.filtered');
+            Route::post('/create', [GeoLocationSettingsController::class, 'store'])->name('settings.geo-location.store');
+            Route::get('/{id}/edit', [GeoLocationSettingsController::class, 'edit'])->name('settings.geo-location.edit');
+            Route::post('/{id}/update', [GeoLocationSettingsController::class, 'update'])->name('settings.geo-location.update');
+            Route::get('/{id}/delete', [GeoLocationSettingsController::class, 'delete'])->name('settings.geo-location.delete');
+            Route::get('/{id}/change-status/{status}', [GeoLocationSettingsController::class, 'statusUpdate'])->name('settings.geo-location.change-status');
+        });
+        // geo location settings end
 
     });
     //setting route end

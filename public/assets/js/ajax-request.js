@@ -18,7 +18,9 @@ function formPost(url, data, successCallback='default', errorCallback='default')
                 }
             } else if(successCallback == 'redirect') {
                 if (response.status == 200) {
+                   /* toastr.success(response.message);*/
                     window.location.href = response.redirectUri;
+
                 } else {
                     toastr.error(response.message);
                 }

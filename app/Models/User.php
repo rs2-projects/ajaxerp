@@ -128,6 +128,24 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = [
+      'full_name',
+        'show_image',
+    ];
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getShowImageAttribute()
+    {
+        if ($this->image != null && $this->image != '') {
+            return asset($this->image);
+        }
+        return asset('assets/img/profiles/man.png');
+    }
+
     public static function boot()
     {
         parent::boot();
