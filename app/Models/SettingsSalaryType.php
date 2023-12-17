@@ -38,4 +38,18 @@ class SettingsSalaryType extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+      'status_label',
+    ];
+
+    public function getStatusLabelAttribute()
+    {
+        return self::STATUSES[$this->status];
+    }
+
+    public function salaryTypeDetails()
+    {
+        return $this->hasMany(SettingsSalaryTypeDetails::class, 'settings_salary_type_id', 'id');
+    }
 }

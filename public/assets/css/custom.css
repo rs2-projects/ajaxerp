@@ -1,3 +1,9 @@
 .pac-container {
     z-index: 1200 !important;
 }
+.add-tds.add-more-custom {
+    top: 0;
+    right: 0;
+    position: relative;
+    margin: 0 auto;
+}

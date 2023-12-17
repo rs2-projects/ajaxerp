@@ -9,6 +9,7 @@ use App\Http\Controllers\Settings\HolidaySettingsController;
 use App\Http\Controllers\Settings\LeaveTypeSettingsController;
 use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
+use App\Http\Controllers\Settings\SalaryTypeSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -103,6 +104,32 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [GeoLocationSettingsController::class, 'statusUpdate'])->name('settings.geo-location.change-status');
         });
         // geo location settings end
+
+        // salary type settings start
+        Route::group(['prefix' => 'salary-type'], function () {
+            Route::get('/', [SalaryTypeSettingsController::class, 'index'])->name('settings.salary-type');
+            Route::post('/filtered', [SalaryTypeSettingsController::class, 'indexFiltered'])->name('settings.salary-type.filtered');
+            Route::get('/create', [SalaryTypeSettingsController::class, 'create'])->name('settings.salary-type.create');
+            Route::post('/create', [SalaryTypeSettingsController::class, 'store'])->name('settings.salary-type.store');
+            Route::get('/{id}/edit', [SalaryTypeSettingsController::class, 'edit'])->name('settings.salary-type.edit');
+            Route::post('/{id}/update', [SalaryTypeSettingsController::class, 'update'])->name('settings.salary-type.update');
+            Route::get('/{id}/delete', [SalaryTypeSettingsController::class, 'delete'])->name('settings.salary-type.delete');
+            Route::get('/{id}/change-status/{status}', [SalaryTypeSettingsController::class, 'statusUpdate'])->name('settings.salary-type.change-status');
+        });
+        // salary type settings end
+
+        // absent penalty settings start
+        Route::group(['prefix' => 'absent-penalty'], function () {
+            Route::get('/', [SalaryTypeSettingsController::class, 'index'])->name('settings.absent-penalty');
+            Route::post('/filtered', [SalaryTypeSettingsController::class, 'indexFiltered'])->name('settings.absent-penalty.filtered');
+            Route::post('/create', [SalaryTypeSettingsController::class, 'store'])->name('settings.absent-penalty.store');
+            Route::get('/{id}/edit', [SalaryTypeSettingsController::class, 'edit'])->name('settings.absent-penalty.edit');
+            Route::post('/{id}/update', [SalaryTypeSettingsController::class, 'update'])->name('settings.absent-penalty.update');
+            Route::get('/{id}/delete', [SalaryTypeSettingsController::class, 'delete'])->name('settings.absent-penalty.delete');
+            Route::get('/{id}/change-status/{status}', [SalaryTypeSettingsController::class, 'statusUpdate'])->name('settings.absent-penalty.change-status');
+        });
+        // absent penalty settings end
+
 
     });
     //setting route end

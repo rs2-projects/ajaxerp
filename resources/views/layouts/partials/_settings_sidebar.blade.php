@@ -32,11 +32,11 @@
                     <span>Payroll</span>
                 </li>
                 <li>
-                    <a href="salary-setting.html" class="active"><i class="la la-crosshairs"></i> <span>Salary</span></a>
+                    <a href="{{ route('settings.salary-type') }}" class="{{ ($activeMenu == 'settings.salary-type' || $activeMenu == 'settings.salary-type.create' || $activeMenu == 'settings.salary-type.edit') ? 'active' : ''}}"><i class="la la-crosshairs"></i> <span>Salary</span></a>
                 </li>
 
                 <li>
-                    <a href="absent-setting.html"><i class="la la-crosshairs"></i> <span>Absent Penalty</span></a>
+                    <a href="{{ route('settings.absent-penalty') }}" class="{{ ($activeMenu == 'settings.absent-penalty') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Absent Penalty</span></a>
                 </li>
                 <li>
                     <a href="late-penalty-setting.html"><i class="la la-crosshairs"></i> <span>Late Penalty</span></a>

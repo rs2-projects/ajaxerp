@@ -11,7 +11,7 @@ class StoreSalaryTypeSettingsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreSalaryTypeSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'detail_title' => 'required',
+            'detail_type' => 'required',
+            'detail_value' => 'required',
         ];
     }
 }
