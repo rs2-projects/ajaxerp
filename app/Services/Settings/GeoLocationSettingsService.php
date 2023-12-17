@@ -41,6 +41,7 @@ class GeoLocationSettingsService
     public function getEditData($id)
     {
         $data['item'] = SettingsGeoLocation::findOrFail($id);
+        $data['location_data'] = json_decode($data['item']->location_data, true);
         return $data;
     }
 

@@ -12,19 +12,19 @@
         </div>
         <div class="input-block erp-step-input-block mb-2">
             <label class="col-form-label">Search Location</label>
-            <input type="text" class="form-control" id="autocomplete">
+            <input type="text" class="form-control" id="autocomplete_edit">
             <span class="location_data_error ie-span"></span>
         </div>
 
-        <input type="hidden" id="map_json_data_create"  name="location_data">
-        <div id="map" style="width: 100%; height: 300px; margin: 0 auto;"></div>
+        <input type="hidden" id="edit_map_json_data_create" value="{{ $item->location_data }}" name="location_data">
+        <div id="edit_map" style="width: 100%; height: 300px; margin: 0 auto;"></div>
         <div class="text-center mt-2">
-            <button class="btn btn-danger" id="delete-button" type="button" onclick="deleteSelectedShape('#map_json_data_create')">Change Shape</button>
+            <button class="btn btn-danger" id="delete-button" type="button" onclick="deleteSelectedShape('#edit_map_json_data_create')">Change Shape</button>
         </div>
         <div class="input-block erp-step-input-block mb-2 text-center">
             <div class="checkbox">
                 <label class="col-form-label">
-                    <input type="checkbox" name="is_default" value="1" {{ (\App\Models\SettingsGeoLocation::IS_DEFAULT_YES) ? 'checked' : '' }}> Make it Default
+                    <input type="checkbox" name="is_default" value="1" {{ ($item->is_default == \App\Models\SettingsGeoLocation::IS_DEFAULT_YES) ? 'checked' : '' }}> Make it Default
                 </label>
             </div>
         </div>

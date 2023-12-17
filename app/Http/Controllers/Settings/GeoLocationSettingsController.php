@@ -49,7 +49,10 @@ class GeoLocationSettingsController extends BackendController
         $view = $this->view('settings.geo-location._edit_data')->with($data)
             ->render();
 
-        return $this->returnAjaxSuccess(['view' => $view]);
+        return $this->returnAjaxSuccess([
+            'view' => $view,
+            'location_data' => $data['location_data']??[]
+        ]);
     }
 
     public function update(UpdateGeoLocationSettingsRequest $request, GeoLocationSettingsService $geoLocationSettingsService, $id)

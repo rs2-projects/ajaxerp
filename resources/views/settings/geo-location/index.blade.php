@@ -98,8 +98,6 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load");
         }
 
-
-
         function editItem(id){
             let url = "{{route('settings.geo-location.edit', ':id')}}";
             url = url.replace(':id', id);
@@ -107,7 +105,12 @@
                 if (response.status == 200) {
                     $("#edit_geo_location_modal_body").html(response.view);
                     $("#edit_geo_location_modal").modal('show');
-                    openCreateLocationModal();
+                    var locationData = response.location_data;
+                    const centerPoint = calculateCenterPoint(locationData);
+                    // console.log(locationData);
+                    locationData = JSON.stringify(locationData);
+                    initMap('edit_map', centerPoint.lat, centerPoint.lng, '#edit_map_json_data_create', locationData);
+                    initialize_edit()
                 } else {
                     toastr.error(response.message);
                 }
@@ -115,6 +118,17 @@
         }
 
 
+        function calculateCenterPoint(coordinates) {
+            if (!coordinates || coordinates.length === 0) {
+                return null;
+            }
+
+            // Calculate average latitude and longitude
+            const avgLat = coordinates.reduce((sum, coord) => sum + coord.lat, 0) / coordinates.length;
+            const avgLng = coordinates.reduce((sum, coord) => sum + coord.lng, 0) / coordinates.length;
+
+            return { lat: avgLat, lng: avgLng };
+        }
     </script>
 
     <script>
@@ -126,8 +140,8 @@
 
         function setDeleteData(id)
         {
-            $("#delete_location .location_id").val(id)
-            ;
+            console.log('test',id);
+            $("#delete_location .location_id").val(id);
         }
         function IsJsonString(str) {
             try {
@@ -159,11 +173,6 @@
                 center: { lat: center_point_lat, lng: center_point_lng },
                 zoom: 14,
             });
-
-            /*new google.maps.Marker({
-                position: { lat: center_point_lat, lng: center_point_lng },
-                map
-            });*/
 
             if (triangleCoords !== null) {
                 if (IsJsonString(triangleCoords)) {
@@ -235,12 +244,6 @@
     </script>
 
     <script>
-        $(document).ready(function() {
-            /*$("#lat_area").addClass("d-none");
-            $("#long_area").addClass("d-none");*/
-        });
-    </script>
-    <script>
         // google.maps.event.addDomListener(window, 'load', initialize);
         let autocomplete;
         var marker;
@@ -262,6 +265,31 @@
                 });
             });
         }
+    </script>
+
+    <script>
+
+        let autocomplete_edit;
+        var marker_edit;
+        function initialize_edit() {
+            // var input = document.getElementById('autocomplete');
+            autocomplete_edit = new google.maps.places.Autocomplete(document.getElementById('autocomplete_edit'),
+                {
+                    types:['establishment'],
+                    fields: ['place_id', 'geometry', 'name']
+                }
+            );
+
+            autocomplete_edit.addListener('place_changed', function() {
+                var place = autocomplete_edit.getPlace();
+
+                map.setCenter({
+                    lat : place.geometry['location'].lat(),
+                    lng : place.geometry['location'].lng()
+                });
+            });
+        }
+
     </script>
 @endsection
 
