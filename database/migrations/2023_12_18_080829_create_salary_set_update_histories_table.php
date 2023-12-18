@@ -28,6 +28,8 @@ return new class extends Migration
             $table->boolean('attendance_type_fingerprint_device')->default(false)->comment('0=No, 1=Yes');
             $table->boolean('attendance_type_in_geo')->default(false)->comment('0=No, 1=Yes');
 
+            $table->unsignedTinyInteger('salary_generate_type')->default(1)->comment('1=Half Month, 2=Full Month');
+
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });
