@@ -11,17 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_salary_settings', function (Blueprint $table) {
+        Schema::create('salary_set_update_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
-            $table->decimal('basic_salary', 12, 2)->default(0);
+            $table->unsignedBigInteger('salary_set_id');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->string('name');
+            $table->text('description')->nullable();
+
             $table->unsignedBigInteger('settings_salary_type_id')->nullable();
             $table->unsignedBigInteger('settings_overtime_type_id')->nullable();
             $table->unsignedBigInteger('settings_absent_penalty_id')->nullable();
             $table->unsignedBigInteger('settings_late_penalty_id')->nullable();
             $table->unsignedBigInteger('settings_office_time_type_id')->nullable();
+
+            $table->boolean('attendance_type_fingerprint_device')->default(false)->comment('0=No, 1=Yes');
+            $table->boolean('attendance_type_in_geo')->default(false)->comment('0=No, 1=Yes');
+
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });
@@ -32,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_salary_settings');
+        Schema::dropIfExists('salary_set_update_histories');
     }
 };
