@@ -57,4 +57,36 @@ class SettingsBonusTypeSalaryBonus extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'rate_type_text',
+        'salary_type_text',
+        'status_text',
+    ];
+
+    public function getRateTypeTextAttribute()
+    {
+        return self::RATE_TYPES[$this->rate_type];
+    }
+
+    public function getSalaryTypeTextAttribute()
+    {
+        return self::SALARY_TYPES[$this->salary_type];
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return self::STATUSES[$this->status];
+    }
+
+
+    public function bonusType()
+    {
+        return $this->belongsTo(SettingsBonusType::class, 'settings_bonus_type_id');
+    }
+
+    public function salaryType()
+    {
+        return $this->belongsTo(SettingsSalaryType::class, 'settings_salary_type_id');
+    }
 }

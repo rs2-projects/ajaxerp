@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Settings\OverTime;
+namespace App\Http\Requests\Settings\absentPenalty;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOverTimeTypeSettingsRequest extends FormRequest
+class StoreAbsentPenaltySettingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,9 @@ class StoreOverTimeTypeSettingsRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'salary_type' => 'required',
+            'rate_type' => 'required',
             'rate' => 'required|numeric|min:0',
-
+            'salary_type' => 'required',
         ];
     }
 }

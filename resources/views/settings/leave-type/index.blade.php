@@ -69,10 +69,14 @@
                 var url = $(self).attr('action');
 
                 formPost(url, formData, function (res) {
-                    $("#add_leave_type_modal").modal('hide');
-                    $(self)[0].reset();
-                    showSuccessAlert('Success',res.message)
-                    getData();
+                    if (res.status == 200) {
+                        $("#add_leave_type_modal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    } else {
+                        showErrorAlert('Error',res.message)
+                    }
                 }, 'show_input_error');
             });
 
@@ -83,9 +87,13 @@
                 var url = $(this).attr('action');
 
                 formPost(url, formData, function (res){
-                    $("#edit_leave_type_modal").modal('hide');
-                    showSuccessAlert('Success',res.message)
-                    getData();
+                    if(res.status == 200){
+                        $("#edit_leave_type_modal").modal('hide');
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
                 }, 'show_input_error');
             });
 

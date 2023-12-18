@@ -62,8 +62,8 @@
                                                             </div>
                                                             <div class="erp-filter-item flex-30">
                                                                 <div class="input-block mb-0 erp-step-input-block ">
-                                                                    <label class="col-form-label">Value </label>
-                                                                    <input type="number" step="any" value="{{ $detail->value }}" name="detail_value[]" required  class="form-control detail_value" >
+                                                                    <label class="col-form-label">Value (%)</label>
+                                                                    <input type="number" step="any" min="0" value="{{ $detail->value }}" name="detail_value[]" required  class="form-control detail_value" >
                                                                     <span class="detail_value_error ie-span"></span>
                                                                 </div>
                                                             </div>
@@ -121,8 +121,8 @@
             </div>
             <div class="erp-filter-item flex-30">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Value </label>
-                    <input type="number" step="any"  name="detail_value[]" required id="detail_value" class="form-control detail_value" >
+                    <label class="col-form-label">Value (%)</label>
+                    <input type="number" step="any" min="0" name="detail_value[]" required id="detail_value" class="form-control detail_value" >
                     <span class="detail_value_error ie-span"></span>
                 </div>
             </div>
@@ -161,7 +161,8 @@
 
                 formPost(url, formData, function (res) {
                    if (res.status ==200){
-                       window.location.reload();
+                          showSuccessAlert('Success',res.message);
+                          window.location.href = "{{ route('settings.salary-type') }}";
                    }else {
                           showInputErrors(res.error, 'show_input_error');
                    }

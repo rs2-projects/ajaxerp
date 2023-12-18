@@ -1,4 +1,4 @@
-<div class="table-responsive">
+<div class="">
     <table class="table mb-0 erp-table">
         <thead class="erp-thead">
             <tr class="erp-tr">

@@ -56,4 +56,19 @@ class SettingsAbsentPenalty extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+      'rate_type_text',
+       'salary_type_text',
+    ];
+
+    public function getRateTypeTextAttribute()
+    {
+        return self::RATE_TYPES[$this->rate_type];
+    }
+
+    public function getSalaryTypeTextAttribute()
+    {
+        return self::SALARY_TYPES[$this->salary_type];
+    }
 }

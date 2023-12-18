@@ -24,8 +24,8 @@ class UpdateLeaveTypeSettingsRequest extends FormRequest
         return [
             'title' => 'required',
             'description' => 'nullable',
-            'annual_leave_days' => 'required|numeric',
-            'max_leave_per_month' => 'required|numeric',
+            'annual_leave_days' => 'required|numeric|min:0',
+            'max_leave_per_month' => 'required|numeric|min:0',
         ];
     }
 }

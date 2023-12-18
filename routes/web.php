@@ -3,9 +3,12 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
+use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
 use App\Http\Controllers\Settings\GeoLocationSettingsController;
 use App\Http\Controllers\Settings\HolidaySettingsController;
+use App\Http\Controllers\Settings\LatePenaltySettingsController;
 use App\Http\Controllers\Settings\LeaveTypeSettingsController;
 use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
@@ -93,6 +96,18 @@ Route::group(['middleware' => 'auth'], function () {
         });
         // bonus type settings end
 
+        // bonus-type-salary settings start
+        Route::group(['prefix' => 'bonus-type-salary'], function () {
+            Route::get('/', [BonusTypeSalarySettingsController::class, 'index'])->name('settings.bonus-type-salary');
+            Route::post('/filtered', [BonusTypeSalarySettingsController::class, 'indexFiltered'])->name('settings.bonus-type-salary.filtered');
+            Route::post('/create', [BonusTypeSalarySettingsController::class, 'store'])->name('settings.bonus-type-salary.store');
+            Route::get('/{id}/edit', [BonusTypeSalarySettingsController::class, 'edit'])->name('settings.bonus-type-salary.edit');
+            Route::post('/{id}/update', [BonusTypeSalarySettingsController::class, 'update'])->name('settings.bonus-type-salary.update');
+            Route::get('/{id}/delete', [BonusTypeSalarySettingsController::class, 'delete'])->name('settings.bonus-type-salary.delete');
+            Route::get('/{id}/change-status/{status}', [BonusTypeSalarySettingsController::class, 'statusUpdate'])->name('settings.bonus-type-salary.change-status');
+        });
+        // bonus-type-salary settings end
+
         // geo location settings start
         Route::group(['prefix' => 'geo-location'], function () {
             Route::get('/', [GeoLocationSettingsController::class, 'index'])->name('settings.geo-location');
@@ -120,15 +135,25 @@ Route::group(['middleware' => 'auth'], function () {
 
         // absent penalty settings start
         Route::group(['prefix' => 'absent-penalty'], function () {
-            Route::get('/', [SalaryTypeSettingsController::class, 'index'])->name('settings.absent-penalty');
-            Route::post('/filtered', [SalaryTypeSettingsController::class, 'indexFiltered'])->name('settings.absent-penalty.filtered');
-            Route::post('/create', [SalaryTypeSettingsController::class, 'store'])->name('settings.absent-penalty.store');
-            Route::get('/{id}/edit', [SalaryTypeSettingsController::class, 'edit'])->name('settings.absent-penalty.edit');
-            Route::post('/{id}/update', [SalaryTypeSettingsController::class, 'update'])->name('settings.absent-penalty.update');
-            Route::get('/{id}/delete', [SalaryTypeSettingsController::class, 'delete'])->name('settings.absent-penalty.delete');
-            Route::get('/{id}/change-status/{status}', [SalaryTypeSettingsController::class, 'statusUpdate'])->name('settings.absent-penalty.change-status');
+            Route::get('/', [AbsentPenaltySettingsController::class, 'index'])->name('settings.absent-penalty');
+            Route::post('/filtered', [AbsentPenaltySettingsController::class, 'indexFiltered'])->name('settings.absent-penalty.filtered');
+            Route::post('/create', [AbsentPenaltySettingsController::class, 'store'])->name('settings.absent-penalty.store');
+            Route::get('/{id}/edit', [AbsentPenaltySettingsController::class, 'edit'])->name('settings.absent-penalty.edit');
+            Route::post('/{id}/update', [AbsentPenaltySettingsController::class, 'update'])->name('settings.absent-penalty.update');
+            Route::get('/{id}/delete', [AbsentPenaltySettingsController::class, 'delete'])->name('settings.absent-penalty.delete');
         });
         // absent penalty settings end
+
+        // late penalty settings start
+        Route::group(['prefix' => 'late-penalty'], function () {
+            Route::get('/', [LatePenaltySettingsController::class, 'index'])->name('settings.late-penalty');
+            Route::post('/filtered', [LatePenaltySettingsController::class, 'indexFiltered'])->name('settings.late-penalty.filtered');
+            Route::post('/create', [LatePenaltySettingsController::class, 'store'])->name('settings.late-penalty.store');
+            Route::get('/{id}/edit', [LatePenaltySettingsController::class, 'edit'])->name('settings.late-penalty.edit');
+            Route::post('/{id}/update', [LatePenaltySettingsController::class, 'update'])->name('settings.late-penalty.update');
+            Route::get('/{id}/delete', [LatePenaltySettingsController::class, 'delete'])->name('settings.late-penalty.delete');
+        });
+        // late penalty settings end
 
 
     });

@@ -39,13 +39,13 @@
                     <a href="{{ route('settings.absent-penalty') }}" class="{{ ($activeMenu == 'settings.absent-penalty') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Absent Penalty</span></a>
                 </li>
                 <li>
-                    <a href="late-penalty-setting.html"><i class="la la-crosshairs"></i> <span>Late Penalty</span></a>
+                    <a href="{{ route('settings.late-penalty') }}" class="{{ ($activeMenu == 'settings.late-penalty') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Late Penalty</span></a>
                 </li>
                 <li>
                     <a href="{{ route('settings.bonus-type') }}" class="{{ ($activeMenu == 'settings.bonus-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
                 </li>
                 <li>
-                    <a href="{{ route('settings.bonus-type') }}" class="{{ ($activeMenu == 'settings.bonus-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Bonus</span></a>
+                    <a href="{{ route('settings.bonus-type-salary') }}" class="{{ ($activeMenu == 'settings.bonus-type-salary')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Salary Bonus</span></a>
                 </li>
 
             </ul>

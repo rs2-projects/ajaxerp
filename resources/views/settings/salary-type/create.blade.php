@@ -62,8 +62,8 @@
                                                     </div>
                                                     <div class="erp-filter-item flex-30">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <label class="col-form-label">Value </label>
-                                                            <input type="number" step="any" name="detail_value[]" required  class="form-control detail_value" >
+                                                            <label class="col-form-label">Value (%)</label>
+                                                            <input type="number" step="any" min="0" name="detail_value[]" required  class="form-control detail_value" >
                                                             <span class="detail_value_error ie-span"></span>
                                                         </div>
                                                     </div>
@@ -119,8 +119,8 @@
             </div>
             <div class="erp-filter-item flex-30">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Value </label>
-                    <input type="number" step="any"  name="detail_value[]" required id="detail_value" class="form-control detail_value" >
+                    <label class="col-form-label">Value (%)</label>
+                    <input type="number" step="any" min="0" name="detail_value[]" required id="detail_value" class="form-control detail_value" >
                     <span class="detail_value_error ie-span"></span>
                 </div>
             </div>
@@ -158,9 +158,13 @@
                 var url = $(self).attr('action');
 
                 formPost(url, formData, function (res) {
-                    $(self)[0].reset();
-                    showSuccessAlert('Success', res.message)
-                     window.location.href = "{{ route('settings.salary-type.create') }}";
+                    if (res.status == 200) {
+                        $(self)[0].reset();
+                        showSuccessAlert('Success', res.message)
+                        window.location.href = "{{ route('settings.salary-type') }}";
+                    } else {
+                        showErrorAlert('Error',res.message)
+                    }
                 }, 'show_input_error');
             });
         });

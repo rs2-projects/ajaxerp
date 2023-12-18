@@ -24,7 +24,7 @@ class UpdateOverTimeTypeSettingsRequest extends FormRequest
         return [
             'title' => 'required',
             'salary_type' => 'required',
-            'rate' => 'required',
+            'rate' => 'required|numeric|min:0',
         ];
     }
 }

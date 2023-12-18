@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Settings\OverTime;
+namespace App\Http\Requests\Settings\BonusTypeSalary;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreOverTimeTypeSettingsRequest extends FormRequest
+class UpdateBonusTypeSalarySettingsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,11 @@ class StoreOverTimeTypeSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required',
+            'settings_bonus_type_id' => 'required',
+            'settings_salary_type_id' => 'required',
+            'rate_type' => 'required',
             'salary_type' => 'required',
             'rate' => 'required|numeric|min:0',
-
         ];
     }
 }
