@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salary_sets', function (Blueprint $table) {
+        Schema::create('settings_salary_set_update_histories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('settings_salary_set_id');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
 
@@ -37,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('salary_sets');
+        Schema::dropIfExists('salary_set_update_histories');
     }
 };

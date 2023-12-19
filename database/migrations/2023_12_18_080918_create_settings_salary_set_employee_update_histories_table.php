@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salary_set_employee_update_histories', function (Blueprint $table) {
+        Schema::create('settings_salary_set_employee_update_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('salary_set_employee_id');
+            $table->unsignedBigInteger('settings_salary_set_employee_id');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->unsignedBigInteger('salary_set_id');
+            $table->unsignedBigInteger('settings_salary_set_id');
             $table->unsignedBigInteger('employee_id');
             $table->decimal('basic_salary', 12, 2)->default(0);
 

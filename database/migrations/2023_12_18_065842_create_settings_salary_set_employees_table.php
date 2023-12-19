@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salary_set_leave_types', function (Blueprint $table) {
+        Schema::create('settings_salary_set_employees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('salary_set_id');
-            $table->unsignedBigInteger('settings_leave_type_id');
+            $table->unsignedBigInteger('settings_salary_set_id');
+            $table->unsignedBigInteger('employee_id');
+            $table->decimal('basic_salary', 12, 2)->default(0);
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('salary_set_leave_types');
+        Schema::dropIfExists('salary_set_employees');
     }
 };
