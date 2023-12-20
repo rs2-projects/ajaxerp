@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('attendance_history_todays', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('employee_id')->comment('id from users table');
+            $table->timestamp('datetime');
+            $table->unsignedTinyInteger('type')->comment('0: check in, 1: check out');
+            $table->string('latitude', 20)->nullable();
+            $table->string('longitude', 20)->nullable();
+            $table->string('image',128)->nullable();
+            $table->unsignedTinyInteger('attendance_by')->comment('0: employee, 1: admin');
+
+            \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('attendance_history_todays');
+    }
+};
