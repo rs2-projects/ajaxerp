@@ -13,12 +13,12 @@
 
 
                 <li class="submenu">
-                    <a href="javascript:void(0);" class="active noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.department' || $activeMenu == 'hr.designation') ? 'active' : '' }} noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="active"> <span>Attendance</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);"> <span>Attendance</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li ><a class="active" href="my-attendance.html"><span>My Attendance</span></a></li>
+                                <li ><a href="my-attendance.html"><span>My Attendance</span></a></li>
                                 <li><a href="reports.html"><span>Reports</span></a></li>
                                 <li><a href="employee-attendance.html"><span>Employee Attendance</span></a></li>
 
@@ -29,16 +29,16 @@
                             <a href="leave.html"> <span>Leaves</span></a>
                         </li>
                         <li>
-                            <a href="employee.html"><span>Employee</span></a>
+                            <a href="{{ route('hr.employee') }}" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create') ? 'active' : '' }}"><span>Employee</span></a>
                         </li>
                         <li>
                             <a href="notice.html"><span>Notice</span></a>
                         </li>
                         <li class="submenu">
-                            <a href="javascript:void(0);"> <span>More</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="department.html"><span>Department</span></a></li>
-                                <li><a href="designation.html"><span>Designation</span></a></li>
+                                <li><a href="{{ route('hr.department') }}" class="{{ ($activeMenu == 'hr.department')?'active':'' }}"><span>Department</span></a></li>
+                                <li><a href="{{ route('hr.designation') }}" class="{{ ($activeMenu == 'hr.designation')? 'active' : ''}}"><span>Designation</span></a></li>
 
                                 <li class="submenu">
                                     <a href="javascript:void(0);"> <span> Resignation</span> <span class="menu-arrow"></span></a>

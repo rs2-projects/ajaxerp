@@ -3,6 +3,9 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Hr\DepartmentController;
+use App\Http\Controllers\Hr\DesignationController;
+use App\Http\Controllers\Hr\EmployeeController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -158,4 +161,44 @@ Route::group(['middleware' => 'auth'], function () {
 
     });
     //setting route end
+
+    // HR route start
+    Route::group(['prefix' => 'hr'], function () {
+       // department route start
+        Route::group(['prefix' => 'department'], function () {
+            Route::get('/', [DepartmentController::class, 'index'])->name('hr.department');
+            Route::post('/filtered', [DepartmentController::class, 'indexFiltered'])->name('hr.department.filtered');
+            Route::post('/create', [DepartmentController::class, 'store'])->name('hr.department.store');
+            Route::get('/{id}/edit', [DepartmentController::class, 'edit'])->name('hr.department.edit');
+            Route::post('/{id}/update', [DepartmentController::class, 'update'])->name('hr.department.update');
+            Route::get('/{id}/delete', [DepartmentController::class, 'delete'])->name('hr.department.delete');
+            Route::get('/{id}/change-status/{status}', [DepartmentController::class, 'statusUpdate'])->name('hr.department.change-status');
+        });
+        // department route end
+        Route::group(['prefix' => 'designation'], function () {
+            Route::get('/', [DesignationController::class, 'index'])->name('hr.designation');
+            Route::post('/filtered', [DesignationController::class, 'indexFiltered'])->name('hr.designation.filtered');
+            Route::post('/create', [DesignationController::class, 'store'])->name('hr.designation.store');
+            Route::get('/{id}/edit', [DesignationController::class, 'edit'])->name('hr.designation.edit');
+            Route::post('/{id}/update', [DesignationController::class, 'update'])->name('hr.designation.update');
+            Route::get('/{id}/delete', [DesignationController::class, 'delete'])->name('hr.designation.delete');
+            Route::get('/{id}/change-status/{status}', [DesignationController::class, 'statusUpdate'])->name('hr.designation.change-status');
+        });
+        // designation route start
+
+        // Employee route start
+        Route::group(['prefix' => 'employee'], function () {
+            Route::get('/', [EmployeeController::class, 'index'])->name('hr.employee');
+            Route::post('/filtered', [EmployeeController::class, 'indexFiltered'])->name('hr.employee.filtered');
+            Route::get('/create', [EmployeeController::class, 'create'])->name('hr.employee.create');
+            Route::post('/create', [EmployeeController::class, 'store'])->name('hr.employee.store');
+            Route::get('/{id}/edit', [EmployeeController::class, 'edit'])->name('hr.employee.edit');
+            Route::post('/{id}/update', [EmployeeController::class, 'update'])->name('hr.employee.update');
+            Route::get('/{id}/delete', [EmployeeController::class, 'delete'])->name('hr.employee.delete');
+            Route::get('/{id}/change-status/{status}', [EmployeeController::class, 'statusUpdate'])->name('hr.employee.change-status');
+        });
+        // Employee route end
+
+    });
+    // HR route end
 });

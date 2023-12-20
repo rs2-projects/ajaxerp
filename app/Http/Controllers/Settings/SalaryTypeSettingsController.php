@@ -13,7 +13,7 @@ class SalaryTypeSettingsController extends BackendController
     public function __construct()
     {
         $this->addBreadcrumbs('Settings', route('settings.office-time'), 'fa fa-cog');
-        $this->addBreadcrumbs('Salary Type');
+        $this->addBreadcrumbs('Salary Type', route('settings.salary-type'));
     }
 
     public function index()
@@ -36,6 +36,7 @@ class SalaryTypeSettingsController extends BackendController
     {
         $this->setPageTitle("Create Salary Type");
         $this->setActiveMenu('settings.salary-type.create');
+        $this->addBreadcrumbs('Create');
 
         return $this->view('settings.salary-type.create');
     }
@@ -56,7 +57,8 @@ class SalaryTypeSettingsController extends BackendController
     {
         try {
             $this->setPageTitle("Edit Salary Type");
-            $this->setActiveMenu('settings.salary-type.edit', $id);
+            $this->setActiveMenu('settings.salary-type.edit');
+            $this->addBreadcrumbs('Edit');
             $data = $salaryTypeSettingsService->getEditData($id);
 
             return  $this->view('settings.salary-type.edit')->with($data);

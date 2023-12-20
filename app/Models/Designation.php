@@ -40,4 +40,9 @@ class Designation extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
 }

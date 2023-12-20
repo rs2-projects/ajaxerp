@@ -30,6 +30,13 @@ function formPost(url, data, successCallback='default', errorCallback='default')
                 } else {
                     toastr.error(response.message);
                 }
+            } else if(successCallback == 'reloadAjaxGetData') {
+                if (response.status == 200) {
+                    toastr.success(response.message);
+                    getData();
+                } else {
+                    toastr.error(response.message);
+                }
             } else {
                 successCallback(response);
             }
@@ -67,6 +74,7 @@ function ajaxGet(url, data, successCallback='default', errorCallback='default') 
           showLoader('Please Wait', 'Loading...');
         },
         success: function (response) {
+            console.log(response);
             hideLoader();
             if (successCallback == 'default') {
                 if (response.status == 200) {
@@ -83,6 +91,13 @@ function ajaxGet(url, data, successCallback='default', errorCallback='default') 
             } else if(successCallback == 'reload') {
                 if (response.status == 200) {
                     window.location.reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            } else if(successCallback == 'reloadAjaxGetData') {
+                if (response.status == 200) {
+                    toastr.success(response.message);
+                    getData();
                 } else {
                     toastr.error(response.message);
                 }
