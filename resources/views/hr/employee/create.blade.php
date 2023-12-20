@@ -55,22 +55,19 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Department <span class="text-danger">*</span></label>
-                                                <select class="select select-step" name="department_id" id="department_id">
+                                                <select class="select select-step" name="department_id" onchange="getDesignation(this)" id="department_id"  required>
                                                     <option value="">Select Department</option>
-                                                    <option>Web Development</option>
-                                                    <option>IT Management</option>
-                                                    <option>Marketing</option>
+                                                    @foreach($departments as $key=>$department)
+                                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Designation <span class="text-danger">*</span></label>
-                                                <select class="select select-step">
-                                                    <option>Select Designation</option>
-                                                    <option>Web Designer</option>
-                                                    <option>Web Developer</option>
-                                                    <option>Android Developer</option>
+                                                <select class="select select-step" name="designation_id" id="designation_id" required>
+                                                    <option value="">Select Department First</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -353,6 +350,19 @@
 @endsection
 
 @section('js')
+    <script>
+        function getDesignation(select) {
+            var department_id = $(select).val();
+            let url = "{{ route('ajax.get-designation-by-department') }}";
+            ajaxGet(url, {department_id:department_id}, function (response) {
+                if (response.status == 200) {
+                    $("#designation_id").html(response.view);
+                } else {
+                    toastr.error(response.message);
+                }
+            });
+        }
+    </script>
     <script>
         (function($) {
             "use strict";
