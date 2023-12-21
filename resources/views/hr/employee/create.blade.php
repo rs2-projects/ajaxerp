@@ -7,7 +7,7 @@
             <form action="{{ route('hr.employee.store') }}" method="post" id="employeeStoreForm">
                 @csrf
                 <div class="erp-main-filter-wrapper d-flex justify-content-center ">
-                    <div class="erp-add-em-step-wrapper bg-card flex-80">
+                    <div class="erp-add-em-step-wrapper bg-card flex-100">
                         <div class="erp-step-content-wrapper">
                             <div id="reg-employee">
                                 <h3 class="d-none">General</h3>
@@ -48,7 +48,10 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Joining Date <span class="text-red">*</span></label>
-                                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                <div class="cal-icon">
+                                                    <input class="form-control datetimepicker" name="joining_date" type="text" >
+                                                    <span class="joining_date_error ie-span"></span>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -61,6 +64,8 @@
                                                         <option value="{{ $department->id }}">{{ $department->name }}</option>
                                                     @endforeach
                                                 </select>
+                                                <span class="department_id_error ie-span"></span>
+
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
@@ -69,12 +74,14 @@
                                                 <select class="select select-step" name="designation_id" id="designation_id" required>
                                                     <option value="">Select Department First</option>
                                                 </select>
+                                                <span class="designation_id_error ie-span"></span>
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Password</label>
-                                                <input class="form-control " type="password" required>
+                                                <input class="form-control " name="password" type="password" required>
+                                                <span class="password_error ie-span"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -86,32 +93,32 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">NID No. </label>
-                                                <input class="form-control " type="text" >
+                                                <input class="form-control " name="nid_no" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Upload NID: </label>
-                                                <input class="form-control " type="file" >
+                                                <input class="form-control " name="nid_image" type="file" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-group-item flex-100 d-flex justify-content-center flex-wrap">
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Passport No. </label>
-                                                    <input class="form-control " type="text" >
+                                                    <input class="form-control " name="passport_no" type="text" >
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Expire Date: </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" name="passport_expiry_date" type="text" ></div>
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Upload Passport: </label>
-                                                    <input class="form-control " type="file" >
+                                                    <input class="form-control " type="file" name="passport_image">
                                                 </div>
                                             </div>
                                         </div>
@@ -119,16 +126,17 @@
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Date Of Birth </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" name="date_of_birth" type="text" ></div>
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Gender: </label>
-                                                    <select class="select no-search-select-step">
-                                                        <option>Select Gender</option>
-                                                        <option>Male</option>
-                                                        <option>Female </option>
+                                                    <select class="select no-search-select-step" name="gender">
+                                                        <option value="">Select Gender</option>
+                                                        <option value="0">Male</option>
+                                                        <option value="1">Female </option>
+                                                        <option value="2">Other</option>
 
                                                     </select>
                                                 </div>
@@ -137,12 +145,13 @@
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Religion: <span class="text-danger">*</span></label>
-                                                    <select class="select no-search-select-step">
-                                                        <option>Select Religion</option>
-                                                        <option>Islam</option>
-                                                        <option>Christianity </option>
-                                                        <option>Hinduism</option>
-                                                        <option>Buddhism</option>
+                                                    <select class="select no-search-select-step" name="religion">
+                                                        <option value="">Select Religion</option>
+                                                        <option value="islam">Islam</option>
+                                                        <option value="christianity">Christianity </option>
+                                                        <option value="hinduism">Hinduism</option>
+                                                        <option value="buddhism">Buddhism</option>
+                                                        <option value="others">Others</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -152,10 +161,11 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Marital Status:</label>
-                                                <select class="select no-search-select-step">
-                                                    <option>Select Marital Status</option>
-                                                    <option>Married</option>
-                                                    <option>Unmarried </option>
+                                                <select class="select no-search-select-step" name="marital_status">
+                                                    <option value="">Select Marital Status</option>
+                                                    <option value="0">Unmarried </option>
+                                                    <option value="1">Married</option>
+                                                    <option value="3">Widowed</option>
 
                                                 </select>
                                             </div>
@@ -163,55 +173,28 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Marriage Date: </label>
-                                                <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                <div class="cal-icon"><input class="form-control datetimepicker" name="marriage_date" type="text" ></div>
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Present Address: </label>
-                                                <textarea  class="form-control" cols="30" rows="3"></textarea>
+                                                <textarea  class="form-control" name="present_address" cols="30" rows="3"></textarea>
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Permanent Address: </label>
-                                                <textarea  class="form-control" cols="30" rows="3"></textarea>
+                                                <textarea  class="form-control" name="permanent_address" cols="30" rows="3"></textarea>
                                             </div>
                                         </div>
-                                        <div class="erp-em-reg-step-item flex-100">
+                                        <div class="erp-em-reg-step-item flex-100 pt-3">
+                                            <div class="erp-emergency-contact-main-wrap d-flex flex-wrap justify-content-center gap-3" id="emergencyContactWrapMain">
 
-                                            <div class="e-add-contact flex-100 pb-3 pt-3 text-center">
-                                                <a href="javascript:void(0);" class="btn erp-add-btn "><i class="fa-solid fa-plus"></i> Add Emergency Contact</a>
+
                                             </div>
-
-                                            <div class="erp-emergency-contact-main-wrap d-flex flex-wrap justify-content-center ">
-                                                <div class="erp-emergency-child-contact-wrap flex-wrap flex-48" style="display: none;">
-                                                    <div class="erp-emergency-contact-item flex-100">
-                                                        <div class="input-block erp-step-input-block ">
-                                                            <label class="col-form-label">Name </label>
-                                                            <input class="form-control " type="text" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="erp-emergency-contact-item flex-100">
-                                                        <div class="input-block erp-step-input-block ">
-                                                            <label class="col-form-label">Email </label>
-                                                            <input class="form-control " type="text" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="erp-emergency-contact-item flex-100">
-                                                        <div class="input-block erp-step-input-block ">
-                                                            <label class="col-form-label">Phone </label>
-                                                            <input class="form-control " type="text" >
-                                                        </div>
-                                                    </div>
-                                                    <div class="erp-emergency-contact-item flex-100">
-                                                        <div class="input-block erp-step-input-block ">
-                                                            <label class="col-form-label">Relationship </label>
-                                                            <input class="form-control " type="text" >
-                                                        </div>
-                                                    </div>
-                                                </div>
-
+                                            <div class="e-add-contact flex-100 pb-3 pt-3 text-center">
+                                                <a href="javascript:void(0);" class="btn erp-add-btn " onclick="addEmergencyContact()"><i class="fa-solid fa-plus"></i> Add Emergency Contact</a>
                                             </div>
                                         </div>
                                     </div>
@@ -224,37 +207,43 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Bank Name: </label>
-                                                <input class="form-control " type="text" placeholder="">
+                                                <input class="form-control " name="bank_name" type="text" placeholder="">
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Account Name: </label>
-                                                <input class="form-control " type="text" placeholder="">
+                                                <input class="form-control " name="account_name" type="text" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">Account Number: </label>
+                                                <input class="form-control " name="account_number" type="text" placeholder="">
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Branch: </label>
-                                                <input class="form-control " type="text" >
+                                                <input class="form-control " name="branch_name" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Routing Number: </label>
-                                                <input class="form-control " type="text" >
+                                                <input class="form-control " name="routing_number" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Swift Code: </label>
-                                                <input class="form-control " type="text" >
+                                                <input class="form-control " name="swift_code" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Note: </label>
-                                                <input class="form-control " type="text" >
+                                                <input class="form-control " name="note" type="text" >
                                             </div>
                                         </div>
                                     </div>
@@ -262,22 +251,22 @@
 
                                 <h3 class="d-none">Education Info</h3>
                                 <section class="erp-step-salary-wrapper">
-                                    <div class="erp-em-reg-step-wrapper">
+                                    <div class="erp-em-reg-step-wrapper" id="addEducationWrapMain">
                                         <div class="erp-em-edu-step-wrapper d-flex flex-wrap">
 
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Degree: </label>
-                                                    <select class="select select-step">
-                                                        <option>Select Degree</option>
-                                                        <option>SSC</option>
-                                                        <option>HSC </option>
-                                                        <option>Diploma </option>
-                                                        <option>Honours </option>
-                                                        <option>Associate Degree </option>
-                                                        <option>Bachelor of Science </option>
-                                                        <option>Master of Science </option>
-                                                        <option>Other's </option>
+                                                    <select class="select select-step" name="degree[]">
+                                                        <option value="">Select Degree</option>
+                                                        <option value="ssc">SSC</option>
+                                                        <option value="hsc">HSC </option>
+                                                        <option value="diploma">Diploma </option>
+                                                        <option value="honusrs">Honours </option>
+                                                        <option value="associate_degree">Associate Degree </option>
+                                                        <option value="bachelor_of_science">Bachelor of Science </option>
+                                                        <option value="master_of_science">Master of Science </option>
+                                                        <option value="others">Other's </option>
 
                                                     </select>
                                                 </div>
@@ -285,37 +274,38 @@
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Institute Number: </label>
-                                                    <input class="form-control " type="text" placeholder="">
+                                                    <input class="form-control " name="institute_name[]" type="text" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Subject: </label>
-                                                    <input class="form-control " type="text" >
+                                                    <input class="form-control " name="subject[]" type="text" >
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Grade: </label>
-                                                    <input class="form-control " type="text" >
+                                                    <input class="form-control " name="grade[]" type="text" >
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Start : </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" name="start_date[]" type="text" ></div>
                                                 </div>
                                             </div>
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Ending: </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" type="text" ></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" name="end_date[]" type="text" ></div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="erp-em-edu-step-add-wrapper text-center">
-                                            <a href="javascript:void(0);" class="btn erp-add-btn "><i class="fa-solid fa-plus"></i> Add Education</a>
-                                        </div>
+                                    </div>
+
+                                    <div class="erp-em-edu-step-add-wrapper text-center mt-3">
+                                        <a href="javascript:void(0);" onclick="addEducation()" class="btn erp-add-btn "><i class="fa-solid fa-plus"></i> Add Education</a>
                                     </div>
 
                                 </section>
@@ -331,6 +321,89 @@
 
     </div>
     <!--End::row-1 -->
+    <div id="emergencyContactWrap" style="display: none;">
+        <div class="erp-emergency-child-contact-wrap flex-wrap flex-48">
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Name </label>
+                    <input class="form-control " name="contact_name[]" required type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Email </label>
+                    <input class="form-control " name="contact_email[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Phone </label>
+                    <input class="form-control " name="contact_phone[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Relationship </label>
+                    <input class="form-control " name="contact_relation[]" required type="text" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{--add education--}}
+    <div id="addEducationWrap" style="display: none;">
+        <div class="erp-em-edu-step-wrapper d-flex flex-wrap">
+
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Degree: </label>
+                    <select class="select select-step" name="degree[]">
+                        <option value="">Select Degree</option>
+                        <option value="ssc">SSC</option>
+                        <option value="hsc">HSC </option>
+                        <option value="diploma">Diploma </option>
+                        <option value="honusrs">Honours </option>
+                        <option value="associate_degree">Associate Degree </option>
+                        <option value="bachelor_of_science">Bachelor of Science </option>
+                        <option value="master_of_science">Master of Science </option>
+                        <option value="others">Other's </option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Institute Number: </label>
+                    <input class="form-control " name="institute_name[]" type="text" placeholder="">
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Subject: </label>
+                    <input class="form-control " name="subject[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Grade: </label>
+                    <input class="form-control " name="grade[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Start : </label>
+                    <div class="cal-icon"><input class="form-control datetimepicker" name="start_date[]" type="text" ></div>
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Ending: </label>
+                    <div class="cal-icon"><input class="form-control datetimepicker" name="end_date[]" type="text" ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('modals')
@@ -342,15 +415,22 @@
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
     <script src="{{ asset('assets/plugins/jquery-steps/jquery.steps.min.js') }}"></script>
+    <!-- Datetimepicker JS -->
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
     <script>
+        $(document).ready(function() {
+            initializeDatepicker();
+        });
         function getDesignation(select) {
             var department_id = $(select).val();
             let url = "{{ route('ajax.get-designation-by-department') }}";
@@ -362,6 +442,29 @@
                 }
             });
         }
+        function addEmergencyContact(){
+            var item = $('#emergencyContactWrap').html();
+
+            $('#emergencyContactWrapMain').append(item);
+        }
+        function addEducation(){
+            var item = $('#addEducationWrap').html();
+
+            $('#addEducationWrapMain').append(item);
+        }
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                //format: 'DD/MM/YYYY',
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
+        }
+
     </script>
     <script>
         (function($) {
@@ -409,6 +512,22 @@
                     } else {
                         return true;
                     }
+                },
+                onFinished: function (event, currentIndex) {
+
+                    event.preventDefault();
+                    var formData = new FormData($('#employeeStoreForm')[0]);
+                    $(".ie-span").text("").hide();
+                    var url = $('#employeeStoreForm').attr('action');
+
+                    formPost(url, formData, function (res){
+                        if(res.status == 200){
+                            showSuccessAlert('Success',res.message)
+                            window.location.href = "{{ route('hr.employee') }}";
+                        }else{
+                            showErrorAlert('Error',res.message)
+                        }
+                    }, 'show_input_error');
                 }
             });
 

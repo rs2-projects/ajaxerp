@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('employee_id',16)->nullable();
             $table->unsignedTinyInteger('type')->default(1)->comment('0=admin, 1=employee');
-            $table->unsignedSmallInteger('role')->comment('0=superuser,1=admin');
+            $table->unsignedSmallInteger('role')->default(2)->comment('0=superuser,1=admin,2=employee');
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('designation_id')->nullable();
             $table->string('first_name', 255)->index();

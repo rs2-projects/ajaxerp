@@ -25,9 +25,11 @@ class User extends Authenticatable
 
     const ROLE_SUPERUSER = 0;
     const ROLE_ADMIN = 1;
+    const ROLE_EMPLOYEE = 2;
     const ROLES = [
         self::ROLE_SUPERUSER => 'Superuser',
         self::ROLE_ADMIN => 'Admin',
+        self::ROLE_EMPLOYEE => 'Employee',
     ];
 
     const STATUS_ACTIVE = 1;

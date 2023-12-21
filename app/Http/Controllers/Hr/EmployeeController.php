@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Requests\Hr\Employee\StoreEmployeeRequest;
 use App\Services\Hr\EmployeeService;
 use Illuminate\Http\Request;
 
@@ -40,5 +41,16 @@ class EmployeeController extends BackendController
         $data = $employeeService->getCreateData();
 
         return $this->view('hr.employee.create')->with($data);
+    }
+
+    public function store(StoreEmployeeRequest $request, EmployeeService $employeeService)
+    {
+        try {
+            $employeeService->storeEmployee($request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Create Success");
     }
 }
