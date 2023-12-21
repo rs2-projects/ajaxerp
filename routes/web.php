@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\DashboardController;
@@ -198,6 +199,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [EmployeeController::class, 'statusUpdate'])->name('hr.employee.change-status');
         });
         // Employee route end
+
+        // common ajax route start
+        Route::group(['prefix' => 'ajax'], function () {
+            Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
+        });
+        // common ajax route end
 
     });
     // HR route end
