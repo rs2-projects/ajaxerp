@@ -133,6 +133,7 @@ class User extends Authenticatable
     protected $appends = [
       'full_name',
         'show_image',
+        'show_nid_image',
     ];
 
     public function getFullNameAttribute()
@@ -148,6 +149,13 @@ class User extends Authenticatable
         return asset('assets/img/profiles/man.png');
     }
 
+    public function getShowNidImageAttribute(){
+        if ($this->nid_image != null && $this->nid_image != '') {
+            return asset($this->nid_image);
+        }
+        return asset('assets/img/profiles/man.png');
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -159,5 +167,29 @@ class User extends Authenticatable
             $model->employee_id = 1000 + $model->id;
             $model->save();
         });
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class, 'designation_id');
+    }
+
+    public function userEmergencyContacts(){
+        return $this->hasMany(UserEmergencyContact::class, 'user_id');
+    }
+
+    public function userEducationInfo()
+    {
+        return $this->hasMany(UserEducationInfo::class, 'user_id');
+    }
+
+    public function userBankInfo()
+    {
+        return $this->hasMany(UserBankInfo::class, 'user_id');
     }
 }

@@ -4,7 +4,7 @@
     <div class="row">
 
         <div class="erp-employee-list-wrapper">
-            <form action="{{ route('hr.employee.store') }}" method="post" id="employeeStoreForm">
+            <form action="{{ route('hr.employee.update',$employee->id) }}" method="post" id="employeeStoreForm">
                 @csrf
                 <div class="erp-main-filter-wrapper d-flex justify-content-center ">
                     <div class="erp-add-em-step-wrapper bg-card flex-100">

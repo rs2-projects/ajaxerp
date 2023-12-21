@@ -26,8 +26,8 @@
 
                                     <div class="erp-filter-item flex-30">
                                         <div class="search-box table-search position-relative">
-                                            <input class="form-control" type="text" placeholder=" Name, ID, Phone, Email">
-                                            <button class="btn position-absolute search-btn" onclick="getData()" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                            <input class="form-control" type="text" id="keyword_filtered" placeholder=" Name, ID, Phone, Email">
+                                            <button class="btn position-absolute search-btn" onclick="getData()" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
                                         </div>
                                     </div>
                                     <div class="erp-filter-item flex-63 text-end">
@@ -71,7 +71,7 @@
 @section('js')
     <script>
         var filterData = {
-            keyword_filtered: '',
+            keyword_filtered: ''
         };
         $(document).ready(function() {
             getData();
@@ -79,7 +79,6 @@
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
-                getData();
             });
 
             $("#designationStoreForm").on('submit', function (e) {

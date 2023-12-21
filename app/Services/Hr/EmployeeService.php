@@ -8,10 +8,9 @@ use App\Models\User;
 use App\Models\UserBankInfo;
 use App\Models\UserEducationInfo;
 use App\Models\UserEmergencyContact;
+use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\EncodedImage;
-use Intervention\Image\ImageManager;
 
 
 class EmployeeService
@@ -23,10 +22,17 @@ class EmployeeService
     public function getIndexFilteredData($request)
     {
         $keyword = $request->keyword_filtered??null;
-        $data['employees'] = User::where('deleted', User::DELETED_NO)
+        $data['employees'] = User::with('designation', 'department')
+            ->where('type', User::TYPE_EMPLOYEE)
+            ->where('role', User::ROLE_EMPLOYEE)
+            ->where('deleted', User::DELETED_NO)
             ->where(function ($query) use ($keyword) {
                 if ($keyword != null && $keyword != '') {
                     $query->where('first_name', 'LIKE', "%{$keyword}%");
+                    $query->orWhere('last_name', 'LIKE', "%{$keyword}%");
+                    $query->orWhere('email', 'LIKE', "%{$keyword}%");
+                    $query->orWhere('phone', 'LIKE', "%{$keyword}%");
+                    $query->orWhere('employee_id', 'LIKE', "%{$keyword}%");
                 }
             })
             ->orderBy('first_name', 'asc')
@@ -51,39 +57,33 @@ class EmployeeService
     {
         DB::beginTransaction();
         try {
-//            $check_email = User::where('email', $request->email)
-//                ->where('deleted', User::DELETED_NO)
-//                ->first();
-//            if ($check_email){
-//
-//                throw new \Exception("Email already exists");
-//            }
-//
-//            $check_phone = User::where('phone', $request->phone)
-//                ->where('deleted', User::DELETED_NO)
-//                ->first();
-//            if ($check_phone){
-//                throw new \Exception("Phone already exists");
-//            }
+            $check_email = User::where('email', $request->email)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if ($check_email){
 
-            if ($request->hasFile('nid_image')) {
-                /*$ext = $request->file('nid_image')->getClientOriginalExtension();
-                $image_url = "nid-" . time() . rand(1000, 9999) .'.'. $ext;
-                $image_directory = CommonHelper::getUploadPath() . '/nid/';
-                $filePath=$image_directory;
-                $image_path = $filePath . $image_url;
-                $db_image_path = 'storage/nid/'. $image_url;
-                if (!file_exists($filePath)) {
-                    mkdir($filePath, 666, true);
-                }*/
-                $manager = ImageManager::gd();
-                $image = $manager->read($request->nid_image);
-                $a = storage_path('app/public/employee/nid');
-                file_put_contents($image->toWebp(60), $a);
-
-                throw new \Exception("OK");
+                throw new \Exception("Email already exists");
             }
-            throw new \Exception("OK2");
+
+            $check_phone = User::where('phone', $request->phone)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if ($check_phone){
+                throw new \Exception("Phone already exists");
+            }
+            $nid_image_path = null;
+            if ($request->hasFile('nid_image')) {
+                $imageUploadService = new ImageUploadService();
+                $nid_image_path = $imageUploadService->store($request->nid_image, 'employee/nid');
+                $nid_image_path = $nid_image_path['path'];
+            }
+            $passport_image_path = null;
+            if ($request->hasFile('passport_image')) {
+                $imageUploadService = new ImageUploadService();
+                $passport_image_path = $imageUploadService->store($request->passport_image, 'employee/passport');
+                $passport_image_path = $passport_image_path['path'];
+            }
+
             // user
             $user = new User();
             $user->type = User::TYPE_EMPLOYEE;
@@ -97,10 +97,10 @@ class EmployeeService
             $user->department_id = $request->department_id;
             $user->password = bcrypt($request->password);
             $user->nid_no = $request->nid_no??null;
-            $user->nid_image = $request->nid_image??null;
+            $user->nid_image = $nid_image_path??null;
             $user->passport_no = $request->passport_no??null;
             $user->passport_expiry_date = $request->passport_expiry_date??null;
-            $user->passport_image = $request->passport_image??null;
+            $user->passport_image = $passport_image_path??null;
             $user->date_of_birth = $request->date_of_birth??null;
             $user->gender = $request->gender??null;
             $user->religion = $request->religion??null;
@@ -178,6 +178,82 @@ class EmployeeService
         }catch (\Exception $exception) {
             DB::rollBack();
              throw new \Exception($exception->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function getEditData($id)
+    {
+        $data['departments'] = Department::where('deleted', Department::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['employee'] = User::with('designation', 'department')
+            ->where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+        if (!$data['employee']){
+            throw new \Exception("Employee not found!");
+        }
+
+        return $data;
+    }
+
+    public function deleteEmployee($id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user){
+                throw new \Exception("Employee not found!");
+            }
+            $user->status = User::STATUS_INACTIVE;
+            $user->deleted = User::DELETED_YES;
+            $user->deleted_at = Carbon::now();
+            $user->deleted_by = auth()->id();
+            $user->save();
+
+            $user_contact = UserEmergencyContact::where('user_id', $id)
+                ->get();
+            if ($user_contact){
+                foreach ($user_contact as $contact){
+                    $contact->status = UserEmergencyContact::STATUS_INACTIVE;
+                    $contact->save();
+                }
+            }
+
+            $user_bank_info = UserBankInfo::where('user_id', $id)
+                ->where('deleted', UserBankInfo::DELETED_NO)
+                ->get();
+            if ($user_bank_info){
+                foreach ($user_bank_info as $bank_info){
+                    $bank_info->status = UserBankInfo::STATUS_INACTIVE;
+                    $bank_info->deleted = UserBankInfo::DELETED_YES;
+                    $bank_info->deleted_at = Carbon::now();
+                    $bank_info->deleted_by = auth()->id();
+                    $bank_info->save();
+                }
+            }
+
+            $user_edu_info = UserEducationInfo::where('user_id', $id)
+                ->where('deleted', UserEducationInfo::DELETED_NO)
+                ->get();
+            if ($user_edu_info){
+                foreach ($user_edu_info as $edu_info){
+                    $edu_info->status = UserEducationInfo::STATUS_INACTIVE;
+                    $edu_info->deleted = UserEducationInfo::DELETED_YES;
+                    $edu_info->deleted_at = Carbon::now();
+                    $edu_info->deleted_by = auth()->id();
+                    $edu_info->save();
+                }
+            }
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
         }
         DB::commit();
     }

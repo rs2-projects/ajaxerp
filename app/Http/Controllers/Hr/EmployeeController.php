@@ -53,4 +53,29 @@ class EmployeeController extends BackendController
 
         return $this->returnAjaxSuccess([], "Create Success");
     }
+
+    public function edit(EmployeeService $employeeService, $id)
+    {
+        try {
+            $this->addBreadcrumbs('Edit');
+            $this->setPageTitle("Edit Employee");
+            $this->setActiveMenu('hr.employee.edit');
+            $data = $employeeService->getEditData($id);
+        }catch (\Exception $exception) {
+            return redirect()->route('hr.employee')->with('error', $exception->getMessage());
+        }
+
+        return $this->view('hr.employee.edit')->with($data);
+    }
+
+    public function delete(EmployeeService $employeeService, $id)
+    {
+        try {
+            $employeeService->deleteEmployee($id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Delete Success");
+    }
 }
