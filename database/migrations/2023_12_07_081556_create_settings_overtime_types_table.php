@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_overtime_types', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->unsignedTinyInteger('salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');
             $table->decimal('rate', 6, 2)->default(0)->comment('percentage of basic salary');

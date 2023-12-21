@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('user_bank_infos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('bank_name', 255)->nullable();
+            $table->string('bank_name', 255)->index()->nullable();
             $table->string('branch_name', 255)->nullable();
             $table->string('account_name', 255)->nullable();
             $table->string('account_number', 255)->nullable();
@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string('note', 255)->nullable();
 
             MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

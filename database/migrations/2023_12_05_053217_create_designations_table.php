@@ -18,6 +18,9 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('department_id')->references('id')->on('departments');
         });
     }
 

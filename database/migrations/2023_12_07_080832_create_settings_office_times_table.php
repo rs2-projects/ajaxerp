@@ -21,6 +21,8 @@ return new class extends Migration
             $table->boolean('is_weekend')->default(0)->comment('0: No, 1: Yes');
             $table->unsignedSmallInteger('working_hour')->default(0);
 
+            //define relationships
+            $table->foreign('office_time_type_id')->references('id')->on('settings_office_time_types');
         });
     }
 

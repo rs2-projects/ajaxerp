@@ -22,6 +22,12 @@ return new class extends Migration
             $table->decimal('amount',12,2)->default(0)->comment('amount of earning/allowance or deduction');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('salary_id')->references('id')->on('salaries');
+            $table->foreign('salary_details_id')->references('id')->on('salary_details');
+            $table->foreign('settings_salary_type_id', 'sdad_sst_id_foreign')->references('id')->on('settings_salary_types');
+            $table->foreign('settings_salary_type_details_id', 'sdad_sstd_id_foreign')->references('id')->on('settings_salary_type_details');
         });
     }
 

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('type')->default(0)->comment('0=earning/allowance,1=deduction');
             $table->string('title', 255);
             $table->decimal('value',6,2)->default(0)->comment('percentage of basic salary');
+
+            //define relationships
+            $table->foreign('settings_salary_type_id')->references('id')->on('settings_salary_types');
         });
     }
 

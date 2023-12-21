@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('salary_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id');
+            $table->unsignedBigInteger('employee_id')->index()->comment('id from users table');
             $table->unsignedBigInteger('salary_id');
             $table->unsignedBigInteger('settings_salary_set_id');
             $table->unsignedBigInteger('settings_salary_type_id')->nullable();
@@ -81,6 +81,17 @@ return new class extends Migration
             $table->unsignedTinyInteger('slip_generated')->default(0)->comment('0=Not Generated, 1=Generated');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('employee_id')->references('id')->on('users');
+            $table->foreign('salary_id')->references('id')->on('salaries');
+            $table->foreign('settings_salary_set_id')->references('id')->on('settings_salary_sets');
+            $table->foreign('settings_salary_type_id')->references('id')->on('settings_salary_types');
+            $table->foreign('settings_overtime_type_id')->references('id')->on('settings_overtime_types');
+            $table->foreign('settings_absent_penalty_id')->references('id')->on('settings_absent_penalties');
+            $table->foreign('settings_late_penalty_id')->references('id')->on('settings_late_penalties');
+            $table->foreign('settings_office_time_type_id')->references('id')->on('settings_office_time_types');
+            $table->foreign('settings_deduction_type_id')->references('id')->on('settings_salary_deduction_types');
         });
     }
 

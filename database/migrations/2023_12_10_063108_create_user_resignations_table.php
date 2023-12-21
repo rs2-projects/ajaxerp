@@ -21,6 +21,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('resignation_status')->default(0)->comment('0: Pending, 1: Approved, 2: Rejected');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

@@ -30,6 +30,10 @@ return new class extends Migration
             $table->text('reject_reason')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('settings_leave_type_id')->references('id')->on('settings_leave_types');
         });
     }
 

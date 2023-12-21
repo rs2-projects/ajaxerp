@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('phone', 32)->nullable();
             $table->string('relation', 128)->index();
             $table->unsignedTinyInteger('status')->default(1)->comment('0=inactive,1=active');
+
+            //define relationships
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

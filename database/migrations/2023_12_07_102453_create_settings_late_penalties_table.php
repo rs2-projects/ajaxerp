@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_late_penalties', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->integer('late_count_minutes')->default(0);
 

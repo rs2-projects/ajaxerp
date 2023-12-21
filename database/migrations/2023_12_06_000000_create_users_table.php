@@ -45,6 +45,11 @@ return new class extends Migration
             $table->boolean('terminated')->default(false)->comment('0=No, 1=Yes');
             $table->date('terminate_date')->nullable();
             MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('department_id')->references('id')->on('departments');
+            $table->foreign('designation_id')->references('id')->on('designations');
+
         });
     }
 

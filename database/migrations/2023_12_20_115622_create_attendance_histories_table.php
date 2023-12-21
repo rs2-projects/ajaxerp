@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('attendance_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id')->comment('id from users table');
+            $table->unsignedBigInteger('employee_id')->index()->comment('id from users table');
             $table->timestamp('datetime');
             $table->unsignedTinyInteger('type')->comment('0: check in, 1: check out');
             $table->string('latitude', 20)->nullable();
@@ -22,6 +22,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('attendance_by')->comment('0: employee, 1: admin');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('employee_id')->references('id')->on('users');
         });
     }
 

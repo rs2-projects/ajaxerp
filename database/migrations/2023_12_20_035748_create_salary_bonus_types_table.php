@@ -18,6 +18,10 @@ return new class extends Migration
             $table->decimal('total_bonus_amount', 12, 2)->default(0);
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('salary_id')->references('id')->on('salaries');
+            $table->foreign('settings_bonus_type_id')->references('id')->on('settings_bonus_types');
         });
     }
 

@@ -18,6 +18,10 @@ return new class extends Migration
             $table->decimal('basic_salary', 12, 2)->default(0);
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('settings_salary_set_id')->references('id')->on('settings_salary_sets');
+            $table->foreign('employee_id')->references('id')->on('users');
         });
     }
 

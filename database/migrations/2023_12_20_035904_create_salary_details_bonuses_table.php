@@ -24,6 +24,12 @@ return new class extends Migration
             $table->decimal('bonus_amount', 12, 2)->default(0)->comment('amount of bonus');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('salary_id')->references('id')->on('salaries');
+            $table->foreign('salary_details_id')->references('id')->on('salary_details');
+            $table->foreign('settings_bonus_type_id')->references('id')->on('settings_bonus_types');
+            $table->foreign('settings_bonus_type_salary_bonus_id', 'sdb_sbtsb_id_foreign')->references('id')->on('settings_bonus_type_salary_bonuses');
         });
     }
 

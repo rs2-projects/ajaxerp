@@ -17,6 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('settings_leave_type_id');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('settings_salary_set_id')->references('id')->on('settings_salary_sets');
+            $table->foreign('settings_leave_type_id')->references('id')->on('settings_leave_types');
         });
     }
 

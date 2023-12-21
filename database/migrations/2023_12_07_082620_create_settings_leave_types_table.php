@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_leave_types', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->unsignedSmallInteger('annual_leave_days')->default(0);
             $table->unsignedSmallInteger('max_leave_per_month')->default(0);

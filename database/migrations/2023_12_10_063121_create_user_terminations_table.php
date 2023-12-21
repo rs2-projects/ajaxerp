@@ -22,6 +22,10 @@ return new class extends Migration
             $table->unsignedTinyInteger('termination_status')->default(0)->comment('0: Pending, 1: Approved, 2: Rejected');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('settings_termination_type_id')->references('id')->on('settings_termination_types');
         });
     }
 

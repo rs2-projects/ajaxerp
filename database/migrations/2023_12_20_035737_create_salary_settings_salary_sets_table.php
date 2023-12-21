@@ -20,6 +20,10 @@ return new class extends Migration
             $table->decimal('total_deduction_amount', 12, 2)->default(0)->comment('Total Deduction(If Salary generate deduction selected) Amount');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('salary_id')->references('id')->on('salaries');
+            $table->foreign('settings_salary_set_id')->references('id')->on('settings_salary_sets');
         });
     }
 

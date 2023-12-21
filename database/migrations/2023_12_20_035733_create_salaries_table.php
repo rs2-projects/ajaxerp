@@ -39,6 +39,9 @@ return new class extends Migration
             $table->unsignedTinyInteger('view_status')->default(1)->comment('0=Not Viewed, 1=Viewed');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('generated_by')->references('id')->on('users');
         });
     }
 

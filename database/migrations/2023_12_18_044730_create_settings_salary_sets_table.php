@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_salary_sets', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->index();
             $table->text('description')->nullable();
 
             $table->unsignedBigInteger('settings_salary_type_id')->nullable();
@@ -29,6 +29,13 @@ return new class extends Migration
 
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('settings_salary_type_id')->references('id')->on('settings_salary_types');
+            $table->foreign('settings_overtime_type_id')->references('id')->on('settings_overtime_types');
+            $table->foreign('settings_absent_penalty_id')->references('id')->on('settings_absent_penalties');
+            $table->foreign('settings_late_penalty_id')->references('id')->on('settings_late_penalties');
+            $table->foreign('settings_office_time_type_id')->references('id')->on('settings_office_time_types');
         });
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_salary_deduction_types', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->unsignedTinyInteger('rate_type')->default(0)->comment('0=percent,1=fixed_amount');
             $table->unsignedTinyInteger('salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');

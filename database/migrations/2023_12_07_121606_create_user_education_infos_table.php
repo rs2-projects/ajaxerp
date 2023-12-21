@@ -22,6 +22,9 @@ return new class extends Migration
             $table->date('end_date')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationship
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

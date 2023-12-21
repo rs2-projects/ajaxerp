@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_termination_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
             $table->text('description')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);

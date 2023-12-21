@@ -20,6 +20,10 @@ return new class extends Migration
             $table->decimal('rate', 10, 2)->default(0)->comment('percentage or fixed amount');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('settings_bonus_type_id', 'sbtsb_sbt_id_foreign')->references('id')->on('settings_bonus_types');
+            $table->foreign('settings_salary_type_id', 'sbtsb_sst_id_foreign')->references('id')->on('settings_salary_types');
         });
     }
 

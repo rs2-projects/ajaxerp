@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_holidays', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->date('start_date');
             $table->date('end_date');

@@ -17,6 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('settings_geo_location_id');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+
+            //define relationships
+            $table->foreign('settings_salary_set_id', 'sssal_sss_id_foreign')->references('id')->on('settings_salary_sets');
+            $table->foreign('settings_geo_location_id', 'sssal_sgl_id_foreign')->references('id')->on('settings_geo_locations');
         });
     }
 

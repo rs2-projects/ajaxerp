@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('settings_geo_locations', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
+            $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->unsignedTinyInteger('map_type')->default(0)->comment('0=polygon, 1=circle, 2=rectangle');
             $table->text('location_data')->nullable();
