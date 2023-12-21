@@ -15,5 +15,11 @@
 Installation Complete
 
 
-## Create New Service 
+## Development Resources
+
+### #Create New Service 
 ``php artisan make:services ServiceName``
+
+
+### #Run Project on Local
+``php artisan serve``
