@@ -165,6 +165,7 @@
                                                     <option value="">Select Marital Status</option>
                                                     <option value="0">Unmarried </option>
                                                     <option value="1">Married</option>
+                                                    <option value="2">Divorced</option>
                                                     <option value="3">Widowed</option>
 
                                                 </select>
@@ -207,43 +208,43 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Bank Name: </label>
-                                                <input class="form-control " name="bank_name" type="text" placeholder="">
+                                                <input class="form-control " name="bank_name[]" type="text" placeholder="">
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Account Name: </label>
-                                                <input class="form-control " name="account_name" type="text" placeholder="">
+                                                <input class="form-control " name="account_name[]" type="text" placeholder="">
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Account Number: </label>
-                                                <input class="form-control " name="account_number" type="text" placeholder="">
+                                                <input class="form-control " name="account_number[]" type="text" placeholder="">
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Branch: </label>
-                                                <input class="form-control " name="branch_name" type="text" >
+                                                <input class="form-control " name="branch_name[]" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Routing Number: </label>
-                                                <input class="form-control " name="routing_number" type="text" >
+                                                <input class="form-control " name="routing_number[]" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Swift Code: </label>
-                                                <input class="form-control " name="swift_code" type="text" >
+                                                <input class="form-control " name="swift_code[]" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Note: </label>
-                                                <input class="form-control " name="note" type="text" >
+                                                <input class="form-control " name="note[]" type="text" >
                                             </div>
                                         </div>
                                     </div>
@@ -257,12 +258,12 @@
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
                                                     <label class="col-form-label">Degree: </label>
-                                                    <select class="select select-step" name="degree[]">
+                                                    <select class="select2" name="degree[]">
                                                         <option value="">Select Degree</option>
                                                         <option value="ssc">SSC</option>
                                                         <option value="hsc">HSC </option>
                                                         <option value="diploma">Diploma </option>
-                                                        <option value="honusrs">Honours </option>
+                                                        <option value="honours">Honours </option>
                                                         <option value="associate_degree">Associate Degree </option>
                                                         <option value="bachelor_of_science">Bachelor of Science </option>
                                                         <option value="master_of_science">Master of Science </option>
@@ -357,7 +358,7 @@
             <div class="erp-em-reg-step-item flex-48">
                 <div class="input-block erp-step-input-block ">
                     <label class="col-form-label">Degree: </label>
-                    <select class="select select-step" name="degree[]">
+                    <select class="select2" name="degree[]">
                         <option value="">Select Degree</option>
                         <option value="ssc">SSC</option>
                         <option value="hsc">HSC </option>
@@ -430,6 +431,7 @@
     <script>
         $(document).ready(function() {
             initializeDatepicker();
+            initializeSelect()
         });
         function getDesignation(select) {
             var department_id = $(select).val();
@@ -451,6 +453,7 @@
             var item = $('#addEducationWrap').html();
 
             $('#addEducationWrapMain').append(item);
+            initializeSelect()
         }
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
@@ -462,6 +465,13 @@
                     next: 'fa-solid fa-angle-right',
                     previous: 'fa-solid fa-angle-left'
                 }
+            });
+        }
+
+        function initializeSelect() {
+            $('#addEducationWrapMain .select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
             });
         }
 
@@ -490,15 +500,88 @@
                         if (currentIndex === 0) {
                             let form_valid = true;
 
-                            let email = $('#emailAddress').val();
+                            let email = $('input[name="email"]').val();
+                            let first_name = $('input[name="first_name"]').val();
+                            let last_name = $('input[name="last_name"]').val();
+                            let phone = $('input[name="phone"]').val();
+                            let joining_date = $('input[name="joining_date"]').val();
+                            let department_id = $('select[name="department_id"]').val();
+                            let designation_id = $('select[name="designation_id"]').val();
+                            let password = $('input[name="password"]').val();
                             if (!email) {
-                                $("#emailAddress").addClass("is-invalid");
-                                $('.emailAddress-error').show();
+                                $("input[name='email']").addClass("is-invalid");
+                                $('.email_error').html('Email is required!').show();
+                                form_valid = false;
+                            } else if(!validateEmail(email)) {
+                                $("input[name='email']").addClass("is-invalid");
+                                $('.email_error').html('Please enter a valid email!').show();
                                 form_valid = false;
                             } else {
-                                $("#emailAddress").removeClass("is-invalid");
-                                $('.emailAddress-error').hide();
+                                $("input[name='email']").removeClass("is-invalid");
+                                $('.email_error').hide();
                             }
+
+                            if (!first_name) {
+                                $("input[name='first_name']").addClass("is-invalid");
+                                $('.first_name_error').html('First name is required').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='first_name']").removeClass("is-invalid");
+                                $('.first_name_error').hide();
+                            }
+                            if (!last_name) {
+                                $("input[name='last_name']").addClass("is-invalid");
+                                $('.last_name_error').html('Last name is required').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='last_name']").removeClass("is-invalid");
+                                $('.last_name_error').hide();
+                            }
+                            if (!phone) {
+                                $("input[name='phone']").addClass("is-invalid");
+                                $('.phone_error').html('Phone is required').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='phone']").removeClass("is-invalid");
+                                $('.phone_error').hide();
+                            }
+                            if (!joining_date) {
+                                $("input[name='joining_date']").addClass("is-invalid");
+                                $('.joining_date_error').html('Joining Date is required').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='joining_date']").removeClass("is-invalid");
+                                $('.joining_date_error').hide();
+                            }
+                            if (!department_id) {
+                                $("select[name='department_id']").addClass("is-invalid");
+                                $('.department_id_error').html('Department is required').show();
+                                form_valid = false;
+                            } else {
+                                $("select[name='department_id']").removeClass("is-invalid");
+                                $('.department_id_error').hide();
+                            }
+                            if (!designation_id) {
+                                $("select[name='designation_id']").addClass("is-invalid");
+                                $('.designation_id_error').html('Designation is required').show();
+                                form_valid = false;
+                            } else {
+                                $("select[name='designation_id']").removeClass("is-invalid");
+                                $('.designation_id_error').hide();
+                            }
+                            if(!password){
+                                $("input[name='password']").addClass("is-invalid");
+                                $('.password_error').html('Password is required').show();
+                                form_valid = false;
+                            }else if(password.length < 6){
+                                $("input[name='password']").addClass("is-invalid");
+                                $('.password_error').html('Password Min 6 character').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='password']").removeClass("is-invalid");
+                                $('.password_error').hide();
+                            }
+
 
                             return form_valid;
                         }
@@ -561,6 +644,13 @@
 
         });
 
+        function validateEmail(email) {
+            return String(email)
+                .toLowerCase()
+                .match(
+                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+        }
 
     </script>
 @endsection

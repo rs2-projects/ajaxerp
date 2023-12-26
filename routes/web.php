@@ -197,6 +197,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [EmployeeController::class, 'update'])->name('hr.employee.update');
             Route::get('/{id}/delete', [EmployeeController::class, 'delete'])->name('hr.employee.delete');
             Route::get('/{id}/change-status/{status}', [EmployeeController::class, 'statusUpdate'])->name('hr.employee.change-status');
+            Route::get('/{id}/details', [EmployeeController::class, 'details'])->name('hr.employee.details');
+            Route::post('/{id}/details', [EmployeeController::class, 'detailFiltered'])->name('hr.employee.detail.filtered');
+            Route::post('profile-info/{id}/update', [EmployeeController::class, 'profileInfoUpdate'])->name('hr.employee.profile-info.update');
+            Route::post('personal-info/{id}/update', [EmployeeController::class, 'personalInfoUpdate'])->name('hr.employee.personal-info.update');
+            Route::post('bank-info/{id}/update', [EmployeeController::class, 'bankInfoUpdate'])->name('hr.employee.bank-info.update');
+            Route::post('education-info/{id}/update', [EmployeeController::class, 'educationInfoUpdate'])->name('hr.employee.education-info.update');
+            Route::post('experience-info/{id}/update', [EmployeeController::class, 'experienceInfoUpdate'])->name('hr.employee.experience-info.update');
+            Route::post('emergency-contact-info/{id}/update', [EmployeeController::class, 'emergencyContactInfoUpdate'])->name('hr.employee.emergency-contact-info.update');
         });
         // Employee route end
 

@@ -40,6 +40,45 @@ class ImageUploadService
         ];
     }
 
+    public function update($image, $path='', $old_image_path, $name=null, $type='webp'): array
+    {
+        try {
+            if(!$this->validateType($type)) {
+                throw new \Exception("Invalid Type!");
+            }
+            if($image == null) {
+                throw new \Exception('Empty Image');
+            }
+
+            if($name === null) {
+                $name = time() . rand(1000, 9999) .'.'. $type;
+            }
+
+            $full_path = storage_path().'/app/public/'.$path;
+            $save_path = $full_path . '/' . $name;
+            if (!file_exists($full_path)) {
+                mkdir($full_path, 0777, true);
+            }
+            $iImage = Image::make($image);
+            $iImage->encode($type, 70)->save($save_path);
+
+            $return_path = 'storage/'.$path.'/'.$name;
+
+            $old_image_path = str_replace('storage/', '', $old_image_path);
+            if($old_image_path !='' && file_exists(storage_path().'/app/public/'.$old_image_path)) {
+                unlink(storage_path().'/app/public/'.$old_image_path);
+            }
+
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
+        }
+
+        return [
+            'name' => $name,
+            'path' => $return_path
+        ];
+    }
+
     public function validateType(string $type)
     {
         $availableTypes = [

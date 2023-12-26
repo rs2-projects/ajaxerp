@@ -31,7 +31,7 @@
                 <h4>{{ $employees->total() + $loop->iteration -1 }}</h4>
             </div>
             <div class="table-body-item em-list ">
-                <a href="employee-profile.html" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                <a href="{{ route('hr.employee.details',$item->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                     <div class="em-pro-img-box">
                         <img src="{{ $item->show_image }}" alt="">
                     </div>
@@ -65,7 +65,7 @@
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="#"><i class="la la-puzzle-piece m-r-5"></i> Details</a>
+                            <a class="dropdown-item" href="{{ route('hr.employee.details', $item->id) }}"><i class="la la-puzzle-piece m-r-5"></i> Details</a>
                             <a class="dropdown-item" href="{{ route('hr.employee.edit',$item->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.employee.delete',$item->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                             <a class="dropdown-item" href="#"><i class="la la-crosshairs m-r-5"></i> Attendance</a>

@@ -4,6 +4,13 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\Hr\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Hr\Employee\UpdateBankInfoRequest;
+use App\Http\Requests\Hr\Employee\UpdateEducationInfoRequest;
+use App\Http\Requests\Hr\Employee\UpdateEmergencyContactRequest;
+use App\Http\Requests\Hr\Employee\UpdateEmployeeRequest;
+use App\Http\Requests\Hr\Employee\UpdateExperienceInfoRequest;
+use App\Http\Requests\Hr\Employee\UpdatePersonalInfoRequest;
+use App\Http\Requests\Hr\Employee\UpdateProfileInfoRequest;
 use App\Services\Hr\EmployeeService;
 use Illuminate\Http\Request;
 
@@ -66,6 +73,112 @@ class EmployeeController extends BackendController
         }
 
         return $this->view('hr.employee.edit')->with($data);
+    }
+
+    public function update(UpdateEmployeeRequest $request, EmployeeService $employeeService, $id)
+    {
+        try {
+            $employeeService->updateEmployee($request, $id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function details(EmployeeService $employeeService, $id)
+    {
+        try {
+            $this->addBreadcrumbs('Details');
+            $this->setPageTitle("Employee Details");
+            $this->setActiveMenu('hr.employee.details');
+            $data = $employeeService->getDetailsData($id);
+        }catch (\Exception $exception) {
+            return redirect()->route('hr.employee')->with('error', $exception->getMessage());
+        }
+
+        return $this->view('hr.employee.details')->with($data);
+    }
+
+    public function detailFiltered(Request $request, EmployeeService $employeeService, $id)
+    {
+        $data = $employeeService->getDetailFilteredData($request, $id);
+        $view = $this->view('hr.employee._details')->with($data)->render();
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
+    public function profileInfoUpdate(UpdateProfileInfoRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updateProfileInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+
+    }
+
+    public function personalInfoUpdate(UpdatePersonalInfoRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updatePersonalInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function bankInfoUpdate(UpdateBankInfoRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updateBankInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function educationInfoUpdate(UpdateEducationInfoRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updateEducationInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function experienceInfoUpdate(UpdateExperienceInfoRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updateExperienceInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function emergencyContactInfoUpdate(UpdateEmergencyContactRequest $request, EmployeeService $employeeService, $id)
+    {
+
+        try {
+            $employeeService->updateEmergencyContactInfo($request,$id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
     }
 
     public function delete(EmployeeService $employeeService, $id)

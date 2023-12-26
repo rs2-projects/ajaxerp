@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserBankInfo;
 use App\Models\UserEducationInfo;
 use App\Models\UserEmergencyContact;
+use App\Models\UserExperienceInfo;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -133,23 +134,23 @@ class EmployeeService
             }
 
             // user back info
-            if ($request->bank_name !=null && $request->bank_name !=''){
-
-                $user_bank_info = new UserBankInfo();
-                $user_bank_info->user_id = $user->id;
-                $user_bank_info->bank_name = $request->bank_name;
-                $user_bank_info->branch_name = $request->branch_name;
-                $user_bank_info->account_name = $request->account_name;
-                $user_bank_info->account_number = $request->account_number;
-                $user_bank_info->routing_number = $request->routing_number;
-                $user_bank_info->swift_code = $request->swift_code;
-                $user_bank_info->note = $request->note;
-                $user_bank_info->created_by = auth()->id();
-                $user_bank_info->created_at = Carbon::now();
-                $user_bank_info->updated_by = auth()->id();
-                $user_bank_info->updated_at = Carbon::now();
-                $user_bank_info->save();
-
+            if (is_array($request->bank_name) && count($request->bank_name) > 0){
+                foreach ($request->bank_name as $key=>$item){
+                    $user_bank_info = new UserBankInfo();
+                    $user_bank_info->user_id = $user->id;
+                    $user_bank_info->bank_name = $request->bank_name[$key];
+                    $user_bank_info->branch_name = $request->branch_name[$key];
+                    $user_bank_info->account_name = $request->account_name[$key];
+                    $user_bank_info->account_number = $request->account_number[$key];
+                    $user_bank_info->routing_number = $request->routing_number[$key];
+                    $user_bank_info->swift_code = $request->swift_code[$key];
+                    $user_bank_info->note = $request->note[$key];
+                    $user_bank_info->created_by = auth()->id();
+                    $user_bank_info->created_at = Carbon::now();
+                    $user_bank_info->updated_by = auth()->id();
+                    $user_bank_info->updated_at = Carbon::now();
+                    $user_bank_info->save();
+                }
             }
 
             // user education info
@@ -190,7 +191,7 @@ class EmployeeService
         $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
             ->orderBy('name', 'asc')
             ->get();
-        $data['employee'] = User::with('designation', 'department')
+        $data['employee'] = User::with('designation', 'department', 'userEmergencyContacts', 'userBankInfo', 'userEducationInfo')
             ->where('id', $id)
             ->where('deleted', User::DELETED_NO)
             ->first();
@@ -199,6 +200,616 @@ class EmployeeService
         }
 
         return $data;
+    }
+
+
+    public function updateEmployee($request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            $check_email = User::where('email', $request->email)
+                ->where('deleted', User::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+            if ($check_email) {
+                throw new \Exception("Email already exists");
+            }
+
+            $check_phone = User::where('phone', $request->phone)
+                ->where('deleted', User::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+            if ($check_phone) {
+                throw new \Exception("Phone already exists");
+            }
+
+            $nid_image_path = $user->nid_image;
+            if ($request->hasFile('nid_image')) {
+                $imageUploadService = new ImageUploadService();
+                $nid_image_path = $imageUploadService->update($request->nid_image, 'employee/nid', $user->nid_image);
+                $nid_image_path = $nid_image_path['path'];
+            }
+            $passport_image_path = $user->passport_image;
+            if ($request->hasFile('passport_image')) {
+                $imageUploadService = new ImageUploadService();
+                $passport_image_path = $imageUploadService->update($request->passport_image, 'employee/passport', $user->passport_image);
+                $passport_image_path = $passport_image_path['path'];
+            }
+
+            // user
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email;
+            $user->phone = $request->phone ?? null;
+            $user->joining_date = $request->joining_date;
+            $user->designation_id = $request->designation_id;
+            $user->department_id = $request->department_id;
+            $user->nid_no = $request->nid_no ?? null;
+            $user->nid_image = $nid_image_path ?? null;
+            $user->passport_no = $request->passport_no ?? null;
+            $user->passport_expiry_date = $request->passport_expiry;
+            $user->passport_image = $passport_image_path ?? null;
+            $user->date_of_birth = $request->date_of_birth ?? null;
+            $user->gender = $request->gender??null;
+            $user->religion = $request->religion??null;
+            $user->marital_status = $request->marital_status??null;
+            $user->marriage_date = $request->marriage_date??null;
+            $user->present_address = $request->present_address??null;
+            $user->permanent_address = $request->permanent_address??null;
+            $user->updated_by = auth()->id();
+            $user->updated_at = Carbon::now();
+            $user->save();
+
+            // user emergency contact update or create new or delete
+
+            if (is_array($request->contact_name) && count($request->contact_name)> 0){
+                // check if not exist then delete first
+                $contact_ids = $request->contact_id??[];
+                $user_contact = UserEmergencyContact::where('user_id', $user->id)
+                    ->whereNotIn('id', $contact_ids)
+                    ->delete();
+                foreach ($request->contact_name as $key => $value){
+                    if (!isset($request->contact_name[$key])){
+                        continue;
+                    }
+                    if ($request->contact_name[$key] == '' || $request->contact_name[$key] == null){
+                        continue;
+                    }
+                    if ($request->contact_id[$key] != null){
+                        // update
+                        $contact = UserEmergencyContact::where('id', $request->contact_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($contact){
+                            $contact->name = $request->contact_name[$key];
+                            $contact->phone = $request->contact_phone[$key];
+                            $contact->email = $request->contact_email[$key];
+                            $contact->relation = $request->contact_relation[$key];
+                            $contact->save();
+                        }
+                    }else{
+                        // create
+                        $contact = new UserEmergencyContact();
+                        $contact->user_id = $user->id;
+                        $contact->name = $request->contact_name[$key];
+                        $contact->phone = $request->contact_phone[$key];
+                        $contact->email = $request->contact_email[$key];
+                        $contact->relation = $request->contact_relation[$key];
+                        $contact->status = UserEmergencyContact::STATUS_ACTIVE;
+                        $contact->save();
+                    }
+
+                }
+
+            }
+
+            // user bank info update or create new or delete
+
+            if (is_array($request->bank_name) && count($request->bank_name) > 0){
+                // check if not exist then delete first
+                $bank_ids = $request->bank_id??[];
+                $user_bank_info = UserBankInfo::where('user_id', $user->id)
+                    ->whereNotIn('id', $bank_ids)
+                    ->delete();
+                foreach ($request->bank_name as $key=>$item){
+                    if (!isset($request->bank_name[$key])){
+                        continue;
+                    }
+                    if ($request->bank_name[$key] == '' || $request->bank_name[$key] == null){
+                        continue;
+                    }
+                    if ($request->bank_id[$key] != null){
+                        // update
+                        $bank_info = UserBankInfo::where('id', $request->bank_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($bank_info){
+                            $bank_info->bank_name = $request->bank_name[$key];
+                            $bank_info->branch_name = $request->branch_name[$key];
+                            $bank_info->account_name = $request->account_name[$key];
+                            $bank_info->account_number = $request->account_number[$key];
+                            $bank_info->routing_number = $request->routing_number[$key];
+                            $bank_info->swift_code = $request->swift_code[$key];
+                            $bank_info->note = $request->note[$key];
+                            $bank_info->updated_by = auth()->id();
+                            $bank_info->updated_at = Carbon::now();
+                            $bank_info->save();
+                        }
+                    }else{
+                        // create
+                        $bank_info = new UserBankInfo();
+                        $bank_info->user_id = $user->id;
+                        $bank_info->bank_name = $request->bank_name[$key];
+                        $bank_info->branch_name = $request->branch_name[$key];
+                        $bank_info->account_name = $request->account_name[$key];
+                        $bank_info->account_number = $request->account_number[$key];
+                        $bank_info->routing_number = $request->routing_number[$key];
+                        $bank_info->swift_code = $request->swift_code[$key];
+                        $bank_info->note = $request->note[$key];
+                        $bank_info->created_by = auth()->id();
+                        $bank_info->created_at = Carbon::now();
+                        $bank_info->updated_by = auth()->id();
+                        $bank_info->updated_at = Carbon::now();
+                        $bank_info->save();
+                    }
+                }
+            }
+
+            // user education info update or create new or delete
+
+            if (is_array($request->degree) && count($request->degree) > 0){
+                // check if not exist then delete first
+                $education_ids = $request->education_id??[];
+                $user_edu_info = UserEducationInfo::where('user_id', $user->id)
+                    ->whereNotIn('id', $education_ids)
+                    ->delete();
+                foreach ($request->degree as $key => $value){
+                    if (!isset($request->degree[$key])){
+                        continue;
+                    }
+                    if ($request->degree[$key] == '' || $request->degree[$key] == null){
+                        continue;
+                    }
+                    if ($request->education_id[$key] != null){
+                        // update
+                        $edu_info = UserEducationInfo::where('id', $request->education_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($edu_info){
+                            $edu_info->degree = $request->degree[$key];
+                            $edu_info->institute_name = $request->institute_name[$key];
+                            $edu_info->subject = $request->subject[$key];
+                            $edu_info->grade = $request->grade[$key];
+                            $edu_info->start_date = $request->start_date[$key];
+                            $edu_info->end_date = $request->end_date[$key];
+                            $edu_info->updated_by = auth()->id();
+                            $edu_info->updated_at = Carbon::now();
+                            $edu_info->save();
+                        }
+                    }else{
+                        // create
+                        $edu_info = new UserEducationInfo();
+                        $edu_info->user_id = $user->id;
+                        $edu_info->degree = $request->degree[$key];
+                        $edu_info->institute_name = $request->institute_name[$key];
+                        $edu_info->subject = $request->subject[$key];
+                        $edu_info->grade = $request->grade[$key];
+                        $edu_info->start_date = $request->start_date[$key];
+                        $edu_info->end_date = $request->end_date[$key];
+                        $edu_info->created_by = auth()->id();
+                        $edu_info->created_at = Carbon::now();
+                        $edu_info->updated_by = auth()->id();
+                        $edu_info->updated_at = Carbon::now();
+                        $edu_info->save();
+                    }
+                }
+            }
+
+
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function getDetailsData($id)
+    {
+        $data['departments'] = Department::where('deleted', Department::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['employee'] = User::with('designation', 'department', 'userEmergencyContacts', 'userBankInfo', 'userEducationInfo','userExperienceInfo')
+            ->where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+        if (!$data['employee']){
+            throw new \Exception("Employee not found!");
+        }
+
+        return $data;
+    }
+
+    public function getDetailFilteredData($request, $id)
+    {
+        /*$data['departments'] = Department::where('deleted', Department::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();*/
+        $data['employee'] = User::with('designation', 'department', 'userEmergencyContacts', 'userBankInfo', 'userEducationInfo')
+            ->where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+        if (!$data['employee']){
+            throw new \Exception("Employee not found!");
+        }
+
+        return $data;
+    }
+
+    public function updateProfileInfo($request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            $check_email = User::where('email', $request->email)
+                ->where('deleted', User::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+            if ($check_email) {
+                throw new \Exception("Email already exists");
+            }
+
+            $check_phone = User::where('phone', $request->phone)
+                ->where('deleted', User::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+            if ($check_phone) {
+                throw new \Exception("Phone already exists");
+            }
+
+            $image_path = $user->image;
+            if ($request->hasFile('image')) {
+                $imageUploadService = new ImageUploadService();
+                $image_path = $imageUploadService->update($request->image, 'employee/image', $user->image);
+                $image_path = $image_path['path'];
+            }
+
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email;
+            $user->phone = $request->phone ?? null;
+            $user->joining_date = $request->joining_date;
+            $user->designation_id = $request->designation_id;
+            $user->department_id = $request->department_id;
+            $user->image = $image_path ?? null;
+            $user->updated_by = auth()->id();
+            $user->updated_at = Carbon::now();
+            $user->save();
+
+
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function updatePersonalInfo($request, $id)
+    {
+        try {
+
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            // nid image
+            $nid_image_path = $user->nid_image;
+            if ($request->hasFile('nid_image')) {
+                $imageUploadService = new ImageUploadService();
+                $nid_image_path = $imageUploadService->update($request->nid_image, 'employee/nid', $user->nid_image);
+                $nid_image_path = $nid_image_path['path'];
+            }
+
+            // passport image
+            $passport_image_path = $user->passport_image;
+            if ($request->hasFile('passport_image')) {
+                $imageUploadService = new ImageUploadService();
+                $passport_image_path = $imageUploadService->update($request->passport_image, 'employee/passport', $user->passport_image);
+                $passport_image_path = $passport_image_path['path'];
+            }
+
+            $user->nid_no = $request->nid_no ?? null;
+            $user->nid_image = $nid_image_path ?? null;
+            $user->passport_no = $request->passport_no ?? null;
+            $user->passport_expiry_date = $request->passport_expiry_date ?? null;
+            $user->passport_image = $passport_image_path ?? null;
+            $user->date_of_birth = $request->date_of_birth ?? null;
+            $user->gender = $request->gender ?? null;
+            $user->religion = $request->religion ?? null;
+            $user->marital_status = $request->marital_status ?? null;
+            $user->marriage_date = $request->marriage_date ?? null;
+            $user->present_address = $request->present_address ?? null;
+            $user->permanent_address = $request->permanent_address ?? null;
+            $user->updated_by = auth()->id();
+            $user->updated_at = Carbon::now();
+            $user->save();
+
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function updateBankInfo($request ,$id)
+    {
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            // user bank info update or create new or delete
+
+            if (is_array($request->bank_name) && count($request->bank_name) > 0) {
+                // check if not exist then delete first
+                $bank_ids = $request->bank_id??[];
+                $user_bank_info = UserBankInfo::where('user_id', $user->id)
+                    ->whereNotIn('id', $bank_ids)
+                    ->delete();
+                foreach ($request->bank_name as $key => $item) {
+                    if (!isset($request->bank_name[$key])) {
+                        continue;
+                    }
+                    if ($request->bank_name[$key] == '' || $request->bank_name[$key] == null) {
+
+                        continue;
+                    }
+                    if (isset($request->bank_id[$key]) && $request->bank_id[$key] != null) {
+                        // update
+                        $bank_info = UserBankInfo::where('id', $request->bank_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($bank_info) {
+                            $bank_info->bank_name = $request->bank_name[$key];
+                            $bank_info->branch_name = $request->branch_name[$key];
+                            $bank_info->account_name = $request->account_name[$key];
+                            $bank_info->account_number = $request->account_number[$key];
+                            $bank_info->routing_number = $request->routing_number[$key];
+                            $bank_info->swift_code = $request->swift_code[$key];
+                            $bank_info->note = $request->note[$key];
+                            $bank_info->updated_by = auth()->id();
+                            $bank_info->updated_at = Carbon::now();
+                            $bank_info->save();
+                        }
+                    } else {
+                        // create
+                        $bank_info = new UserBankInfo();
+                        $bank_info->user_id = $user->id;
+                        $bank_info->bank_name = $request->bank_name[$key];
+                        $bank_info->branch_name = $request->branch_name[$key];
+                        $bank_info->account_name = $request->account_name[$key];
+                        $bank_info->account_number = $request->account_number[$key];
+                        $bank_info->routing_number = $request->routing_number[$key];
+                        $bank_info->swift_code = $request->swift_code[$key];
+                        $bank_info->note = $request->note[$key];
+                        $bank_info->created_by = auth()->id();
+                        $bank_info->created_at = Carbon::now();
+                        $bank_info->updated_by = auth()->id();
+                        $bank_info->updated_at = Carbon::now();
+                        $bank_info->save();
+                    }
+                }
+            }
+
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+
+        }
+
+    }
+
+    public function updateEducationInfo($request, $id)
+    {
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            // user education info update or create new or delete
+
+            if (is_array($request->degree) && count($request->degree) > 0) {
+                // check if not exist then delete first
+                $education_ids = $request->education_id??[];
+                $user_edu_info = UserEducationInfo::where('user_id', $user->id)
+                    ->whereNotIn('id', $education_ids)
+                    ->delete();
+                foreach ($request->degree as $key => $value) {
+                    if (!isset($request->degree[$key])) {
+                        continue;
+                    }
+                    if ($request->degree[$key] == '' || $request->degree[$key] == null) {
+                        continue;
+                    }
+                    if (isset($request->education_id[$key]) && $request->education_id[$key] != null) {
+                        // update
+                        $edu_info = UserEducationInfo::where('id', $request->education_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($edu_info) {
+                            $edu_info->degree = $request->degree[$key];
+                            $edu_info->institute_name = $request->institute_name[$key];
+                            $edu_info->subject = $request->subject[$key];
+                            $edu_info->grade = $request->grade[$key];
+                            $edu_info->start_date = $request->start_date[$key];
+                            $edu_info->end_date = $request->end_date[$key];
+                            $edu_info->updated_by = auth()->id();
+                            $edu_info->updated_at = Carbon::now();
+                            $edu_info->save();
+                        }
+                    } else {
+                        // create
+                        $edu_info = new UserEducationInfo();
+                        $edu_info->user_id = $user->id;
+                        $edu_info->degree = $request->degree[$key];
+                        $edu_info->institute_name = $request->institute_name[$key];
+                        $edu_info->subject = $request->subject[$key];
+                        $edu_info->grade = $request->grade[$key];
+                        $edu_info->start_date = $request->start_date[$key];
+                        $edu_info->end_date = $request->end_date[$key];
+                        $edu_info->created_by = auth()->id();
+                        $edu_info->created_at = Carbon::now();
+                        $edu_info->updated_by = auth()->id();
+                        $edu_info->updated_at = Carbon::now();
+                        $edu_info->save();
+
+                    }
+                }
+
+            }
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+
+    }
+
+    public function updateExperienceInfo($request, $id)
+    {
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            // user experience info update or create new or delete
+
+            if (is_array($request->company_name) && count($request->company_name) > 0) {
+                // check if not exist then delete first
+                $experience_ids = $request->experience_id??[];
+                $user_exp_info = UserExperienceInfo::where('user_id', $user->id)
+                    ->whereNotIn('id', $experience_ids)
+                    ->delete();
+                foreach ($request->company_name as $key => $value) {
+                    if (!isset($request->company_name[$key])) {
+                        continue;
+                    }
+                    if ($request->company_name[$key] == '' || $request->company_name[$key] == null) {
+                        continue;
+                    }
+                    if (isset($request->experience_id[$key]) && $request->experience_id[$key] != null) {
+                        // update
+                        $exp_info = UserExperienceInfo::where('id', $request->experience_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($exp_info) {
+                            $exp_info->company_name = $request->company_name[$key];
+                            $exp_info->designation = $request->designation[$key];
+                            $exp_info->start_date = $request->start_date[$key];
+                            $exp_info->end_date = $request->end_date[$key];
+                            $exp_info->updated_by = auth()->id();
+                            $exp_info->updated_at = Carbon::now();
+                            $exp_info->save();
+                        }
+                    } else {
+                        // create
+                        $exp_info = new UserExperienceInfo();
+                        $exp_info->user_id = $user->id;
+                        $exp_info->company_name = $request->company_name[$key];
+                        $exp_info->designation = $request->designation[$key];
+                        $exp_info->start_date = $request->start_date[$key];
+                        $exp_info->end_date = $request->end_date[$key];
+                        $exp_info->created_by = auth()->id();
+                        $exp_info->created_at = Carbon::now();
+                        $exp_info->updated_by = auth()->id();
+                        $exp_info->save();
+
+                    }
+                }
+            }
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function updateEmergencyContactInfo($request, $id)
+    {
+        try {
+            $user = User::where('id', $id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$user) {
+                throw new \Exception("Employee not found!");
+            }
+
+            // user emergency contact update or create new or delete
+
+            if (is_array($request->contact_name) && count($request->contact_name) > 0) {
+                // check if not exist then delete first
+                $contact_ids = $request->contact_id??[];
+                $user_contact = UserEmergencyContact::where('user_id', $user->id)
+                    ->whereNotIn('id', $contact_ids)
+                    ->delete();
+                foreach ($request->contact_name as $key => $value) {
+                    if (!isset($request->contact_name[$key])) {
+                        continue;
+                    }
+                    if ($request->contact_name[$key] == '' || $request->contact_name[$key] == null) {
+                        continue;
+                    }
+                    if (isset($request->contact_id[$key]) && $request->contact_id[$key] != null) {
+                        // update
+                        $contact = UserEmergencyContact::where('id', $request->contact_id[$key])
+                            ->where('user_id', $user->id)
+                            ->first();
+                        if ($contact) {
+                            $contact->name = $request->contact_name[$key];
+                            $contact->phone = $request->contact_phone[$key];
+                            $contact->email = $request->contact_email[$key];
+                            $contact->relation = $request->contact_relation[$key];
+                            $contact->save();
+                        }
+                    } else {
+                        // create
+                        $contact = new UserEmergencyContact();
+                        $contact->user_id = $user->id;
+                        $contact->name = $request->contact_name[$key];
+                        $contact->phone = $request->contact_phone[$key];
+                        $contact->email = $request->contact_email[$key];
+                        $contact->relation = $request->contact_relation[$key];
+                        $contact->status = UserEmergencyContact::STATUS_ACTIVE;
+                        $contact->save();
+                    }
+                }
+            }
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
     }
 
     public function deleteEmployee($id)

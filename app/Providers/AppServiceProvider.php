@@ -23,5 +23,15 @@ class AppServiceProvider extends ServiceProvider
         if(config('app.force_https')) {
             URL::forceScheme('https');
         }
+
+        view()->composer('*', function ($view)
+        {
+            $view->with('global_currency_symbol', $this->getGlobalCurrencySymbol());
+        });
+    }
+
+    public function getGlobalCurrencySymbol()
+    {
+        return "₱";
     }
 }

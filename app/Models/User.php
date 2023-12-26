@@ -90,6 +90,7 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
+        'image',
         'phone',
         'joining_date',
         'nid_no',
@@ -134,6 +135,8 @@ class User extends Authenticatable
       'full_name',
         'show_image',
         'show_nid_image',
+        'gender_text',
+        'marital_status_text'
     ];
 
     public function getFullNameAttribute()
@@ -155,6 +158,23 @@ class User extends Authenticatable
         }
         return asset('assets/img/profiles/man.png');
     }
+
+    public function getGenderTextAttribute()
+    {
+        if ($this->gender !='' || $this->gender !=null){
+            return self::GENDERS[$this->gender] ?? 'Unknown';
+        }
+        return 'N/A';
+    }
+
+    public function getMaritalStatusTextAttribute()
+    {
+        if ($this->marital_status !='' || $this->marital_status !=null){
+            return self::MARITAL_STATUSES[$this->marital_status] ?? 'Unknown';
+        }
+        return 'N/A';
+    }
+
 
     public static function boot()
     {
@@ -191,5 +211,10 @@ class User extends Authenticatable
     public function userBankInfo()
     {
         return $this->hasMany(UserBankInfo::class, 'user_id');
+    }
+
+    public function userExperienceInfo()
+    {
+        return $this->hasMany(UserExperienceInfo::class, 'user_id');
     }
 }

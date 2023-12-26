@@ -19,7 +19,8 @@ Installation Complete
 
 ### #Create New Service 
 ``php artisan make:services ServiceName``
-
+### #currency change
+custom function and AppServiceProvider
 
 ### #Run Project on Local
 ``php artisan serve``
