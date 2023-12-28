@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -207,6 +208,19 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('emergency-contact-info/{id}/update', [EmployeeController::class, 'emergencyContactInfoUpdate'])->name('hr.employee.emergency-contact-info.update');
         });
         // Employee route end
+
+        // Salary set route start
+        Route::group(['prefix' => 'salary-set'], function () {
+            Route::get('/', [SalarySetController::class, 'index'])->name('hr.salary-set');
+            Route::post('/filtered', [SalarySetController::class, 'indexFiltered'])->name('hr.salary-set.filtered');
+            Route::get('/create', [SalarySetController::class, 'create'])->name('hr.salary-set.create');
+            Route::post('/create', [SalarySetController::class, 'store'])->name('hr.salary-set.store');
+            Route::get('/{id}/edit', [SalarySetController::class, 'edit'])->name('hr.salary-set.edit');
+            Route::post('/{id}/update', [SalarySetController::class, 'update'])->name('hr.salary-set.update');
+            Route::get('/{id}/delete', [SalarySetController::class, 'delete'])->name('hr.salary-set.delete');
+            Route::get('/{id}/change-status/{status}', [SalarySetController::class, 'statusUpdate'])->name('hr.salary-set.change-status');
+        });
+        // Salary set route end
 
         // common ajax route start
         Route::group(['prefix' => 'ajax'], function () {

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('settings_office_time_type_id')->nullable();
 
             $table->boolean('attendance_type_fingerprint_device')->default(false)->comment('0=No, 1=Yes');
-            $table->boolean('attendance_type_in_geo')->default(false)->comment('0=No, 1=Yes');
+            $table->unsignedTinyInteger('attendance_type_location')->default(0)->comment('0=No, 1=In Geo, 2=Any Location');
 
             $table->unsignedTinyInteger('salary_generate_type')->default(1)->comment('1=Half Month, 2=Full Month');
 

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 class CreateServicesCommand extends Command
 {
@@ -27,7 +28,9 @@ class CreateServicesCommand extends Command
     public function handle()
     {
         $name = $this->argument('name');
+        Log::info("Creating service class {$name}...");
         $path = $this->getServicePath($name);
+        Log::info("Service class path: {$path}");
 
         if (!File::exists(dirname($path))) {
             // Create the directory if it doesn't exist
@@ -53,9 +56,24 @@ class CreateServicesCommand extends Command
 
     private function generateClass($name)
     {
+        $namespaceParts = explode('/', $name);
+        $className = array_pop($namespaceParts);
+
+        if (count($namespaceParts) > 0) {
+            $directoryPath = implode('\\', $namespaceParts);
+        } else {
+            $directoryPath = '';
+        }
         // Customize this method to generate the content of your service class
         // For example, you can use a stub file or manually generate the content
-        $namespace = implode('\\', explode('/', $name));
-        return "<?php\n\nnamespace App\Services\\{$namespace};\n\nclass {$name}\n{\n    // Your code here\n}\n";
+
+        if($directoryPath == '') {
+            $fullNamespace = 'App\Services';
+        } else {
+            $fullNamespace = 'App\Services\\' . $directoryPath;
+        }
+
+
+        return "<?php\n\nnamespace $fullNamespace;\n\nclass {$className}\n{\n    // Your code here\n}\n";
     }
 }
