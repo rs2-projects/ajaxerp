@@ -1,10 +1,10 @@
 @extends('layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row">
+    <div class="row" id="VueApp">
 
         <div class="erp-employee-list-wrapper">
-            <form action="{{ route('hr.employee.store') }}" method="post" id="employeeStoreForm">
+            <form action="{{ route('hr.salary-set.store') }}" method="post" id="salarySetStoreForm">
                 @csrf
                 <div class="erp-main-filter-wrapper d-flex justify-content-center ">
                     <div class="erp-add-em-step-wrapper bg-card flex-100">
@@ -13,7 +13,6 @@
                                 <h3 class="d-none">Salary Set</h3>
                                 <section class="erp-em-general-info">
                                     <div class="erp-em-reg-step-wrapper d-flex flex-wrap">
-
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Name: <span class="text-red">*</span></label>
@@ -23,7 +22,7 @@
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
-                                                <label class="col-form-label">Description: <span class="text-red">*</span></label>
+                                                <label class="col-form-label">Description: </label>
                                                 <textarea  class="form-control" name="description" cols="1" rows="1"></textarea>
                                             </div>
                                         </div>
@@ -129,8 +128,7 @@
                                         <div class="erp-em-reg-step-item flex-100 location-hide-show" style="display: none">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Location: <span class="text-danger">*</span></label>
-                                                <select class="select select-step" multiple name="settings_geo_location_id" id="settings_geo_location_id">
-                                                    <option value="all">All</option>
+                                                <select class="select select-step" multiple name="settings_geo_location_id[]" id="settings_geo_location_id">
                                                     @foreach($settingsGeoLocations as $settingsGeoLocation)
                                                         <option value="{{ $settingsGeoLocation->id }}">{{ $settingsGeoLocation->title }}</option>
                                                     @endforeach
@@ -143,11 +141,10 @@
                                 <h3 class="d-none">Leave Types Set</h3>
                                 <section class="erp-step-bank-info-wrapper">
                                     <div class="erp-em-reg-step-wrapper d-flex flex-wrap">
-                                        <div class="erp-em-reg-step-item flex-100 location-hide-show">
+                                        <div class="erp-em-reg-step-item flex-100">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Leave Types: <span class="text-danger">*</span></label>
-                                                <select class="select select-step" multiple name="settings_leave_type_id" id="settings_leave_type_id" required>
-                                                    <option value="all">All</option>
+                                                <select class="select select-step" multiple name="settings_leave_type_id[]" id="settings_leave_type_id" required>
                                                     @foreach($settingsLeaveTypes as $settingsLeaveType)
                                                         <option value="{{ $settingsLeaveType->id }}">{{ $settingsLeaveType->title }}</option>
                                                     @endforeach
@@ -157,64 +154,61 @@
                                     </div>
                                 </section>
 
-                                <h3 class="d-none">Employee Set</h3>
+                                {{--<h3 class="d-none">Employee Set</h3>
                                 <section class="erp-step-salary-wrapper">
                                     <div class="table-main-wrapper pt-4" >
+                                        <a href="javascript:void(0)" onclick="employeeListModal()" class="employee-set-btn"><i class="fa-solid fa-plus"></i></a>
                                         <div class="table-header-wrapper d-flex flex-wrap">
                                             <div class="table-header-item em-list">
                                                 <h4>SL</h4>
                                             </div>
-                                            <div class="table-header-item em-list text-start">
+                                            <div class="table-header-item em-list text-start flex-23">
                                                 <h4>Name</h4>
                                             </div>
-                                            <div class="table-header-item em-list text-center">
+                                            <div class="table-header-item em-list text-center flex-23">
                                                 <h4>Email/Phone</h4>
                                             </div>
-                                            <div class="table-header-item em-list text-center">
+                                            <div class="table-header-item em-list text-center flex-23">
                                                 <h4>Department/Designation</h4>
                                             </div>
-                                            <div class="table-header-item em-list text-center">
+                                            <div class="table-header-item em-list text-center flex-23">
                                                 <h4>Basic Salary</h4>
                                             </div>
                                         </div>
-                                        <div class="table-body-wrapper">
-                                                <div class="table-body-item-wrapper d-flex flex-wrap">
-                                                    <div class="table-body-item em-list">
-                                                        <h4>1</h4>
-                                                    </div>
-                                                    <div class="table-body-item em-list ">
-                                                        <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
-                                                            <div class="em-pro-img-box">
-                                                                <img src="" alt="">
-                                                            </div>
-                                                            <div class="em-pro-details-box">
-                                                                <h5>Kawsar</h5>
-                                                                <p class="em-id">ID: <span> #1000</span></p>
+                                        <div class="table-body-wrapper" v-for="(selectedEmployee, selectedEmployeeItemIndex) in getEmployees" :key="selectedEmployee.id">
+                                            <div class="table-body-item-wrapper d-flex flex-wrap">
+                                                <input type="hidden" name="employee_id[]" :value="selectedEmployee.id">
+                                                <div class="table-body-item em-list">
+                                                    <h4>1</h4>
+                                                </div>
+                                                <div class="table-body-item em-list flex-23">
+                                                    <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                                        <div class="em-pro-img-box">
+                                                            <img src="@{{ selectedEmployee.show_image }}" alt="">
+                                                        </div>
+                                                        <div class="em-pro-details-box">
+                                                            <h5>@{{ selectedEmployee.full_name }}</h5>
+                                                            <p class="em-id">ID: <span> # @{{ selectedEmployee.employee_id }}</span></p>
 
-                                                            </div>
-                                                        </a>
-                                                    </div>
-
-                                                    <div class="table-body-item em-list ">
-                                                        <h4 class="text-center erp-t-email">kawsar4585@gmail.com</h4>
-                                                        <h4 class="text-center erp-t-email">01714234585</h4>
-                                                    </div>
-                                                    <div class="table-body-item em-list ">
-                                                        <h4 class="text-center erp-t-phone">Department</h4>
-                                                        <h4 class="text-center erp-t-phone">Designation</h4>
-                                                    </div>
-                                                    <div class="table-body-item em-list ">
-                                                        <h4 class="text-center erp-t-department">105000</h4>
-                                                    </div>
+                                                        </div>
+                                                    </a>
                                                 </div>
 
+                                                <div class="table-body-item em-list flex-23">
+                                                    <h4 class="text-center erp-t-email">@{{ selectedEmployee.email }}</h4>
+                                                    <h4 class="text-center erp-t-email">@{{ selectedEmployee.phone }}</h4>
+                                                </div>
+                                                <div class="table-body-item em-list flex-23">
+                                                    <h4 class="text-center erp-t-phone">Department</h4>
+                                                    <h4 class="text-center erp-t-phone">Designation</h4>
+                                                </div>
+                                                <div class="table-body-item em-list flex-23">
+                                                    <h4 class="text-center erp-t-department">105000</h4>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="erp-em-edu-step-add-wrapper text-center mt-3">
-                                        <a href="javascript:void(0);" onclick="addEducation()" class="btn erp-add-btn "><i class="fa-solid fa-plus"></i> Add Education</a>
-                                    </div>
-
-                                </section>
+                                </section>--}}
 
 
                             </div>
@@ -224,8 +218,9 @@
             </form>
         </div>
 
-
+        @include('hr.salary-set._employee_list_modal')
     </div>
+
 
 @endsection
 
@@ -234,7 +229,9 @@
 @endsection
 
 @section('css')
+    <style>
 
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -250,6 +247,9 @@
 @endsection
 
 @section('js')
+    {{--<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>--}}
+
     <script>
         $(document).ready(function() {
             initializeDatepicker();
@@ -282,6 +282,22 @@
             }else{
                 $('.location-hide-show').slideUp();
             }
+        }
+
+        function employeeListModal(){
+            $('#employee_list_modal').modal('show');
+        }
+
+        function getDesignation(select) {
+            var department_id = $(select).val();
+            let url = "{{ route('ajax.get-designation-by-department') }}";
+            ajaxGet(url, {department_id:department_id}, function (response) {
+                if (response.status == 200) {
+                    $("#designation_id").html(response.view);
+                } else {
+                    toastr.error(response.message);
+                }
+            });
         }
 
     </script>
@@ -318,67 +334,67 @@
                             let salary_generate_type = $('select[name="salary_generate_type"]').val();
 
 
-                            // if (!name) {
-                            //     $("input[name='name']").addClass("is-invalid");
-                            //     $('.name_error').html('name is required').show();
-                            //     form_valid = false;
-                            // } else {
-                            //     $("input[name='name']").removeClass("is-invalid");
-                            //     $('.name_error').hide();
-                            // }
-                            //
-                            // if (!settings_salary_type_id){
-                            //     $("select[name='settings_salary_type_id']").addClass("is-invalid");
-                            //     $('.settings_salary_type_id_error').html('salary type is required').show();
-                            //     form_valid = false;
-                            // }else {
-                            //     $("select[name='settings_salary_type_id']").removeClass("is-invalid");
-                            //     $('.settings_salary_type_id_error').hide();
-                            // }
-                            // if (!settings_overtime_type_id){
-                            //     $("select[name='settings_overtime_type_id']").addClass("is-invalid");
-                            //     $('.settings_overtime_type_id_error').html('overtime type is required').show();
-                            //     form_valid = false;
-                            // }else {
-                            //     $("select[name='settings_overtime_type_id']").removeClass("is-invalid");
-                            //     $('.settings_overtime_type_id_error').hide();
-                            // }
-                            //
-                            // if (!settings_absent_penalty_id){
-                            //     $("select[name='settings_absent_penalty_id']").addClass("is-invalid");
-                            //     $('.settings_absent_penalty_id_error').html('absent penalty is required').show();
-                            //     form_valid = false;
-                            // }else {
-                            //     $("select[name='settings_absent_penalty_id']").removeClass("is-invalid");
-                            //     $('.settings_absent_penalty_id_error').hide();
-                            // }
-                            //
-                            // if (!settings_late_penalty_id){
-                            //     $("select[name='settings_late_penalty_id']").addClass("is-invalid");
-                            //     $('.settings_late_penalty_id_error').html('late penalty is required').show();
-                            //     form_valid = false;
-                            // }else{
-                            //     $("select[name='settings_late_penalty_id']").removeClass("is-invalid");
-                            //     $('.settings_late_penalty_id_error').hide();
-                            // }
-                            //
-                            // if (!settings_office_time_type_id){
-                            //     $("select[name='settings_office_time_type_id']").addClass("is-invalid");
-                            //     $('.settings_office_time_type_id_error').html('office time is required').show();
-                            //     form_valid = false;
-                            // }else {
-                            //     $("select[name='settings_office_time_type_id']").removeClass("is-invalid");
-                            //     $('.settings_office_time_type_id_error').hide();
-                            // }
-                            //
-                            // if (!salary_generate_type){
-                            //     $("select[name='salary_generate_type']").addClass("is-invalid");
-                            //     $('.salary_generate_type_error').html('salary generate type is required').show();
-                            //     form_valid = false;
-                            // }else {
-                            //     $("select[name='salary_generate_type']").removeClass("is-invalid");
-                            //     $('.salary_generate_type_error').hide();
-                            // }
+                            if (!name) {
+                                $("input[name='name']").addClass("is-invalid");
+                                $('.name_error').html('name is required').show();
+                                form_valid = false;
+                            } else {
+                                $("input[name='name']").removeClass("is-invalid");
+                                $('.name_error').hide();
+                            }
+
+                            if (!settings_salary_type_id){
+                                $("select[name='settings_salary_type_id']").addClass("is-invalid");
+                                $('.settings_salary_type_id_error').html('salary type is required').show();
+                                form_valid = false;
+                            }else {
+                                $("select[name='settings_salary_type_id']").removeClass("is-invalid");
+                                $('.settings_salary_type_id_error').hide();
+                            }
+                            if (!settings_overtime_type_id){
+                                $("select[name='settings_overtime_type_id']").addClass("is-invalid");
+                                $('.settings_overtime_type_id_error').html('overtime type is required').show();
+                                form_valid = false;
+                            }else {
+                                $("select[name='settings_overtime_type_id']").removeClass("is-invalid");
+                                $('.settings_overtime_type_id_error').hide();
+                            }
+
+                            if (!settings_absent_penalty_id){
+                                $("select[name='settings_absent_penalty_id']").addClass("is-invalid");
+                                $('.settings_absent_penalty_id_error').html('absent penalty is required').show();
+                                form_valid = false;
+                            }else {
+                                $("select[name='settings_absent_penalty_id']").removeClass("is-invalid");
+                                $('.settings_absent_penalty_id_error').hide();
+                            }
+
+                            if (!settings_late_penalty_id){
+                                $("select[name='settings_late_penalty_id']").addClass("is-invalid");
+                                $('.settings_late_penalty_id_error').html('late penalty is required').show();
+                                form_valid = false;
+                            }else{
+                                $("select[name='settings_late_penalty_id']").removeClass("is-invalid");
+                                $('.settings_late_penalty_id_error').hide();
+                            }
+
+                            if (!settings_office_time_type_id){
+                                $("select[name='settings_office_time_type_id']").addClass("is-invalid");
+                                $('.settings_office_time_type_id_error').html('office time is required').show();
+                                form_valid = false;
+                            }else {
+                                $("select[name='settings_office_time_type_id']").removeClass("is-invalid");
+                                $('.settings_office_time_type_id_error').hide();
+                            }
+
+                            if (!salary_generate_type){
+                                $("select[name='salary_generate_type']").addClass("is-invalid");
+                                $('.salary_generate_type_error').html('salary generate type is required').show();
+                                form_valid = false;
+                            }else {
+                                $("select[name='salary_generate_type']").removeClass("is-invalid");
+                                $('.salary_generate_type_error').hide();
+                            }
 
 
                             return form_valid;
@@ -397,14 +413,14 @@
                 onFinished: function (event, currentIndex) {
 
                     event.preventDefault();
-                    var formData = new FormData($('#employeeStoreForm')[0]);
+                    var formData = new FormData($('#salarySetStoreForm')[0]);
                     $(".ie-span").text("").hide();
-                    var url = $('#employeeStoreForm').attr('action');
+                    var url = $('#salarySetStoreForm').attr('action');
 
                     formPost(url, formData, function (res){
                         if(res.status == 200){
                             showSuccessAlert('Success',res.message)
-                            window.location.href = "{{ route('hr.employee') }}";
+                            {{--window.location.href = "{{ route('hr.salary-set') }}";--}}
                         }else{
                             showErrorAlert('Error',res.message)
                         }
@@ -451,6 +467,84 @@
         }
 
     </script>
+
+
+    {{--<script>
+        var { createApp } = Vue;
+
+        var vueApp = createApp({
+            data() {
+                return {
+                    keyword: '',
+                    getEmployees:[],
+
+                }
+            },
+            computed: {
+                isAllChecked() {
+                    let isFalse = this.getEmployees.find(o => o.is_selected !== true);
+                    if(isFalse !== undefined) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                    // return isFalse;
+                },
+                selectedEmployees() {
+                    return $.grep(this.getEmployees, function (e) {
+                        return e.is_selected === true;
+                    });
+                },
+
+                filteredEmployees() {
+                    let self = this;
+                    return this.getEmployees.filter(o => o.full_name.toUpperCase().includes(self.keyword.toUpperCase()));
+                },
+            },
+            methods: {
+
+                fetchEmployees() {
+
+                    let keyword = this.keyword;
+
+                    axios
+                        .get("{{ route('ajax.get-employees') }}", {
+                            params: {
+                                keyword: keyword,
+                            }
+                        })
+                        .then(response => {
+                            this.getEmployees = response.data.getEmployees;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+
+                },
+
+                clickedEmployee(index) {
+                    let selected_employee = this.filteredEmployees[index];
+                    console.log(selected_employee);
+                    let selected_index = this.getEmployees.findIndex(o => o.id === selected_employee.id);
+                    this.getEmployees[selected_index].is_selected = !this.getEmployees[selected_index].is_selected;
+                },
+                unCheckAllEmployee() {
+                    for(let i=0; i<this.getEmployees.length; i++) {
+                        this.getEmployees[i].is_selected = false;
+                    }
+                },
+
+            },
+            created() {
+
+            },
+            mounted () {
+
+                this.fetchEmployees();
+
+            }
+        }).mount('#VueApp');
+    </script>--}}
 @endsection
 
 

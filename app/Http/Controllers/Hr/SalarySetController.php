@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Requests\Hr\SalarySet\StoreSalarySetRequest;
 use App\Services\Hr\SalarySetService;
 use Illuminate\Http\Request;
 
@@ -39,5 +40,48 @@ class SalarySetController extends BackendController
         $data = $salarySetService->getCreateData();
 
         return $this->view('hr.salary-set.create')->with($data);
+    }
+
+    public function store(StoreSalarySetRequest $request, SalarySetService $salarySetService)
+    {
+        /*return $request->all();*/
+        try {
+            $salarySetService->store($request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Create Success");
+    }
+
+    public function edit($id, SalarySetService $salarySetService)
+    {
+        try {
+
+            $data = $salarySetService->getEditData($id);
+
+            $view = $this->view('hr.salary-set._edit_data')->with($data)
+                ->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+
+    }
+
+    public function setEmployees($id, SalarySetService $salarySetService)
+    {
+        try {
+
+            $this->addBreadcrumbs('Set Employees');
+            $this->setPageTitle("Set Employees");
+            $this->setActiveMenu('hr.salary-set.set-employees');
+
+            $data = $salarySetService->getSetEmployeesData($id);
+            return $this->view('hr.salary-set.set-employees')->with($data);
+        }catch (\Exception $exception) {
+            return redirect()->route('hr.salary-set')->with('error', $exception->getMessage());
+        }
     }
 }

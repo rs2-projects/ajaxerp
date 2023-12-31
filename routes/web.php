@@ -219,12 +219,15 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [SalarySetController::class, 'update'])->name('hr.salary-set.update');
             Route::get('/{id}/delete', [SalarySetController::class, 'delete'])->name('hr.salary-set.delete');
             Route::get('/{id}/change-status/{status}', [SalarySetController::class, 'statusUpdate'])->name('hr.salary-set.change-status');
+
+            Route::get('/{id}/set-employees',[SalarySetController::class, 'setEmployees'])->name('hr.salary-set.set-employees');
         });
         // Salary set route end
 
         // common ajax route start
         Route::group(['prefix' => 'ajax'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
+            Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
         });
         // common ajax route end
 

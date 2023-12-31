@@ -13833,6 +13833,20 @@ a.em-profile-wrap:hover {
 }
 .flex-17{
     flex-basis: 17%;
+}  .employee-set-btn{
+    right: 69px !important;
+    bottom: 395px !important;
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #7fc241;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+    font-size: 13px;
+    background: #fff;
+    color: #7fc241;
 }
 
 /* Media QUERY Start*/

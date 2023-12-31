@@ -31,7 +31,7 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label" for="emailAddress">Email Address <span class="text-red">*</span></label>
-                                                <input type="email" class="form-control is-invalid" name="email" id="emailAddress" placeholder="Enter email address" required="">
+                                                <input type="email" class="form-control" name="email" id="emailAddress" placeholder="Enter email address" required="">
                                                 {{--<div class="invalid-feedback emailAddress-error">Please provide a valid email.</div>--}}
                                                 <span class="email_error ie-span"></span>
                                             </div>

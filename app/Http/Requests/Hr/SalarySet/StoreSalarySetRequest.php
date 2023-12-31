@@ -11,7 +11,7 @@ class StoreSalarySetRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,14 @@ class StoreSalarySetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'settings_salary_type_id' => 'required',
+            'settings_overtime_type_id' => 'required',
+            'settings_absent_penalty_id' => 'required',
+            'settings_late_penalty_id' => 'required',
+            'settings_office_time_type_id' => 'required',
+            'salary_generate_type' => 'required',
+            'settings_leave_type_id' => 'required',
         ];
     }
 }

@@ -21,4 +21,14 @@ class AjaxController extends BackendController
             return $this->returnAjaxError($exception->getMessage());
         }
     }
+
+    public function getEmployees(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getEmployees($request);
+           return $this->returnAjaxSuccess($data);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxError($exception->getMessage());
+        }
+    }
 }
