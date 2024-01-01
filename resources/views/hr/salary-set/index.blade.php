@@ -47,6 +47,8 @@
 
 @section('modals')
     @include('hr.salary-set._edit_salary_set_modal')
+    @include('hr.salary-set._edit_attendance_set_modal')
+    @include('hr.salary-set._edit_leave_type_set_modal')
 @endsection
 
 @section('css')
@@ -93,6 +95,39 @@
                 }, 'show_input_error');
             });
 
+            $(document).on("submit", "#attendanceSetUpdateForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#edit_attendance_set_modal").modal('hide');
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+            $(document).on("submit", "#leaveTypeSetUpdateForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#edit_leave_type_set_modal").modal('hide');
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
         });
         function getData(){
             getPaginatedListData("{{ route('hr.salary-set.filtered') }}", "#ajax-data-load", filterData);
@@ -116,11 +151,61 @@
             }, 'default');
         }
 
+        function setAttendance(id){
+            let url = "{{route('hr.salary-set.attendance-set.edit', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#edit_attendance_set_modal_body").html(response.view);
+                    $("#edit_attendance_set_modal").modal('show');
+                    // initializeSelect();
+                    locationSelect2();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function setLeaveTypes(id){
+            let url = "{{route('hr.salary-set.leave-type-set.edit', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#edit_leave_type_set_modal_body").html(response.view);
+                    $("#edit_leave_type_set_modal").modal('show');
+                    leaveTypeSelect2()
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
         function initializeSelect() {
             $('.select2').select2({
                 minimumResultsForSearch: -1,
                 width: '100%'
             });
+        }
+
+        function locationSelect2() {
+            $('#settings_geo_location_id').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+        function leaveTypeSelect2() {
+            $('#settings_leave_type_id').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+        function locationType(e){
+            if(e.value == 1){
+                $('.location-hide-show').slideDown();
+            }else{
+                $('.location-hide-show').slideUp();
+            }
         }
     </script>
 @endsection

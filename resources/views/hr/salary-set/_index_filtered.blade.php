@@ -34,7 +34,7 @@
                             <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$item->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                             <a class="dropdown-item" href="{{ route('hr.salary-set.set-employees',$item->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Set Employees</a>
                             <a class="dropdown-item" href="javascript:void(0)" onclick="setLeaveTypes({{$item->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Set Leave Types</a>
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="SetAttendance({{$item->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Set Attendance</a>
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="setAttendance({{$item->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Set Attendance</a>
                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.salary-set.delete',$item->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                         </div>
                     </div>

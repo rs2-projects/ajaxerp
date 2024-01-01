@@ -220,7 +220,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/delete', [SalarySetController::class, 'delete'])->name('hr.salary-set.delete');
             Route::get('/{id}/change-status/{status}', [SalarySetController::class, 'statusUpdate'])->name('hr.salary-set.change-status');
 
+            Route::get('/attendance-set/{id}/edit',[SalarySetController::class, 'attendanceSetEdit'])->name('hr.salary-set.attendance-set.edit');
+            Route::post('/attendance-set/{id}/update',[SalarySetController::class, 'attendanceSetUpdate'])->name('hr.salary-set.attendance-set.update');
+            Route::get('/leave-type-set/{id}/edit',[SalarySetController::class, 'leaveTypeSetEdit'])->name('hr.salary-set.leave-type-set.edit');
+            Route::post('/leave-type-set/{id}/update',[SalarySetController::class, 'leaveTypeSetUpdate'])->name('hr.salary-set.leave-type-set.update');
             Route::get('/{id}/set-employees',[SalarySetController::class, 'setEmployees'])->name('hr.salary-set.set-employees');
+            Route::post('/{id}/set-employees',[SalarySetController::class, 'setEmployeesStore'])->name('hr.salary-set.set-employees.store');
         });
         // Salary set route end
 
@@ -228,6 +233,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'ajax'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
             Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
+            Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
         });
         // common ajax route end
 

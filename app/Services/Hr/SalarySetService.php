@@ -150,6 +150,8 @@ class SalarySetService
         }
         DB::commit();
 
+       $data['setEmployeeRoute'] = route('hr.salary-set.set-employees', $salarySet->id);
+        return $data;
     }
 
     public function getEditData($id)
@@ -193,6 +195,206 @@ class SalarySetService
         return $data;
     }
 
+    public function update($id,$request){
+
+        try {
+            $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if (!$salarySet){
+                throw new \Exception("Salary Set not found");
+            }
+
+            $salarySet->name = $request->name;
+            $salarySet->description = $request->description;
+            $salarySet->settings_salary_type_id = $request->settings_salary_type_id;
+            $salarySet->settings_overtime_type_id = $request->settings_overtime_type_id;
+            $salarySet->settings_absent_penalty_id = $request->settings_absent_penalty_id;
+            $salarySet->settings_late_penalty_id = $request->settings_late_penalty_id;
+            $salarySet->settings_office_time_type_id = $request->settings_office_time_type_id;
+            $salarySet->salary_generate_type = $request->salary_generate_type;
+            $salarySet->updated_at = Carbon::now();
+            $salarySet->updated_by = auth()->user()->id;
+            $salarySet->save();
+
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if (!$salarySet){
+                throw new \Exception("Salary Set not found");
+            }
+
+            $salarySet->deleted = SettingsSalarySet::DELETED_YES;
+            $salarySet->deleted_at = Carbon::now();
+            $salarySet->deleted_by = auth()->user()->id;
+            $salarySet->save();
+
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function getAttendanceSetEditData($id)
+    {
+        try {
+            $data['item'] = SettingsSalarySet::with('attendanceLocations')
+                ->where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+            if (!$data['item']){
+                throw new \Exception("Salary Set not found");
+            }
+            $data['settingsGeoLocations'] = SettingsGeoLocation::where('status',SettingsGeoLocation::STATUS_ACTIVE)
+                ->where('deleted', SettingsGeoLocation::DELETED_NO)
+                ->orderBy('title', 'asc')
+                ->get();
+
+            $data['selected_geo_location_ids'] = $data['item']->attendanceLocations->pluck('settings_geo_location_id')->toArray();
+
+            return $data;
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function attendanceSetUpdate($id,$request)
+    {
+        try {
+            $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if (!$salarySet){
+                throw new \Exception("Salary Set not found");
+            }
+
+            $salarySet->attendance_type_fingerprint_device = $request->attendance_type_fingerprint_device??0;
+            $salarySet->attendance_type_location = $request->attendance_type_location??0;
+            $salarySet->updated_at = Carbon::now();
+            $salarySet->updated_by = auth()->user()->id;
+            $salarySet->save();
+
+
+            if ($salarySet->attendance_type_location == 1){
+                $geoLocationIds = $request->settings_geo_location_id??[];
+                if (count($geoLocationIds) == 0){
+                    throw new \Exception("Please select at least one geo location");
+                }
+                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+                    ->whereNotIn('settings_geo_location_id', $geoLocationIds)
+                    ->delete();
+
+                if (count($geoLocationIds) > 0){
+                    foreach ($geoLocationIds as $key => $value){
+                        if ($value != null && $value != '') {
+                            $location = SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+                                ->where('settings_geo_location_id', $value)
+                                ->first();
+                            if (!$location){
+                                $location = new SettingsSalarySetAttendanceLocation();
+                                $location->settings_salary_set_id = $salarySet->id;
+                                $location->settings_geo_location_id = $value;
+                                $location->created_at = Carbon::now();
+                                $location->created_by = auth()->user()->id;
+                                $location->updated_at = Carbon::now();
+                                $location->updated_by = auth()->user()->id;
+                                $location->save();
+                            }
+
+                        }
+                    }
+                }
+            }else{
+                $geoLocationIds = $request->settings_geo_location_id??[];
+                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+//                    ->whereNotIn('settings_geo_location_id', $geoLocationIds)
+                    ->delete();
+            }
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+
+    }
+
+    public function getLeaveTypeSetEditData($id)
+    {
+        try {
+            $data['item'] = SettingsSalarySet::with('leaveTypes')
+                ->where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+            if (!$data['item']){
+                throw new \Exception("Salary Set not found");
+            }
+            $data['settingsLeaveTypes'] = SettingsLeaveType::where('status',SettingsLeaveType::STATUS_ACTIVE)
+                ->where('deleted', SettingsLeaveType::DELETED_NO)
+                ->orderBy('title', 'asc')
+                ->get();
+
+            $data['selected_leave_type_ids'] = $data['item']->leaveTypes->pluck('settings_leave_type_id')->toArray();
+
+            return $data;
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+
+    }
+
+    public function leaveTypeSetUpdate($id,$request)
+    {
+        try {
+            $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if (!$salarySet){
+                throw new \Exception("Salary Set not found");
+            }
+
+            $leaveTypeIds = $request->settings_leave_type_id??[];
+            if (count($leaveTypeIds) == 0){
+                throw new \Exception("Please select at least one leave type");
+            }
+            SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySet->id)
+                ->whereNotIn('settings_leave_type_id', $leaveTypeIds)
+                ->delete();
+
+            if (count($leaveTypeIds) > 0){
+                foreach ($leaveTypeIds as $key => $value){
+                    if ($value != null && $value != '') {
+                        $leaveType = SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySet->id)
+                            ->where('settings_leave_type_id', $value)
+                            ->first();
+                        if (!$leaveType){
+                            $leaveType = new SettingsSalarySetLeaveType();
+                            $leaveType->settings_salary_set_id = $salarySet->id;
+                            $leaveType->settings_leave_type_id = $value;
+                            $leaveType->created_at = Carbon::now();
+                            $leaveType->created_by = auth()->user()->id;
+                            $leaveType->updated_at = Carbon::now();
+                            $leaveType->updated_by = auth()->user()->id;
+                            $leaveType->save();
+                        }
+
+                    }
+                }
+            }
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+
+    }
+
     public function getSetEmployeesData($id)
     {
         try {
@@ -225,6 +427,57 @@ class SalarySetService
                 ->get();
 
             return $data;
+        }catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function setEmployeesStore($id,$request)
+    {
+        try {
+            $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if (!$salarySet){
+                throw new \Exception("Salary Set not found");
+            }
+
+            $employeeIds = $request->employee_id??[];
+            if (count($employeeIds) == 0){
+                throw new \Exception("Employee Required");
+            }
+            SettingsSalarySetEmployee::where('settings_salary_set_id', $salarySet->id)
+                ->whereNotIn('employee_id', $employeeIds)
+                ->delete();
+
+
+            foreach ($employeeIds as $key => $value){
+                if ($value != null && $value != '') {
+                    $employee = SettingsSalarySetEmployee::where('settings_salary_set_id', $salarySet->id)
+                        ->where('employee_id', $value)
+                        ->first();
+                    if (!$employee){
+                        $employee = new SettingsSalarySetEmployee();
+                        $employee->settings_salary_set_id = $salarySet->id;
+                        $employee->employee_id = $value;
+                        $employee->basic_salary = $request->basic_salary[$key];
+                        $employee->created_at = Carbon::now();
+                        $employee->created_by = auth()->user()->id;
+                        $employee->updated_at = Carbon::now();
+                        $employee->updated_by = auth()->user()->id;
+
+                    }else{
+                        $employee->basic_salary = $request->basic_salary[$key];
+                        $employee->updated_at = Carbon::now();
+                        $employee->updated_by = auth()->user()->id;
+                    }
+
+                    $employee->save();
+
+                }
+            }
+
         }catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
         }

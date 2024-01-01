@@ -420,7 +420,7 @@
                     formPost(url, formData, function (res){
                         if(res.status == 200){
                             showSuccessAlert('Success',res.message)
-                            {{--window.location.href = "{{ route('hr.salary-set') }}";--}}
+                            window.location.href = res.setEmployeeRoute;
                         }else{
                             showErrorAlert('Error',res.message)
                         }

@@ -14,7 +14,7 @@
                         <div class="erp-em-reg-step-item flex-32">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">Name <span class="text-red">*</span></label>
-                                <input class="form-control " type="text" placeholder="Name" required="">
+                                <input class="form-control" v-model="keyword" @input="fetchEmployees" type="text" placeholder="Name">
                             </div>
                         </div>
                         <div class="erp-em-reg-step-item flex-32">
@@ -64,7 +64,7 @@
                                     <h4 class="text-center erp-t-email">@{{ employee.phone }}</h4>
                                 </div>
                                 <div class="table-body-item em-list flex-30">
-                                    <input class="form-control " type="text" placeholder="Basic Salary" required="">
+                                    <input class="form-control " type="text" placeholder="Basic Salary" v-model="employee.basic_salary" required="">
                                 </div>
                             </div>
                         {{--@endforeach--}}

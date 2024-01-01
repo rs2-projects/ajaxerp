@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\Hr\SalarySet\StoreSalarySetRequest;
+use App\Http\Requests\Hr\SalarySet\UpdateSalarySetRequest;
 use App\Services\Hr\SalarySetService;
 use Illuminate\Http\Request;
 
@@ -46,12 +47,12 @@ class SalarySetController extends BackendController
     {
         /*return $request->all();*/
         try {
-            $salarySetService->store($request);
+           $data = $salarySetService->store($request);
         }catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
 
-        return $this->returnAjaxSuccess([], "Create Success");
+        return $this->returnAjaxSuccess($data, "Create Success");
     }
 
     public function edit($id, SalarySetService $salarySetService)
@@ -70,6 +71,83 @@ class SalarySetController extends BackendController
 
     }
 
+    public function update($id, UpdateSalarySetRequest $request, SalarySetService $salarySetService)
+    {
+        try {
+            $salarySetService->update($id, $request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+    public function delete($id, SalarySetService $salarySetService)
+    {
+        try {
+            $salarySetService->delete($id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Delete Success");
+    }
+
+    public function attendanceSetEdit($id, SalarySetService $salarySetService)
+    {
+        try {
+
+            $data = $salarySetService->getAttendanceSetEditData($id);
+
+            $view = $this->view('hr.salary-set._edit_attendance_data')->with($data)
+                ->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+
+    }
+
+    public function attendanceSetUpdate($id, Request $request, SalarySetService $salarySetService)
+    {
+        try {
+            $salarySetService->attendanceSetUpdate($id, $request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
+
+    public function leaveTypeSetEdit($id, SalarySetService $salarySetService)
+    {
+        try {
+
+            $data = $salarySetService->getLeaveTypeSetEditData($id);
+
+            $view = $this->view('hr.salary-set._edit_leave_type_data')->with($data)
+                ->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+
+    }
+
+    public function leaveTypeSetUpdate($id, Request $request, SalarySetService $salarySetService)
+    {
+        try {
+            $salarySetService->leaveTypeSetUpdate($id, $request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
+
     public function setEmployees($id, SalarySetService $salarySetService)
     {
         try {
@@ -83,5 +161,16 @@ class SalarySetController extends BackendController
         }catch (\Exception $exception) {
             return redirect()->route('hr.salary-set')->with('error', $exception->getMessage());
         }
+    }
+
+    public function setEmployeesStore($id, Request $request, SalarySetService $salarySetService)
+    {
+        try {
+            $salarySetService->setEmployeesStore($id, $request);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Set Employees Success");
     }
 }

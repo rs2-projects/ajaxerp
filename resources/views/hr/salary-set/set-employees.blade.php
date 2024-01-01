@@ -2,10 +2,18 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row" id="VueApp">
+        <div class="erp-add-employee-wrapper mb-3">
+            <div class="erp-add-employee">
+                <a href="javascript(0)" data-bs-toggle="modal" data-bs-target="#employee_list_modal" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i>Choose Employees</a>
+            </div>
+        </div>
 
         <div class="erp-employee-list-wrapper">
-            <form action="{{ route('hr.salary-set.store') }}" method="post" id="salarySetStoreForm">
+            <form action="{{ route('hr.salary-set.set-employees.store',$salarySet->id) }}" method="post" id="employeeSetStoreForm">
                 @csrf
+                {{--<div class="submit-section mt-3" v-if="selectedEmployees.length > 0">
+                    <button class="btn btn-primary submit-btn" type="submit">Submit</button>
+                </div>--}}
                 <div class="erp-main-filter-wrapper d-flex justify-content-center ">
                     <div class="erp-add-em-step-wrapper bg-card flex-100">
                         <div class="erp-step-content-wrapper">
@@ -13,7 +21,6 @@
                                 <h3 class="d-none">Employee Set</h3>
                                 <section class="erp-step-salary-wrapper">
                                     <div class="table-main-wrapper pt-4" >
-                                        <a href="javascript:void(0)" onclick="employeeListModal()" class="employee-set-btn"><i class="fa-solid fa-plus"></i></a>
                                         <div class="table-header-wrapper d-flex flex-wrap">
                                             <div class="table-header-item em-list">
                                                 <h4>SL</h4>
@@ -27,14 +34,15 @@
                                             <div class="table-header-item em-list text-center flex-23">
                                                 <h4>Department/Designation</h4>
                                             </div>
-                                            <div class="table-header-item em-list text-center flex-23">
+                                            <div class="table-header-item em-list text-center flex-20">
                                                 <h4>Basic Salary</h4>
                                             </div>
                                         </div>
-                                        <div class="table-body-wrapper" v-for="(selectedEmployee, selectedEmployeeItemIndex) in getEmployees" :key="selectedEmployee.id">
-                                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                                <input type="hidden" name="employee_id[]" :value="selectedEmployee.id">
+                                        <div class="table-body-wrapper" v-for="(selectedEmployee, selectedEmployeeItemIndex) in selectedEmployees" :key="selectedEmployee.id">
+                                            <div class="table-body-item-wrapper d-flex">
+
                                                 <div class="table-body-item em-list">
+                                                    <input type="hidden" name="employee_id[]" :value="selectedEmployee.id">
                                                     <h4>1</h4>
                                                 </div>
                                                 <div class="table-body-item em-list flex-23">
@@ -54,17 +62,20 @@
                                                     <h4 class="text-center erp-t-email">@{{ selectedEmployee.email }}</h4>
                                                     <h4 class="text-center erp-t-email">@{{ selectedEmployee.phone }}</h4>
                                                 </div>
-                                                <div class="table-body-item em-list flex-23">
-                                                    <h4 class="text-center erp-t-phone">Department</h4>
-                                                    <h4 class="text-center erp-t-phone">Designation</h4>
+                                                <div class="table-body-item em-list flex-23 d-block">
+                                                    <h4 class="text-center erp-t-phone">@{{ selectedEmployee.department.name }}</h4>
+                                                    <h4 class="text-center erp-t-phone">@{{ selectedEmployee.designation.name }}</h4>
                                                 </div>
-                                                <div class="table-body-item em-list flex-23">
-                                                    <h4 class="text-center erp-t-department">105000</h4>
+                                                <div class="table-body-item em-list flex-20">
+                                                    <input type="text" class="form-control" name="basic_salary[]" required v-model="selectedEmployee.basic_salary">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </section>
+                                <div class="submit-section mt-3" v-if="selectedEmployees.length > 0">
+                                    <button class="btn btn-primary submit-btn" type="submit">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +118,23 @@
     <script>
         $(document).ready(function() {
             initializeDatepicker();
-            initializeSelect()
+            initializeSelect();
+
+            $(document).on("submit", "#employeeSetStoreForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        showSuccessAlert('Success',res.message)
+                        window.location.href = "{{ route('hr.salary-set') }}";
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
         });
 
         function initializeDatepicker() {
@@ -135,6 +162,18 @@
             $('#employee_list_modal').modal('show');
         }
 
+        function getDesignation(select) {
+            var department_id = $(select).val();
+            let url = "{{ route('ajax.get-designation-by-department') }}";
+            ajaxGet(url, {department_id:department_id}, function (response) {
+                if (response.status == 200) {
+                    $("#designation_id").html(response.view);
+                } else {
+                    toastr.error(response.message);
+                }
+            });
+        }
+
     </script>
 
 
@@ -147,6 +186,7 @@
                 return {
                     keyword: '',
                     getEmployees:[],
+                    basic_salary: 0,
 
                 }
             },
@@ -167,8 +207,9 @@
                 },
 
                 filteredEmployees() {
-                    let self = this;
-                    return this.getEmployees.filter(o => o.full_name.toUpperCase().includes(self.keyword.toUpperCase()));
+                    return this.getEmployees.filter((employee) =>
+                        employee.full_name.toUpperCase().includes(this.keyword.toUpperCase())
+                    );
                 },
             },
             methods: {
@@ -178,9 +219,10 @@
                     let keyword = this.keyword;
 
                     axios
-                        .get("{{ route('ajax.get-employees') }}", {
+                        .get("{{ route('ajax.salary-set.get-employees') }}", {
                             params: {
                                 keyword: keyword,
+                                salary_set_id: "{{ $salarySet->id }}"
                             }
                         })
                         .then(response => {

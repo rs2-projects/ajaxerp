@@ -68,4 +68,14 @@ class SettingsSalarySet extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function attendanceLocations()
+    {
+        return $this->hasMany(SettingsSalarySetAttendanceLocation::class, 'settings_salary_set_id', 'id');
+    }
+
+    public function leaveTypes()
+    {
+        return $this->hasMany(SettingsSalarySetLeaveType::class, 'settings_salary_set_id', 'id');
+    }
 }
