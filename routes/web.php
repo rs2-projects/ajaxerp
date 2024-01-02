@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
@@ -229,11 +230,26 @@ Route::group(['middleware' => 'auth'], function () {
         });
         // Salary set route end
 
+        // User Leaves route start
+        Route::group(['prefix' => 'user-leaves'], function () {
+            Route::get('/', [UserLeavesController::class, 'index'])->name('hr.user-leaves');
+            Route::post('/filtered', [UserLeavesController::class, 'indexFiltered'])->name('hr.user-leaves.filtered');
+            Route::get('/create', [UserLeavesController::class, 'create'])->name('hr.user-leaves.create');
+            Route::post('/create', [UserLeavesController::class, 'store'])->name('hr.user-leaves.store');
+            Route::get('/{id}/edit', [UserLeavesController::class, 'edit'])->name('hr.user-leaves.edit');
+            Route::post('/{id}/update', [UserLeavesController::class, 'update'])->name('hr.user-leaves.update');
+            Route::get('/{id}/delete', [UserLeavesController::class, 'delete'])->name('hr.user-leaves.delete');
+            Route::get('/{id}/change-status/{status}', [UserLeavesController::class, 'statusUpdate'])->name('hr.user-leaves.change-status');
+        });
+        // User Leaves route end
+
         // common ajax route start
         Route::group(['prefix' => 'ajax'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
             Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
             Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
+            Route::get('get-leave-type-by-user',[AjaxController::class, 'getLeaveTypeByUser'])->name('ajax.get-leave-type-by-user');
+            Route::get('get-employee-total-leave-by-leave-type',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveType'])->name('ajax.get-user-total-leave-by-leave-type');
         });
         // common ajax route end
 

@@ -3,8 +3,13 @@
 namespace App\Services\Ajax;
 
 use App\Models\Designation;
+use App\Models\SalarySettingsSalarySets;
+use App\Models\SettingsLeaveType;
 use App\Models\SettingsSalarySetEmployee;
+use App\Models\SettingsSalarySetLeaveType;
 use App\Models\User;
+use App\Models\UserLeave;
+use Carbon\Carbon;
 
 class AjaxService
 {
@@ -112,5 +117,83 @@ class AjaxService
             });
 
         return $data;
+    }
+
+    public function getLeaveTypeByUser($request)
+    {
+        try {
+            if ($request->user_id == '' || $request->user_id == null) {
+                throw new \Exception("Please Select Employee");
+            }
+
+            $salarySetEmployee = SettingsSalarySetEmployee::where('employee_id', $request->user_id)
+                ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+                ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
+                ->first();
+            if (empty($salarySetEmployee)) {
+                throw new \Exception("Please Set Salary Set For This Employee");
+            }
+
+            $salarySetLeaveTypes = SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySetEmployee->settings_salary_set_id)
+                ->where('deleted', SettingsSalarySetLeaveType::DELETED_NO)
+                ->where('status', SettingsSalarySetLeaveType::STATUS_ACTIVE)
+                ->pluck('settings_leave_type_id')->toArray();
+
+            $data['settings_leave_types'] = SettingsLeaveType::whereIn('id', $salarySetLeaveTypes)
+                ->where('deleted', SettingsLeaveType::DELETED_NO)
+                ->where('status', SettingsLeaveType::STATUS_ACTIVE)
+                ->orderBy('title', 'asc')
+                ->get();
+
+            return $data;
+
+        }catch (\Exception $exception) {
+           throw new \Exception($exception->getMessage());
+        }
+    }
+
+    public function getEmployeeTotalLeaveByLeaveType($request)
+    {
+        try {
+            $user_id = $request->user_id;
+            $leave_type_id = $request->leave_type_id;
+            if ($user_id == '' || $user_id == null) {
+                throw new \Exception("Please Select Employee");
+            }
+            if ($leave_type_id == '' || $leave_type_id == null) {
+                throw new \Exception("Please Select Leave Type");
+            }
+            $check_user = User::where('id', $user_id)
+                ->where('deleted', User::DELETED_NO)
+                ->where('status', User::STATUS_ACTIVE)
+                ->first();
+            if(empty($check_user)) {
+                throw new \Exception("Invalid User");
+            }
+
+            $check_leave_type = SettingsLeaveType::where('id', $leave_type_id)
+                ->where('deleted', SettingsLeaveType::DELETED_NO)
+                ->where('status', SettingsLeaveType::STATUS_ACTIVE)
+                ->first();
+            if(empty($check_leave_type)) {
+                throw new \Exception("Invalid Leave Type");
+            }
+            $startOfYear = Carbon::now()->startOfYear()->format('Y-m-d');
+            $endOfYear = Carbon::now()->endOfYear()->format('Y-m-d');
+            $usedLeaves = UserLeave::where('user_id', $user_id)
+                ->where('settings_leave_type_id', $leave_type_id)
+                ->where('deleted', UserLeave::DELETED_NO)
+                ->where('status', UserLeave::STATUS_ACTIVE)
+                ->whereIn('leave_status',[UserLeave::LEAVE_STATUS_APPROVED, UserLeave::LEAVE_STATUS_PENDING])
+                ->whereDate('approve_start_date', '>=', $startOfYear)
+                ->whereDate('approve_end_date', '<=', $endOfYear)
+                ->sum('approved_number_of_days');
+
+            $data['remaining_leaves'] = $check_leave_type->annual_leave_days - $usedLeaves;
+
+            return $data;
+        }catch (\Exception $exception) {
+           throw new \Exception($exception->getMessage());
+        }
     }
 }

@@ -13,11 +13,11 @@ class UserLeave extends Model
     public $timestamps = false;
 
     const LEAVE_STATUS_PENDING = 0;
-    const LEAVE_STATUS_ACCEPTED = 1;
+    const LEAVE_STATUS_APPROVED = 1;
     const LEAVE_STATUS_REJECTED = 2;
     const LEAVE_STATUSES = [
         self::LEAVE_STATUS_PENDING => 'Pending',
-        self::LEAVE_STATUS_ACCEPTED => 'Accepted',
+        self::LEAVE_STATUS_APPROVED => 'Approved',
         self::LEAVE_STATUS_REJECTED => 'Rejected',
     ];
 
@@ -62,4 +62,29 @@ class UserLeave extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'leave_status_label',
+    ];
+
+    public function getLeaveStatusLabelAttribute()
+    {
+        return self::LEAVE_STATUSES[$this->leave_status] ?? self::LEAVE_STATUSES[0];
+    }
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function settingsLeaveType()
+    {
+        return $this->belongsTo(SettingsLeaveType::class, 'settings_leave_type_id');
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'accepted_by');
+    }
 }

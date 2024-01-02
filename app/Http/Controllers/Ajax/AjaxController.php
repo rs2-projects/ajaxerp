@@ -40,4 +40,30 @@ class AjaxController extends BackendController
             return $this->returnAjaxError($exception->getMessage());
         }
     }
+
+    public function getLeaveTypeByUser(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getLeaveTypeByUser($request);
+
+            $view = $this->view('ajax._get_leave_type_by_user')->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
+
+    public function getEmployeeTotalLeaveByLeaveType(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getEmployeeTotalLeaveByLeaveType($request);
+
+
+            return $this->returnAjaxSuccess(['data' => $data]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
 }

@@ -13,7 +13,10 @@
 
 
                 <li class="submenu">
-                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details' || $activeMenu == 'hr.department' || $activeMenu == 'hr.designation' || $activeMenu == 'hr.salary-set' || $activeMenu == 'hr.salary-create') ? 'active' : '' }} noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details'
+                        || $activeMenu == 'hr.department' || $activeMenu == 'hr.designation'
+                        || $activeMenu == 'hr.salary-set' || $activeMenu == 'hr.salary-create'
+                        || $activeMenu == 'hr.user-leaves') ? 'active' : '' }} noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"> <span>Attendance</span> <span class="menu-arrow"></span></a>
@@ -26,7 +29,7 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="leave.html"> <span>Leaves</span></a>
+                            <a href="{{ route('hr.user-leaves') }}" class="{{ ($activeMenu == 'hr.user-leaves') ? 'active' : '' }}"> <span>Leaves</span></a>
                         </li>
                         <li>
                             <a href="{{ route('hr.employee') }}" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details') ? 'active' : '' }}"><span>Employee</span></a>

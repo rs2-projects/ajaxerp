@@ -81,3 +81,10 @@ if (!function_exists('getCurrencySymbol')) {
         return "₱";
     }
 }
+
+if (!function_exists('hasUserPermission')) {
+    function hasUserPermission(...$permissions)
+    {
+        return in_array(auth()->user()->type, $permissions);
+    }
+}

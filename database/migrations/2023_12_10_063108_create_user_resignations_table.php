@@ -19,7 +19,11 @@ return new class extends Migration
             $table->text('reason');
             $table->text('remarks')->nullable();
             $table->unsignedTinyInteger('resignation_status')->default(0)->comment('0: Pending, 1: Approved, 2: Rejected');
-
+            $table->timestamp('approved_at')->nullable();
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->timestamp('rejected_at')->nullable();
+            $table->unsignedBigInteger('rejected_by')->nullable();
+            $table->text('reject_reason')->nullable();
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
             //define relationships
