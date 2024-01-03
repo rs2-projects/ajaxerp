@@ -1,5 +1,5 @@
 <!-- Add Leave Modal -->
-<div class="modal custom-modal fade" id="edit_user_leave_modal" role="dialog">
+<div class="modal custom-modal fade" id="reject_user_leave_modal" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header erp-modal-header">
@@ -8,7 +8,7 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body" id="edit_user_leave_modal_body">
+            <div class="modal-body" id="reject_user_leave_modal_body">
 
             </div>
         </div>

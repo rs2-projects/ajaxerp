@@ -4,11 +4,13 @@ use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Hr\ContractorConroller;
 use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\SalarySetController;
+use App\Http\Controllers\Hr\UserTerminationController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Settings\LeaveTypeSettingsController;
 use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
 use App\Http\Controllers\Settings\SalaryTypeSettingsController;
+use App\Http\Controllers\Settings\TerminationTypeSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -161,6 +164,17 @@ Route::group(['middleware' => 'auth'], function () {
         });
         // late penalty settings end
 
+        // Termination Type settings start
+        Route::group(['prefix' => 'termination-type'], function () {
+            Route::get('/', [TerminationTypeSettingsController::class, 'index'])->name('settings.termination-type');
+            Route::post('/filtered', [TerminationTypeSettingsController::class, 'indexFiltered'])->name('settings.termination-type.filtered');
+            Route::post('/create', [TerminationTypeSettingsController::class, 'store'])->name('settings.termination-type.store');
+            Route::get('/{id}/edit', [TerminationTypeSettingsController::class, 'edit'])->name('settings.termination-type.edit');
+            Route::post('/{id}/update', [TerminationTypeSettingsController::class, 'update'])->name('settings.termination-type.update');
+            Route::get('/{id}/delete', [TerminationTypeSettingsController::class, 'delete'])->name('settings.termination-type.delete');
+            Route::get('/{id}/change-status/{status}', [TerminationTypeSettingsController::class, 'statusUpdate'])->name('settings.termination-type.change-status');
+        });
+
 
     });
     //setting route end
@@ -240,8 +254,36 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [UserLeavesController::class, 'update'])->name('hr.user-leaves.update');
             Route::get('/{id}/delete', [UserLeavesController::class, 'delete'])->name('hr.user-leaves.delete');
             Route::get('/{id}/change-status/{status}', [UserLeavesController::class, 'statusUpdate'])->name('hr.user-leaves.change-status');
+            Route::get('/{id}/status-approve',[UserLeavesController::class, 'statusApprove'])->name('hr.user-leaves.status-approve');
+            Route::post('/{id}/status-approve',[UserLeavesController::class, 'statusApproveUpdate'])->name('hr.user-leaves.status-approve');
+            Route::get('/{id}/status-reject',[UserLeavesController::class, 'statusReject'])->name('hr.user-leaves.status-reject');
+            Route::post('/{id}/status-reject',[UserLeavesController::class, 'statusRejectUpdate'])->name('hr.user-leaves.status-reject');
         });
         // User Leaves route end
+
+        // User Termination route start
+        Route::group(['prefix' => 'user-termination'], function () {
+            Route::get('/', [UserTerminationController::class, 'index'])->name('hr.user-termination');
+            Route::post('/filtered', [UserTerminationController::class, 'indexFiltered'])->name('hr.user-termination.filtered');
+            Route::get('/create', [UserTerminationController::class, 'create'])->name('hr.user-termination.create');
+            Route::post('/create', [UserTerminationController::class, 'store'])->name('hr.user-termination.store');
+            Route::get('/{id}/edit', [UserTerminationController::class, 'edit'])->name('hr.user-termination.edit');
+            Route::post('/{id}/update', [UserTerminationController::class, 'update'])->name('hr.user-termination.update');
+            Route::get('/{id}/delete', [UserTerminationController::class, 'delete'])->name('hr.user-termination.delete');
+        });
+        // User Termination route end
+
+        // User Contractors Route Start
+        Route::group(['prefix' => 'user-contractor'], function () {
+            Route::get('/', [ContractorConroller::class, 'index'])->name('hr.user-contractor');
+            Route::post('/filtered', [ContractorConroller::class, 'indexFiltered'])->name('hr.user-contractor.filtered');
+            Route::get('/create', [ContractorConroller::class, 'create'])->name('hr.user-contractor.create');
+            Route::post('/create', [ContractorConroller::class, 'store'])->name('hr.user-contractor.store');
+            Route::get('/{id}/edit', [ContractorConroller::class, 'edit'])->name('hr.user-contractor.edit');
+            Route::post('/{id}/update', [ContractorConroller::class, 'update'])->name('hr.user-contractor.update');
+            Route::get('/{id}/delete', [ContractorConroller::class, 'delete'])->name('hr.user-contractor.delete');
+        });
+
 
         // common ajax route start
         Route::group(['prefix' => 'ajax'], function () {
@@ -250,6 +292,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
             Route::get('get-leave-type-by-user',[AjaxController::class, 'getLeaveTypeByUser'])->name('ajax.get-leave-type-by-user');
             Route::get('get-employee-total-leave-by-leave-type',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveType'])->name('ajax.get-user-total-leave-by-leave-type');
+            Route::get('get-employee-total-leave-by-leave-type-edit',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveTypeEdit'])->name('ajax.get-user-total-leave-by-leave-type-edit');
         });
         // common ajax route end
 

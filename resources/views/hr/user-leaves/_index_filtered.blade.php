@@ -36,7 +36,7 @@
 
             </td>
             <td class="erp-tbody-td text-center">
-                <h4 class="text-center d-table-title">{{ $userLeave->reason??'N/A' }}</h4>
+                <h4 class="text-center d-table-title">{{ ($userLeave->leave_status == \App\Models\UserLeave::LEAVE_STATUS_REJECTED) ? $userLeave->reject_reason :  $userLeave->reason}}</h4>
 
             </td>
             <td class="erp-tbody-td text-center">
@@ -58,8 +58,12 @@
                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
 
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Details</a>
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                            @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Approve</a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Reject</a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                            @endif
 
                         </div>
                     </div>

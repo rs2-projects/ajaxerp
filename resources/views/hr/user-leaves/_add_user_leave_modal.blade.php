@@ -74,7 +74,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Add Leave Request</button>
+                                        <button class=" erp-search-btn text-center" type="submit">Submit</button>
                                     </div>
                                 </div>
                             </div>

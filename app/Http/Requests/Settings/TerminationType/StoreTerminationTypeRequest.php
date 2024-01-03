@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Hr\UserLeaves;
+namespace App\Http\Requests\Settings\TerminationType;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserLeavesRequest extends FormRequest
+class StoreTerminationTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,7 @@ class UpdateUserLeavesRequest extends FormRequest
     public function rules(): array
     {
         return [
-//            'user_id' => 'required',
-            'settings_leave_type_id' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'number_of_days' => 'required|min:1|numeric',
+            'name' => 'required|string|max:255',
         ];
     }
 }

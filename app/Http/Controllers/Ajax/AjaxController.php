@@ -66,4 +66,15 @@ class AjaxController extends BackendController
             return $this->returnAjaxException($exception);
         }
     }
+    public function getEmployeeTotalLeaveByLeaveTypeEdit(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getEmployeeTotalLeaveByLeaveTypeEdit($request);
+
+
+            return $this->returnAjaxSuccess(['data' => $data]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
 }

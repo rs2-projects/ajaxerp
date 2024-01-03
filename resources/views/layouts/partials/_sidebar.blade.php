@@ -35,17 +35,20 @@
                             <a href="{{ route('hr.employee') }}" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details') ? 'active' : '' }}"><span>Employee</span></a>
                         </li>
                         <li>
+                            <a href="{{ route('hr.user-contractor') }}" class="{{ ($activeMenu == 'hr.user-contractor') ? 'active' : '' }}"><span>Contractors</span></a>
+                        </li>
+                        <li>
                             <a href="{{ route('hr.salary-set') }}" class="{{ ($activeMenu == 'hr.salary-set' || $activeMenu == 'hr.salary-set.create') ? 'active' : '' }}"><span>Salary Set</span></a>
                         </li>
                         <li>
                             <a href="notice.html"><span>Notice</span></a>
                         </li>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation' || $activeMenu == 'hr.user-termination')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
                             <ul>
                                 <li><a href="{{ route('hr.department') }}" class="{{ ($activeMenu == 'hr.department')?'active':'' }}"><span>Department</span></a></li>
                                 <li><a href="{{ route('hr.designation') }}" class="{{ ($activeMenu == 'hr.designation')? 'active' : ''}}"><span>Designation</span></a></li>
-
+                                <li><a href="{{ route('hr.user-termination') }}" class="{{ ($activeMenu == 'hr.user-termination')? 'active' : ''}}"><span>Terminated Employee</span></a></li>
                                 <li class="submenu">
                                     <a href="javascript:void(0);"> <span> Resignation</span> <span class="menu-arrow"></span></a>
                                     <ul>
@@ -53,14 +56,14 @@
                                         <li><a href="resignation-list.html">Resignation List</a></li>
                                     </ul>
                                 </li>
-                                <li class="submenu">
+                                {{--<li class="submenu">
                                     <a href="javascript:void(0);"> <span> Termination</span> <span class="menu-arrow"></span></a>
                                     <ul>
                                         <li><a href="termination-notice.html">Termination Notice</a></li>
                                         <li><a href="terminated-employee.html">Terminated Employee</a></li>
                                         <li><a href="termination-tyoe">Termination Type</a></li>
                                     </ul>
-                                </li>
+                                </li>--}}
                                 <li class="submenu">
                                     <a href="javascript:void(0);"> <span> Promotion</span> <span class="menu-arrow"></span></a>
                                     <ul>

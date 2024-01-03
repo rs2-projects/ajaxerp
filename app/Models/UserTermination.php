@@ -53,4 +53,14 @@ class UserTermination extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function settingsTerminationType()
+    {
+        return $this->belongsTo(SettingsTerminationType::class, 'settings_termination_type_id');
+    }
 }

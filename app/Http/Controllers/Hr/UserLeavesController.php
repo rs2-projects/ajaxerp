@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Hr;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Hr\UserLeaves\ApproveUserLeavesRequest;
 use App\Http\Requests\Hr\UserLeaves\StoreUserLeavesRequest;
+use App\Http\Requests\Hr\UserLeaves\UpdateUserLeavesRequest;
 use App\Services\Hr\UserLeavesService;
 use Illuminate\Http\Request;
 
@@ -44,4 +46,85 @@ class UserLeavesController extends BackendController
         return $this->returnAjaxSuccess([], 'Leave has been created successfully.');
     }
 
+    public function edit($id, UserLeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->edit($id);
+            $view = $this->view('hr.user-leaves._edit_data')->with($data)->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
+
+    public function update($id, UpdateUserLeavesRequest $request, UserLeavesService $leavesService)
+    {
+        try {
+            $leavesService->update($id, $request);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been updated successfully.');
+    }
+
+    public function delete($id, UserLeavesService $leavesService)
+    {
+        try {
+            $leavesService->delete($id);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been deleted successfully.');
+    }
+
+    public function statusApprove($id, UserLeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->statusApprove($id);
+            $view = $this->view('hr.user-leaves._approve_data')->with($data)->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+    }
+
+    public function statusApproveUpdate($id, ApproveUserLeavesRequest $request, UserLeavesService $leavesService)
+    {
+        try {
+            $leavesService->statusApproveUpdate($id, $request);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been approved successfully.');
+    }
+
+    public function statusReject($id, UserLeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->statusReject($id);
+            $view = $this->view('hr.user-leaves._reject_data')->with($data)->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+    }
+
+    public function statusRejectUpdate($id, Request $request, UserLeavesService $leavesService)
+    {
+        try {
+            $leavesService->statusRejectUpdate($id, $request);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been rejected successfully.');
+    }
 }

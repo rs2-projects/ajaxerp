@@ -28,6 +28,9 @@
                 <li>
                     <a href="{{ route('settings.geo-location') }}" class="{{ ($activeMenu == 'settings.geo-location')?'active':'' }}"><i class="la la-globe"></i> <span>GEO Location</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('settings.termination-type') }}" class="{{ ($activeMenu == 'settings.termination-type')?'active':'' }}"><i class="la la-globe"></i> <span>Termination Type</span></a>
+                </li>
                 <li class="menu-title">
                     <span>Payroll</span>
                 </li>
