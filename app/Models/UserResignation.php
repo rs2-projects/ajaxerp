@@ -56,4 +56,17 @@ class UserResignation extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    protected $appends = [
+        'resignation_status_text',
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function getResignationStatusTextAttribute()
+    {
+        return self::RESIGNATION_STATUSES[$this->resignation_status];
+    }
 }

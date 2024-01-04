@@ -21,10 +21,11 @@ class UserTerminationService
             ->orderBy('name', 'asc')
             ->get();
         $data['employees'] = User::where('deleted', User::DELETED_NO)
-            ->where(function ($q) {
-                $q->where('terminated', User::TERMINATED_NO)
-                    ->orWhere('terminate_date', '>', Carbon::now());
-            })
+//            ->where(function ($q) {
+//                $q->where('terminated', User::TERMINATED_NO)
+//                    ->orWhere('terminate_date', '>', Carbon::now());
+//            })
+            ->where('terminated', User::TERMINATED_NO)
             ->where(function ($q) {
                 $q->where('resigned', User::RESIGNED_NO)
                     ->orWhere('resign_date', '>', Carbon::now());
@@ -60,8 +61,8 @@ class UserTerminationService
             $userTermination = new UserTermination();
             $userTermination->user_id = $request->user_id;
             $userTermination->settings_termination_type_id = $request->settings_termination_type_id;
-            $userTermination->notice_date = $request->notice_date;
-            $userTermination->termination_date = Carbon::now();
+            $userTermination->notice_date = Carbon::now();
+            $userTermination->termination_date = $request->termination_date;
             $userTermination->reason = $request->reason;
             $userTermination->termination_status = UserTermination::TERMINATION_STATUS_APPROVED;
             $userTermination->created_at = Carbon::now();
@@ -71,7 +72,7 @@ class UserTerminationService
             $userTermination->save();
 
             $chek_user->terminated = User::TERMINATED_YES;
-            $chek_user->terminate_date = Carbon::now();
+            $chek_user->terminate_date = $request->termination_date;
             $chek_user->updated_at = Carbon::now();
             $chek_user->updated_by = auth()->user()->id;
             $chek_user->save();
@@ -108,12 +109,23 @@ class UserTerminationService
             if (!$userTermination) {
                 throw new \Exception("Data not found");
             }
+            $chek_user = User::where('id', $userTermination->user_id)
+                ->where('deleted', User::DELETED_NO)
+                ->first();
+            if (!$chek_user) {
+                throw new \Exception("User not found");
+            }
             $userTermination->settings_termination_type_id = $request->settings_termination_type_id;
-            $userTermination->notice_date = $request->notice_date;
+            $userTermination->termination_date = $request->termination_date;
             $userTermination->reason = $request->reason;
             $userTermination->updated_at = Carbon::now();
             $userTermination->updated_by = auth()->user()->id;
             $userTermination->save();
+
+            $chek_user->terminate_date = $request->termination_date;
+            $chek_user->updated_at = Carbon::now();
+            $chek_user->updated_by = auth()->user()->id;
+            $chek_user->save();
 
         }catch (\Exception $exception) {
             DB::rollBack();

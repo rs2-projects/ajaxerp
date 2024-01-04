@@ -2,6 +2,7 @@
 
 namespace App\Services\Hr;
 
+use App\Models\Contractor;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\User;
@@ -50,6 +51,11 @@ class EmployeeService
             ->orderBy('name', 'asc')
             ->get();
 
+        $data['contractors'] = Contractor::where('deleted', Contractor::DELETED_NO)
+            ->where('status', Contractor::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->get();
+
         return $data;
 
     }
@@ -72,6 +78,13 @@ class EmployeeService
             if ($check_phone){
                 throw new \Exception("Phone already exists");
             }
+
+            if(isset($request->is_contracted)){
+                if($request->contractor_id == null || $request->contractor_id == ''){
+                    throw new \Exception("Contractor is required");
+                }
+            }
+
             $nid_image_path = null;
             if ($request->hasFile('nid_image')) {
                 $imageUploadService = new ImageUploadService();
@@ -96,6 +109,8 @@ class EmployeeService
             $user->joining_date = $request->joining_date;
             $user->designation_id = $request->designation_id;
             $user->department_id = $request->department_id;
+            $user->is_contracted = $request->is_contracted??User::CONTRACTED_NO;
+            $user->contractor_id = $request->contractor_id??null;
             $user->password = bcrypt($request->password);
             $user->nid_no = $request->nid_no??null;
             $user->nid_image = $nid_image_path??null;
@@ -199,6 +214,11 @@ class EmployeeService
             throw new \Exception("Employee not found!");
         }
 
+        $data['contractors'] = Contractor::where('deleted', Contractor::DELETED_NO)
+            ->where('status', Contractor::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->get();
+
         return $data;
     }
 
@@ -230,6 +250,15 @@ class EmployeeService
                 throw new \Exception("Phone already exists");
             }
 
+            if(isset($request->is_contracted)){
+                if($request->contractor_id == null || $request->contractor_id == ''){
+                    throw new \Exception("Contractor is required");
+                }
+                $contractorId = $request->contractor_id;
+            }else{
+                $contractorId = null;
+            }
+
             $nid_image_path = $user->nid_image;
             if ($request->hasFile('nid_image')) {
                 $imageUploadService = new ImageUploadService();
@@ -251,6 +280,8 @@ class EmployeeService
             $user->joining_date = $request->joining_date;
             $user->designation_id = $request->designation_id;
             $user->department_id = $request->department_id;
+            $user->is_contracted = $request->is_contracted??User::CONTRACTED_NO;
+            $user->contractor_id = $contractorId??null;
             $user->nid_no = $request->nid_no ?? null;
             $user->nid_image = $nid_image_path ?? null;
             $user->passport_no = $request->passport_no ?? null;

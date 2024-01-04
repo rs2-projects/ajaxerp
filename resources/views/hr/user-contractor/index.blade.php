@@ -44,6 +44,35 @@
 
     </div>
     <!--End::row-1 -->
+
+    <div id="emergencyContactWrap" style="display: none;">
+        <div class="erp-emergency-child-contact-wrap flex-wrap flex-48">
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Name </label>
+                    <input class="form-control " name="contact_name[]" required type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Email </label>
+                    <input class="form-control " name="contact_email[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Phone </label>
+                    <input class="form-control " name="contact_phone[]" type="text" >
+                </div>
+            </div>
+            <div class="erp-emergency-contact-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Relationship </label>
+                    <input class="form-control " name="contact_relation[]" required type="text" >
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -71,7 +100,7 @@
         $(document).ready(function(){
             getData();
             initializeDatepicker();
-            $("#userTerminationStoreForm").on('submit', function (e) {
+            $("#userContractorStoreForm").on('submit', function (e) {
                 initializeSelect();
                 var self = this;
                 e.preventDefault();
@@ -81,7 +110,7 @@
 
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
-                        $("#add_user_termination_modal").modal('hide');
+                        $("#add_user_contractor_modal").modal('hide');
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         getData();
@@ -91,7 +120,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#userTerminationUpdateForm", function(e) {
+            $(document).on("submit", "#userContractorUpdateForm", function(e) {
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
@@ -99,7 +128,7 @@
 
                 formPost(url, formData, function (res){
                     if(res.status == 200){
-                        $("#edit_user_termination_modal").modal('hide');
+                        $("#edit_user_contractor_modal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -132,14 +161,13 @@
         }
 
         function editItem(id){
-            let url = "{{route('hr.user-termination.edit', ':id')}}";
+            let url = "{{route('hr.user-contractor.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
-                    $("#edit_user_termination_modal_body").html(response.view);
-                    $("#edit_user_termination_modal").modal('show');
+                    $("#edit_user_contractor_modal_body").html(response.view);
+                    $("#edit_user_contractor_modal").modal('show');
                     initializeSelect();
-                    initializeDatepicker();
                 } else {
                     toastr.error(response.message);
                 }
@@ -151,6 +179,17 @@
                 minimumResultsForSearch: -1,
                 width: '100%'
             });
+        }
+
+        function addEmergencyContact(){
+            var item = $('#emergencyContactWrap').html();
+
+            $('#emergencyContactWrapMain').append(item);
+        }
+        function addEmergencyContactEdit(){
+            var item = $('#emergencyContactWrap').html();
+
+            $('#emergencyContactWrapMainEdit').append(item);
         }
 
     </script>

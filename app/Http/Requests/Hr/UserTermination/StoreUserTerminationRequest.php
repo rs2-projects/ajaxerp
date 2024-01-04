@@ -24,7 +24,7 @@ class StoreUserTerminationRequest extends FormRequest
         return [
             'user_id' => 'required',
             'settings_termination_type_id' => 'required',
-            'notice_date' => 'required',
+            'termination_date' => 'required',
         ];
     }
 }

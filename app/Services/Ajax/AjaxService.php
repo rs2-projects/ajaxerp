@@ -85,6 +85,15 @@ class AjaxService
             ->where('status', User::STATUS_ACTIVE)
             ->where('role', User::ROLE_EMPLOYEE)
             ->where('type', User::TYPE_EMPLOYEE)
+            ->where('is_contracted', User::CONTRACTED_NO)
+            ->where(function ($q) {
+                $q->where('terminated', User::TERMINATED_NO)
+                    ->orWhere('terminate_date', '>', Carbon::now());
+            })
+            ->where(function ($q) {
+                $q->where('resigned', User::RESIGNED_NO)
+                    ->orWhere('resign_date', '>', Carbon::now());
+            })
             ->where(function ($q) use ($keyword) {
                 if (!empty($keyword)) {
                     $q->where('first_name', 'like', '%' . $keyword . '%')

@@ -11,6 +11,12 @@
                     <a href="index.html" class="{{ ($activeMenu == 'dashboard')?'active':'' }}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
                 </li>
 
+                <li>
+                    <a href="{{ route('user.resignation') }}" class="{{ ($activeMenu == 'user.resignation')?'active':'' }}"><i class="la la-dashboard"></i> <span>Resignation</span></a>
+                </li>
+                <li>
+                    <a href="{{ route('user.leaves') }}" class="{{ ($activeMenu == 'user.leaves')?'active':'' }}"><i class="la la-dashboard"></i> <span>Leaves</span></a>
+                </li>
 
                 <li class="submenu">
                     <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details'
@@ -44,18 +50,19 @@
                             <a href="notice.html"><span>Notice</span></a>
                         </li>
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation' || $activeMenu == 'hr.user-termination')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation' || $activeMenu == 'hr.user-termination' || $activeMenu == 'hr.user-resignation')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
                             <ul>
                                 <li><a href="{{ route('hr.department') }}" class="{{ ($activeMenu == 'hr.department')?'active':'' }}"><span>Department</span></a></li>
                                 <li><a href="{{ route('hr.designation') }}" class="{{ ($activeMenu == 'hr.designation')? 'active' : ''}}"><span>Designation</span></a></li>
                                 <li><a href="{{ route('hr.user-termination') }}" class="{{ ($activeMenu == 'hr.user-termination')? 'active' : ''}}"><span>Terminated Employee</span></a></li>
-                                <li class="submenu">
-                                    <a href="javascript:void(0);"> <span> Resignation</span> <span class="menu-arrow"></span></a>
-                                    <ul>
-                                        <li><a href="resignation-notice.html">Resignation Notice</a></li>
-                                        <li><a href="resignation-list.html">Resignation List</a></li>
-                                    </ul>
-                                </li>
+                                <li><a href="{{ route('hr.user-resignation') }}" class="{{ ($activeMenu == 'hr.user-resignation')? 'active' : ''}}"><span>Resignation List</span></a></li>
+{{--                                <li class="submenu">--}}
+{{--                                    <a href="javascript:void(0);"> <span> Resignation</span> <span class="menu-arrow"></span></a>--}}
+{{--                                    <ul>--}}
+{{--                                        <li><a href="resignation-notice.html">Resignation Notice</a></li>--}}
+{{--                                        <li><a href="#">Resignation List</a></li>--}}
+{{--                                    </ul>--}}
+{{--                                </li>--}}
                                 {{--<li class="submenu">
                                     <a href="javascript:void(0);"> <span> Termination</span> <span class="menu-arrow"></span></a>
                                     <ul>

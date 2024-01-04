@@ -10,6 +10,7 @@ use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\SalarySetController;
+use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
 use App\Http\Controllers\Settings\SalaryTypeSettingsController;
 use App\Http\Controllers\Settings\TerminationTypeSettingsController;
+use App\Http\Controllers\User\LeavesController;
+use App\Http\Controllers\User\ResignationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -261,6 +264,21 @@ Route::group(['middleware' => 'auth'], function () {
         });
         // User Leaves route end
 
+        // User Resignation Route Start
+        Route::group(['prefix' => 'user-resignation'], function () {
+            Route::get('/', [UserResignationController::class, 'index'])->name('hr.user-resignation');
+            Route::post('/filtered', [UserResignationController::class, 'indexFiltered'])->name('hr.user-resignation.filtered');
+            Route::get('/create', [UserResignationController::class, 'create'])->name('hr.user-resignation.create');
+            Route::post('/create', [UserResignationController::class, 'store'])->name('hr.user-resignation.store');
+            Route::get('/{id}/edit', [UserResignationController::class, 'edit'])->name('hr.user-resignation.edit');
+            Route::post('/{id}/update', [UserResignationController::class, 'update'])->name('hr.user-resignation.update');
+            Route::get('/{id}/delete', [UserResignationController::class, 'delete'])->name('hr.user-resignation.delete');
+            Route::get('/{id}/change-status/{status}', [UserResignationController::class, 'statusUpdate'])->name('hr.user-resignation.change-status');
+            Route::get('/{id}/status-reject',[UserResignationController::class, 'statusReject'])->name('hr.user-resignation.status-reject');
+            Route::post('/{id}/status-reject',[UserResignationController::class, 'statusRejectUpdate'])->name('hr.user-resignation.status-reject');
+        });
+        // User Resignation Route End
+
         // User Termination route start
         Route::group(['prefix' => 'user-termination'], function () {
             Route::get('/', [UserTerminationController::class, 'index'])->name('hr.user-termination');
@@ -283,6 +301,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [ContractorConroller::class, 'update'])->name('hr.user-contractor.update');
             Route::get('/{id}/delete', [ContractorConroller::class, 'delete'])->name('hr.user-contractor.delete');
         });
+        // User Contractors Route End
 
 
         // common ajax route start
@@ -298,4 +317,26 @@ Route::group(['middleware' => 'auth'], function () {
 
     });
     // HR route end
+
+    // User Resignation Route Start
+    Route::group(['prefix' => 'user-resignation'], function () {
+        Route::get('/', [ResignationController::class, 'index'])->name('user.resignation');
+        Route::post('/filtered', [ResignationController::class, 'indexFiltered'])->name('user.resignation.filtered');
+        Route::get('/create', [ResignationController::class, 'create'])->name('user.resignation.create');
+        Route::post('/create', [ResignationController::class, 'store'])->name('user.resignation.store');
+        Route::get('/{id}/edit', [ResignationController::class, 'edit'])->name('user.resignation.edit');
+        Route::post('/{id}/update', [ResignationController::class, 'update'])->name('user.resignation.update');
+        Route::get('/{id}/delete', [ResignationController::class, 'delete'])->name('user.resignation.delete');
+        Route::get('/{id}/change-status/{status}', [ResignationController::class, 'statusUpdate'])->name('user.resignation.change-status');
+    });
+    // user leaves Route Start
+    Route::group(['prefix' => 'user-leaves'], function () {
+        Route::get('/', [LeavesController::class, 'index'])->name('user.leaves');
+        Route::post('/filtered', [LeavesController::class, 'indexFiltered'])->name('user.leaves.filtered');
+        Route::get('/create', [LeavesController::class, 'create'])->name('user.leaves.create');
+        Route::post('/create', [LeavesController::class, 'store'])->name('user.leaves.store');
+        Route::get('/{id}/edit', [LeavesController::class, 'edit'])->name('user.leaves.edit');
+        Route::post('/{id}/update', [LeavesController::class, 'update'])->name('user.leaves.update');
+        Route::get('/{id}/delete', [LeavesController::class, 'delete'])->name('user.leaves.delete');
+    });
 });

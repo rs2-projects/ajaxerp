@@ -2,91 +2,31 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#add_user_leave"><i class="fa-solid fa-plus"></i> Add Leave</a>
+        @if(!$check_resignation)
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#add_user_resignation_modal"><i class="fa-solid fa-plus"></i> Add Resignation</a>
+
+                </div>
             </div>
-        </div>
+        @endif
+
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
-                    <div class="erp-leave-tab-wrapper">
-                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center" id="myTab" role="tablist">
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link active erp-nav-link" onclick="getData()" id="all-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="pending-leave-tab" data-bs-toggle="tab" data-bs-target="#pending-leave" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="approved-leave-tab" data-bs-toggle="tab" data-bs-target="#approved-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="rejected-leave-tab" data-bs-toggle="tab" data-bs-target="#rejected-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Rejected</button>
-                            </li>
-                        </ul>
+                    <div class="my-attendance-report-wrapper">
+                        <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
+                            <div class="erp-filter-box d-flex align-items-center justify-content-start flex-100">
 
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="all-leave" role="tabpanel" aria-labelledby="all-leave-tab">
-                                <div class="my-attendance-report-wrapper">
-                                    <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
-                                        <div class="erp-box-header">
-                                            <h4>All Leave History </h4>
-                                        </div>
-                                        <div class="erp-filter-box d-flex align-items-center justify-content-end">
-
-                                            <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end">
-                                                <div class="erp-filter-item">
-                                                    <h6 class="me-2">Search By: </h6>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class=" form-focus select-focus custom-form-focus">
-                                                        <select class="select floating select2-box">
-                                                            <option>Select Month</option>
-                                                            <option>January</option>
-                                                            <option>February</option>
-                                                            <option>March</option>
-                                                            <option>April</option>
-                                                            <option>May</option>
-                                                            <option>June</option>
-                                                            <option>July</option>
-                                                            <option>August</option>
-                                                            <option>September</option>
-                                                            <option>October</option>
-                                                            <option>November</option>
-                                                            <option>December</option>
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class=" form-focus select-focus custom-form-focus">
-                                                        <select class="select floating select2-box">
-                                                            <option>Select Year</option>
-                                                            <option>2023</option>
-                                                            <option>2022</option>
-                                                            <option>2021</option>
-                                                            <option>Last Year</option>
-                                                            <option>Last Two Years</option>
-
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class="erp-search-btn-wrap">
-                                                        <button class=" erp-search-btn">Search</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-100">
+                                    <div class="erp-filter-item flex-5">
+                                        <h6 class="me-2">Search By: </h6>
                                     </div>
 
-                                    <div class="big-table pt-4">
-                                        <div class="de-table-wrapper">
-                                            <div class="" id="ajax-data-load">
-
-                                            </div>
+                                    <div class="erp-filter-item flex-30">
+                                        <div class="search-box table-search position-relative">
+                                            <input class="form-control" type="text" placeholder=" Name, ID, Department, Designation">
+                                            <button class="btn position-absolute search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                                         </div>
                                     </div>
 
@@ -94,9 +34,14 @@
                             </div>
                         </div>
 
+                        <div class="big-table pt-4">
+                            <div class="de-table-wrapper" id="ajax-data-load">
+
+                            </div>
+                        </div>
+
+
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -107,10 +52,8 @@
 @endsection
 
 @section('modals')
-    @include('hr.user-leaves._add_user_leave_modal')
-    @include('hr.user-leaves._edit_user_leave_modal')
-    @include('hr.user-leaves._approve_user_leave_modal')
-    @include('hr.user-leaves._reject_user_leave_modal')
+    @include('user.resignation._add_user_resignation_modal')
+    @include('user.resignation._edit_user_resignation_modal')
 @endsection
 
 @section('css')
@@ -132,7 +75,6 @@
     <script>
         var filterData = {
             keyword_filtered: '',
-            leave_status : null,
         };
         $(document).ready(function(){
             getData();
@@ -147,7 +89,7 @@
                 filterData.keyword_filtered = $(this).val();
             });
 
-            $("#userLeavesStoreForm").on('submit', function (e) {
+            $("#userResignationStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(self)[0]);
@@ -155,11 +97,8 @@
                 var url = $(self).attr('action');
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
-                        $("#add_user_leave").modal('hide');
+                        $("#add_user_resignation_modal").modal('hide');
                         $(self)[0].reset();
-                        // user and leave tregger change
-                        $("#user_id").trigger('change');
-                        $("#settings_leave_type_id").trigger('change');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -168,7 +107,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#userLeaveUpdateForm", function(e) {
+            $(document).on("submit", "#userResignationUpdateForm", function(e) {
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
@@ -176,23 +115,7 @@
 
                 formPost(url, formData, function (res){
                     if(res.status == 200){
-                        $("#edit_user_leave_modal").modal('hide');
-                        showSuccessAlert('Success',res.message)
-                        getData();
-                    }else{
-                        showErrorAlert('Error',res.message)
-                    }
-                }, 'show_input_error');
-            });
-            $(document).on("submit", "#userLeaveApproveForm", function(e) {
-                e.preventDefault();
-                var formData = new FormData($(this)[0]);
-                $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
-
-                formPost(url, formData, function (res){
-                    if(res.status == 200){
-                        $("#approve_user_leave_modal").modal('hide');
+                        $("#edit_user_resignation_modal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -201,7 +124,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#userLeaveRejectForm", function(e) {
+            $(document).on("submit", "#userResignationRejectForm", function(e) {
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
@@ -209,7 +132,7 @@
 
                 formPost(url, formData, function (res){
                     if(res.status == 200){
-                        $("#reject_user_leave_modal").modal('hide');
+                        $("#reject_user_resignation_modal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -221,24 +144,8 @@
         });
 
         function getData(){
-            var activeTab = $('.nav-tabs .nav-link.active').attr('id');
-            switch (activeTab) {
-                case 'pending-leave-tab':
-                    filterData.leave_status = 0;
-                    break;
-                case 'approved-leave-tab':
-                    filterData.leave_status = 1;
-                    break;
-                case 'rejected-leave-tab':
-                    filterData.leave_status = 2;
-                    break;
-                default:
-                    // For the 'All' tab or any other case
-                    filterData.leave_status = null;
-                    break;
-            }
 
-            getPaginatedListData("{{ route('hr.user-leaves.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('user.resignation.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
@@ -246,25 +153,14 @@
         }
 
         function editItem(id){
-            let url = "{{route('hr.user-leaves.edit', ':id')}}";
+            let url = "{{route('user.resignation.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     console.log(response)
-                    $("#edit_user_leave_modal_body").html(response.view);
-                    $("#edit_user_leave_modal").modal('show');
+                    $("#edit_user_resignation_modal_body").html(response.view);
+                    $("#edit_user_resignation_modal").modal('show');
                     initializeDatepicker();
-                    leaveTypeSelect2();
-
-                    editLeaveTypeChnage($("#edit_settings_leave_type_id"));
-                    $('#edit_start_date').on('dp.change', function(e){
-                        console.log('1');
-                        updateNumberOfDaysEdit();
-                    });
-                    $('#edit_end_date').on('dp.change', function(e){
-                        console.log('2');
-                        updateNumberOfDaysEdit();
-                    });
                 } else {
                     toastr.error(response.message);
                 }
@@ -296,13 +192,13 @@
         }
 
         function rejectItem(id){
-            let url = "{{route('hr.user-leaves.status-reject', ':id')}}";
+            let url = "{{route('hr.user-resignation.status-reject', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     console.log(response)
-                    $("#reject_user_leave_modal_body").html(response.view);
-                    $("#reject_user_leave_modal").modal('show');
+                    $("#reject_user_resignation_modal_body").html(response.view);
+                    $("#reject_user_resignation_modal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }
@@ -333,7 +229,7 @@
 
         function updateNumberOfDays() {
 
-           let startDate = $('#start_date').val();//2024-01-02
+            let startDate = $('#start_date').val();//2024-01-02
             let endDate = $('#end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -362,7 +258,7 @@
         }
         function updateNumberOfDaysEdit() {
             console.log('3')
-           let startDate = $('#edit_start_date').val();//2024-01-02
+            let startDate = $('#edit_start_date').val();//2024-01-02
             let endDate = $('#edit_end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -392,7 +288,7 @@
 
         function updateNumberOfDaysApprove() {
             console.log('3')
-           let startDate = $('#approve_start_date').val();//2024-01-02
+            let startDate = $('#approve_start_date').val();//2024-01-02
             let endDate = $('#approve_end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -466,9 +362,7 @@
                     toastr.error(response.message);
                 }
             }, 'default');
-        }
-
-        function editLeaveTypeChnage(value){
+        }function editLeaveTypeChnage(value){
             console.log(value);
             let leave_type_id = $(value).val();
             let user_id = $("#edit_user_id").val();

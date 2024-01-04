@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Hr\UserTermination;
+namespace App\Http\Requests\User\Leaves;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserTerminationRequest extends FormRequest
+class UpdateLeavesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,8 +22,7 @@ class UpdateUserTerminationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'settings_termination_type_id' => 'required',
-            'termination_date' => 'required',
+            //
         ];
     }
 }

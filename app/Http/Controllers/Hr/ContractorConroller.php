@@ -16,11 +16,12 @@ class ContractorConroller extends BackendController
         $this->addBreadcrumbs('Contractor');
     }
 
-    public function index()
+    public function index(ContractorService $contractorService)
     {
         $this->setPageTitle("Contractor");
         $this->setActiveMenu('hr.user-contractor');
-        return  $this->view('hr.user-contractor.index');
+        $data = $contractorService->getIndexData();
+        return  $this->view('hr.user-contractor.index')->with($data);
     }
 
     public function indexFiltered(Request $request, ContractorService $contractorService)
@@ -33,6 +34,7 @@ class ContractorConroller extends BackendController
 
     public function store(StoreContractorRequest $request, ContractorService $contractorService)
     {
+
         try {
             $contractorService->store($request);
         }catch (\Exception $exception) {

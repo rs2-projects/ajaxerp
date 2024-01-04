@@ -2,9 +2,9 @@
     @csrf
     <div class="erp-modal-body-content">
         <div class="input-block mb-2">
-            <label class="col-form-label">Notice Date <span class="text-danger">*</span></label>
+            <label class="col-form-label">Termination Date <span class="text-danger">*</span></label>
             <div class="cal-icon">
-                <input type="text" name="notice_date" value="{{ $item->notice_date }}" required class="form-control datetimepicker">
+                <input type="text" name="termination_date" value="{{ $item->termination_date }}" required class="form-control datetimepicker">
             </div>
         </div>
         <div class="input-block erp-step-input-block mb-2">

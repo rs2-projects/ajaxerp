@@ -8,7 +8,7 @@
             <th class="erp-th text-center">Designation </th>
             <th class="erp-th text-center">Termination Type </th>
             <th class="erp-th text-center">Reason </th>
-            <th class="erp-th text-center">Notice Date </th>
+            <th class="erp-th text-center">Termination Date </th>
 
             <th class="text-end erp-th">Action</th>
         </tr>
@@ -47,7 +47,7 @@
 
                 </td>
                 <td class="erp-tbody-td text-center">
-                    <h4 class="text-center d-table-title">{{ getFormattedDate($userTermination->notice_date,'d M, Y') }}</h4>
+                    <h4 class="text-center d-table-title">{{ getFormattedDate($userTermination->termination_date,'d M, Y') }}</h4>
                 </td>
 
 

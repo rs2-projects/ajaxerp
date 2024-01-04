@@ -11,7 +11,7 @@ class UpdateContractorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateContractorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'phone' => 'required',
+            'email' => 'required',
+            'contract_value' => 'required|numeric|min:0',
+            'company_name' => 'required',
         ];
     }
 }

@@ -82,6 +82,27 @@
                                             </div>
                                         </div>
 
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <div class="checkbox">
+                                                    <label class="col-form-label"><input type="checkbox" onclick="isContracted()" value="1" name="is_contracted" {{ ($employee->is_contracted == \App\Models\User::CONTRACTED_YES) ? 'checked' : '' }} class="me-1"> Is Contracted?  </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48 is-contracted" style="display: {{ ($employee->is_contracted == \App\Models\User::CONTRACTED_NO) ? 'none' : ''  }}">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">Contractor <span class="text-danger">*</span></label>
+                                                <select class="select select-step" name="contractor_id" id="contractor_id"  required>
+                                                    <option value="">Select Contractor</option>
+                                                    @foreach($contractors as $key=>$contractor)
+                                                        <option value="{{ $contractor->id }}" {{ ($contractor->id == $employee->contractor_id) ? 'selected' : '' }}>{{ $contractor->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <span class="contractor_id_error ie-span"></span>
+
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </section>
 
@@ -559,6 +580,14 @@
             });
         }
 
+        function isContracted() {
+            if($('input[name="is_contracted"]').is(':checked')){
+                $('.is-contracted').show();
+            }else{
+                $('.is-contracted').hide();
+            }
+        }
+
     </script>
     <script>
         (function($) {
@@ -591,6 +620,8 @@
                             let joining_date = $('input[name="joining_date"]').val();
                             let department_id = $('select[name="department_id"]').val();
                             let designation_id = $('select[name="designation_id"]').val();
+                            let is_contracted = $('input[name="is_contracted"]').is(':checked');
+                            let contractor_id = $('select[name="contractor_id"]').val();
                             if (!email) {
                                 $("input[name='email']").addClass("is-invalid");
                                 $('.email_error').html('Email is required!').show();
@@ -653,6 +684,16 @@
                                 $('.designation_id_error').hide();
                             }
 
+                            if (is_contracted) {
+                                if (!contractor_id) {
+                                    $("select[name='contractor_id']").addClass("is-invalid");
+                                    $('.contractor_id_error').html('Contractor is required').show();
+                                    form_valid = false;
+                                } else {
+                                    $("select[name='contractor_id']").removeClass("is-invalid");
+                                    $('.contractor_id_error').hide();
+                                }
+                            }
 
                             return form_valid;
                         }

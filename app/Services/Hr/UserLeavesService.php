@@ -26,6 +26,14 @@ class UserLeavesService
             ->where('status', User::STATUS_ACTIVE)
             ->where('type', User::TYPE_EMPLOYEE)
             ->where('role', User::ROLE_EMPLOYEE)
+            ->where(function ($q) {
+                $q->where('terminated', User::TERMINATED_NO)
+                    ->orWhere('terminate_date', '>', Carbon::now());
+            })
+            ->where(function ($q) {
+                $q->where('resigned', User::RESIGNED_NO)
+                    ->orWhere('resign_date', '>', Carbon::now());
+            })
             ->get();
 
         return $data;

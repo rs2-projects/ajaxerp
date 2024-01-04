@@ -3,12 +3,12 @@
         <thead class="erp-thead">
         <tr class="erp-tr">
             <th class="erp-th">SL</th>
-            <th class="erp-th">Termination Employee </th>
-            <th class="erp-th text-center">Department </th>
-            <th class="erp-th text-center">Designation </th>
-            <th class="erp-th text-center">Termination Type </th>
-            <th class="erp-th text-center">Reason </th>
-            <th class="erp-th text-center">Notice Date </th>
+            <th class="erp-th">Name </th>
+            <th class="erp-th text-center">Email </th>
+            <th class="erp-th text-center">Phone </th>
+            <th class="erp-th text-center">Contract Value </th>
+            <th class="erp-th text-center">Phone 2 </th>
+            <th class="erp-th text-center">Address </th>
 
             <th class="text-end erp-th">Action</th>
         </tr>
@@ -17,7 +17,7 @@
         @foreach($userContractors as $userContractor)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
-                    <h4 class="d-table-title">{{ $userContractor->total() + $loop->iteration -1 }}</h4>
+                    <h4 class="d-table-title">{{ $userContractors->total() + $loop->iteration -1 }}</h4>
                 </td>
                 <td class="erp-tbody-td">
                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">

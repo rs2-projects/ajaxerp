@@ -107,10 +107,10 @@
 @endsection
 
 @section('modals')
-    @include('hr.user-leaves._add_user_leave_modal')
-    @include('hr.user-leaves._edit_user_leave_modal')
-    @include('hr.user-leaves._approve_user_leave_modal')
-    @include('hr.user-leaves._reject_user_leave_modal')
+    @include('user.leaves._add_user_leave_modal')
+{{--    @include('user.leaves._edit_user_leave_modal')--}}
+{{--    @include('user.leaves._approve_user_leave_modal')--}}
+{{--    @include('user.leaves._reject_user_leave_modal')--}}
 @endsection
 
 @section('css')
@@ -184,41 +184,6 @@
                     }
                 }, 'show_input_error');
             });
-            $(document).on("submit", "#userLeaveApproveForm", function(e) {
-                e.preventDefault();
-                var formData = new FormData($(this)[0]);
-                $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
-
-                formPost(url, formData, function (res){
-                    if(res.status == 200){
-                        $("#approve_user_leave_modal").modal('hide');
-                        showSuccessAlert('Success',res.message)
-                        getData();
-                    }else{
-                        showErrorAlert('Error',res.message)
-                    }
-                }, 'show_input_error');
-            });
-
-            $(document).on("submit", "#userLeaveRejectForm", function(e) {
-                e.preventDefault();
-                var formData = new FormData($(this)[0]);
-                $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
-
-                formPost(url, formData, function (res){
-                    if(res.status == 200){
-                        $("#reject_user_leave_modal").modal('hide');
-                        showSuccessAlert('Success',res.message)
-                        getData();
-                    }else{
-                        showErrorAlert('Error',res.message)
-                    }
-                }, 'show_input_error');
-            });
-
-        });
 
         function getData(){
             var activeTab = $('.nav-tabs .nav-link.active').attr('id');
@@ -238,7 +203,7 @@
                     break;
             }
 
-            getPaginatedListData("{{ route('hr.user-leaves.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('user.leaves.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
@@ -246,7 +211,7 @@
         }
 
         function editItem(id){
-            let url = "{{route('hr.user-leaves.edit', ':id')}}";
+            let url = "{{route('user.leaves.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
@@ -265,44 +230,6 @@
                         console.log('2');
                         updateNumberOfDaysEdit();
                     });
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
-        }
-        function approveItem(id){
-            let url = "{{route('hr.user-leaves.status-approve', ':id')}}";
-            url = url.replace(':id', id);
-            ajaxGet(url, {}, function (response) {
-                if (response.status == 200) {
-                    console.log(response)
-                    $("#approve_user_leave_modal_body").html(response.view);
-                    $("#approve_user_leave_modal").modal('show');
-                    initializeDatepicker();
-                    editLeaveTypeChnage($("#edit_settings_leave_type_id"));
-
-                    $('#approve_start_date').on('dp.change', function(e){
-                        console.log('1');
-                        updateNumberOfDaysApprove();
-                    });
-                    $('#approve_end_date').on('dp.change', function(e){
-                        console.log('2');
-                        updateNumberOfDaysApprove();
-                    });
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
-        }
-
-        function rejectItem(id){
-            let url = "{{route('hr.user-leaves.status-reject', ':id')}}";
-            url = url.replace(':id', id);
-            ajaxGet(url, {}, function (response) {
-                if (response.status == 200) {
-                    console.log(response)
-                    $("#reject_user_leave_modal_body").html(response.view);
-                    $("#reject_user_leave_modal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }
@@ -333,7 +260,7 @@
 
         function updateNumberOfDays() {
 
-           let startDate = $('#start_date').val();//2024-01-02
+            let startDate = $('#start_date').val();//2024-01-02
             let endDate = $('#end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -362,7 +289,7 @@
         }
         function updateNumberOfDaysEdit() {
             console.log('3')
-           let startDate = $('#edit_start_date').val();//2024-01-02
+            let startDate = $('#edit_start_date').val();//2024-01-02
             let endDate = $('#edit_end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -392,7 +319,7 @@
 
         function updateNumberOfDaysApprove() {
             console.log('3')
-           let startDate = $('#approve_start_date').val();//2024-01-02
+            let startDate = $('#approve_start_date').val();//2024-01-02
             let endDate = $('#approve_end_date').val();//2024-01-04
 
             if(!startDate || !endDate) {
@@ -418,23 +345,6 @@
             let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
             daysDifference += 1;
             $("#approve_number_of_days").val(daysDifference);
-        }
-
-        function employeeChange(value){
-
-            let user_id = $(value).val();
-            let url = "{{ route('ajax.get-leave-type-by-user') }}"
-
-            ajaxGet(url, {user_id: user_id}, function (response) {
-                if (response.status == 200) {
-                    $("#settings_leave_type_id").html(response.view);
-                } else {
-                    toastr.error(response.message);
-                    // trigger change leave type
-                    $("#settings_leave_type_id").html('<option value="">Select Leave Type</option>');
-                    $("#settings_leave_type_id").trigger('change');
-                }
-            }, 'default');
         }
 
         function LeaveTypeChnage(value){
@@ -467,7 +377,6 @@
                 }
             }, 'default');
         }
-
         function editLeaveTypeChnage(value){
             console.log(value);
             let leave_type_id = $(value).val();

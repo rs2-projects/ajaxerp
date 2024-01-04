@@ -80,6 +80,13 @@ class User extends Authenticatable
         self::TERMINATED_YES => 'Yes',
     ];
 
+    const CONTRACTED_NO = 0;
+    const CONTRACTED_YES = 1;
+    const CONTRACTEDS = [
+        self::CONTRACTED_NO => 'No',
+        self::CONTRACTED_YES => 'Yes',
+    ];
+
 
     protected $fillable = [
         'employee_id',
@@ -87,6 +94,8 @@ class User extends Authenticatable
         'role',
         'department_id',
         'designation_id',
+        'is_contracted',
+        'contractor_id',
         'first_name',
         'last_name',
         'email',
@@ -216,5 +225,10 @@ class User extends Authenticatable
     public function userExperienceInfo()
     {
         return $this->hasMany(UserExperienceInfo::class, 'user_id');
+    }
+
+    public function userContractor()
+    {
+        return $this->belongsTo(Contractor::class, 'contractor_id');
     }
 }

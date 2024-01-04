@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Hr\UserTermination;
+namespace App\Http\Requests\Hr\UserResignation;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserTerminationRequest extends FormRequest
+class StoreUserResigationRequst extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class UpdateUserTerminationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'settings_termination_type_id' => 'required',
-            'termination_date' => 'required',
+            'user_id' => 'required',
+            'notice_date' => 'required',
+            'resignation_date' => 'required',
         ];
     }
 }
