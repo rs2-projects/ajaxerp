@@ -157,8 +157,6 @@
                     if(res.status == 200){
                         $("#add_user_leave").modal('hide');
                         $(self)[0].reset();
-                        // user and leave tregger change
-                        $("#user_id").trigger('change');
                         $("#settings_leave_type_id").trigger('change');
                         showSuccessAlert('Success',res.message)
                         getData();
@@ -184,6 +182,7 @@
                     }
                 }, 'show_input_error');
             });
+        });
 
         function getData(){
             var activeTab = $('.nav-tabs .nav-link.active').attr('id');
@@ -349,7 +348,7 @@
 
         function LeaveTypeChnage(value){
             let leave_type_id = $(value).val();
-            let user_id = $("#user_id").val();
+            let user_id = "{{ auth()->user()->id }}"
             let url = "{{ route('ajax.get-user-total-leave-by-leave-type') }}"
 
             ajaxGet(url, {leave_type_id: leave_type_id,user_id:user_id}, function (response) {

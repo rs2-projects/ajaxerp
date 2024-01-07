@@ -23,6 +23,7 @@ use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
 use App\Http\Controllers\Settings\SalaryTypeSettingsController;
 use App\Http\Controllers\Settings\TerminationTypeSettingsController;
+use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\LeavesController;
 use App\Http\Controllers\User\ResignationController;
 use Illuminate\Support\Facades\Route;
@@ -338,5 +339,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [LeavesController::class, 'edit'])->name('user.leaves.edit');
         Route::post('/{id}/update', [LeavesController::class, 'update'])->name('user.leaves.update');
         Route::get('/{id}/delete', [LeavesController::class, 'delete'])->name('user.leaves.delete');
+    });
+    // user leaves Route End
+
+    // user attendance Route Start
+    Route::group(['prefix' => 'user-attendance'], function () {
+        Route::get('/', [AttendanceController::class, 'index'])->name('user.attendance');
+        Route::post('/filtered', [AttendanceController::class, 'indexFiltered'])->name('user.attendance.filtered');
+        Route::get('/create', [AttendanceController::class, 'create'])->name('user.attendance.create');
+        Route::post('/create', [AttendanceController::class, 'store'])->name('user.attendance.store');
+        Route::get('/punch', [AttendanceController::class, 'punch'])->name('user.attendance.punch');
+        Route::get('/{id}/edit', [AttendanceController::class, 'edit'])->name('user.attendance.edit');
+        Route::post('/{id}/update', [AttendanceController::class, 'update'])->name('user.attendance.update');
+        Route::get('/{id}/delete', [AttendanceController::class, 'delete'])->name('user.attendance.delete');
     });
 });

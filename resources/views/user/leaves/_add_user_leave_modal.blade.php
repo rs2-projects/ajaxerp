@@ -1,0 +1,76 @@
+<!-- Add Leave Modal -->
+<div class="modal custom-modal fade" id="add_user_leave" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header erp-modal-header">
+                <h5 class="modal-title">Add Leave</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('user.leaves.store') }}" id="userLeavesStoreForm" method="post">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between">
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block erp-step-input-block mb-0">
+                                        <label class="col-form-label">Leave Type <span class="text-danger">*</span></label>
+                                        <select class="select select-step" onchange="LeaveTypeChnage(this)" name="settings_leave_type_id" id="settings_leave_type_id" required>
+                                            <option value="">Select Leave Type</option>
+                                                @foreach($settings_leave_types as $settingsLeaveType)
+                                                    <option value="{{$settingsLeaveType->id}}">{{$settingsLeaveType->title}}</option>
+                                                @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block mb-0 erp-step-input-block">
+                                        <label class="col-form-label">Date From <span class="text-danger">*</span></label>
+                                        <div class="cal-icon">
+                                            <input type="text" class="form-control datetimepicker" id="start_date" name="start_date" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block mb-0 erp-step-input-block">
+                                        <label class="col-form-label">Date To <span class="text-danger">*</span></label>
+                                        <div class="cal-icon">
+                                            <input type="text" class="form-control datetimepicker" id="end_date" name="end_date" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block mb-0 erp-step-input-block">
+                                        <label class="col-form-label">Number of Days <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control " name="number_of_days" id="number_of_days" required readonly>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block mb-0 erp-step-input-block">
+                                        <label class="col-form-label">Remaining Leave <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control " value="0" name="remaining_leave" id="remaining_leave" readonly>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-100">
+                                    <div class="input-block mb-0 erp-step-input-block">
+                                        <label class="col-form-label">Leave Reason <span class="text-danger">*</span></label>
+                                        <textarea  rows="4" class="form-control" name="reason"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="erp-filter-item flex-100 mt-4">
+                                    <div class="erp-search-btn-wrap text-center">
+                                        <button class=" erp-search-btn text-center" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

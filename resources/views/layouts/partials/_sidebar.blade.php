@@ -17,6 +17,9 @@
                 <li>
                     <a href="{{ route('user.leaves') }}" class="{{ ($activeMenu == 'user.leaves')?'active':'' }}"><i class="la la-dashboard"></i> <span>Leaves</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('user.attendance') }}" class="{{ ($activeMenu == 'user.attendance')?'active':'' }}"><i class="la la-dashboard"></i> <span>My Attendance</span></a>
+                </li>
 
                 <li class="submenu">
                     <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details'
@@ -27,7 +30,7 @@
                         <li class="submenu">
                             <a href="javascript:void(0);"> <span>Attendance</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li ><a href="my-attendance.html"><span>My Attendance</span></a></li>
+                                <li ><a href="{{ route('user.attendance') }}"><span>My Attendance</span></a></li>
                                 <li><a href="reports.html"><span>Reports</span></a></li>
                                 <li><a href="employee-attendance.html"><span>Employee Attendance</span></a></li>
 

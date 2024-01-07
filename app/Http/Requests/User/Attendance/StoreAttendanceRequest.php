@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\User\Leaves;
+namespace App\Http\Requests\User\Attendance;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLeavesRequest extends FormRequest
+class StoreAttendanceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,10 +22,7 @@ class StoreLeavesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'settings_leave_type_id' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'number_of_days' => 'required|min:1|numeric',
+            //
         ];
     }
 }
