@@ -37,6 +37,7 @@ class SettingsOvertimeType extends Model
         'description',
         'salary_type',
         'rate',
+        'special_rate',
         'status',
         'created_at',
         'created_by',

@@ -8,6 +8,7 @@
             {{--<th class="erp-th text-center">Interval Time <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></th>--}}
             <th class="erp-th text-center">Salary Type </th>
             <th class="erp-th text-center">Hourly Rate </th>
+            <th class="erp-th text-center">Special Hourly Rate </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
@@ -32,6 +33,9 @@
                 </td>
                 <td class="erp-tbody-td text-center">
                     <h4 class="text-center d-table-title">{{$item->rate}}% of {{$item->salary_type_text}}</h4>
+                </td>
+                <td class="erp-tbody-td text-center">
+                    <h4 class="text-center d-table-title">{{$item->special_rate}}% of {{$item->salary_type_text}}</h4>
                 </td>
                 <td class="text-end erp-tbody-td">
                     <div class="erp-action-t">

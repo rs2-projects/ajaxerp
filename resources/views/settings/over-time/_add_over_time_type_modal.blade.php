@@ -42,6 +42,12 @@
                                     <input type="number" step="any" class="form-control " name="rate" required value="0">
                                 </div>
                             </div>
+                            <div class="erp-filter-item flex-48">
+                                <div class="input-block mb-0 erp-step-input-block ">
+                                    <label class="col-form-label">Special Hourly Rate (%) </label>
+                                    <input type="number" step="any" class="form-control " name="special_rate" required value="0">
+                                </div>
+                            </div>
 
                         </div>
 

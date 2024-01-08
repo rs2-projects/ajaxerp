@@ -27,7 +27,7 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title"> {{ $item->days }} Days</h4>
+                        <h4 class="text-center d-table-title"> {{ \Carbon\Carbon::make($item->start_date)->diffInDays(\Carbon\Carbon::make($item->end_date)) + 1 }} Days</h4>
                     </td>
                     <td class="text-end erp-tbody-td">
                         <div class="erp-action-t">

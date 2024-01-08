@@ -13,7 +13,7 @@
                         <div class="pulse-css"></div>
                         <label class="switch punch-switch ">
 
-                            <input type="checkbox" id="attendanceCheckbox">
+                            <input type="checkbox" id="attendanceCheckbox" {{ ($new_punch_type == \App\Models\AttendanceHistoryToday::TYPE_OUT) ? 'checked' : '' }}>
                             <div class="slider slider--0">Punch Out</div>
                             <div class="slider slider--1">
                                 <div></div>
@@ -28,7 +28,8 @@
                         class="punch-child-box d-flex justify-content-between flex-wrap mt-3 align-items-center">
                         <div class="punch-hour-box">
                             <h4>Working Time</h4>
-                            <p>7.30 hrs</p>
+                            <p>{{ $working_hours }} hrs</p>
+
                         </div>
                         <div class="punch-overtime">
                             <h4>Overtime</h4>
@@ -42,63 +43,23 @@
                     <h4>Today Activity</h4>
                 </div>
                 <div class="erp-box-body erp-timeline">
-                    <ul class="timeline list-unstyled">
-                        <li>
-                            <div class="timeline-time text-end">
-                                <span class="time d-inline-block punch-badge">IN</span>
-                            </div>
-                            <div class="timeline-icon">
-                                <a href="javascript:void(0);"></a>
-                            </div>
-                            <div class="timeline-body">
-                                <div class="timeline-header er-punch">
-                                    <span class="d-block p-in">Punch In at</span>
-                                    <span class="d-block p-time">10:00 AM</span>
+                    <ul class="timeline list-unstyled today-activity-data">
+                        @foreach($attendance_history_today as $item)
+                            <li>
+                                <div class="timeline-time text-end">
+                                    <span class="time d-inline-block punch-badge">{{ $item::TYPES[$item->type] }}</span>
                                 </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="timeline-time text-end">
-                                <span class="time d-inline-block punch-badge">OUT</span>
-                            </div>
-                            <div class="timeline-icon">
-                                <a href="javascript:void(0);"></a>
-                            </div>
-                            <div class="timeline-body">
-                                <div class="timeline-header er-punch">
-                                    <span class="d-block p-out">Punch Out at</span>
-                                    <span class="d-block p-time">11:00 AM</span>
+                                <div class="timeline-icon">
+                                    <a href="javascript:void(0);"></a>
                                 </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="timeline-time text-end">
-                                <span class="time d-inline-block punch-badge">IN</span>
-                            </div>
-                            <div class="timeline-icon">
-                                <a href="javascript:void(0);"></a>
-                            </div>
-                            <div class="timeline-body">
-                                <div class="timeline-header er-punch">
-                                    <span class="d-block p-out">Punch In at</span>
-                                    <span class="d-block p-time">01:00 PM</span>
+                                <div class="timeline-body">
+                                    <div class="timeline-header er-punch">
+                                        <span class="d-block p-in">Punch {{ $item::TYPES[$item->type] }} at</span>
+                                        <span class="d-block p-time">{{ getFormattedTime2($item->datetime) }}</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="timeline-time text-end">
-                                <span class="time d-inline-block punch-badge">OUT</span>
-                            </div>
-                            <div class="timeline-icon">
-                                <a href="javascript:void(0);"></a>
-                            </div>
-                            <div class="timeline-body">
-                                <div class="timeline-header er-punch">
-                                    <span class="d-block p-out">Punch Out at</span>
-                                    <span class="d-block p-time">06:00 PM</span>
-                                </div>
-                            </div>
-                        </li>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -364,24 +325,37 @@
 @section('js')
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw74VNUecFrAFANUq9WnHIKPVAPsCqyZg&libraries=drawing,places&v=weekly&callback=initialize" defer></script>
     <script>
-        $('#attendanceCheckbox').on('change', function () {
-            console.log('test');
-            var isChecked = $(this).prop('checked');
-            var action = isChecked ? 'punchIn' : 'punchOut';
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-                console.log(latitude, longitude);
-                let url = "{{route('user.attendance.punch')}}";
-                ajaxGet(url, {action:action,latitude:latitude,longitude:longitude}, function (response) {
-                    if (response.status == 200) {
-                        console.log(response)
-                    } else {
-                        toastr.error(response.message);
+        function getCurrentPosition() {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        resolve({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+                    },
+                    function (error) {
+                        reject(error);
                     }
-                }, 'default');
+                );
             });
+        }
+
+        $('#attendanceCheckbox').on('change', function () {
+            getCurrentPosition()
+                .then(({ latitude, longitude }) => {
+                    let url = "{{route('user.attendance.punch')}}";
+                    ajaxGet(url, { latitude: latitude, longitude: longitude }, function (response) {
+                        if (response.status == 200) {
+                            console.log(response);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }, 'default');
+                })
+                .catch(error => {
+                    console.error("Error getting geolocation:", error);
+                    toastr.error('Please enable your location');
+                });
         });
+
     </script>
 @endsection
 

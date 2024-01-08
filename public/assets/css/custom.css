@@ -7,3 +7,29 @@
     position: relative;
     margin: 0 auto;
 }
+.today-activity-data{
+    overflow: hidden;
+    height: 327px;
+    overflow-y: scroll;
+}
+
+.today-activity-data::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+    background:#F6F6F6;
+}
+
+.today-activity-data::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px #F6F6F6;
+    border-radius: 0px;
+}
+
+.today-activity-data::-webkit-scrollbar-thumb {
+    background:var(--primary-color);
+    border-radius: 40px;
+}
+
+.today-activity-data::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+

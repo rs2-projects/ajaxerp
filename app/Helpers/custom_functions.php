@@ -29,6 +29,18 @@ if (!function_exists('getFormattedTime')) {
         return $date;
     }
 }
+if (!function_exists('getFormattedTime2')) {
+    function getFormattedTime2($date, $format = null)
+    {
+        if($format == null) {
+            $format = 'H:i A';
+        }
+        if ($date !=''){
+            return Carbon::make($date)->format($format);
+        }
+        return $date;
+    }
+}
 
 // get date time format
 

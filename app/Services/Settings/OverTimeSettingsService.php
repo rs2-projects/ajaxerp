@@ -49,6 +49,7 @@ class OverTimeSettingsService
             $over_time->description = $request->description;
             $over_time->salary_type = $request->salary_type;
             $over_time->rate = $request->rate;
+            $over_time->special_rate = $request->special_rate;
             $over_time->status = SettingsOvertimeType::STATUS_ACTIVE;
             $over_time->deleted = SettingsOvertimeType::DELETED_NO;
             $over_time->created_at = Carbon::now();
@@ -81,6 +82,7 @@ class OverTimeSettingsService
             $over_time->description = $request->description;
             $over_time->salary_type = $request->salary_type;
             $over_time->rate = $request->rate;
+            $over_time->special_rate = $request->special_rate;
             $over_time->updated_at = Carbon::now();
             $over_time->updated_by = auth()->id();
             $over_time->save();
