@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Helpers\AttendanceHelper;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\User\Attendance\StoreAttendanceRequest;
 use App\Services\User\AttendanceService;
@@ -15,11 +16,12 @@ class AttendanceController extends BackendController
         $this->addBreadcrumbs('Attendance');
     }
 
-    public function index(AttendanceService $attendanceService)
+    public function index(Request $request, AttendanceService $attendanceService)
     {
+        AttendanceHelper::employeeAttendanceDetails(2, '2024-01-08');
         $this->setPageTitle("Attendance");
         $this->setActiveMenu('user.attendance');
-        $data = $attendanceService->indexData();
+        $data = $attendanceService->indexData($request);
         return  $this->view('user.attendance.index')->with($data);
     }
 

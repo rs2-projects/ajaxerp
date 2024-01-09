@@ -100,3 +100,16 @@ if (!function_exists('hasUserPermission')) {
         return in_array(auth()->user()->type, $permissions);
     }
 }
+
+if (!function_exists('minutesToHourString')) {
+    function minutesToHourString($minutes)
+    {
+        $hour_string = '00:00';
+        if ($minutes > 0) {
+            $hours = floor($minutes / 60);
+            $minutes = $minutes % 60;
+            $hour_string = $hours . ':' .$minutes;
+        }
+        return $hour_string;
+    }
+}

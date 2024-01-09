@@ -113,7 +113,7 @@ class OvertimeHelper
 
         $attendance_history_table = new AttendanceHistory();
 
-        $min_out_time = Carbon::make($day_end_time)->format('H:i');
+        $min_out_time = Carbon::parse($day_end_time)->format('H:i');
         $min_out_time = $min_out_time . ":00";
 
 
@@ -136,10 +136,11 @@ class OvertimeHelper
         } else {
             $day_type = 'general';
         }
-        return self::getOvertimeMinutesFromActivity($activity_history,$timing->start_time, $timing->end_time, $day_type);
+//        dd($activity_history->pluck('datetime'));
+        return self::getOvertimeMinutesFromActivity($activity_history, $timing->end_time, $day_type);
     }
 
-    public static function getOvertimeMinutesFromActivity($list,$start_time, $end_time, $type='general')
+    public static function getOvertimeMinutesFromActivity($list, $min_out_time, $type='general')
     {
         $details['status'] = 'ok';
         $details['overtime'] = 0;
@@ -150,15 +151,17 @@ class OvertimeHelper
                 continue;
             }
             if ($type == 'general') {
-                if (Carbon::make($data->datetime) >= Carbon::make($end_time)) {
-                    $details['overtime'] += $lastInTime->diffInMinutes(Carbon::make($data->datetime));
+                if (Carbon::make($data->datetime)->format('H:i:s') >= Carbon::make($min_out_time)->format('H:i:s')) {
+                    if ($lastInTime->format('H:i:s') < Carbon::make($min_out_time)->format('H:i:s')) {
+                        $details['overtime'] += Carbon::parse(Carbon::parse($data->datetime)->format('H:i:s'))->diffInMinutes(Carbon::parse($min_out_time));
+                    } else {
+                        $details['overtime'] += Carbon::parse(Carbon::parse($data->datetime)->format('H:i:s'))->diffInMinutes(Carbon::parse($lastInTime->format('H:i:s')));
+                    }
                 }
             } else {
-                $details['overtime'] += $lastInTime->diffInMinutes(Carbon::make($data->datetime));
-
+                $details['overtime'] += Carbon::parse(Carbon::parse($data->datetime)->format('H:i:s'))->diffInMinutes(Carbon::parse($lastInTime->format('H:i:s')));
             }
         }
-
         return $details;
     }
 

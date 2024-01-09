@@ -33,7 +33,7 @@
                         </div>
                         <div class="punch-overtime">
                             <h4>Overtime</h4>
-                            <p>0.30 hrs</p>
+                            <p>{{ $overtime['overtime'] }} hrs</p>
                         </div>
                     </div>
                 </div>
@@ -181,119 +181,43 @@
                             <div class="table-header-item my-att text-center">
                                 <h4>Punch Out</h4>
                             </div>
-                            <div class="table-header-item my-att text-center">
+                            {{--<div class="table-header-item my-att text-center">
                                 <h4>Break Time (Hour)</h4>
-                            </div>
+                            </div>--}}
                             <div class="table-header-item my-att text-center">
                                 <h4>Over Time (Hour)</h4>
                             </div>
                         </div>
                         <div class="table-body-wrapper">
-                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                <div class="table-body-item my-att">
-                                    <h4>01</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">14 November, 2023</h4>
-                                </div>
-                                <div class="table-body-item my-att">
-                                    <h4 class="text-center">10:00 AM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">06:00 PM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">01:00 </h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">00:30</h4>
-                                </div>
+                            @php($sl = 0)
+                            @while ($attendance_list_end_date->gte($attendance_list_start_date))
+                                @php($sl++)
+                                @php($aldate = $attendance_list_end_date->format('Y-m-d'))
+                                {{--@php($alData = \App\Helpers\AttendanceHelper::getAttendanceStatus(auth()->id(),$aldate))--}}
+                                @php($alOvertimeData = \App\Helpers\OvertimeHelper::getOvertime(auth()->id(),$aldate))
+                                    <div class="table-body-item-wrapper d-flex flex-wrap">
+                                        <div class="table-body-item my-att">
+                                            <h4>{{ $sl }}</h4>
+                                        </div>
+                                        <div class="table-body-item my-att ">
+                                            <h4 class="text-center">{{ $attendance_list_end_date->format('j M Y') }}</h4>
+                                        </div>
+                                        <div class="table-body-item my-att">
+                                            <h4 class="text-center">10:00 AM</h4>
+                                        </div>
+                                        <div class="table-body-item my-att ">
+                                            <h4 class="text-center">06:00 PM</h4>
+                                        </div>
+                                        {{--<div class="table-body-item my-att ">
+                                            <h4 class="text-center">01:00 </h4>
+                                        </div>--}}
+                                        <div class="table-body-item my-att ">
+                                            <h4 class="text-center">{{ $alOvertimeData['overtime'] }}</h4>
+                                        </div>
 
-                            </div>
-                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                <div class="table-body-item my-att">
-                                    <h4>02</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">15 November, 2023</h4>
-                                </div>
-                                <div class="table-body-item my-att">
-                                    <h4 class="text-center">10:00 AM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">06:30 PM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">01:00 </h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">01:00</h4>
-                                </div>
-
-                            </div>
-                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                <div class="table-body-item my-att">
-                                    <h4>03</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">16 November, 2023</h4>
-                                </div>
-                                <div class="table-body-item my-att">
-                                    <h4 class="text-center">10:00 AM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">07:30 PM</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">01:00 </h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">01:30</h4>
-                                </div>
-
-                            </div>
-                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                <div class="table-body-item my-att">
-                                    <h4>04</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">17 November, 2023</h4>
-                                </div>
-                                <div class="table-body-item my-att">
-                                    <h4 class="text-center"></h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center"></h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">00:00</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">00:00</h4>
-                                </div>
-
-                            </div>
-                            <div class="table-body-item-wrapper d-flex flex-wrap">
-                                <div class="table-body-item my-att">
-                                    <h4>05</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">18 November, 2023</h4>
-                                </div>
-                                <div class="table-body-item my-att">
-                                    <h4 class="text-center"></h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center"></h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">00:00</h4>
-                                </div>
-                                <div class="table-body-item my-att ">
-                                    <h4 class="text-center">00:00</h4>
-                                </div>
-
-                            </div>
+                                    </div>
+                                @php($attendance_list_end_date->subDay())
+                            @endwhile
                         </div>
                     </div>
 

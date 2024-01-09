@@ -2,6 +2,8 @@
 
 namespace App\Services\User;
 
+use App\Helpers\AttendanceHelper;
+use App\Helpers\AttendanceHistoryHelper;
 use App\Helpers\OvertimeHelper;
 use App\Helpers\PolygonAreaHelpler;
 use App\Models\AttendanceHistory;
@@ -20,7 +22,7 @@ class AttendanceService
         $this->paginate_limit = config('commonData.paginate_limit');
     }
 
-    public function indexData()
+    public function indexData($request)
     {
         $auth_user = auth()->user();
         $data['last_punch'] = AttendanceHistoryToday::where('employee_id', $auth_user->id)
@@ -39,7 +41,7 @@ class AttendanceService
             $data['new_punch_type'] = AttendanceHistoryToday::TYPE_IN;
         }
 
-        if($data['last_punch']->type == AttendanceHistoryToday::TYPE_IN) {
+        if($data['last_punch'] && $data['last_punch']->type == AttendanceHistoryToday::TYPE_IN) {
             $data['working_hours'] = (Carbon::now())->diff(new Carbon($data['last_punch']->datetime))->format('%h:%I');
         }else{
             $data['working_hours'] = '0:00';
@@ -50,9 +52,22 @@ class AttendanceService
             ->whereDate('datetime', Carbon::now()->format('Y-m-d'))
             ->get();
 
-        $data['overtime'] = OvertimeHelper::getOvertimeMinutes($auth_user->id, Carbon::now()->format('Y-m-d'));
-//
-        dd($data);
+        $data['overtime'] = OvertimeHelper::getOvertime($auth_user->id, Carbon::now()->format('Y-m-d'));
+
+        if (($request->month != '') && ($request->year != '')) {
+            $alDate = $request->year.'-'.$request->month.'-1';
+            if($request->year == date('Y') && ($request->month == date('m'))) {
+                $data['attendance_list_start_date'] = Carbon::now()->startOfMonth();
+                $data['attendance_list_end_date'] = Carbon::now();
+            } else {
+                $data['attendance_list_start_date'] = Carbon::make($alDate)->startOfMonth();
+                $data['attendance_list_end_date'] = Carbon::make($alDate)->endOfMonth();
+            }
+        } else {
+            $data['attendance_list_start_date'] = Carbon::now()->startOfMonth();
+            $data['attendance_list_end_date'] = Carbon::now();
+        }
+
         return $data;
     }
     public function punch($request)
@@ -157,7 +172,7 @@ class AttendanceService
             $attendance_history->updated_by = $auth_user->id;
             $attendance_history->save();
 
-
+            $attendance_report = AttendanceHistoryHelper::attendanceReportCreateOrUpdate($auth_user->id, Carbon::now()->format('Y-m-d'));
 
         }catch (\Exception $exception) {
             DB::rollBack();
