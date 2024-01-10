@@ -2,6 +2,7 @@
 
 namespace App\Services\Hr;
 
+use App\Helpers\AttendanceHelper\AttendanceLeaveHelper;
 use App\Models\SettingsLeaveType;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalarySetLeaveType;
@@ -67,6 +68,10 @@ class UserLeavesService
             if (!$check_leave_type) {
                 throw new \Exception('Leave type not found.');
             }
+
+            $getUserRemainingLeaves = AttendanceLeaveHelper::getUserRemainingLeaves($request->user_id, $request->settings_leave_type_id);
+
+            //TODO: calculate number of days based on start and end date instead of using number_of_days from request
 
             $userLeave = new UserLeave();
             $userLeave->user_id = $request->user_id;

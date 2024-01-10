@@ -339,6 +339,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [LeavesController::class, 'edit'])->name('user.leaves.edit');
         Route::post('/{id}/update', [LeavesController::class, 'update'])->name('user.leaves.update');
         Route::get('/{id}/delete', [LeavesController::class, 'delete'])->name('user.leaves.delete');
+
+        // ajax
+        Route::get('get-user-leave-number-of-days',[LeavesController::class, 'getUserLeaveNumberOfDays'])->name('user.get-user-leave-number-of-days');
     });
     // user leaves Route End
 

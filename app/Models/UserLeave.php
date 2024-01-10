@@ -21,6 +21,13 @@ class UserLeave extends Model
         self::LEAVE_STATUS_REJECTED => 'Rejected',
     ];
 
+    const IS_PAID_NO = 0;
+    const IS_PAID_YES = 1;
+    const IS_PAIDS = [
+        self::IS_PAID_NO => 'No',
+        self::IS_PAID_YES => 'Yes',
+    ];
+
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
     const STATUSES = [
@@ -35,8 +42,6 @@ class UserLeave extends Model
         self::DELETED_YES => 'Yes',
     ];
 
-
-
     protected $fillable = [
         'user_id',
         'settings_leave_type_id',
@@ -50,6 +55,12 @@ class UserLeave extends Model
         'approve_start_date',
         'approve_end_date',
         'approved_number_of_days',
+        'paid_leave_start_date',
+        'paid_leave_end_date',
+        'paid_leave_number_of_days',
+        'unpaid_leave_start_date',
+        'unpaid_leave_end_date',
+        'unpaid_leave_number_of_days',
         'rejected_at',
         'rejected_by',
         'reject_reason',

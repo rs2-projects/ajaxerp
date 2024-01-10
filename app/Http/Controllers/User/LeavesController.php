@@ -53,4 +53,14 @@ class LeavesController extends BackendController
         }
         return $this->returnAjaxSuccess([], 'Leave has been deleted successfully.');
     }
+
+    public function getUserLeaveNumberOfDays(Request $request, LeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->getUserLeaveNumberOfDays($request);
+            return $this->returnAjaxSuccess($data);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
 }

@@ -16,13 +16,13 @@
                                 <button class="nav-link active erp-nav-link" onclick="getData()" id="all-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="pending-leave-tab" data-bs-toggle="tab" data-bs-target="#pending-leave" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
+                                <button class="nav-link erp-nav-link" onclick="getData()" id="pending-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="approved-leave-tab" data-bs-toggle="tab" data-bs-target="#approved-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved</button>
+                                <button class="nav-link erp-nav-link" onclick="getData()" id="approved-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="rejected-leave-tab" data-bs-toggle="tab" data-bs-target="#rejected-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Rejected</button>
+                                <button class="nav-link erp-nav-link" onclick="getData()" id="rejected-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Rejected</button>
                             </li>
                         </ul>
 
@@ -279,12 +279,26 @@
             }
 
             // Calculate the time difference in milliseconds
-            let timeDifference = endDateTime - startDateTime;
+            // let timeDifference = endDateTime - startDateTime;
 
             // Convert milliseconds to days
-            let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-            daysDifference += 1;
-            $("#number_of_days").val(daysDifference);
+            // let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+            // daysDifference += 1;
+            // $("#number_of_days").val(daysDifference);
+            let leave_type_id = $("#settings_leave_type_id").val();
+            if (!leave_type_id) {
+                $("#number_of_days").val(0);
+                toastr.error('Please select leave type');
+                return false;
+            }
+            let user_id = "{{ auth()->user()->id }}"
+            ajaxGet("{{ route('user.get-user-leave-number-of-days') }}", {start_date: startDate, end_date: endDate,leave_type_id:leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#number_of_days").val(response.general_days_number);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
         function updateNumberOfDaysEdit() {
             console.log('3')

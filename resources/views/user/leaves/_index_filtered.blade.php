@@ -15,7 +15,7 @@
     @foreach($userLeaves as $userLeave)
         <tr class="erp-tbody-tr">
             <td class="erp-tbody-td">
-                <h4 class="d-table-title">{{ $userLeaves->total() + $loop->iteration - 1 }}</h4>
+                <h4 class="d-table-title">{{ $userLeaves->firstItem() + $loop->iteration - 1 }}</h4>
             </td>
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title">{{ getFormattedDate($userLeave->approve_start_date,'d M, Y') }} to {{ getFormattedDate($userLeave->approve_end_date,'d M, Y') }}</h4>

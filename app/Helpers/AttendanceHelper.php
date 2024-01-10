@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Helpers\AttendanceHelper\AttendanceLateEarlyHelper;
+use App\Helpers\AttendanceHelper\AttendanceLeaveHelper;
 use App\Helpers\AttendanceHelper\AttendanceOvertimeHelper;
 use App\Helpers\AttendanceHelper\AttendanceWorkingTimeHelper;
 use App\Models\AttendanceHistory;
@@ -12,6 +13,7 @@ use App\Models\SettingsOfficeTimeType;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\User;
+use App\Models\UserLeave;
 use Carbon\Carbon;
 
 class AttendanceHelper
@@ -60,6 +62,15 @@ class AttendanceHelper
             $day_type = 'general';
         }
 
+        $leaveDetails = UserLeave::where('user_id', $employee_id)
+            ->where('status', UserLeave::STATUS_ACTIVE)
+            ->where('deleted', UserLeave::DELETED_NO)
+            ->where('leave_status', UserLeave::LEAVE_STATUS_APPROVED)
+            ->where('approve_start_date', '<=', $date)
+            ->where('approve_start_date', '>=', $date)
+            ->first();
+        dump("Leave: ");
+        dump($leaveDetails);
         //check and get total overtime
         $overtimeDetails = AttendanceOvertimeHelper::getOvertimeDetails($office_time, $attendance_activity_history, $day_type);
         dump("Overtime: ");
@@ -67,27 +78,18 @@ class AttendanceHelper
         //check and get total working time
         $workingTimeDetails = AttendanceWorkingTimeHelper::getWorkingTimeDetails($attendance_activity_history);
         dump("Working Time: ");
-        dd($workingTimeDetails);
+        dump($workingTimeDetails);
         //check and get late time
         $lateEarlyTimeDetails = AttendanceLateEarlyHelper::getLateEarlyDetails($office_time, $attendance_activity_history, $day_type);
-        //check and get early leaving time
+        dump("Late Early Time: ");
+        dump($lateEarlyTimeDetails);
+
 
 
         //return total history
 
-    }
-    public function checkWeekend($employee_id, $date)
-    {
-        $day = strtolower(Carbon::make($date)->format('l'));
+
+        dd('EOF');
     }
 
-    public function checkHoliday($employee_id, $date)
-    {
-
-    }
-
-    public function checkLeave($employee_id, $date)
-    {
-
-    }
 }

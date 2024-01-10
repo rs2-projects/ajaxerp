@@ -18,7 +18,7 @@ class AttendanceController extends BackendController
 
     public function index(Request $request, AttendanceService $attendanceService)
     {
-        AttendanceHelper::employeeAttendanceDetails(2, '2024-01-08');
+        AttendanceHelper::employeeAttendanceDetails(2, '2024-01-09');
         $this->setPageTitle("Attendance");
         $this->setActiveMenu('user.attendance');
         $data = $attendanceService->indexData($request);
