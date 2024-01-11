@@ -28,7 +28,7 @@
     @foreach($employees as $item)
         <div class="table-body-item-wrapper d-flex flex-wrap">
             <div class="table-body-item em-list">
-                <h4>{{ $employees->total() + $loop->iteration -1 }}</h4>
+                <h4>{{ $employees->firstItem() + $loop->iteration -1 }}</h4>
             </div>
             <div class="table-body-item em-list ">
                 <a href="{{ route('hr.employee.details',$item->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">

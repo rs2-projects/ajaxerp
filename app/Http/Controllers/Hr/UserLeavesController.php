@@ -60,6 +60,7 @@ class UserLeavesController extends BackendController
 
     public function update($id, UpdateUserLeavesRequest $request, UserLeavesService $leavesService)
     {
+
         try {
             $leavesService->update($id, $request);
 

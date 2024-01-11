@@ -18,7 +18,7 @@ use Carbon\Carbon;
 
 class AttendanceHelper
 {
-    public static function employeeAttendanceDetails($employee_id, $date)
+    public static function employeeAttendanceDetails($employee_id, $date):array
     {
         $employee = User::where('id', $employee_id)
             ->where('status', User::STATUS_ACTIVE)
@@ -85,7 +85,7 @@ class AttendanceHelper
         dump($lateEarlyTimeDetails);
 
 
-
+        return [];
         //return total history
 
 

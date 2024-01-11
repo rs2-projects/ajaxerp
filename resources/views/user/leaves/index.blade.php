@@ -137,6 +137,8 @@
         $(document).ready(function(){
             getData();
             initializeDatepicker();
+            yearSelect2()
+
             $('.nav-tabs .nav-link').on('click', function() {
                 getData();
             });
@@ -166,22 +168,6 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#userLeaveUpdateForm", function(e) {
-                e.preventDefault();
-                var formData = new FormData($(this)[0]);
-                $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
-
-                formPost(url, formData, function (res){
-                    if(res.status == 200){
-                        $("#edit_user_leave_modal").modal('hide');
-                        showSuccessAlert('Success',res.message)
-                        getData();
-                    }else{
-                        showErrorAlert('Error',res.message)
-                    }
-                }, 'show_input_error');
-            });
         });
 
         function getData(){
@@ -207,32 +193,6 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
-        }
-
-        function editItem(id){
-            let url = "{{route('user.leaves.edit', ':id')}}";
-            url = url.replace(':id', id);
-            ajaxGet(url, {}, function (response) {
-                if (response.status == 200) {
-                    console.log(response)
-                    $("#edit_user_leave_modal_body").html(response.view);
-                    $("#edit_user_leave_modal").modal('show');
-                    initializeDatepicker();
-                    leaveTypeSelect2();
-
-                    editLeaveTypeChnage($("#edit_settings_leave_type_id"));
-                    $('#edit_start_date').on('dp.change', function(e){
-                        console.log('1');
-                        updateNumberOfDaysEdit();
-                    });
-                    $('#edit_end_date').on('dp.change', function(e){
-                        console.log('2');
-                        updateNumberOfDaysEdit();
-                    });
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
         }
 
         function initializeDatepicker() {
@@ -278,13 +238,6 @@
                 return false;
             }
 
-            // Calculate the time difference in milliseconds
-            // let timeDifference = endDateTime - startDateTime;
-
-            // Convert milliseconds to days
-            // let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-            // daysDifference += 1;
-            // $("#number_of_days").val(daysDifference);
             let leave_type_id = $("#settings_leave_type_id").val();
             if (!leave_type_id) {
                 $("#number_of_days").val(0);
@@ -374,38 +327,6 @@
                 }
             }, 'default');
         }
-        function editLeaveTypeChnage(value){
-            console.log(value);
-            let leave_type_id = $(value).val();
-            let user_id = $("#edit_user_id").val();
-            let userLeaveId = $("#userLeaveId").val();
-            let url = "{{ route('ajax.get-user-total-leave-by-leave-type-edit') }}"
-
-            ajaxGet(url, {leave_type_id: leave_type_id,user_id:user_id,userLeaveId:userLeaveId}, function (response) {
-                if (response.status == 200) {
-                    $("#edit_remaining_leave").val(response.data.remaining_leaves);
-
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
-        }
-        function editLeaveTypeChnage(value){
-            console.log(value);
-            let leave_type_id = $(value).val();
-            let user_id = $("#edit_user_id").val();
-            let userLeaveId = $("#userLeaveId").val();
-            let url = "{{ route('ajax.get-user-total-leave-by-leave-type-edit') }}"
-
-            ajaxGet(url, {leave_type_id: leave_type_id,user_id:user_id,userLeaveId:userLeaveId}, function (response) {
-                if (response.status == 200) {
-                    $("#edit_remaining_leave").val(response.data.remaining_leaves);
-
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
-        }
 
         function leaveTypeSelect2() {
             $('#edit_settings_leave_type_id').select2({
@@ -414,6 +335,76 @@
             });
         }
 
+        function yearSelect2() {
+            $('.year-select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+    </script>
+
+    <!-- Your updated script for datetimepicker -->
+    <script>
+        $(document).ready(function () {
+            // Initialize datetimepicker
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                useCurrent: false,
+                showClear: true,
+                showClose: true
+            });
+
+            // Handle change event on month select
+            $('#month').change(function () {
+                updateAvailableDates();
+            });
+
+            // Handle change event on year select
+            $('#year').change(function () {
+                updateAvailableDates();
+            });
+        });
+
+        let prev_first_date;
+        let prev_last_date;
+        // Function to update available dates based on selected month and year
+        function updateAvailableDates() {
+            var selectedMonth = $('#month').val();
+            var selectedYear = $('#year').val();
+
+            if (selectedMonth && selectedYear) {
+                // Calculate the first day of the selected month and year
+                var firstDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+                // Calculate the last day of the selected month and year
+                var lastDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+
+                if(firstDayOfMonth > prev_last_date) {
+                    // Update datetimepicker options for "Date From" input
+                    $('#start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                } else {
+                    // Update datetimepicker options for "Date From" input
+                    $('#start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                }
+
+                prev_first_date = firstDayOfMonth;
+                prev_last_date = lastDayOfMonth;
+
+                // Clear the selected dates
+                $('#start_date').val("");
+                $('#end_date').val("");
+            }
+        }
     </script>
 
 @endsection

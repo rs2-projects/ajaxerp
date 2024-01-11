@@ -33,7 +33,7 @@ class LeavesController extends BackendController
 
     public function store(StoreLeavesRequest $request, LeavesService $leavesService)
     {
-//        return $request->all();
+
         try {
             $leavesService->store($request);
 

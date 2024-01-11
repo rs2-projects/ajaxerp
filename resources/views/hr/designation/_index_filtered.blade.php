@@ -20,7 +20,7 @@
     @foreach($designations as $key=>$item)
         <div class="table-body-item-wrapper d-flex flex-wrap">
             <div class="table-body-item flex-10">
-                <h4>{{ $designations->total() + $loop->iteration - 1 }}</h4>
+                <h4>{{ $designations->firstItem() + $loop->iteration - 1 }}</h4>
             </div>
             <div class="table-body-item flex-20 ">
                 <h4 class="text-start erp-t-email">{{ $item->department->name??'N/A' }}</h4>

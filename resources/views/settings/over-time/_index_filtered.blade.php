@@ -16,7 +16,7 @@
         @foreach($over_time_types as $key=> $item)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
-                    <h4 class="d-table-title">{{$loop->iteration}}</h4>
+                    <h4 class="d-table-title">{{$over_time_types->firstItem() + $loop->iteration -1}}</h4>
                 </td>
                 <td class="erp-tbody-td">
                     <h4 class="text-start d-table-title">{{$item->title??'N/A'}} </h4>

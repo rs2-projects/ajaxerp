@@ -10,7 +10,9 @@ use App\Models\SettingsLeaveType;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalarySetLeaveType;
 use App\Models\UserLeave;
+use App\Models\UserLeaveDetail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LeavesService
 {
@@ -70,6 +72,7 @@ class LeavesService
 
     public function store($request)
     {
+        DB::beginTransaction();
         try {
             $auth_user = auth()->user();
 
@@ -98,7 +101,22 @@ class LeavesService
 
             $general_number_of_days =  LeaveHelper::countEmployeeGeneralDays($auth_user->id, $request->start_date, $request->end_date);
             $salary_set = SalarySetHelper::getEmployeeSalarySet($auth_user->id);
+            $get_leave_type_data = LeaveHelper::leaveType($request->settings_leave_type_id);
 
+            $getTotalLeaveYearly = $get_leave_type_data->annual_leave_days;
+            $getTotalLeaveMonthly = $get_leave_type_data->max_leave_per_month;
+
+            $getUsedLeaveYearly = LeaveHelper::countEmployeeUsedLeave($auth_user->id, $request->settings_leave_type_id, $request->start_date);
+            $getUsedLeaveMonthly = LeaveHelper::countEmployeeUsedLeaveMonth($auth_user->id, $request->settings_leave_type_id, $request->start_date);
+
+            $getRemainingLeaveYearly = $getTotalLeaveYearly - $getUsedLeaveYearly;
+            $getRemainingLeaveMonthly = $getTotalLeaveMonthly - $getUsedLeaveMonthly;
+
+            if ($getRemainingLeaveYearly < $getRemainingLeaveMonthly) {
+                $max_usable_paid_leave = $getRemainingLeaveYearly;
+            }else{
+                $max_usable_paid_leave = $getRemainingLeaveMonthly;
+            }
 
             $userLeave = new UserLeave();
             $userLeave->user_id = $auth_user->id;
@@ -113,14 +131,87 @@ class LeavesService
             $userLeave->reason = $request->reason;
             $userLeave->save();
 
-            return $userLeave;
+            // while loop start end date
+            $start_date = Carbon::make($request->start_date);
+            $end_date = Carbon::make($request->end_date);
+
+            $paid_leave_start_date = null;
+            $paid_leave_end_date = null;
+            $paid_leave_number_of_days = 0;
+
+            $unpaid_leave_start_date = null;
+            $unpaid_leave_end_date = null;
+            $unpaid_leave_number_of_days = 0;
+
+            while ($start_date->lte($end_date)) {
+                $check_day_type_holiday = LeaveHelper::checkDateIsHoliday($start_date);
+                $check_day_type_weekend = LeaveHelper::checkDateIsWeekend($salary_set->settings_office_time_type_id, $start_date);
+                $dayType = UserLeaveDetail::DAY_TYPE_GENERAL;
+
+                if ($check_day_type_holiday) {
+                    $dayType = UserLeaveDetail::DAY_TYPE_HOLIDAY;
+                } elseif ($check_day_type_weekend) {
+                    $dayType = UserLeaveDetail::DAY_TYPE_WEEKEND;
+                }
+
+                $is_paid = UserLeave::IS_PAID_NO;
+                if($max_usable_paid_leave > $paid_leave_number_of_days) {
+                    if($paid_leave_start_date == null) {
+                        $paid_leave_start_date = $start_date->format('Y-m-d');
+                    }
+                    $paid_leave_end_date = $start_date->format('Y-m-d');
+                    if ($dayType == UserLeaveDetail::DAY_TYPE_GENERAL) {
+                        $paid_leave_number_of_days++;
+                    }
+
+                    $is_paid = UserLeave::IS_PAID_YES;
+                } else {
+                    if($unpaid_leave_start_date == null) {
+                        $unpaid_leave_start_date = $start_date->format('Y-m-d');
+                    }
+                    $unpaid_leave_end_date = $start_date->format('Y-m-d');
+                    if ($dayType == UserLeaveDetail::DAY_TYPE_GENERAL) {
+                        $unpaid_leave_number_of_days++;
+                    }
+                }
+
+                $userLeaveDetail = new UserLeaveDetail();
+                $userLeaveDetail->user_id = $auth_user->id;
+                $userLeaveDetail->settings_leave_type_id = $request->settings_leave_type_id;
+                $userLeaveDetail->user_leave_id = $userLeave->id;
+                $userLeaveDetail->date = $start_date->format('Y-m-d');
+                $userLeaveDetail->day_type = $dayType;
+                $userLeaveDetail->is_paid = $is_paid;
+                $userLeaveDetail->leave_status = UserLeaveDetail::LEAVE_STATUS_PENDING;
+                $userLeaveDetail->created_at = Carbon::now();
+                $userLeaveDetail->created_by = $auth_user->id;
+                $userLeaveDetail->updated_at = Carbon::now();
+                $userLeaveDetail->updated_by = $auth_user->id;
+                $userLeaveDetail->save();
+
+                $start_date->addDay();
+            }
+
+            $userLeave->paid_leave_start_date = $paid_leave_start_date;
+            $userLeave->paid_leave_end_date = $paid_leave_end_date;
+            $userLeave->paid_leave_number_of_days = $paid_leave_number_of_days;
+            $userLeave->unpaid_leave_start_date = $unpaid_leave_start_date;
+            $userLeave->unpaid_leave_end_date = $unpaid_leave_end_date;
+            $userLeave->unpaid_leave_number_of_days = $unpaid_leave_number_of_days;
+            $userLeave->save();
+
+
         }catch (\Exception $exception) {
+            DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
+        DB::commit();
+        return $userLeave;
     }
 
     public function delete($id)
     {
+        DB::beginTransaction();
         try {
             $userLeave = UserLeave::where('id', $id)
                 ->where('deleted', UserLeave::DELETED_NO)
@@ -133,9 +224,21 @@ class LeavesService
             $userLeave->deleted_at = Carbon::now();
             $userLeave->deleted_by = auth()->user()->id;
             $userLeave->save();
+
+            $userLeaveDetails = UserLeaveDetail::where('user_leave_id', $userLeave->id)
+                ->get();
+            foreach ($userLeaveDetails as $userLeaveDetail) {
+                $userLeaveDetail->deleted = UserLeaveDetail::DELETED_YES;
+                $userLeaveDetail->deleted_at = Carbon::now();
+                $userLeaveDetail->deleted_by = auth()->user()->id;
+                $userLeaveDetail->save();
+            }
+
         }catch (\Exception $exception) {
+            DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
+        DB::commit();
     }
 
     public function getUserLeaveNumberOfDays($request)

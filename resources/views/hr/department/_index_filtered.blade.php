@@ -17,7 +17,7 @@
     @foreach($departments as $key=>$item)
         <div class="table-body-item-wrapper d-flex flex-wrap">
             <div class="table-body-item dep-list">
-                <h4>{{ $departments->total() + $loop->iteration - 1 }}</h4>
+                <h4>{{ $departments->firstItem() + $loop->iteration - 1 }}</h4>
             </div>
             <div class="table-body-item dep-list ">
                 <h4 class="text-start erp-t-email">{{ $item->name??'N/A' }}</h4>

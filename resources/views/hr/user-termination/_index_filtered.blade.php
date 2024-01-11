@@ -17,7 +17,7 @@
         @foreach($userTerminations as $userTermination)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
-                    <h4 class="d-table-title">{{ $userTerminations->total() + $loop->iteration -1 }}</h4>
+                    <h4 class="d-table-title">{{ $userTerminations->firstItem() + $loop->iteration -1 }}</h4>
                 </td>
                 <td class="erp-tbody-td">
                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">

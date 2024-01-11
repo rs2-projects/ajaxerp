@@ -255,6 +255,17 @@
                     $("#edit_user_leave_modal").modal('show');
                     initializeDatepicker();
                     leaveTypeSelect2();
+                    yearSelect2()
+                    monthSelect2()
+
+                    $('#edit_month').change(function () {
+                        updateAvailableDatesEdit();
+                    });
+
+                    // Handle change event on year select
+                    $('#edit_year').change(function () {
+                        updateAvailableDatesEdit();
+                    });
 
                     editLeaveTypeChnage($("#edit_settings_leave_type_id"));
                     $('#edit_start_date').on('dp.change', function(e){
@@ -280,6 +291,29 @@
                     $("#approve_user_leave_modal").modal('show');
                     initializeDatepicker();
                     editLeaveTypeChnage($("#edit_settings_leave_type_id"));
+
+                    let approve_start_date = $('#approve_start_date').val();
+                    let approve_end_date = $('#approve_end_date').val();
+                    let firstDayOfMonth = moment(approve_start_date, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+                    let lastDayOfMonth = moment(approve_end_date, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+
+                    if(firstDayOfMonth > lastDayOfMonth) {
+                        // Update datetimepicker options for "Date From" input
+                        $('#approve_start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                        $('#approve_start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+
+                        // Update datetimepicker options for "Date To" input
+                        $('#approve_end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                        $('#approve_end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    } else {
+                        // Update datetimepicker options for "Date From" input
+                        $('#approve_start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                        $('#approve_start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+
+                        // Update datetimepicker options for "Date To" input
+                        $('#approve_end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                        $('#approve_end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    }
 
                     $('#approve_start_date').on('dp.change', function(e){
                         console.log('1');
@@ -351,14 +385,26 @@
                 showInfoAlert('Oops!', 'End date can\'t be less then start date!');
                 return false;
             }
+            let user_id = $("#user_id").val();
+            let leave_type_id = $("#settings_leave_type_id").val();
+            if (!user_id) {
+                $("#number_of_days").val(0);
+                toastr.error('Please select employee');
+                return false;
+            }
+            if (!leave_type_id) {
+                $("#number_of_days").val(0);
+                toastr.error('Please select leave type');
+                return false;
+            }
 
-            // Calculate the time difference in milliseconds
-            let timeDifference = endDateTime - startDateTime;
-
-            // Convert milliseconds to days
-            let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-            daysDifference += 1;
-            $("#number_of_days").val(daysDifference);
+            ajaxGet("{{ route('user.get-user-leave-number-of-days') }}", {start_date: startDate, end_date: endDate,leave_type_id:leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#number_of_days").val(response.general_days_number);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
         function updateNumberOfDaysEdit() {
             console.log('3')
@@ -381,13 +427,26 @@
                 return false;
             }
 
-            // Calculate the time difference in milliseconds
-            let timeDifference = endDateTime - startDateTime;
+            let user_id = $("#edit_user_id").val();
+            let leave_type_id = $("#edit_settings_leave_type_id").val();
+            if (!user_id) {
+                $("#edit_number_of_days").val(0);
+                toastr.error('Please select employee');
+                return false;
+            }
+            if (!leave_type_id) {
+                $("#edit_number_of_days").val(0);
+                toastr.error('Please select leave type');
+                return false;
+            }
 
-            // Convert milliseconds to days
-            let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-            daysDifference += 1;
-            $("#edit_number_of_days").val(daysDifference);
+            ajaxGet("{{ route('user.get-user-leave-number-of-days') }}", {start_date: startDate, end_date: endDate,leave_type_id:leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#edit_number_of_days").val(response.general_days_number);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
         function updateNumberOfDaysApprove() {
@@ -411,13 +470,27 @@
                 return false;
             }
 
-            // Calculate the time difference in milliseconds
-            let timeDifference = endDateTime - startDateTime;
+            let user_id = $("#edit_user_id").val();
+            let leave_type_id = $("#edit_settings_leave_type_id").val();
+            if (!user_id) {
+                $("#edit_number_of_days").val(0);
+                toastr.error('Please select employee');
+                return false;
+            }
+            if (!leave_type_id) {
+                $("#edit_number_of_days").val(0);
+                toastr.error('Please select leave type');
+                return false;
+            }
 
-            // Convert milliseconds to days
-            let daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-            daysDifference += 1;
-            $("#approve_number_of_days").val(daysDifference);
+            ajaxGet("{{ route('user.get-user-leave-number-of-days') }}", {start_date: startDate, end_date: endDate,leave_type_id:leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#approve_number_of_days").val(response.general_days_number);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+
         }
 
         function employeeChange(value){
@@ -491,6 +564,125 @@
                 width: '100%'
             });
         }
+
+        function yearSelect2() {
+            $('.year-select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+        function monthSelect2() {
+            $('.month-select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+    </script>
+
+    <!-- Your updated script for datetimepicker -->
+    <script>
+        $(document).ready(function () {
+            // Initialize datetimepicker
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                useCurrent: false,
+                showClear: true,
+                showClose: true
+            });
+
+            // Handle change event on month select
+            $('#month').change(function () {
+                updateAvailableDates();
+            });
+
+            // Handle change event on year select
+            $('#year').change(function () {
+                updateAvailableDates();
+            });
+
+        });
+
+        let prev_first_date;
+        let prev_last_date;
+        // Function to update available dates based on selected month and year
+        function updateAvailableDates() {
+            var selectedMonth = $('#month').val();
+            var selectedYear = $('#year').val();
+
+            if (selectedMonth && selectedYear) {
+                // Calculate the first day of the selected month and year
+                var firstDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+                // Calculate the last day of the selected month and year
+                var lastDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+
+                if(firstDayOfMonth > prev_last_date) {
+                    // Update datetimepicker options for "Date From" input
+                    $('#start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                } else {
+                    // Update datetimepicker options for "Date From" input
+                    $('#start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                }
+
+                prev_first_date = firstDayOfMonth;
+                prev_last_date = lastDayOfMonth;
+
+                // Clear the selected dates
+                $('#start_date').val("");
+                $('#end_date').val("");
+            }
+        }
+
+        let edit_prev_first_date;
+        let edit_prev_last_date;
+        function updateAvailableDatesEdit() {
+            console.log('call function')
+            var selectedMonth = $('#edit_month').val();
+            var selectedYear = $('#edit_year').val();
+
+            if (selectedMonth && selectedYear) {
+                // Calculate the first day of the selected month and year
+                var firstDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
+                // Calculate the last day of the selected month and year
+                var lastDayOfMonth = moment(selectedYear + '-' + selectedMonth, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+
+                if(firstDayOfMonth > edit_prev_last_date) {
+                    // Update datetimepicker options for "Date From" input
+                    $('#edit_start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#edit_start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#edit_end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                    $('#edit_end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                } else {
+                    // Update datetimepicker options for "Date From" input
+                    $('#edit_start_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#edit_start_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+
+                    // Update datetimepicker options for "Date To" input
+                    $('#edit_end_date').data('DateTimePicker').minDate(firstDayOfMonth);
+                    $('#edit_end_date').data('DateTimePicker').maxDate(lastDayOfMonth);
+                }
+
+                edit_prev_first_date = firstDayOfMonth;
+                edit_prev_last_date = lastDayOfMonth;
+
+                // Clear the selected dates
+                $('#edit_start_date').val("");
+                $('#edit_end_date').val("");
+            }
+        }
+
 
     </script>
 

@@ -16,7 +16,7 @@
     @foreach($userLeaves as $userLeave)
         <tr class="erp-tbody-tr">
             <td class="erp-tbody-td">
-                <h4 class="d-table-title">{{ $userLeaves->total() + $loop->iteration - 1 }}</h4>
+                <h4 class="d-table-title">{{ $userLeaves->firstItem() + $loop->iteration - 1 }}</h4>
             </td>
             <td class="erp-tbody-td">
                 <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
@@ -60,8 +60,8 @@
 
                             @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
                                 <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Approve</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Reject</a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-check m-r-5"></i> Approve</a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-cancel m-r-5"></i> Reject</a>
                                 <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                             @endif
 

@@ -38,6 +38,28 @@
                                     </div>
                                 </div>
                                 <div class="erp-filter-item flex-48">
+                                    <div class="input-block erp-step-input-block mb-0">
+                                        <label class="col-form-label">Month <span class="text-danger">*</span></label>
+                                        <select class="select select-step"  name="month" id="month" required>
+                                            <option value="">Select Month</option>
+                                            @foreach(config('commonData.month_names') as $key => $month)
+                                                <option value="{{$key}}">{{ucfirst($month)}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
+                                    <div class="input-block erp-step-input-block mb-0">
+                                        <label class="col-form-label">Year <span class="text-danger">*</span></label>
+                                        <select class="select select-step year-select"  name="year" id="year" required>
+                                            <option value="">Select Year</option>
+                                            <option value="{{ \Carbon\Carbon::now()->subYear()->format('Y') }}"> {{\Carbon\Carbon::now()->subYear()->format('Y')}} </option>
+                                            <option value="{{ \Carbon\Carbon::now()->format('Y') }}" selected> {{\Carbon\Carbon::now()->format('Y')}} </option>
+                                            <option value="{{ \Carbon\Carbon::now()->addYear()->format('Y') }}"> {{\Carbon\Carbon::now()->addYear()->format('Y')}} </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item flex-48">
                                     <div class="input-block mb-0 erp-step-input-block">
                                         <label class="col-form-label">Date From <span class="text-danger">*</span></label>
                                         <div class="cal-icon">

@@ -105,13 +105,18 @@ class LeaveHelper
 
     }
 
-    public static function countEmployeeUsedLeave($employee_id, $leave_type_id, $start_date, $end_date)
+    public static function countEmployeeUsedLeave($employee_id, $leave_type_id, $start_date, $userLeaveId=null)
     {
         $start_date = Carbon::make($start_date)->startOfYear();
         $end_date = Carbon::make($start_date)->endOfYear();
 
         $userUsedLeaves = UserLeave::where('user_id', $employee_id)
             ->where('settings_leave_type_id', $leave_type_id)
+            ->where(function ($q) use ($userLeaveId){
+                if (!empty($userLeaveId)) {
+                    $q->where('id', '!=', $userLeaveId);
+                }
+            })
             ->where('status', UserLeave::STATUS_ACTIVE)
             ->where('deleted', UserLeave::DELETED_NO)
             ->whereIn('leave_status', [UserLeave::LEAVE_STATUS_APPROVED, UserLeave::LEAVE_STATUS_PENDING])
@@ -121,13 +126,18 @@ class LeaveHelper
 
         return $userUsedLeaves;
     }
-    public static function countEmployeeUsedLeaveMonth($employee_id, $leave_type_id, $start_date, $end_date)
+    public static function countEmployeeUsedLeaveMonth($employee_id, $leave_type_id, $start_date, $userLeaveId=null)
     {
         $start_date = Carbon::make($start_date)->startOfMonth();
         $end_date = Carbon::make($start_date)->endOfMonth();
 
         $userUsedLeaves = UserLeave::where('user_id', $employee_id)
             ->where('settings_leave_type_id', $leave_type_id)
+            ->where(function ($q) use ($userLeaveId){
+                if (!empty($userLeaveId)) {
+                    $q->where('id', '!=', $userLeaveId);
+                }
+            })
             ->where('status', UserLeave::STATUS_ACTIVE)
             ->where('deleted', UserLeave::DELETED_NO)
             ->whereIn('leave_status', [UserLeave::LEAVE_STATUS_APPROVED, UserLeave::LEAVE_STATUS_PENDING])

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('date')->nullable();
             $table->unsignedTinyInteger('day_type')->default(0)->comment('0=general, 1=weekend, 2=holiday');
             $table->boolean('is_paid')->default(false)->comment('0=unpaid, 1=paid');
+            $table->unsignedTinyInteger('leave_status')->default(0)->comment('0=pending, 1=approved, 2=rejected');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
