@@ -3,11 +3,13 @@
 namespace App\Services\User;
 
 use App\Helpers\AttendanceHelper;
+use App\Helpers\AttendanceHelper\AttendanceLateEarlyHelper;
 use App\Helpers\AttendanceHistoryHelper;
 use App\Helpers\OvertimeHelper;
 use App\Helpers\PolygonAreaHelpler;
 use App\Models\AttendanceHistory;
 use App\Models\AttendanceHistoryToday;
+use App\Models\AttendanceReport;
 use App\Models\SettingsGeoLocation;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetAttendanceLocation;
@@ -67,6 +69,7 @@ class AttendanceService
             $data['attendance_list_start_date'] = Carbon::now()->startOfMonth();
             $data['attendance_list_end_date'] = Carbon::now();
         }
+//        dd($data);
 
         return $data;
     }
@@ -172,7 +175,8 @@ class AttendanceService
             $attendance_history->updated_by = $auth_user->id;
             $attendance_history->save();
 
-            $attendance_report = AttendanceHistoryHelper::attendanceReportCreateOrUpdate($auth_user->id, Carbon::now()->format('Y-m-d'));
+            $attendance_report = AttendanceHistoryHelper::attendanceReportCreateOrUpdate($attendance_history->employee_id, $attendance_history->datetime, 1);
+            dd($attendance_report);
 
         }catch (\Exception $exception) {
             DB::rollBack();
@@ -180,5 +184,13 @@ class AttendanceService
         }
         DB::commit();
         return ['attendance_history_today'=>$attendance_history_today,'attendance_history'=>$attendance_history];
+    }
+
+    public function attendanceReportCreateOrUpdate($employee_id, $date)
+    {
+
+
+        return 'test';
+
     }
 }

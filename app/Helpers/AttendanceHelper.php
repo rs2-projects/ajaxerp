@@ -14,6 +14,7 @@ use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\User;
 use App\Models\UserLeave;
+use App\Models\UserLeaveDetail;
 use Carbon\Carbon;
 
 class AttendanceHelper
@@ -69,27 +70,41 @@ class AttendanceHelper
             ->where('approve_start_date', '<=', $date)
             ->where('approve_start_date', '>=', $date)
             ->first();
-        dump("Leave: ");
-        dump($leaveDetails);
+
+        $userLeaveDetails = UserLeaveDetail::where('user_id', $employee_id)
+            ->where('status', UserLeaveDetail::STATUS_ACTIVE)
+            ->where('deleted', UserLeaveDetail::DELETED_NO)
+            ->where('leave_status', UserLeaveDetail::LEAVE_STATUS_APPROVED)
+            ->where('date', $date)
+            ->orderBy('id', 'desc')
+            ->first();
+
         //check and get total overtime
         $overtimeDetails = AttendanceOvertimeHelper::getOvertimeDetails($office_time, $attendance_activity_history, $day_type);
-        dump("Overtime: ");
-        dump($overtimeDetails);
+
         //check and get total working time
         $workingTimeDetails = AttendanceWorkingTimeHelper::getWorkingTimeDetails($attendance_activity_history);
-        dump("Working Time: ");
-        dump($workingTimeDetails);
+
         //check and get late time
         $lateEarlyTimeDetails = AttendanceLateEarlyHelper::getLateEarlyDetails($office_time, $attendance_activity_history, $day_type);
-        dump("Late Early Time: ");
-        dump($lateEarlyTimeDetails);
 
 
-        return [];
+
+        return [
+            'employee' => $employee,
+            'office_time' => $office_time,
+            'attendance_activity_history' => $attendance_activity_history,
+            'day_type' => $day_type,
+            'leaveDetails' => $leaveDetails,
+            'userLeaveDetails' => $userLeaveDetails,
+            'overtimeDetails' => $overtimeDetails,
+            'workingTimeDetails' => $workingTimeDetails,
+            'lateEarlyTimeDetails' => $lateEarlyTimeDetails,
+        ];
         //return total history
 
 
-        dd('EOF');
+//        dd('EOF');
     }
 
 }
