@@ -7,7 +7,9 @@ use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Hr\ContractorConroller;
 use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
+use App\Http\Controllers\Hr\EmployeeAttendanceController;
 use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\GenerateSalaryController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserResignationController;
@@ -315,6 +317,25 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('get-employee-total-leave-by-leave-type-edit',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveTypeEdit'])->name('ajax.get-user-total-leave-by-leave-type-edit');
         });
         // common ajax route end
+
+        // employee attendance route start
+        Route::group(['prefix' => 'employee-attendance'], function () {
+            Route::get('/', [EmployeeAttendanceController::class, 'index'])->name('hr.employee-attendance');
+            Route::post('/filtered', [EmployeeAttendanceController::class, 'indexFiltered'])->name('hr.employee-attendance.filtered');
+            Route::post('/bulk-attendance-store', [EmployeeAttendanceController::class, 'bulkAttendanceStore'])->name('hr.employee-attendance.bulk-attendance-store');
+            Route::post('/attendance-store', [EmployeeAttendanceController::class, 'attendanceStore'])->name('hr.employee-attendance.attendance-store');
+            Route::get('get-employees-by-attendance-date',[EmployeeAttendanceController::class, 'getEmployeesByAttendanceDate'])->name('hr.employee-attendance.get-employees-by-attendance-date');
+            Route::post('get-employee-attendance-activity-details-by-date',[EmployeeAttendanceController::class, 'getEmployeeAttendanceActivityDetailsByDate'])->name('hr.employee-attendance.get-employee-attendance-activity-details-by-date');
+        });
+        // employee attendance route end
+
+        // Generate Salary Route Start
+        Route::group(['prefix' => 'generate-salary'], function () {
+            Route::get('/', [GenerateSalaryController::class, 'index'])->name('hr.generate-salary');
+            Route::post('/create', [GenerateSalaryController::class, 'create'])->name('hr.generate-salary.create');
+            Route::get('salary-list', [GenerateSalaryController::class, 'salaryList'])->name('hr.generate-salary.salary-list');
+            Route::get('get-salary-set-by-salary-type',[GenerateSalaryController::class, 'getSalarySetBySalaryType'])->name('hr.generate-salary.get-salary-set-by-salary-type');
+        });
 
     });
     // HR route end

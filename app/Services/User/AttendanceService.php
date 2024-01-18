@@ -69,6 +69,14 @@ class AttendanceService
             $data['attendance_list_start_date'] = Carbon::now()->startOfMonth();
             $data['attendance_list_end_date'] = Carbon::now();
         }
+
+        $data['attendance_reports'] = AttendanceReport::where('employee_id', $auth_user->id)
+            ->where('deleted', AttendanceReport::DELETED_NO)
+            ->whereBetween('date', [$data['attendance_list_start_date']->format('Y-m-d'), $data['attendance_list_end_date']->format('Y-m-d')])
+            ->get();
+
+        $data['months'] = config('commonData.month_names');
+
 //        dd($data);
 
         return $data;
@@ -176,21 +184,14 @@ class AttendanceService
             $attendance_history->save();
 
             $attendance_report = AttendanceHistoryHelper::attendanceReportCreateOrUpdate($attendance_history->employee_id, $attendance_history->datetime, 1);
-            dd($attendance_report);
+
 
         }catch (\Exception $exception) {
             DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
         DB::commit();
-        return ['attendance_history_today'=>$attendance_history_today,'attendance_history'=>$attendance_history];
+        return ['attendance_history_today'=>$attendance_history_today,'attendance_history'=>$attendance_history, 'attendance_report'=>$attendance_report];
     }
 
-    public function attendanceReportCreateOrUpdate($employee_id, $date)
-    {
-
-
-        return 'test';
-
-    }
 }

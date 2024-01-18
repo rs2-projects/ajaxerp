@@ -120,51 +120,47 @@
                         </div>
                         <div class="erp-filter-box d-flex align-items-center justify-content-end">
 
-                            <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end">
-                                <div class="erp-filter-item">
-                                    <h6 class="me-2">Search By: </h6>
-                                </div>
-                                <div class="erp-filter-item">
-                                    <div class=" form-focus select-focus custom-form-focus">
-                                        <select class="select floating select2-box">
-                                            <option>Select Month</option>
-                                            <option>January</option>
-                                            <option>February</option>
-                                            <option>March</option>
-                                            <option>April</option>
-                                            <option>May</option>
-                                            <option>June</option>
-                                            <option>July</option>
-                                            <option>August</option>
-                                            <option>September</option>
-                                            <option>October</option>
-                                            <option>November</option>
-                                            <option>December</option>
-                                        </select>
+                            <form>
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end">
+                                    <div class="erp-filter-item">
+                                        <h6 class="me-2">Search By: </h6>
+                                    </div>
+                                    <div class="erp-filter-item">
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box" required name="month">
+                                                <option value="">Select Month</option>
+                                                @foreach($months as $key=>$month)
+                                                    <option value="{{ $key }}"
+                                                        {{ $key == request()->month ? 'selected' : '' }}>
+                                                        {{ $month }}
+                                                    </option>
 
+                                                @endforeach
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item">
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box" name="year" required>
+                                                <option value="">-</option>
+                                                @for($i=(date('Y') - 2);$i<=(date('Y'));$i++)
+                                                    <option value="{{$i}}" {{ (request()->year == $i)?'selected':'' }}>{{ $i }}</option>
+                                                @endfor
+
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item">
+                                        <div class="erp-search-btn-wrap">
+                                            <button class=" erp-search-btn">Search</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="erp-filter-item">
-                                    <div class=" form-focus select-focus custom-form-focus">
-                                        <select class="select floating select2-box">
-                                            <option>Select Year</option>
-                                            <option>2023</option>
-                                            <option>2022</option>
-                                            <option>2021</option>
-                                            <option>Last Year</option>
-                                            <option>Last Two Years</option>
-
-                                        </select>
-
-                                    </div>
-                                </div>
-                                <div class="erp-filter-item">
-                                    <div class="erp-search-btn-wrap">
-                                        <button class=" erp-search-btn">Search</button>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
+
                     </div>
 
                     <div class="table-main-wrapper pt-4">
@@ -181,41 +177,38 @@
                             <div class="table-header-item my-att text-center">
                                 <h4>Punch Out</h4>
                             </div>
-                            {{--<div class="table-header-item my-att text-center">
+                            <div class="table-header-item my-att text-center">
                                 <h4>Break Time (Hour)</h4>
-                            </div>--}}
+                            </div>
                             <div class="table-header-item my-att text-center">
                                 <h4>Over Time (Hour)</h4>
                             </div>
                         </div>
                         <div class="table-body-wrapper">
                             @php($sl = 0)
-                            @while ($attendance_list_end_date->gte($attendance_list_start_date))
+                            @while($attendance_list_end_date->gte($attendance_list_start_date))
                                 @php($sl++)
-                                @php($aldate = $attendance_list_end_date->format('Y-m-d'))
-                                {{--@php($alData = \App\Helpers\AttendanceHelper::getAttendanceStatus(auth()->id(),$aldate))--}}
-                                @php($alOvertimeData = \App\Helpers\OvertimeHelper::getOvertime(auth()->id(),$aldate))
-                                    <div class="table-body-item-wrapper d-flex flex-wrap">
-                                        <div class="table-body-item my-att">
-                                            <h4>{{ $sl }}</h4>
-                                        </div>
-                                        <div class="table-body-item my-att ">
-                                            <h4 class="text-center">{{ $attendance_list_end_date->format('j M Y') }}</h4>
-                                        </div>
-                                        <div class="table-body-item my-att">
-                                            <h4 class="text-center">10:00 AM</h4>
-                                        </div>
-                                        <div class="table-body-item my-att ">
-                                            <h4 class="text-center">06:00 PM</h4>
-                                        </div>
-                                        {{--<div class="table-body-item my-att ">
-                                            <h4 class="text-center">01:00 </h4>
-                                        </div>--}}
-                                        <div class="table-body-item my-att ">
-                                            <h4 class="text-center">{{ $alOvertimeData['overtime'] }}</h4>
-                                        </div>
-
+                                @php($report = $attendance_reports->where('date', $attendance_list_end_date->format('Y-m-d'))->first())
+                                <div class="table-body-item-wrapper d-flex flex-wrap">
+                                    <div class="table-body-item my-att">
+                                        <h4>{{ $sl }}</h4>
                                     </div>
+                                    <div class="table-body-item my-att ">
+                                        <h4 class="text-center">{{ getFormattedDate($attendance_list_end_date->format('Y-m-d'),'j M, Y') }}</h4>
+                                    </div>
+                                    <div class="table-body-item my-att">
+                                        <h4 class="text-center">{{ getFormattedTime2($report->time_in ?? null) }}</h4>
+                                    </div>
+                                    <div class="table-body-item my-att ">
+                                        <h4 class="text-center">{{ getFormattedTime2($report->time_out ?? null) }}</h4>
+                                    </div>
+                                    <div class="table-body-item my-att ">
+                                        <h4 class="text-center">{{ $report->total_break_time ?? '' }} </h4>
+                                    </div>
+                                    <div class="table-body-item my-att ">
+                                        <h4 class="text-center">{{ $report->total_overtime ?? '' }}</h4>
+                                    </div>
+                                </div>
                                 @php($attendance_list_end_date->subDay())
                             @endwhile
                         </div>
@@ -269,6 +262,8 @@
                     ajaxGet(url, { latitude: latitude, longitude: longitude }, function (response) {
                         if (response.status == 200) {
                             console.log(response);
+                            toastr.success('Success');
+                            window.location.reload();
                         } else {
                             toastr.error(response.message);
                         }

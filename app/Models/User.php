@@ -231,4 +231,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Contractor::class, 'contractor_id');
     }
+
+    public function settingsSalarySetEmployee()
+    {
+        return $this->belongsTo(SettingsSalarySetEmployee::class, 'id', 'employee_id');
+    }
 }

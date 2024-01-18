@@ -33,7 +33,7 @@ class AttendanceLateEarlyHelper
                 $is_present = true;
                 $punch_in_time = $first_in->datetime;
                 if (Carbon::parse($first_in->datetime)->format('H:i') > Carbon::parse($office_time->start_time)->format('H:i')) {
-                    $total_late_minutes += Carbon::parse(Carbon::parse($first_in->datetime)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($office_time->start_time)->format('H:i')));
+                    $total_late_minutes = Carbon::parse(Carbon::parse($first_in->datetime)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($office_time->start_time)->format('H:i')));
                     $is_late = true;
                 } else {
                     $is_late = false;
@@ -42,7 +42,7 @@ class AttendanceLateEarlyHelper
                 if (!empty($last_out)) {
                     $punch_out_time = $last_out->datetime;
                     if (Carbon::parse($last_out->datetime)->format('H:i') < Carbon::parse($office_time->end_time)->format('H:i')) {
-                        $total_early_minutes += Carbon::parse(Carbon::parse($office_time->end_time)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($last_out->datetime)->format('H:i')));
+                        $total_early_minutes = Carbon::parse(Carbon::parse($office_time->end_time)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($last_out->datetime)->format('H:i')));
                         $is_early = true;
                     } else {
                         $is_early = false;

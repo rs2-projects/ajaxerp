@@ -8,33 +8,32 @@
                 </li>
 
                 <li>
-                    <a href="index.html" class="{{ ($activeMenu == 'dashboard')?'active':'' }}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
+                    <a href="{{ route('dashboard') }}" class="{{ ($activeMenu == 'dashboard')?'active':'' }}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
                 </li>
+                @if(hasUserPermission(\App\Models\User::TYPE_EMPLOYEE))
+                    <li>
+                        <a href="{{ route('user.resignation') }}" class="{{ ($activeMenu == 'user.resignation')?'active':'' }}"><i class="la la-dashboard"></i> <span>Resignation</span></a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user.leaves') }}" class="{{ ($activeMenu == 'user.leaves')?'active':'' }}"><i class="la la-dashboard"></i> <span>Leaves</span></a>
+                    </li>
+                    <li>
+                        <a href="{{ route('user.attendance') }}" class="{{ ($activeMenu == 'user.attendance')?'active':'' }}"><i class="la la-dashboard"></i> <span>My Attendance</span></a>
+                    </li>
+                @endif
 
-                <li>
-                    <a href="{{ route('user.resignation') }}" class="{{ ($activeMenu == 'user.resignation')?'active':'' }}"><i class="la la-dashboard"></i> <span>Resignation</span></a>
-                </li>
-                <li>
-                    <a href="{{ route('user.leaves') }}" class="{{ ($activeMenu == 'user.leaves')?'active':'' }}"><i class="la la-dashboard"></i> <span>Leaves</span></a>
-                </li>
-                <li>
-                    <a href="{{ route('user.attendance') }}" class="{{ ($activeMenu == 'user.attendance')?'active':'' }}"><i class="la la-dashboard"></i> <span>My Attendance</span></a>
-                </li>
-
+                @if(hasUserPermission(\App\Models\User::TYPE_ADMIN))
                 <li class="submenu">
                     <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details'
                         || $activeMenu == 'hr.department' || $activeMenu == 'hr.designation'
                         || $activeMenu == 'hr.salary-set' || $activeMenu == 'hr.salary-create'
-                        || $activeMenu == 'hr.user-leaves') ? 'active' : '' }} noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
+                        || $activeMenu == 'hr.user-leaves') || $activeMenu == 'hr.employee-attendance' ? 'active' : '' }} noti-dot"><i class="la la-users"></i> <span> HR Corporate</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
                             <a href="javascript:void(0);"> <span>Attendance</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li ><a href="{{ route('user.attendance') }}"><span>My Attendance</span></a></li>
                                 <li><a href="reports.html"><span>Reports</span></a></li>
-                                <li><a href="employee-attendance.html"><span>Employee Attendance</span></a></li>
-
-
+                                <li><a href="{{ route('hr.employee-attendance') }}"><span>Employee Attendance</span></a></li>
                             </ul>
                         </li>
                         <li>
@@ -85,6 +84,18 @@
                             </ul>
                         </li>
 
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.generate-salary' || $activeMenu == 'hr.generate-salary.salary-list') ? 'active' : '' }} noti-dot"><i class="la la-money"></i> <span> Payroll</span> <span class="menu-arrow"></span></a>
+                    <ul>
+
+                        <li>
+                            <a href="{{ route('hr.generate-salary') }}" class="{{ ($activeMenu == 'hr.generate-salary') ? 'active' : '' }}"> <span>Generate Salary</span></a>
+                        </li>
+                        <li>
+                            <a href="{{ route('hr.generate-salary.salary-list') }}" class="{{ ($activeMenu == 'hr.generate-salary.salary-list') ? 'active' : '' }}"><span>Salary List</span></a>
+                        </li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -174,6 +185,7 @@
                 <li>
                     <a href="{{ route('settings.office-time') }}"><i class="la la-cog"></i> <span>Settings</span></a>
                 </li>
+                @endif
 
             </ul>
         </div>
