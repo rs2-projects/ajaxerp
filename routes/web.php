@@ -326,6 +326,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/attendance-store', [EmployeeAttendanceController::class, 'attendanceStore'])->name('hr.employee-attendance.attendance-store');
             Route::get('get-employees-by-attendance-date',[EmployeeAttendanceController::class, 'getEmployeesByAttendanceDate'])->name('hr.employee-attendance.get-employees-by-attendance-date');
             Route::post('get-employee-attendance-activity-details-by-date',[EmployeeAttendanceController::class, 'getEmployeeAttendanceActivityDetailsByDate'])->name('hr.employee-attendance.get-employee-attendance-activity-details-by-date');
+            Route::post('get-employee-attendance-edit-details-by-date',[EmployeeAttendanceController::class, 'getEmployeeAttendanceEditDetailsByDate'])->name('hr.employee-attendance.get-employee-attendance-edit-details-by-date');
+            Route::post('get-employee-attendance-edit-details-by-date/edit-form',[EmployeeAttendanceController::class, 'getEmployeeAttendanceEditDetailsByDateEditForm'])->name('hr.employee-attendance.get-employee-attendance-edit-details-by-date.edit-form');
+            Route::post('get-employee-attendance-edit-details-by-date/{id}/update',[EmployeeAttendanceController::class, 'getEmployeeAttendanceEditDetailsByDateUpdate'])->name('hr.employee-attendance.get-employee-attendance-edit-details-by-date.update');
         });
         // employee attendance route end
 

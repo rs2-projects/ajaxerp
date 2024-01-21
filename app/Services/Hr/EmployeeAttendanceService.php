@@ -278,4 +278,71 @@ class EmployeeAttendanceService
             throw $exception;
         }
     }
+
+    public function getEmployeeAttendanceEditDetailsByDate($request)
+    {
+        try {
+            $data['date'] = $request->date;
+            $attendance_history_table = new AttendanceHistory();
+
+            $data['activity_history'] = $attendance_history_table->where('employee_id', $request->employee_id)
+                ->whereDate('datetime', $request->date)
+                ->get();
+
+            $data['employee'] = User::where('id', $request->employee_id)->first();
+
+            $data['attendance_report'] = AttendanceReport::where('employee_id', $request->employee_id)
+                ->whereDate('date', $request->date)
+                ->first();
+
+            return $data;
+
+        }catch (\Exception $exception) {
+            throw $exception;
+        }
+
+
+    }
+
+    public function getEmployeeAttendanceEditDetailsByDateEditForm($request)
+    {
+        try {
+            $attendance_id = $request->attendance_id;
+            $attendance_history = new AttendanceHistory();
+
+            $data['att_data'] = $attendance_history->where('id', $attendance_id)->first();
+            $data['employee'] = User::where('id',$data['att_data']->employee_id)
+                ->where('status', User::STATUS_ACTIVE)
+                ->first();
+            return $data;
+        }catch (\Exception $exception) {
+            throw $exception;
+        }
+    }
+
+    public function getEmployeeAttendanceEditDetailsByDateUpdate($request, $id)
+    {
+        try {
+
+            $attendance_id = $id;
+
+            $attendance_history = AttendanceHistory::where('id', $attendance_id)->first();
+            if (empty($attendance_history)) {
+                throw new \Exception("Attendance not found");
+            }
+            $date = Carbon::parse($attendance_history->datetime)->format('Y-m-d');
+            $makeDateTime = $date . ' ' . $request->time;
+            $attendance_history->datetime = $makeDateTime;
+            $attendance_history->updated_at = Carbon::now();
+            $attendance_history->updated_by = auth()->user()->id;
+            $attendance_history->save();
+
+            $attendance_report = AttendanceHistoryHelper::attendanceReportCreateOrUpdate($attendance_history->employee_id, $date, 2);
+
+            return $attendance_report;
+
+        }catch (\Exception $exception) {
+            throw $exception;
+        }
+    }
 }

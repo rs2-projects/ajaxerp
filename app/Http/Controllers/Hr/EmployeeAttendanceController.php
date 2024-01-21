@@ -70,4 +70,40 @@ class EmployeeAttendanceController extends BackendController
 
         return $this->returnAjaxSuccess(['html_view' => $html_view, 'last_flag' => $data['last_flag']]);
     }
+
+    public function getEmployeeAttendanceEditDetailsByDate(Request $request, EmployeeAttendanceService $employeeAttendanceService)
+    {
+        try {
+            $data = $employeeAttendanceService->getEmployeeAttendanceEditDetailsByDate($request);
+            $html_view = $this->view('hr.employee-attendance._employee_attendance_edit_details')->with($data)->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['html_view' => $html_view]);
+    }
+
+    public function getEmployeeAttendanceEditDetailsByDateEditForm(Request $request, EmployeeAttendanceService $employeeAttendanceService)
+    {
+        try {
+            $data = $employeeAttendanceService->getEmployeeAttendanceEditDetailsByDateEditForm($request);
+            $html_view = $this->view('hr.employee-attendance._employee_attendance_edit_details_edit_form')->with($data)->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['html_view' => $html_view]);
+    }
+
+    public function getEmployeeAttendanceEditDetailsByDateUpdate(Request $request, $id, EmployeeAttendanceService $employeeAttendanceService)
+    {
+
+        try {
+            $employeeAttendanceService->getEmployeeAttendanceEditDetailsByDateUpdate($request, $id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Update Success");
+    }
 }

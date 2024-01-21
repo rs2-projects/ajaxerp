@@ -120,7 +120,7 @@
                                                                 $report = \App\Helpers\AttendanceHelper::getAttendanceReport($employee->id, $result_date);
                                                             @endphp
                                                             <td class="erp-tbody-td text-center">
-                                                                <a href="#" data-bs-toggle="modal" data-bs-target="#attendance_info" class="text-center d-table-title erp-{{ $report['show_status'] }}">
+                                                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#attendance_edit_info_modal" onclick="showAttendanceDetails({{ $employee->id }}, '{{ $result_date }}')" class="text-center d-table-title erp-{{ $report['show_status'] }}">
                                                                     <span class="attd-badge ">{!! $report['icon_status'] !!}</span>
                                                                 </a>
                                                             </td>
@@ -148,6 +148,14 @@
 @section('modals')
     @include('hr.employee-attendance._add_bulk_attendance_modal')
     @include('hr.employee-attendance._add_attendance_modal')
+
+    <!-- Add Attendance Modal -->
+    <div class="modal custom-modal fade" id="attendance_edit_info_modal" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('css')
@@ -207,6 +215,27 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         $("#add_attendance_modal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        // getData();
+                        window.location.reload();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $(document).on('submit', "#attendanceUpdateByDateForm", function (e) {
+            // $("#attendanceUpdateByDateForm").on('submit', function (e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#attendance_edit_info_modal").modal('hide');
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         // getData();
@@ -279,16 +308,17 @@
     <script>
 
         function showAttendanceDetails(employee_id, date) {
-            var append_dom = $("#attendance_info .modal-content");
-            var form_route = "";
+            var append_dom = $("#attendance_edit_info_modal .modal-content");
+            var form_route = "{{ route('hr.employee-attendance.get-employee-attendance-edit-details-by-date') }}";
             var csrf_token = $('input[name="_token"]').val();
 
             $.ajax({
                 type: "POST",
                 url: form_route,
                 data: {employee_id: employee_id, date: date, _token: csrf_token},
-                success: function (html) {
-                    append_dom.html(html);
+                success: function (response) {
+                    console.log(response.html_view);
+                    append_dom.html(response.html_view);
                 }
             });
         }
@@ -317,6 +347,21 @@
                 success: function (html) {
                     append_dom.html(html.html_view);
                     last_flag = html.last_flag;
+                }
+            });
+        }
+
+        function editAttendance(attendance_id) {
+            var append_dom = $("#attendance_edit_info_modal .modal-content");
+            var form_route = "{{ route('hr.employee-attendance.get-employee-attendance-edit-details-by-date.edit-form') }}";
+            var csrf_token = $('input[name="_token"]').val();
+
+            $.ajax({
+                type: "POST",
+                url: form_route,
+                data: {attendance_id: attendance_id, _token: csrf_token},
+                success: function (response) {
+                    append_dom.html(response.html_view);
                 }
             });
         }
