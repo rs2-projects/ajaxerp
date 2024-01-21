@@ -50,6 +50,9 @@
                 <li>
                     <a href="{{ route('settings.bonus-type-salary') }}" class="{{ ($activeMenu == 'settings.bonus-type-salary')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Salary Bonus</span></a>
                 </li>
+                <li>
+                    <a href="{{ route('settings.salary-deduction-type') }}" class="{{ ($activeMenu == 'settings.salary-deduction-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Salary Deduction Type</span></a>
+                </li>
 
             </ul>
         </div>

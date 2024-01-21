@@ -23,6 +23,7 @@ use App\Http\Controllers\Settings\LatePenaltySettingsController;
 use App\Http\Controllers\Settings\LeaveTypeSettingsController;
 use App\Http\Controllers\Settings\OfficeTimeSettingsController;
 use App\Http\Controllers\Settings\OverTimeSettingsController;
+use App\Http\Controllers\Settings\SalaryDeductionTypeSettingsController;
 use App\Http\Controllers\Settings\SalaryTypeSettingsController;
 use App\Http\Controllers\Settings\TerminationTypeSettingsController;
 use App\Http\Controllers\User\AttendanceController;
@@ -179,6 +180,17 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [TerminationTypeSettingsController::class, 'update'])->name('settings.termination-type.update');
             Route::get('/{id}/delete', [TerminationTypeSettingsController::class, 'delete'])->name('settings.termination-type.delete');
             Route::get('/{id}/change-status/{status}', [TerminationTypeSettingsController::class, 'statusUpdate'])->name('settings.termination-type.change-status');
+        });
+
+        // Salary Deduction Type settings start
+        Route::group(['prefix' => 'salary-deduction-type'], function () {
+            Route::get('/', [SalaryDeductionTypeSettingsController::class, 'index'])->name('settings.salary-deduction-type');
+            Route::post('/filtered', [SalaryDeductionTypeSettingsController::class, 'indexFiltered'])->name('settings.salary-deduction-type.filtered');
+            Route::post('/create', [SalaryDeductionTypeSettingsController::class, 'store'])->name('settings.salary-deduction-type.store');
+            Route::get('/{id}/edit', [SalaryDeductionTypeSettingsController::class, 'edit'])->name('settings.salary-deduction-type.edit');
+            Route::post('/{id}/update', [SalaryDeductionTypeSettingsController::class, 'update'])->name('settings.salary-deduction-type.update');
+            Route::get('/{id}/delete', [SalaryDeductionTypeSettingsController::class, 'delete'])->name('settings.salary-deduction-type.delete');
+            Route::get('/{id}/change-status/{status}', [SalaryDeductionTypeSettingsController::class, 'statusUpdate'])->name('settings.salary-deduction-type.change-status');
         });
 
 
