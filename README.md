@@ -10,6 +10,7 @@
 - ``composer install``
 - ``cp .env.example .env``
 - Set database credentials in **.env** file
+- ``php artisan key:generate``
 - ``php artisan migrate --seed``
 
 Installation Complete
