@@ -9,11 +9,11 @@ use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeAttendanceController;
 use App\Http\Controllers\Hr\EmployeeController;
-use App\Http\Controllers\Hr\GenerateSalaryController;
-use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\SalarySetController;
+use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
+use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -344,16 +344,22 @@ Route::group(['middleware' => 'auth'], function () {
         });
         // employee attendance route end
 
+    });
+    // HR route end
+
+    //Payroll routes start
+    Route::group(['prefix' => 'hr'], function () {
+
         // Generate Salary Route Start
         Route::group(['prefix' => 'generate-salary'], function () {
-            Route::get('/', [GenerateSalaryController::class, 'index'])->name('hr.generate-salary');
-            Route::post('/create', [GenerateSalaryController::class, 'create'])->name('hr.generate-salary.create');
-            Route::get('salary-list', [GenerateSalaryController::class, 'salaryList'])->name('hr.generate-salary.salary-list');
-            Route::get('get-salary-set-by-salary-type',[GenerateSalaryController::class, 'getSalarySetBySalaryType'])->name('hr.generate-salary.get-salary-set-by-salary-type');
+            Route::get('/', [GenerateSalaryController::class, 'index'])->name('payroll.generate-salary');
+            Route::post('create', [GenerateSalaryController::class, 'create'])->name('payroll.generate-salary.create');
+            Route::get('salary-list', [GenerateSalaryController::class, 'salaryList'])->name('payroll.generate-salary.salary-list');
+            Route::get('get-salary-set-by-salary-type',[GenerateSalaryController::class, 'getSalarySetBySalaryType'])->name('payroll.generate-salary.get-salary-set-by-salary-type');
         });
 
     });
-    // HR route end
+    //Payroll routes end
 
     // User Resignation Route Start
     Route::group(['prefix' => 'user-resignation'], function () {

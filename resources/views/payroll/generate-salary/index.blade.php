@@ -4,7 +4,7 @@
     <div class="row">
 
         <div class="erp-employee-list-wrapper">
-            <form action="{{ route('hr.generate-salary.create') }}" method="post" id="generateSalaryStoreForm">
+            <form action="{{ route('payroll.generate-salary.create') }}" method="post" id="generateSalaryStoreForm">
                 @csrf
                 <div class="erp-main-filter-wrapper d-flex justify-content-center ">
                     <div class="erp-add-em-step-wrapper bg-card flex-100">
@@ -17,8 +17,9 @@
                                                 <label class="col-form-label">Salary Type <span class="text-danger">*</span></label>
                                                 <select class="select select-step" onchange="getSalarySetBySalaryType()" name="salary_type" id="salary_type" required>
                                                     <option value="">Select Salary Type</option>
-                                                    <option value="1">Half Month</option>
-                                                    <option value="2">Full Month</option>
+                                                    @foreach(\App\Models\SettingsSalarySet::SALARY_GENERATE_TYPES as $salary_generate_type_key => $salary_generate_type)
+                                                        <option value="{{ $salary_generate_type_key }}">{{ $salary_generate_type }}</option>
+                                                    @endforeach
                                                 </select>
                                                 <span class="salary_type_error ie-span"></span>
                                             </div>
@@ -63,8 +64,8 @@
                                                 <label class="col-form-label">Period Type <span class="text-danger">*</span></label>
                                                 <select class="select select-step" name="period_type" id="period_type" required>
                                                     <option value="">Select Period Type</option>
-                                                    <option value="1">First Half</option>
-                                                    <option value="2">Second Half</option>
+                                                    <option value="{{ \App\Models\Salary::SALARY_PERIOD_FIRST_HALF }}">First Half</option>
+                                                    <option value="{{ \App\Models\Salary::SALARY_PERIOD_SECOND_HALF }}">Second Half</option>
                                                 </select>
                                                 <span class="salary_type_error ie-span"></span>
                                             </div>
@@ -113,10 +114,13 @@
             var salary_type = $("#salary_type").val();
             if(salary_type == 1){
                 $(".period-type-slide-up-down").slideDown();
+                $("#period_type").attr('required', 'required');
             }else{
                 $(".period-type-slide-up-down").slideUp();
+                $("#period_type").removeAttr('required');
             }
-            let url = "{{ route('hr.generate-salary.get-salary-set-by-salary-type') }}";
+
+            let url = "{{ route('payroll.generate-salary.get-salary-set-by-salary-type') }}";
             ajaxGet(url, {salary_type:salary_type}, function (response) {
                 if (response.status == 200) {
                     $("#salary_set").html(response.data);

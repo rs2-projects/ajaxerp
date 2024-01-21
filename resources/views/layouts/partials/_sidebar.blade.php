@@ -32,7 +32,7 @@
                         <li class="submenu">
                             <a href="javascript:void(0);"> <span>Attendance</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="reports.html"><span>Reports</span></a></li>
+                                {{--<li><a href="reports.html"><span>Reports</span></a></li>--}}
                                 <li><a href="{{ route('hr.employee-attendance') }}"><span>Employee Attendance</span></a></li>
                             </ul>
                         </li>
@@ -49,7 +49,7 @@
                             <a href="{{ route('hr.salary-set') }}" class="{{ ($activeMenu == 'hr.salary-set' || $activeMenu == 'hr.salary-set.create') ? 'active' : '' }}"><span>Salary Set</span></a>
                         </li>
                         <li>
-                            <a href="notice.html"><span>Notice</span></a>
+                            {{--<a href="notice.html"><span>Notice</span></a>--}}
                         </li>
                         <li class="submenu">
                             <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.department' || $activeMenu == 'hr.designation' || $activeMenu == 'hr.user-termination' || $activeMenu == 'hr.user-resignation')?'active':'' }}"> <span>More</span> <span class="menu-arrow"></span></a>
@@ -73,13 +73,13 @@
                                         <li><a href="termination-tyoe">Termination Type</a></li>
                                     </ul>
                                 </li>--}}
-                                <li class="submenu">
+                                {{--<li class="submenu">
                                     <a href="javascript:void(0);"> <span> Promotion</span> <span class="menu-arrow"></span></a>
                                     <ul>
                                         <li><a href="promoted-employee.html">Promoted Employee</a></li>
                                         <li><a href="promotion-type.html">Promotion Type</a></li>
                                     </ul>
-                                </li>
+                                </li>--}}
 
                             </ul>
                         </li>
@@ -87,18 +87,18 @@
                     </ul>
                 </li>
                 <li class="submenu">
-                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.generate-salary' || $activeMenu == 'hr.generate-salary.salary-list') ? 'active' : '' }} noti-dot"><i class="la la-money"></i> <span> Payroll</span> <span class="menu-arrow"></span></a>
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.generate-salary' || $activeMenu == 'payroll.generate-salary.salary-list') ? 'active' : '' }} noti-dot"><i class="la la-money"></i> <span> Payroll</span> <span class="menu-arrow"></span></a>
                     <ul>
 
                         <li>
-                            <a href="{{ route('hr.generate-salary') }}" class="{{ ($activeMenu == 'hr.generate-salary') ? 'active' : '' }}"> <span>Generate Salary</span></a>
+                            <a href="{{ route('payroll.generate-salary') }}" class="{{ ($activeMenu == 'payroll.generate-salary') ? 'active' : '' }}"> <span>Generate Salary</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('hr.generate-salary.salary-list') }}" class="{{ ($activeMenu == 'hr.generate-salary.salary-list') ? 'active' : '' }}"><span>Salary List</span></a>
+                            <a href="{{ route('payroll.generate-salary.salary-list') }}" class="{{ ($activeMenu == 'payroll.generate-salary.salary-list') ? 'active' : '' }}"><span>Salary List</span></a>
                         </li>
                     </ul>
                 </li>
-                <li class="submenu">
+                {{--<li class="submenu">
                     <a href="javascript:void(0);" class="noti-dot"><i class="la la-cube"></i> <span> HR Factory Force</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
@@ -153,12 +153,12 @@
                         </li>
 
                     </ul>
-                </li>
+                </li>--}}
 
 
 
 
-                <li class="menu-title">
+                {{--<li class="menu-title">
                     <span>Performance</span>
                 </li>
                 <li class="submenu">
@@ -175,7 +175,7 @@
                         <li><a href="javascript:void(0);"> Goal List </a></li>
                         <li><a href="javascript:void(0);"> Goal Type </a></li>
                     </ul>
-                </li>
+                </li>--}}
 
 
                 <li class="menu-title">

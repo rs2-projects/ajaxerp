@@ -46,6 +46,7 @@ class SettingsSalaryDeductionType extends Model
         'rate_type',
         'salary_type',
         'rate',
+        'status',
         'created_at',
         'created_by',
         'updated_at',

@@ -1,41 +1,45 @@
 <?php
 
-namespace App\Http\Controllers\Hr;
+namespace App\Http\Controllers\Payroll;
 
 use App\Http\Controllers\BaseControllers\BackendController;
-use App\Http\Controllers\Controller;
 use App\Models\SettingsSalarySet;
+use App\Services\Payroll\GenerateSalaryService;
 use Illuminate\Http\Request;
 
 class GenerateSalaryController extends BackendController
 {
+    private GenerateSalaryService $service;
+
     public function __construct()
     {
         $this->addBreadcrumbs('HR', route('dashboard'), 'fa fa-home');
         $this->addBreadcrumbs('Generate Salary');
+
+        $this->service = new GenerateSalaryService();
     }
 
     public function index(Request $request)
     {
         $this->setPageTitle("Generate Salary");
-        $this->setActiveMenu('hr.generate-salary');
+        $this->setActiveMenu('payroll.generate-salary');
 
-        $data['months'] = config('commonData.month_names');
+        $data = $this->service->getIndexData($request);
 
-        return $this->view('hr.generate-salary.index')->with($data);
+        return $this->view('payroll.generate-salary.index')->with($data);
     }
 
     public function create(Request $request)
     {
-        return redirect()->back()->with(['success' => 'Salary Generated Successfully']);
+
     }
 
     public function salaryList()
     {
         $this->setPageTitle("Salary List");
-        $this->setActiveMenu('hr.generate-salary.salary-list');
+        $this->setActiveMenu('payroll.generate-salary.salary-list');
 
-        return $this->view('hr.generate-salary.salary-list');
+        return $this->view('payroll.generate-salary.salary-list');
     }
 
     public function getSalarySetBySalaryType(Request $request)
@@ -46,7 +50,7 @@ class GenerateSalaryController extends BackendController
             ->where('salary_generate_type', $request->salary_type)
             ->get();
 
-        $data = $this->view('hr.generate-salary._salary_set')->with(['settingsSalarySets' => $settingsSalarySets])->render();
+        $data = $this->view('payroll.generate-salary._salary_set')->with(['settingsSalarySets' => $settingsSalarySets])->render();
 
         return $this->returnAjaxSuccess(['data' => $data]);
     }
