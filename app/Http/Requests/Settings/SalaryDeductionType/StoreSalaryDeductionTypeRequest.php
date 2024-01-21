@@ -23,6 +23,9 @@ class StoreSalaryDeductionTypeRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'rate_type' => 'required',
+            'salary_type' => 'required',
+            'rate' => 'required|numeric|min:0',
         ];
     }
 }

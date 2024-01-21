@@ -18,13 +18,9 @@
                                 <input type="text" name="title" required class="form-control"  >
                                 <span class="title_error ie-span"></span>
                             </div>
-                            <div class="input-block erp-step-input-block mb-2">
-                                <label class="col-form-label">Description</label>
-                                <textarea class="form-control" name="description" rows="2"></textarea>
-                            </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Rate Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
                                     <select class="select select-step select2" name="rate_type" required>
                                         <option value="">Select Type</option>
                                         <option value="0">Percentage</option>
@@ -49,10 +45,14 @@
 
                             <div class="erp-filter-item flex-100">
                                 <div class="input-block mb-0 erp-step-input-block ">
-                                    <label class="col-form-label">Deduct Value (%) </label>
+                                    <label class="col-form-label">Rate </label>
                                     <input type="number" min="0" step="any" class="form-control" required name="rate">
                                     <span class="rate_error ie-span"></span>
                                 </div>
+                            </div>
+                            <div class="input-block erp-step-input-block mb-2">
+                                <label class="col-form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="2"></textarea>
                             </div>
                         </div>
                         <div class="submit-section mt-2">

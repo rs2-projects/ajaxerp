@@ -73,7 +73,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#bonusTypeSalaryFormEdit", function(e) {
+            $(document).on("submit", "#salaryDeductionTypeUpdateForm", function(e) {
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
@@ -81,7 +81,7 @@
 
                 formPost(url, formData, function (res){
                     if(res.status == 200){
-                        $("#edit_bonus_type_salary_modal").modal('hide');
+                        $("#edit_salary_deduction_type_modal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -101,12 +101,12 @@
         }
 
         function editItem(id){
-            let url = "{{route('settings.bonus-type-salary.edit', ':id')}}";
+            let url = "{{route('settings.salary-deduction-type.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
-                    $("#edit_bonus_type_salary_modal_body").html(response.view);
-                    $("#edit_bonus_type_salary_modal").modal('show');
+                    $("#edit_salary_deduction_type_modal_body").html(response.view);
+                    $("#edit_salary_deduction_type_modal").modal('show');
                     initializeSelect();
                 } else {
                     toastr.error(response.message);
