@@ -22,6 +22,7 @@ class AttendanceHistoryHelper
                 $attendanceReport = new AttendanceReport();
                 $attendanceReport->created_at = Carbon::now();
                 $attendanceReport->created_by = ($inputted_by_type !=0) ? auth()->user()->id : null;
+                $attendanceReport->inputted_by_type = $inputted_by_type;
             }
 
             $salarySet = SalarySetHelper::getEmployeeSalarySet($employee_id);
@@ -84,7 +85,6 @@ class AttendanceHistoryHelper
             $attendanceReport->total_break_time = $break_hour;
             $attendanceReport->late_time = $late_hour;
             $attendanceReport->early_leaving_time = $early_hour;
-            $attendanceReport->inputted_by_type = $inputted_by_type;
             $attendanceReport->updated_at = Carbon::now();
             $attendanceReport->updated_by = ($inputted_by_type !=0) ? auth()->user()->id : null;
             $attendanceReport->save();
