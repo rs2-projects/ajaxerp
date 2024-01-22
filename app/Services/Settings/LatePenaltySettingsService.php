@@ -26,6 +26,8 @@ class LatePenaltySettingsService
         $latePenalty->title = $request->title;
         $latePenalty->description = $request->description;
         $latePenalty->late_count_minutes = $request->late_count_minutes;
+        $latePenalty->salary_type = $request->salary_type;
+        $latePenalty->rate = $request->rate;
         $latePenalty->save();
 
     }
@@ -46,6 +48,8 @@ class LatePenaltySettingsService
         $latePenalty->title = $request->title;
         $latePenalty->description = $request->description;
         $latePenalty->late_count_minutes = $request->late_count_minutes;
+        $latePenalty->salary_type = $request->salary_type;
+        $latePenalty->rate = $request->rate;
         $latePenalty->save();
     }
 

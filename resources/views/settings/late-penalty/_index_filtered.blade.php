@@ -6,6 +6,8 @@
                 <th class="erp-th">Title </th>
                 <th class="erp-th text-center">Description </th>
                 <th class="erp-th text-center">Minutes</th>
+                <th class="erp-th text-center">Salary Type </th>
+                <th class="erp-th text-center">Rate </th>
                 <th class="text-end erp-th">Action</th>
             </tr>
         </thead>
@@ -23,6 +25,12 @@
                     </td>
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ $item->late_count_minutes }}</h4>
+                    </td>
+                    <td class="erp-tbody-td text-center">
+                        <h4 class="text-center d-table-title">{{$item::SALARY_TYPES[$item->salary_type]}}</h4>
+                    </td>
+                    <td class="erp-tbody-td text-center">
+                        <h4 class="text-center d-table-title">{{$item->rate}}% of {{$item::SALARY_TYPES[$item->salary_type]}}</h4>
                     </td>
                     <td class="text-end erp-tbody-td">
                         <div class="erp-action-t">

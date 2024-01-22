@@ -27,15 +27,15 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Hourly Rate (%) </label>
-                    <input type="number" step="any" class="form-control " value="{{$item->rate}}" name="rate" required value="0">
+                    <label class="col-form-label">Rate (%) </label>
+                    <input type="number" step="any" class="form-control " value="{{$item->rate}}" name="rate" required>
                 </div>
             </div>
 
             <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Special Hourly Rate (%) </label>
-                    <input type="number" step="any" class="form-control " value="{{$item->special_rate}}" name="special_rate" required value="0">
+                    <label class="col-form-label">Special Rate (%) </label>
+                    <input type="number" step="any" class="form-control " value="{{$item->special_rate}}" name="special_rate" required>
                 </div>
             </div>
 

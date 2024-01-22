@@ -7,8 +7,8 @@
             <th class="erp-th text-center">Description </th>
             {{--<th class="erp-th text-center">Interval Time <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></th>--}}
             <th class="erp-th text-center">Salary Type </th>
-            <th class="erp-th text-center">Hourly Rate </th>
-            <th class="erp-th text-center">Special Hourly Rate </th>
+            <th class="erp-th text-center">Rate </th>
+            <th class="erp-th text-center">Special Rate </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>

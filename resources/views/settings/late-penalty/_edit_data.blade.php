@@ -24,6 +24,24 @@
                 </div>
             </div>
 
+            <div class="erp-filter-item flex-48">
+                <div class="input-block erp-step-input-block mb-0 two">
+                    <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                    <select class="select2 select-step" name="salary_type" required>
+                        <option value="">Select Type</option>
+                        <option value="0" {{($item->salary_type == 0) ? 'selected' : ''}}>Basic Salary</option>
+                        <option value="1" {{($item->salary_type == 1) ? 'selected' : ''}}>Gross Salary</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48">
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Rate (%) </label>
+                    <input type="number" step="any" class="form-control " value="{{$item->rate}}" name="rate" required>
+                </div>
+            </div>
+
         </div>
 
         <div class="submit-section mt-2">

@@ -23,7 +23,9 @@ class UpdateLatePenaltySettingsRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'late_count_minutes' => 'required|numeric|min:0'
+            'late_count_minutes' => 'required|numeric|min:0',
+            'salary_type' => 'required',
+            'rate' => 'required|numeric|min:0',
         ];
     }
 }
