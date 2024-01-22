@@ -24,6 +24,7 @@ class StoreOfficeTimeSettingsRequest extends FormRequest
         return [
             'days' => 'required|array',
             'title' => 'required',
+            'working_hour' => 'required|numeric|min:1',
         ];
     }
 }

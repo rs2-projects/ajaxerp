@@ -24,6 +24,7 @@ class UpdateOfficeTimeSettingsRequest extends FormRequest
         return [
             'days' => 'required|array',
             'name' => 'required',
+            'working_hour' => 'required|numeric|min:1',
         ];
     }
 }

@@ -56,6 +56,7 @@ class OfficeTimeSettingsService
         try {
             $type = new SettingsOfficeTimeType();
             $type->name = $request->title;
+            $type->working_hour = $request->working_hour;
             $type->description = $request->description;
             $type->status = SettingsOfficeTimeType::STATUS_ACTIVE;
             $type->deleted = SettingsOfficeTimeType::DELETED_NO;
@@ -67,7 +68,6 @@ class OfficeTimeSettingsService
                 $is_weekend_input = $day.'_is_weekend';
                 $start_time_input = $day.'_start_time';
                 $end_time_input = $day.'_end_time';
-                $working_hour_input = $day.'_working_hour';
 
                 if(isset($request->$is_weekend_input) && ($request->$is_weekend_input == 1)) {
                     $is_weekend = 1;
@@ -81,7 +81,6 @@ class OfficeTimeSettingsService
                 $office_time->is_weekend = $is_weekend;
                 $office_time->start_time = $request->$start_time_input;
                 $office_time->end_time = $request->$end_time_input;
-                $office_time->working_hour = $request->$working_hour_input??0;
                 $office_time->save();
 
             }
@@ -111,6 +110,7 @@ class OfficeTimeSettingsService
         try {
             $type = SettingsOfficeTimeType::find($id);
             $type->name = $request->name;
+            $type->working_hour = $request->working_hour;
             $type->description = $request->description;
             $type->updated_at = Carbon::now();
             $type->updated_by = auth()->id();
@@ -120,7 +120,6 @@ class OfficeTimeSettingsService
                 $is_weekend_input = $day.'_is_weekend';
                 $start_time_input = $day.'_start_time';
                 $end_time_input = $day.'_end_time';
-                $working_hour_input = $day.'_working_hour';
 
                 if(isset($request->$is_weekend_input) && ($request->$is_weekend_input == 1)) {
                     $is_weekend = 1;
@@ -141,7 +140,6 @@ class OfficeTimeSettingsService
                 $office_time->is_weekend = $is_weekend;
                 $office_time->start_time = $request->$start_time_input;
                 $office_time->end_time = $request->$end_time_input;
-                $office_time->working_hour = $request->$working_hour_input??0;
                 $office_time->save();
 
             }

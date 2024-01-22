@@ -22,6 +22,13 @@
                             </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0">
+                                    <label class="col-form-label">Working Hour <span class="text-danger">*</span></label>
+                                    <input type="number" required name="working_hour" step="any" min="1"  placeholder="Working Hour" class="form-control"  >
+                                    <span class="working_hour_error ie-span"></span>
+                                </div>
+                            </div>
+                            <div class="erp-filter-item flex-100">
+                                <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Description </label>
                                     <textarea class="form-control" name="description" placeholder="Description" rows="1"></textarea>
                                 </div>
@@ -41,11 +48,6 @@
                                         <div class="erp-child-office-time-header-item flex-17">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">End</label>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-header-item flex-17">
-                                            <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Working Hour</label>
                                             </div>
                                         </div>
                                         <div class="erp-child-office-time-header-item flex-17">
@@ -78,12 +80,6 @@
                                                 </div>
                                                 <div class="erp-child-office-time-body-item flex-17">
                                                     <div class="input-block erp-step-input-block mb-0">
-                                                        <input type="number" step="any" class="form-control {{ $week_day }}_working_hour" value="0" name="{{ $week_day }}_working_hour" required>
-                                                        <span class="{{ $week_day }}_working_hour_error ie-span"></span>
-                                                    </div>
-                                                </div>
-                                                <div class="erp-child-office-time-body-item flex-17">
-                                                    <div class="input-block erp-step-input-block mb-0">
                                                         <div class="checkbox">
                                                             <label class="col-form-label">
                                                                 <input type="checkbox" name="{{ $week_day }}_is_weekend" class="me-2 {{ $week_day }}_is_weekend is_weekend_checkbox" data-day="{{ $week_day }}" value="1"> Weekend
@@ -93,163 +89,6 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                        {{--<div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="sunday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_sunday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_sunday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_sunday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="saturday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_saturday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_saturday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_saturday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="saturday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_saturday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_saturday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_saturday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="saturday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_saturday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_saturday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_saturday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="saturday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_saturday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_saturday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_saturday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="erp-child-office-time-body d-flex flex-wrap justify-content-between">
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="text" class="form-control" name="days[]" value="saturday" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control start_time_saturday" name="start_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <input type="time" class="form-control end_time_saturday" name="end_time[]">
-                                                </div>
-                                            </div>
-                                            <div class="erp-child-office-time-body-item flex-17">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <div class="checkbox">
-                                                        <label class="col-form-label">
-                                                            <input type="checkbox" name="checkbox is_weekend_saturday" name="is_weekend[]" class="me-2"> Weekend
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>--}}
-
                                     </div>
 
                                 </div>

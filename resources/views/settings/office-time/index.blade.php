@@ -60,12 +60,10 @@
                     let day = $(this).attr('data-day');
                     $("."+day+"_start_time").attr('required', false);
                     $("."+day+"_end_time").attr('required', false);
-                    $("."+day+"_working_hour").attr('required', false);
                 } else {
                     let day = $(this).attr('data-day');
                     $("."+day+"_start_time").attr('required', true);
                     $("."+day+"_end_time").attr('required', true);
-                    $("."+day+"_working_hour").attr('required', true);
                 }
             });
 

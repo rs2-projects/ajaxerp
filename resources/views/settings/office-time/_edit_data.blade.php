@@ -11,6 +11,13 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">Working Hour <span class="text-danger">*</span></label>
+                    <input type="number" required name="working_hour" value="{{ $item->working_hour }}" step="any" min="1"  placeholder="Working Hour" class="form-control"  >
+                    <span class="working_hour_error ie-span"></span>
+                </div>
+            </div>
+            <div class="erp-filter-item flex-100">
+                <div class="input-block erp-step-input-block mb-0">
                     <label class="col-form-label">Description <span class="text-danger">*</span></label>
                     <textarea class="form-control" name="description" placeholder="Description" rows="1">{!! $item->description !!}</textarea>
                 </div>
@@ -30,11 +37,6 @@
                         <div class="erp-child-office-time-header-item flex-17">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">End</label>
-                            </div>
-                        </div>
-                        <div class="erp-child-office-time-header-item flex-17">
-                            <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Working Hour</label>
                             </div>
                         </div>
                         <div class="erp-child-office-time-header-item flex-17">
@@ -63,12 +65,6 @@
                                     <div class="input-block erp-step-input-block mb-0">
                                         <input type="time" class="form-control {{ $week_day->day }}_end_time" value="{{ $week_day->end_time }}" name="{{ $week_day->day }}_end_time" {{($week_day->is_weekend != 1) ? 'required' : ''}}>
                                         <span class="{{ $week_day->day }}_end_time_error ie-span"></span>
-                                    </div>
-                                </div>
-                                <div class="erp-child-office-time-body-item flex-17">
-                                    <div class="input-block erp-step-input-block mb-0">
-                                        <input type="number" step="any" class="form-control {{ $week_day->day }}_working_hour" value="{{ $week_day->working_hour }}" name="{{ $week_day->day }}_working_hour" {{($week_day->is_weekend != 1) ? 'required' : ''}} >
-                                        <span class="{{ $week_day->day }}_working_hour_error ie-span"></span>
                                     </div>
                                 </div>
                                 <div class="erp-child-office-time-body-item flex-17">

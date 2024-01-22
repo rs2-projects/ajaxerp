@@ -27,6 +27,7 @@ class SettingsOfficeTimeType extends Model
 
     protected $fillable = [
         'name',
+        'working_hour',
         'description',
         'status',
         'created_at',
