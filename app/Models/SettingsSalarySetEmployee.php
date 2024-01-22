@@ -37,4 +37,9 @@ class SettingsSalarySetEmployee extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'employee_id', 'id');
+    }
 }

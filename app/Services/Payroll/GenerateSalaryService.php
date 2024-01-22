@@ -2,11 +2,17 @@
 
 namespace App\Services\Payroll;
 
+use App\Models\Salary;
 use App\Models\SettingsBonusType;
 use App\Models\SettingsSalaryDeductionType;
+use App\Services\Payroll\Traits\GenerateSalaryTrait;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class GenerateSalaryService
 {
+    use GenerateSalaryTrait;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -29,6 +35,72 @@ class GenerateSalaryService
 
     public function generateSalary($request)
     {
+        DB::beginTransaction();
+        try {
+
+            $salary = new Salary();
+            $salary->salary_year = $request->year;
+            $salary->salary_month = $request->month;
+
+            $salary_date = $request->year. '-' . $request->month . '-01';
+
+            $salary->salary_date = $salary_date;
+            $salary->salary_generate_type = $request->salary_type;
+
+            if($request->salary_type == Salary::SALARY_GENERATE_TYPE_FULL_MONTH) {
+                $salary->salary_period = Salary::SALARY_PERIOD_FULL_MONTH;
+                $salary_start_date = Carbon::parse($salary_date)->subMonth()->format('Y-m-26');
+                $salary_end_date = Carbon::parse($salary_date)->endOfMonth()->format('Y-m-25');
+            } else {
+                $salary->salary_period = $request->period_type;
+
+                if($request->period_type == Salary::SALARY_PERIOD_FIRST_HALF) {
+                    $salary_start_date = Carbon::parse($salary_date)->subMonth();
+                    $salary_start_date = $salary_start_date->format('Y-m-26');
+                    $salary_end_date = Carbon::parse($salary_date)->startOfMonth();
+                    $salary_end_date = $salary_end_date->format('Y-m-10');
+                } else {
+                    $salary_start_date = Carbon::parse($salary_date)->startOfMonth();
+                    $salary_start_date = $salary_start_date->format('Y-m-11');
+                    $salary_end_date = Carbon::parse($salary_date)->startOfMonth();
+                    $salary_end_date = $salary_end_date->format('Y-m-25');
+                }
+            }
+
+            $salary->generated_by = auth()->id();
+            $salary->generated_at = Carbon::now();
+            $salary->generation_status = Salary::GENERATION_STATUS_RUNNING;
+            $salary->start_date = $salary_start_date;
+            $salary->end_date = $salary_end_date;
+            $salary->no_of_days = Carbon::parse($salary_end_date)->diffInDays(Carbon::parse($salary_start_date));
+            $salary->view_status = Salary::VIEW_STATUS_NOT_VIEWED;
+            $salary->status = Salary::STATUS_ACTIVE;
+            $salary->deleted = Salary::DELETED_NO;
+            $salary->created_at = Carbon::now();
+            $salary->created_by = auth()->id();
+            $salary->updated_at = Carbon::now();
+            $salary->updated_by = auth()->id();
+            $salary->save();
+
+            $total_salary_amount = 0;
+            $total_bonus_amount = 0;
+            $total_deduction_amount = 0;
+            $total_amount_to_pay = 0;
+            $total_amount_paid = 0;
+
+            //loop through all salary set
+            foreach ($request->salary_set as $salary_set) {
+                $this->generateSalarySetSalary($salary_set, $salary);
+            }
+
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+
+        DB::commit();
+
 
     }
 }

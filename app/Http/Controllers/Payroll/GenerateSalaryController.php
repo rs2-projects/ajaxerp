@@ -31,7 +31,7 @@ class GenerateSalaryController extends BackendController
 
     public function create(Request $request)
     {
-
+        $this->service->generateSalary($request);
     }
 
     public function salaryList()

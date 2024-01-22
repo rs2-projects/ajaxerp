@@ -113,3 +113,13 @@ if (!function_exists('minutesToHourString')) {
         return $hour_string;
     }
 }
+
+
+if (!function_exists('hoursToMinutes')) {
+    function hoursToMinutes($hour)
+    {
+        list($hour, $minute) = explode(':', $hour);
+        $totalMinutes = (intval($hour) * 60) + intval($minute);
+        return $totalMinutes;
+    }
+}

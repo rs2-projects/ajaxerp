@@ -46,10 +46,15 @@ return new class extends Migration
             $table->decimal('daily_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');
             $table->decimal('current_period_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');
 
-            $table->unsignedInteger('overtime_minutes')->default(0);
-            $table->unsignedTinyInteger('overtime_rate_per_hour')->default(0);
-            $table->unsignedTinyInteger('overtime_rate_per_minute')->default(0);
-            $table->decimal('overtime_amount', 12, 2)->default(0);
+            $table->unsignedInteger('normal_day_overtime_minutes')->default(0);
+            $table->unsignedTinyInteger('normal_day_overtime_rate_per_hour')->default(0);
+            $table->unsignedTinyInteger('normal_day_overtime_rate_per_minute')->default(0);
+            $table->decimal('normal_day_overtime_amount', 12, 2)->default(0);
+
+            $table->unsignedInteger('special_day_overtime_minutes')->default(0);
+            $table->unsignedTinyInteger('special_day_overtime_rate_per_hour')->default(0);
+            $table->unsignedTinyInteger('special_day_overtime_rate_per_minute')->default(0);
+            $table->decimal('special_day_overtime_amount', 12, 2)->default(0);
 
             $table->unsignedInteger('late_minutes')->default(0);
             $table->unsignedTinyInteger('late_rate_per_hour')->default(0);

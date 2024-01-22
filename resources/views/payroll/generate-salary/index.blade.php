@@ -27,7 +27,7 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Salary Set <span class="text-danger">*</span></label>
-                                                <select class="select select-step" name="salary_set" id="salary_set" required>
+                                                <select class="select select-step" name="salary_set[]" id="salary_set" required multiple>
                                                     <option value="">Select Salary Set</option>
                                                 </select>
                                                 <span class="salary_type_error ie-span"></span>
