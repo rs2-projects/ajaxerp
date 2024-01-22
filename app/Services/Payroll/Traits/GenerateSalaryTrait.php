@@ -5,9 +5,12 @@ namespace App\Services\Payroll\Traits;
 use App\Models\AttendanceReport;
 use App\Models\Salary;
 use App\Models\SalaryDetails;
+use App\Models\SalaryDetailsAdditionDeductions;
 use App\Models\SalarySettingsSalarySets;
+use App\Models\SettingsOvertimeType;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
+use App\Models\SettingsSalaryTypeDetails;
 use Carbon\Carbon;
 
 trait GenerateSalaryTrait
@@ -164,8 +167,77 @@ trait GenerateSalaryTrait
         }
 
         $monthly_basic_salary = $basic_salary;
-        $daily_basic_salary = $monthly_basic_salary / $total_working_days;
-        $hourly_basic_salary = $daily_basic_salary / 8;
+        $daily_basic_salary = $monthly_basic_salary / ($total_working_days != 0) ? $total_working_days : 1;
+        $hourly_basic_salary = $daily_basic_salary / ($this->settingsOfficeTimeType->working_hour != 0) ? $this->settingsOfficeTimeType->working_hour : 1;
+        $minute_basic_salary = $hourly_basic_salary / 60;
+
+        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+            $net_basic_salary = $monthly_basic_salary / 2;
+        } else {
+            $net_basic_salary = $monthly_basic_salary;
+        }
+
+        $default_added_salary = 0;
+        $default_deducted_salary = 0;
+
+        if(!empty($this->settingsSalaryType->salaryTypeDetails)) {
+            foreach ($this->settingsSalaryType->salaryTypeDetails as $salaryTypeDetail) {
+
+                $additionDeduction = new SalaryDetailsAdditionDeductions();
+                $additionDeduction->salary_id = $salary->id;
+                $additionDeduction->salary_details_id = $salaryDetails->id;
+                $additionDeduction->settings_salary_type_details_id = $salaryTypeDetail->id;
+
+                $additionDeduction->type = $salaryTypeDetail->type;
+                $additionDeduction->rate = $salaryTypeDetail->value;
+
+                $value = ($net_basic_salary * $salaryTypeDetail->value) / 100;
+
+                $additionDeduction->amount = $value;
+
+                if ($salaryTypeDetail->type == SettingsSalaryTypeDetails::TYPE_EARNING) {
+                    $default_added_salary += $value;
+                } else {
+                    $default_deducted_salary += $value;
+                }
+
+                $additionDeduction->status = SalaryDetailsAdditionDeductions::STATUS_ACTIVE;
+                $additionDeduction->created_by = auth()->id();
+                $additionDeduction->created_at = Carbon::now();
+                $additionDeduction->updated_by = auth()->id();
+                $additionDeduction->updated_at = Carbon::now();
+                $additionDeduction->save();
+            }
+        }
+
+        $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+
+        $daily_gross_salary = $monthly_gross_salary / ($total_working_days != 0) ? $total_working_days : 1;
+        $hourly_gross_salary = $daily_gross_salary / ($this->settingsOfficeTimeType->working_hour != 0) ? $this->settingsOfficeTimeType->working_hour : 1;
+        $minute_gross_salary = $hourly_gross_salary / 60;
+
+        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+            $current_period_salary = $monthly_gross_salary / 2;
+        } else {
+            $current_period_salary = $monthly_gross_salary;
+        }
+
+        if($this->settingsOvertimeType->salary_type == SettingsOvertimeType::SALARY_TYPE_GROSS_SALARY) {
+            $normal_day_overtime_rate_per_hour = ($hourly_gross_salary * $this->settingsOvertimeType->rate) / 100;
+            $normal_day_overtime_rate_per_minute = ($minute_gross_salary * $this->settingsOvertimeType->rate) / 100;
+            $special_day_overtime_rate_per_hour = ($hourly_gross_salary * $this->settingsOvertimeType->special_rate) / 100;
+            $special_day_overtime_rate_per_minute = ($minute_gross_salary * $this->settingsOvertimeType->special_rate) / 100;
+        } else {
+            $normal_day_overtime_rate_per_hour = ($hourly_basic_salary * $this->settingsOvertimeType->rate) / 100;
+            $normal_day_overtime_rate_per_minute = ($minute_basic_salary * $this->settingsOvertimeType->rate) / 100;
+            $special_day_overtime_rate_per_hour = ($hourly_basic_salary * $this->settingsOvertimeType->special_rate) / 100;
+            $special_day_overtime_rate_per_minute = ($minute_basic_salary * $this->settingsOvertimeType->special_rate) / 100;
+        }
+
+        $normal_day_overtime_amount = $total_normal_day_overtime_minutes * $normal_day_overtime_rate_per_minute;
+        $special_day_overtime_amount = $total_special_day_overtime_minutes * $special_day_overtime_rate_per_minute;
+
+        $late_rate_per_hour = $hourly_basic_salary;
 
 
     }
