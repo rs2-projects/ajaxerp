@@ -12,6 +12,13 @@ class SettingsLatePenalty extends Model
     protected $table = 'settings_late_penalties';
     public $timestamps = false;
 
+    const SALARY_TYPE_BASIC_SALARY = 0;
+    const SALARY_TYPE_GROSS_SALARY = 1;
+    const SALARY_TYPES = [
+        self::SALARY_TYPE_BASIC_SALARY => 'Basic Salary',
+        self::SALARY_TYPE_GROSS_SALARY => 'Gross Salary',
+    ];
+
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
     const STATUSES = [
@@ -30,6 +37,8 @@ class SettingsLatePenalty extends Model
         'title',
         'description',
         'late_count_minutes',
+        'salary_type',
+        'rate',
         'status',
         'created_at',
         'created_by',
