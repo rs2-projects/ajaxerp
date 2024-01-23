@@ -31,6 +31,8 @@ class SalarySettingsSalarySets extends Model
         'total_salary_amount',
         'total_bonus_amount',
         'total_deduction_amount',
+        'total_amount_to_pay',
+        'total_amount_paid',
         'status',
         'created_by',
         'created_at',

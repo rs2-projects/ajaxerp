@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('salary_id');
             $table->unsignedBigInteger('salary_details_id');
+            $table->unsignedBigInteger('salary_bonus_type_id');
             $table->unsignedBigInteger('settings_bonus_type_id');
             $table->unsignedBigInteger('settings_bonus_type_salary_bonus_id');
 

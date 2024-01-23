@@ -11,6 +11,20 @@ class SalaryDetails extends Model
     protected $table = 'salary_details';
     public $timestamps = false;
 
+    const ABSENT_DAY_RATE_TYPE_PERCENTAGE = 0;
+    const ABSENT_DAY_RATE_TYPE_AMOUNT = 1;
+    const ABSENT_DAY_RATE_TYPES = [
+        self::ABSENT_DAY_RATE_TYPE_PERCENTAGE => 'Percentage',
+        self::ABSENT_DAY_RATE_TYPE_AMOUNT => 'Amount',
+    ];
+
+    const ABSENT_DAY_SALARY_TYPE_BASIC_SALARY = 0;
+    const ABSENT_DAY_SALARY_TYPE_GROSS_SALARY = 1;
+    const ABSENT_DAY_SALARY_TYPES = [
+        self::ABSENT_DAY_SALARY_TYPE_BASIC_SALARY => 'Basic Salary',
+        self::ABSENT_DAY_SALARY_TYPE_GROSS_SALARY => 'Gross Salary',
+    ];
+
     const DEDUCTION_RATE_TYPE_PERCENTAGE = 1;
     const DEDUCTION_RATE_TYPE_AMOUNT = 2;
     const DEDUCTION_RATE_TYPES = [
@@ -59,6 +73,7 @@ class SalaryDetails extends Model
         'employee_id',
         'salary_id',
         'settings_salary_set_id',
+        'salary_settings_salary_set_id',
         'settings_salary_type_id',
         'settings_overtime_type_id',
         'settings_absent_penalty_id',
@@ -86,6 +101,14 @@ class SalaryDetails extends Model
         'monthly_salary',
         'daily_salary',
         'current_period_salary',
+
+        'absent_day_rate_type',
+        'absent_day_salary_type',
+        'absent_day_rate',
+        'absent_day_amount_per_day',
+        'absent_day_amount',
+
+        'extra_leave_amount',
 
         'normal_day_overtime_minutes',
         'normal_day_overtime_rate_per_hour',

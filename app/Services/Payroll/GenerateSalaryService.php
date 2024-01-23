@@ -3,6 +3,8 @@
 namespace App\Services\Payroll;
 
 use App\Models\Salary;
+use App\Models\SalaryBonusTypes;
+use App\Models\SalarySettingsSalarySets;
 use App\Models\SettingsBonusType;
 use App\Models\SettingsSalaryDeductionType;
 use App\Services\Payroll\Traits\GenerateSalaryTrait;
@@ -33,6 +35,9 @@ class GenerateSalaryService
         return $data;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function generateSalary($request)
     {
         DB::beginTransaction();
@@ -67,6 +72,12 @@ class GenerateSalaryService
                 }
             }
 
+            if(isset($request->deduction_type) && ($request->deduction_type != '')) {
+                $salary->settings_salary_deduction_type_id = $request->deduction_type;
+            } else {
+                $salary->settings_salary_deduction_type_id = null;
+            }
+
             $salary->generated_by = auth()->id();
             $salary->generated_at = Carbon::now();
             $salary->generation_status = Salary::GENERATION_STATUS_RUNNING;
@@ -82,17 +93,62 @@ class GenerateSalaryService
             $salary->updated_by = auth()->id();
             $salary->save();
 
+            $salary_bonuses = [];
+            if (isset($request->bonus_types) && is_array($request->bonus_types) && (count($request->bonus_types) > 0)) {
+                foreach ($request->bonus_types as $bonus_type) {
+                    $salary_bonus_types = new SalaryBonusTypes();
+                    $salary_bonus_types->salary_id = $salary->id;
+                    $salary_bonus_types->settings_bonus_type_id = $bonus_type;
+                    $salary_bonus_types->total_bonus_amount = 0;
+                    $salary_bonus_types->status = SalaryBonusTypes::STATUS_ACTIVE;
+                    $salary_bonus_types->deleted = SalaryBonusTypes::DELETED_NO;
+                    $salary_bonus_types->created_at = Carbon::now();
+                    $salary_bonus_types->created_by = auth()->id();
+                    $salary_bonus_types->updated_at = Carbon::now();
+                    $salary_bonus_types->updated_by = auth()->id();
+                    $salary_bonus_types->save();
+
+                    $salary_bonuses[$bonus_type] = $salary_bonus_types;
+                }
+            }
+
             $total_salary_amount = 0;
             $total_bonus_amount = 0;
             $total_deduction_amount = 0;
             $total_amount_to_pay = 0;
-            $total_amount_paid = 0;
+
 
             //loop through all salary set
-            foreach ($request->salary_set as $salary_set) {
-                $this->generateSalarySetSalary($salary_set, $salary);
+            if (isset($request->salary_set) && is_array($request->salary_set) && (count($request->salary_set) > 0)) {
+                foreach ($request->salary_set as $salary_set) {
+                    $salary_ids = Salary::where('salary_year', $request->year)
+                        ->where('salary_month', $request->month)
+                        ->where('salary_generate_type', $request->salary_type)
+                        ->where('salary_period', $request->period_type)
+                        ->pluck('id')
+                        ->toArray();
+                    $generated_salary_set = SalarySettingsSalarySets::where('salary_id', $salary_ids)
+                        ->where('settings_salary_set_id', $salary_set)
+                        ->first();
+                    if (!empty($generated_salary_set)) {
+                        continue;
+                    }
+
+                    $salarySettingsSalarySet = $this->generateSalarySetSalary($salary_set, $salary, $salary_bonuses);
+
+                    $total_salary_amount += $salarySettingsSalarySet->total_salary_amount;
+                    $total_bonus_amount += $salarySettingsSalarySet->total_bonus_amount;
+                    $total_deduction_amount += $salarySettingsSalarySet->total_deduction_amount;
+                    $total_amount_to_pay += $salarySettingsSalarySet->total_amount_to_pay;
+                }
             }
 
+            $salary->total_salary_amount = $total_salary_amount;
+            $salary->total_bonus_amount = $total_bonus_amount;
+            $salary->total_deduction_amount = $total_deduction_amount;
+            $salary->total_amount_to_pay = $total_amount_to_pay;
+            $salary->generation_status = Salary::GENERATION_STATUS_SUCCESS;
+            $salary->save();
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -100,7 +156,7 @@ class GenerateSalaryService
         }
 
         DB::commit();
-
+        return $salary;
 
     }
 }

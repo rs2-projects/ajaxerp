@@ -33,3 +33,28 @@
     background: var(--primary-color);
 }
 
+.salary-set-show-data {
+    padding: 10px;
+    border: 1px solid #dadada;
+    background-color: #00000005;
+}
+.back-to-salary-generate-edit {
+    text-align: right;
+}
+
+.btn-small-edit {
+    font-size: 12px;
+    padding: 5px 7px;
+    border: 0;
+    color: #ffffff;
+    background-color: #03A9F4;
+    line-height: 1;
+}
+.btn-small-edit:hover {
+    font-size: 12px;
+    padding: 5px 7px;
+    border: 0;
+    color: #ffffff;
+    background-color: #03A9F4;
+    line-height: 1;
+}

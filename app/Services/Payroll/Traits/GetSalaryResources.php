@@ -8,6 +8,7 @@ use App\Models\SettingsAbsentPenalty;
 use App\Models\SettingsLatePenalty;
 use App\Models\SettingsOfficeTimeType;
 use App\Models\SettingsOvertimeType;
+use App\Models\SettingsSalaryDeductionType;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalaryType;
@@ -92,7 +93,8 @@ trait GetSalaryResources
     public function getAttendanceReport($employee_id, $date)
     {
         try {
-            $report = AttendanceReport::where('employee_id', $employee_id)
+            $report = AttendanceReport::with('settingsLeaveType')
+                ->where('employee_id', $employee_id)
                 ->where('date', $date)
                 ->where('status', AttendanceReport::STATUS_ACTIVE)
                 ->where('deleted', AttendanceReport::DELETED_NO)
@@ -112,6 +114,14 @@ trait GetSalaryResources
         }
 
         return $report;
+    }
+
+    public function getSettingsSalaryDeductionType($id)
+    {
+        return SettingsSalaryDeductionType::where('id', $id)
+            ->where('status', SettingsSalaryDeductionType::STATUS_ACTIVE)
+            ->where('deleted', SettingsSalaryDeductionType::DELETED_NO)
+            ->first();
     }
 
 

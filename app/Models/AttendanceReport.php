@@ -126,4 +126,9 @@ class AttendanceReport extends Model
     {
         return $this->belongsTo(User::class, 'employee_id');
     }
+
+    public function settingsLeaveType()
+    {
+        return $this->belongsTo(SettingsLeaveType::class, 'settings_leave_type_id');
+    }
 }

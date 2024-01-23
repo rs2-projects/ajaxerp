@@ -18,6 +18,8 @@ return new class extends Migration
             $table->decimal('total_salary_amount', 12, 2)->default(0)->comment('Total Salary Amount With Salary Addition and Deduction');
             $table->decimal('total_bonus_amount', 12, 2)->default(0)->comment('Total Bonus Amount');
             $table->decimal('total_deduction_amount', 12, 2)->default(0)->comment('Total Deduction(If Salary generate deduction selected) Amount');
+            $table->decimal('total_amount_to_pay', 12, 2)->default(0);
+            $table->decimal('total_amount_paid', 12, 2)->default(0);
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id')->index()->comment('id from users table');
             $table->unsignedBigInteger('salary_id');
             $table->unsignedBigInteger('settings_salary_set_id');
+            $table->unsignedBigInteger('salary_settings_salary_set_id')->nullable();
             $table->unsignedBigInteger('settings_salary_type_id')->nullable();
             $table->unsignedBigInteger('settings_overtime_type_id')->nullable();
             $table->unsignedBigInteger('settings_absent_penalty_id')->nullable();
@@ -46,31 +47,39 @@ return new class extends Migration
             $table->decimal('daily_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');
             $table->decimal('current_period_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');
 
+            $table->unsignedTinyInteger('absent_day_rate_type')->default(0)->comment('0=percent,1=fixed_amount');
+            $table->unsignedTinyInteger('absent_day_salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');
+            $table->decimal('absent_day_rate', 10, 2)->default(0)->comment('percentage or fixed amount');
+            $table->decimal('absent_day_amount_per_day', 12, 2)->default(0);
+            $table->decimal('absent_day_amount', 12, 2)->default(0);
+
+            $table->decimal('extra_leave_amount', 12, 2)->default(0);
+
             $table->unsignedInteger('normal_day_overtime_minutes')->default(0);
-            $table->unsignedTinyInteger('normal_day_overtime_rate_per_hour')->default(0);
-            $table->unsignedTinyInteger('normal_day_overtime_rate_per_minute')->default(0);
+            $table->decimal('normal_day_overtime_rate_per_hour', 10,2)->default(0);
+            $table->decimal('normal_day_overtime_rate_per_minute', 10,2)->default(0);
             $table->decimal('normal_day_overtime_amount', 12, 2)->default(0);
 
             $table->unsignedInteger('special_day_overtime_minutes')->default(0);
-            $table->unsignedTinyInteger('special_day_overtime_rate_per_hour')->default(0);
-            $table->unsignedTinyInteger('special_day_overtime_rate_per_minute')->default(0);
+            $table->decimal('special_day_overtime_rate_per_hour',10,2)->default(0);
+            $table->decimal('special_day_overtime_rate_per_minute',10,2)->default(0);
             $table->decimal('special_day_overtime_amount', 12, 2)->default(0);
 
             $table->unsignedInteger('late_minutes')->default(0);
-            $table->unsignedTinyInteger('late_rate_per_hour')->default(0);
-            $table->unsignedTinyInteger('late_rate_per_minute')->default(0);
+            $table->decimal('late_rate_per_hour', 10,2)->default(0);
+            $table->decimal('late_rate_per_minute', 10,2)->default(0);
             $table->decimal('late_amount', 12, 2)->default(0);
 
             $table->unsignedInteger('early_departure_minutes')->default(0);
-            $table->unsignedTinyInteger('early_departure_rate_per_hour')->default(0);
-            $table->unsignedTinyInteger('early_departure_rate_per_minute')->default(0);
+            $table->decimal('early_departure_rate_per_hour', 10,2)->default(0);
+            $table->decimal('early_departure_rate_per_minute', 10,2)->default(0);
             $table->decimal('early_departure_amount', 12, 2)->default(0);
 
             $table->decimal('total_bonus_amount', 12, 2)->default(0);
 
             $table->unsignedBigInteger('settings_deduction_type_id')->nullable();
-            $table->unsignedTinyInteger('deduction_rate_type')->default(1)->comment('1=Percentage, 2=Amount');
-            $table->unsignedTinyInteger('deduction_salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');
+            $table->decimal('deduction_rate_type', 10,2)->default(1)->comment('1=Percentage, 2=Amount');
+            $table->decimal('deduction_salary_type', 10,2)->default(0)->comment('0=basic_salary,1=gross_salary');
             $table->decimal('deduction_rate', 10, 2)->default(0)->comment('percentage or fixed amount');
             $table->decimal('deduction_amount', 12, 2)->default(0);
 

@@ -355,6 +355,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', [GenerateSalaryController::class, 'index'])->name('payroll.generate-salary');
             Route::post('create', [GenerateSalaryController::class, 'create'])->name('payroll.generate-salary.create');
             Route::get('salary-list', [GenerateSalaryController::class, 'salaryList'])->name('payroll.generate-salary.salary-list');
+            Route::get('get-salary-generate-details',[GenerateSalaryController::class, 'getSalaryGenerateDetails'])->name('payroll.generate-salary.get-salary-generate-details');
             Route::get('get-salary-set-by-salary-type',[GenerateSalaryController::class, 'getSalarySetBySalaryType'])->name('payroll.generate-salary.get-salary-set-by-salary-type');
         });
 
