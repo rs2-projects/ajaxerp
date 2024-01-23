@@ -7,6 +7,7 @@ use App\Models\Salary;
 use App\Models\SalaryDetails;
 use App\Models\SalaryDetailsAdditionDeductions;
 use App\Models\SalarySettingsSalarySets;
+use App\Models\SettingsLatePenalty;
 use App\Models\SettingsOvertimeType;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
@@ -237,7 +238,63 @@ trait GenerateSalaryTrait
         $normal_day_overtime_amount = $total_normal_day_overtime_minutes * $normal_day_overtime_rate_per_minute;
         $special_day_overtime_amount = $total_special_day_overtime_minutes * $special_day_overtime_rate_per_minute;
 
-        $late_rate_per_hour = $hourly_basic_salary;
+        if($this->settingsLatePenalty->salary_type == SettingsLatePenalty::SALARY_TYPE_GROSS_SALARY) {
+            $late_rate_per_hour = ($hourly_gross_salary * $this->settingsLatePenalty->rate) / 100;
+            $late_rate_per_minute = ($minute_gross_salary * $this->settingsLatePenalty->rate) / 100;
+        } else {
+            $late_rate_per_hour = ($hourly_basic_salary * $this->settingsLatePenalty->rate) / 100;
+            $late_rate_per_minute = ($minute_basic_salary * $this->settingsLatePenalty->rate) / 100;
+        }
+
+        $late_amount = $total_late_minutes * $late_rate_per_minute;
+        $early_departure_amount = $total_early_departure_minutes * $late_rate_per_minute;
+
+        $salaryDetails->total_days = $totalDays;
+        $salaryDetails->total_working_days = $total_working_days;
+        $salaryDetails->total_weekend_days = $total_weekend_days;
+        $salaryDetails->holiday_days = $holiday_days;
+        $salaryDetails->total_present_days = $total_present_days;
+        $salaryDetails->perfect_present_days = $perfect_present_days;
+        $salaryDetails->late_present_days = $late_present_days;
+        $salaryDetails->early_departure_days = $early_departure_days;
+        $salaryDetails->absent_days = $absent_days;
+        $salaryDetails->total_leave_days = $total_leave_days;
+        $salaryDetails->paid_leave_days = $paid_leave_days;
+        $salaryDetails->extra_leave_days = $extra_leave_days;
+
+        $salaryDetails->monthly_basic_salary = $monthly_basic_salary;
+        $salaryDetails->daily_basic_salary = $daily_basic_salary;
+        $salaryDetails->net_basic_salary = $net_basic_salary;
+        $salaryDetails->total_added_salary = $default_added_salary;
+        $salaryDetails->total_deducted_salary = $default_deducted_salary;
+        $salaryDetails->monthly_salary = $monthly_gross_salary;
+        $salaryDetails->daily_salary = $daily_gross_salary;
+        $salaryDetails->current_period_salary = $current_period_salary;
+
+        $salaryDetails->normal_day_overtime_minutes = $total_normal_day_overtime_minutes;
+        $salaryDetails->normal_day_overtime_rate_per_hour = $normal_day_overtime_rate_per_hour;
+        $salaryDetails->normal_day_overtime_rate_per_minute = $normal_day_overtime_rate_per_minute;
+        $salaryDetails->normal_day_overtime_amount = $normal_day_overtime_amount;
+        $salaryDetails->special_day_overtime_minutes = $total_special_day_overtime_minutes;
+        $salaryDetails->special_day_overtime_rate_per_hour = $special_day_overtime_rate_per_hour;
+        $salaryDetails->special_day_overtime_rate_per_minute = $special_day_overtime_rate_per_minute;
+        $salaryDetails->special_day_overtime_amount = $special_day_overtime_amount;
+
+        $salaryDetails->late_minutes = $total_late_minutes;
+        $salaryDetails->late_rate_per_hour = $late_rate_per_hour;
+        $salaryDetails->late_rate_per_minute = $late_rate_per_minute;
+        $salaryDetails->late_amount = $late_amount;
+
+        $salaryDetails->early_departure_minutes = $total_early_departure_minutes;
+        $salaryDetails->early_departure_rate_per_hour = $late_rate_per_hour;
+        $salaryDetails->early_departure_rate_per_minute = $late_rate_per_minute;
+        $salaryDetails->early_departure_amount = $early_departure_amount;
+
+        //TODO:: calculate leave deduction selected bonuses and selected deduction
+        $net_payable_salary = $current_period_salary + $normal_day_overtime_amount + $special_day_overtime_amount - $late_amount - $early_departure_amount;
+
+        $salaryDetails->net_payable_salary = $net_payable_salary;
+        $salaryDetails->save();
 
 
     }
