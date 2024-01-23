@@ -24,6 +24,11 @@ class AbsentPenaltySettingsService
     public function storeAbsentPenaltySettings($request)
     {
         try {
+
+            if ($request->rate_type == SettingsAbsentPenalty::RATE_TYPE_FIXED_AMOUNT){
+                $request->merge(['salary_type' => SettingsAbsentPenalty::SALARY_TYPE_NOT_SET]);
+            }
+
             $absentPenalty = new SettingsAbsentPenalty();
             $absentPenalty->title = $request->title;
             $absentPenalty->description = $request->description;
@@ -55,6 +60,11 @@ class AbsentPenaltySettingsService
             if (!$absentPenalty) {
              return throw new \Exception("Data not found");
             }
+
+            if ($request->rate_type == SettingsAbsentPenalty::RATE_TYPE_FIXED_AMOUNT){
+                $request->merge(['salary_type' => SettingsAbsentPenalty::SALARY_TYPE_NOT_SET]);
+            }
+
             $absentPenalty->title = $request->title;
             $absentPenalty->description = $request->description;
             $absentPenalty->rate_type = $request->rate_type;

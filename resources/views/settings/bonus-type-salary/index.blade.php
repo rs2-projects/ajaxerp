@@ -124,16 +124,12 @@
         function changeRateType(value){
             if (value == '0'){
                 $(".hide-show-salary-type").slideDown();
-                // salary_type required
                 $("select[name='salary_type']").attr('required', true);
-                // hide-show-value-symbol
-                $("#hide-show-value-symbol").show();
+                $(".hide-show-value-symbol").show();
             }else {
                 $(".hide-show-salary-type").slideUp();
-                // salary_type required false
                 $("select[name='salary_type']").attr('required', false);
-                // hide-show-value-symbol
-                $("#hide-show-value-symbol").hide();
+                $(".hide-show-value-symbol").hide();
             }
         }
 

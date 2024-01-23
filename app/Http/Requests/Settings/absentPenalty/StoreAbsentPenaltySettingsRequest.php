@@ -25,7 +25,7 @@ class StoreAbsentPenaltySettingsRequest extends FormRequest
             'title' => 'required',
             'rate_type' => 'required',
             'rate' => 'required|numeric|min:0',
-            'salary_type' => 'required',
+            'salary_type' => 'required_if:rate_type,0',
         ];
     }
 }

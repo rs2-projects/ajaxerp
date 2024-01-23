@@ -13,7 +13,7 @@
                     @csrf
                     <div class="erp-modal-body-content  d-flex flex-wrap gap-2">
                         <div class="input-block mb-2 flex-48">
-                            <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Contact Person <span class="text-danger">*</span></label>
                             <input type="text" name="name" required class="form-control">
                         </div>
                         <div class="input-block mb-2 flex-48">
@@ -39,9 +39,9 @@
                         </div>
 
                         <div class="input-block mb-2 flex-48">
-                            <label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Company Name</label>
 
-                                <input type="text" name="company_name" required class="form-control">
+                                <input type="text" name="company_name" class="form-control">
 
                         </div>
                         <div class="input-block mb-2 flex-48">

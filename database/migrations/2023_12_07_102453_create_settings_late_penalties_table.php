@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('title', 255)->index();
             $table->text('description')->nullable();
             $table->integer('late_count_minutes')->default(0);
-
+            $table->unsignedTinyInteger('salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');
+            $table->decimal('rate', 6, 2)->default(0)->comment('percentage of basic salary');
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });
     }

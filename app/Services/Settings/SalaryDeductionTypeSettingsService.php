@@ -25,6 +25,11 @@ class SalaryDeductionTypeSettingsService
     public function storeSalaryDeductionTypeSettings($request)
     {
         try {
+
+            if ($request->rate_type == SettingsSalaryDeductionType::RATE_TYPE_FIXED_AMOUNT) {
+                $request->salary_type = SettingsSalaryDeductionType::SALARY_TYPE_NOT_SET;
+            }
+
             $salaryDeductionType = new SettingsSalaryDeductionType();
             $salaryDeductionType->title = $request->title;
             $salaryDeductionType->rate_type = $request->rate_type;
@@ -68,6 +73,10 @@ class SalaryDeductionTypeSettingsService
 
             if (!$salaryDeductionType) {
                 throw new \Exception("Salary Deduction Type not found");
+            }
+
+            if ($request->rate_type == SettingsSalaryDeductionType::RATE_TYPE_FIXED_AMOUNT) {
+                $request->salary_type = SettingsSalaryDeductionType::SALARY_TYPE_NOT_SET;
             }
 
             $salaryDeductionType->title = $request->title;

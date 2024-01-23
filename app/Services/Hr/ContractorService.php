@@ -4,6 +4,7 @@ namespace App\Services\Hr;
 
 use App\Models\Contractor;
 use App\Models\ContractorEmergencyContact;
+use App\Models\SettingsSalarySetEmployee;
 use App\Models\User;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
@@ -18,7 +19,12 @@ class ContractorService
 
     public function getIndexData()
     {
+        $salarySetEmployeeIds = SettingsSalarySetEmployee::where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+            ->pluck('employee_id')
+            ->toArray();
+
         $data['employees'] = User::where('deleted', User::DELETED_NO)
+            ->whereNotIn('id', $salarySetEmployeeIds)
             ->where(function ($q) {
                 $q->where('terminated', User::TERMINATED_NO)
                     ->orWhere('terminate_date', '>', Carbon::now());
@@ -154,7 +160,12 @@ class ContractorService
             ->where('id', $id)
             ->first();
 
+        $salarySetEmployeeIds = SettingsSalarySetEmployee::where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+            ->pluck('employee_id')
+            ->toArray();
+
         $data['employees'] = User::where('deleted', User::DELETED_NO)
+            ->whereNotIn('id', $salarySetEmployeeIds)
             ->where(function ($q) {
                 $q->where('terminated', User::TERMINATED_NO)
                     ->orWhere('terminate_date', '>', Carbon::now());

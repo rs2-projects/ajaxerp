@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('settings_office_time_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->index();
+            $table->unsignedSmallInteger('working_hour')->default(0);
             $table->text('description')->nullable();
             MigrationHelper::getCommonColumns($table);
 

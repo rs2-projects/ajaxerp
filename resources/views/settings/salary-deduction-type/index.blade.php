@@ -121,6 +121,18 @@
             });
         }
 
+        function changeRateType(value){
+            if (value == '0'){
+                $(".hide-show-salary-type").slideDown();
+                $("select[name='salary_type']").attr('required', true);
+                $(".hide-show-value-symbol").show();
+            }else {
+                $(".hide-show-salary-type").slideUp();
+                $("select[name='salary_type']").attr('required', false);
+                $(".hide-show-value-symbol").hide();
+            }
+        }
+
     </script>
 @endsection
 

@@ -25,7 +25,7 @@ class UpdateBonusTypeSalarySettingsRequest extends FormRequest
             'settings_bonus_type_id' => 'required',
             'settings_salary_type_id' => 'required',
             'rate_type' => 'required',
-            'salary_type' => 'required',
+            'salary_type' => 'required_if:rate_type,==,0',
             'rate' => 'required|numeric|min:0',
         ];
     }

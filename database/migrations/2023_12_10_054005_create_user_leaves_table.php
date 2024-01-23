@@ -25,6 +25,12 @@ return new class extends Migration
             $table->date('approve_start_date')->nullable();
             $table->date('approve_end_date')->nullable();
             $table->integer('approved_number_of_days')->nullable();
+            $table->date('paid_leave_start_date')->nullable();
+            $table->date('paid_leave_end_date')->nullable();
+            $table->integer('paid_leave_number_of_days')->nullable();
+            $table->date('unpaid_leave_start_date')->nullable();
+            $table->date('unpaid_leave_end_date')->nullable();
+            $table->integer('unpaid_leave_number_of_days')->nullable();
             $table->timestamp('rejected_at')->nullable();
             $table->unsignedBigInteger('rejected_by')->nullable();
             $table->text('reject_reason')->nullable();

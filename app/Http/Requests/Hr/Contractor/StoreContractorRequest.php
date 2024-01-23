@@ -26,7 +26,7 @@ class StoreContractorRequest extends FormRequest
             'phone' => 'required',
             'email' => 'required',
             'contract_value' => 'required|numeric|min:0',
-            'company_name' => 'required',
+//            'company_name' => 'required',
         ];
     }
 }

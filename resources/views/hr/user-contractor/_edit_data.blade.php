@@ -28,9 +28,9 @@
         </div>
 
         <div class="input-block mb-2 flex-48">
-            <label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+            <label class="col-form-label">Company Name </label>
 
-            <input type="text" name="company_name" value="{{ $item->company_name }}" required class="form-control">
+            <input type="text" name="company_name" value="{{ $item->company_name }}" class="form-control">
 
         </div>
         <div class="input-block mb-2 flex-48">

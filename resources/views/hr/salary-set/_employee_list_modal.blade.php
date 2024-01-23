@@ -40,7 +40,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-main-wrapper pt-4" v-for="(employee, employeeIndex) in getEmployees" :key="employee.id">
+                    <div class="table-main-wrapper pt-4">
+                        <div class="table-body-item-wrapper d-flex flex-wrap">
+                            <div class="table-body-item em-list">
+                               <h4></h4>
+                            </div>
+                            <div class="table-body-item em-list flex-30">
+                               <h4>Employee</h4>
+                            </div>
+                            <div class="table-body-item em-list flex-30">
+                               <h4>Email/Phone</h4>
+                            </div>
+                            <div class="table-body-item em-list flex-30">
+                                <h4>Basic Salary</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-main-wrapper pt-2" v-for="(employee, employeeIndex) in getEmployees" :key="employee.id">
                         {{--@foreach($employees as $employee)--}}
                             <div class="table-body-item-wrapper d-flex flex-wrap">
                                 <div class="table-body-item em-list">
@@ -69,7 +85,9 @@
                             </div>
                         {{--@endforeach--}}
                     </div>
-
+                    <div class="submit-section mt-4">
+                        <button class="btn btn-primary submit-btn" data-bs-dismiss="modal" type="button">Next</button>
+                    </div>
                 </div>
             </div>
         </div>

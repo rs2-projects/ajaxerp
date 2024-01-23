@@ -21,7 +21,14 @@ class SettingsAbsentPenalty extends Model
 
     const SALARY_TYPE_BASIC_SALARY = 0;
     const SALARY_TYPE_GROSS_SALARY = 1;
+    const SALARY_TYPE_NOT_SET = 2;
     const SALARY_TYPES = [
+        self::SALARY_TYPE_BASIC_SALARY => 'Basic Salary',
+        self::SALARY_TYPE_GROSS_SALARY => 'Gross Salary',
+        self::SALARY_TYPE_NOT_SET => 'Not Set',
+    ];
+
+    const SALARY_TYPES_DROPDOWN = [
         self::SALARY_TYPE_BASIC_SALARY => 'Basic Salary',
         self::SALARY_TYPE_GROSS_SALARY => 'Gross Salary',
     ];

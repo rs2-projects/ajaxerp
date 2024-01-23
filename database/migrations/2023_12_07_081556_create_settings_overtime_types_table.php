@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedTinyInteger('salary_type')->default(0)->comment('0=basic_salary,1=gross_salary');
             $table->decimal('rate', 6, 2)->default(0)->comment('percentage of basic salary');
-
+            $table->decimal('special_rate', 10, 2)->default(0)->comment('percentage of basic salary');
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
         });
     }

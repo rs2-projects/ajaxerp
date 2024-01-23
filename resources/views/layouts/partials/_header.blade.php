@@ -2,11 +2,11 @@
 
     <!-- Logo -->
     <div class="header-left">
-        <a href="admin-dashboard.html" class="logo">
-            <img src="{{ asset('assets') }}/img/logo.png" >
+        <a href="{{ route('dashboard') }}" class="logo">
+            <img src="{{ asset('assets') }}/img/logo.webp" >
         </a>
-        <a href="admin-dashboard.html" class="logo2">
-            <img src="{{ asset('assets') }}/img/logo2.png"  alt="Logo">
+        <a href="{{ route('dashboard') }}" class="logo2">
+            <img src="{{ asset('assets') }}/img/logo.webp"  alt="Logo">
         </a>
     </div>
     <!-- /Logo -->

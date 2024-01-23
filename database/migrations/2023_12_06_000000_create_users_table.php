@@ -19,9 +19,12 @@ return new class extends Migration
             $table->unsignedSmallInteger('role')->default(2)->comment('0=superuser,1=admin,2=employee');
             $table->unsignedBigInteger('department_id')->nullable();
             $table->unsignedBigInteger('designation_id')->nullable();
+            $table->boolean('is_contracted')->default(false);
+            $table->unsignedBigInteger('contractor_id')->nullable();
             $table->string('first_name', 255)->index();
             $table->string('last_name', 255)->index();
             $table->string('email',128)->nullable()->index();
+            $table->string('image')->nullable();
             $table->string('phone',32)->nullable()->index();
             $table->date('joining_date')->nullable();
             $table->string('nid_no', 32)->nullable();

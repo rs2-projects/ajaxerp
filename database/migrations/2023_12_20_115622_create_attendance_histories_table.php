@@ -20,11 +20,13 @@ return new class extends Migration
             $table->string('longitude', 20)->nullable();
             $table->string('image',128)->nullable();
             $table->unsignedTinyInteger('attendance_by')->comment('0: employee, 1: admin');
+            $table->unsignedBigInteger('settings_geo_location_id')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
             //define relationships
             $table->foreign('employee_id')->references('id')->on('users');
+            $table->foreign('settings_geo_location_id')->references('id')->on('settings_geo_locations');
         });
     }
 

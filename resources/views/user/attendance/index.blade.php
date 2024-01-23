@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="my-attendance-wrapper d-flex justify-content-center flex-wrap">
+        <div class="my-attendance-wrapper d-flex justify-content-start flex-wrap">
             <div class="my-attendance-box-item bg-card">
                 <div class="erp-box-header">
                     <h4>Timesheet <span> ({{ getFormattedDate(\Carbon\Carbon::now(),'d M, Y') }})</span></h4>
@@ -63,7 +63,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="my-attendance-box-item bg-card">
+            {{--<div class="my-attendance-box-item bg-card">
                 <div class="erp-box-header">
                     <h4>Check In's</h4>
                 </div>
@@ -111,7 +111,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div>--}}
             <div class="my-attendance-box-item bg-card flex-100 attd-table">
                 <div class="my-attendance-report-wrapper">
                     <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">

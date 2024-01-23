@@ -9,32 +9,34 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block erp-step-input-block mb-0 two">
-                    <label class="col-form-label">Rate Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                    <select class="select select-step select2" name="rate_type" required>
+                    <label class="col-form-label">Rate Type </label>
+                    <select class="select select-step select2" onchange="changeRateType(this.value)" name="rate_type" required>
                         <option value="">Select Type</option>
-                        <option value="0" {{ ($item->rate_type == $item::RATE_TYPE_PERCENT) ? 'selected' : '' }}>Percentage</option>
-                        <option value="1" {{ ($item->rate_type == $item::RATE_TYPE_FIXED_AMOUNT) ? 'selected' : '' }}>Flat</option>
+                        @foreach(\App\Models\SettingsSalaryDeductionType::RATE_TYPES as $key => $value)
+                            <option value="{{ $key }}" {{ ($item->rate_type == $key) ? 'selected' : '' }}>{{ $value }}</option>
+                        @endforeach
 
                     </select>
                     <span class="rate_type_error ie-span"></span>
                 </div>
             </div>
             <div class="erp-filter-item flex-48">
-                <div class="input-block erp-step-input-block mb-0 two">
-                    <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                    <select class="select select-step select2" name="salary_type" required>
+                <div class="input-block erp-step-input-block mb-0 two hide-show-salary-type" style="display:{{ ($item->rate_type == $item::RATE_TYPE_FIXED_AMOUNT) ? 'none' : 'inline' }}">
+                    <label class="col-form-label">Salary Type </label>
+                    <select class="select select-step select2" name="salary_type">
                         <option value="">Select Salary Type</option>
-                        <option value="0" {{ ($item->salary_type == $item::SALARY_TYPE_BASIC_SALARY) ? 'selected' : '' }}>Basic Salary</option>
-                        <option value="1" {{ ($item->salary_type == $item::SALARY_TYPE_GROSS_SALARY) ? 'selected' : '' }}>Gross Salary</option>
+                        @foreach(\App\Models\SettingsSalaryDeductionType::SALARY_TYPES_DROPDOWN as $key => $value)
+                            <option value="{{ $key }}" {{ ($item->salary_type == $key) ? 'selected' : '' }}>{{ $value }}</option>
+                        @endforeach
 
                     </select>
                     <span class="salary_type_error ie-span"></span>
                 </div>
             </div>
 
-            <div class="erp-filter-item flex-100">
+            <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Rate </label>
+                    <label class="col-form-label">Rate <span class="hide-show-value-symbol" style="display: {{ ($item->rate_type == $item::RATE_TYPE_FIXED_AMOUNT) ? 'none' : 'inline' }}">(%)</span></label>
                     <input type="number" min="0" step="any" value="{{ $item->rate }}" class="form-control" required name="rate">
                     <span class="rate_error ie-span"></span>
                 </div>

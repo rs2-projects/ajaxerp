@@ -38,11 +38,16 @@ class BonusTypeSalarySettingsService
     public function storeBonusTypeSalarySettings($request)
     {
         try {
+
+            if ($request->rate_type == SettingsBonusTypeSalaryBonus::RATE_TYPE_FIXED_AMOUNT){
+                $request->merge(['salary_type' => SettingsBonusTypeSalaryBonus::SALARY_TYPE_NOT_SET]);
+            }
+
             $bonusTypeSalary = new SettingsBonusTypeSalaryBonus();
             $bonusTypeSalary->settings_bonus_type_id = $request->settings_bonus_type_id;
             $bonusTypeSalary->settings_salary_type_id = $request->settings_salary_type_id;
             $bonusTypeSalary->rate_type = $request->rate_type;
-            $bonusTypeSalary->salary_type = $request->salary_type;
+            $bonusTypeSalary->salary_type = $request->salary_type??$bonusTypeSalary::SALARY_TYPE_NOT_SET;
             $bonusTypeSalary->rate = $request->rate;
             $bonusTypeSalary->created_by = auth()->id();
             $bonusTypeSalary->created_at = Carbon::now();
@@ -80,10 +85,15 @@ class BonusTypeSalarySettingsService
             if (!$bonusTypeSalary){
                 throw new \Exception("Bonus Type Salary not found");
             }
+
+            if ($request->rate_type == $bonusTypeSalary::RATE_TYPE_FIXED_AMOUNT){
+                $request->merge(['salary_type' => $bonusTypeSalary::SALARY_TYPE_NOT_SET]);
+            }
+
             $bonusTypeSalary->settings_bonus_type_id = $request->settings_bonus_type_id;
             $bonusTypeSalary->settings_salary_type_id = $request->settings_salary_type_id;
             $bonusTypeSalary->rate_type = $request->rate_type;
-            $bonusTypeSalary->salary_type = $request->salary_type;
+            $bonusTypeSalary->salary_type = $request->salary_type??$bonusTypeSalary::SALARY_TYPE_NOT_SET;
             $bonusTypeSalary->rate = $request->rate;
             $bonusTypeSalary->updated_by = auth()->id();
             $bonusTypeSalary->updated_at = Carbon::now();

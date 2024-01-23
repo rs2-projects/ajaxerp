@@ -15,7 +15,7 @@
                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Bonus <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Select Bonus From Settings"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Bonus </label>
                                     <select class="select select-step select2" name="settings_bonus_type_id" required>
                                         <option value="">Select Bonus</option>
                                         @foreach($bonusTypes as $key=> $item)
@@ -27,7 +27,7 @@
                             </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Salary <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Select Salary Settings"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Salary </label>
                                     <select class="select select-step select2" name="settings_salary_type_id" required>
                                         <option value="">Select Salary</option>
                                         @foreach($salaryTypes as $key=> $item)
@@ -40,7 +40,7 @@
 
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Type </label>
                                     <select class="select select-step select2" onchange="changeRateType(this.value)" name="rate_type" required>
                                         <option value="">Select Type</option>
                                         <option value="0">Percentage</option>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="erp-filter-item flex-48 hide-show-salary-type" style="display: none">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Salary Type </label>
                                     <select class="select select-step select2" name="salary_type">
                                         <option value="">Select Salary Type</option>
                                         <option value="0">Basic Salary</option>
@@ -65,7 +65,7 @@
 
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block mb-0 erp-step-input-block ">
-                                    <label class="col-form-label">Value <span id="hide-show-value-symbol" style="display: none">(%)</span></label>
+                                    <label class="col-form-label">Value <span class="hide-show-value-symbol" style="display: none">(%)</span></label>
                                     <input type="number" min="0" step="any" class="form-control" required name="rate">
                                     <span class="rate_error ie-span"></span>
                                 </div>

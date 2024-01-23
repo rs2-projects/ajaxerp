@@ -16,7 +16,7 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block erp-step-input-block mb-0 two">
-                    <label class="col-form-label">Salary <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Select Salary Settings"><i class="fa-duotone fa-exclamation"></i></span></label>
+                    <label class="col-form-label">Salary </label>
                     <select class="select select-step select2" name="settings_salary_type_id" required>
                         <option value="">Select Salary</option>
                         @foreach($salaryTypes as $key=> $row)
@@ -29,8 +29,8 @@
 
             <div class="erp-filter-item flex-48">
                 <div class="input-block erp-step-input-block mb-0 two">
-                    <label class="col-form-label">Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                    <select class="select select-step select2" name="rate_type" required>
+                    <label class="col-form-label">Type </label>
+                    <select class="select select-step select2" onchange="changeRateType(this.value)" name="rate_type" required>
                         <option value="">Select Type</option>
                         @foreach(\App\Models\SettingsBonusTypeSalaryBonus::RATE_TYPES as $key => $value)
                             <option value="{{ $key }}" {{ ($item->rate_type == $key) ? 'selected' : '' }}>{{ $value }}</option>
@@ -39,12 +39,12 @@
                     <span class="rate_type_error ie-span"></span>
                 </div>
             </div>
-            <div class="erp-filter-item flex-48">
+            <div class="erp-filter-item flex-48 hide-show-salary-type" style="display:{{ ($item->rate_type == $item::RATE_TYPE_FIXED_AMOUNT) ? 'none' : 'inline' }}">
                 <div class="input-block erp-step-input-block mb-0 two">
                     <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                    <select class="select select-step select2" name="salary_type" required>
+                    <select class="select select-step select2" name="salary_type">
                         <option value="">Select Salary Type</option>
-                        @foreach(\App\Models\SettingsBonusTypeSalaryBonus::SALARY_TYPES as $key => $value)
+                        @foreach(\App\Models\SettingsBonusTypeSalaryBonus::SALARY_TYPES_DROPDOWN as $key => $value)
                             <option value="{{ $key }}" {{ ($item->salary_type == $key) ? 'selected' : '' }}>{{ $value }}</option>
                         @endforeach
 
@@ -53,9 +53,9 @@
                 </div>
             </div>
 
-            <div class="erp-filter-item flex-100">
+            <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Deduct Value (%) </label>
+                    <label class="col-form-label">Value <span class="hide-show-value-symbol" style="display: {{ ($item->rate_type == $item::RATE_TYPE_FIXED_AMOUNT) ? 'none' : 'inline' }}">(%)</span> </label>
                     <input type="number" min="0" value="{{ $item->rate }}" step="any" class="form-control" required name="rate">
                     <span class="rate_error ie-span"></span>
                 </div>
