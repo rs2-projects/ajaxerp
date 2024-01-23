@@ -7,6 +7,8 @@
                 <th class="erp-th text-center">Description </th>
                 <th class="erp-th text-center">Leave Days (annual) </th>
                 <th class="erp-th text-center">Max Leave (per month) </th>
+                <th class="erp-th text-center">Type </th>
+                <th class="erp-th text-center">Rate</th>
                 <th class="erp-th text-center">Leave Status </th>
 
                 <th class="text-end erp-th">Action</th>
@@ -29,6 +31,12 @@
                     </td>
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{$item->max_leave_per_month??0}} Days</h4>
+                    </td>
+                    <td class="erp-tbody-td text-center">
+                        <h4 class="text-center d-table-title">{{$item::SALARY_TYPES[$item->salary_type]}}</h4>
+                    </td>
+                    <td class="erp-tbody-td text-center">
+                        <h4 class="text-center d-table-title">{{ $item->rate??0 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($item->status == \App\Models\SettingsLeaveType::STATUS_ACTIVE) ? 'status-approved' : '' }}">

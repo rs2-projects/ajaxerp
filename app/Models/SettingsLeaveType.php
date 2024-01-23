@@ -26,11 +26,20 @@ class SettingsLeaveType extends Model
         self::DELETED_YES => 'Yes',
     ];
 
+    const SALARY_TYPE_BASIC_SALARY = 0;
+    const SALARY_TYPE_GROSS_SALARY = 1;
+    const SALARY_TYPES = [
+        self::SALARY_TYPE_BASIC_SALARY => 'Basic Salary',
+        self::SALARY_TYPE_GROSS_SALARY => 'Gross Salary',
+    ];
+
     protected $fillable = [
         'title',
         'description',
         'annual_leave_days',
         'max_leave_per_month',
+        'salary_type',
+        'rate',
         'status',
         'created_at',
         'created_by',

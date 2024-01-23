@@ -116,12 +116,18 @@
                 if (response.status == 200) {
                     $("#edit_leave_type_modal_body").html(response.view);
                     $("#edit_leave_type_modal").modal('show');
+                    initializeSelect()
                 } else {
                     toastr.error(response.message);
                 }
             }, 'default');
         }
-
+        function initializeSelect() {
+            $('.select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
 
     </script>
 @endsection

@@ -29,6 +29,8 @@ class LeaveTypeSettingsService
             $leaveType->description = $request->description;
             $leaveType->annual_leave_days = $request->annual_leave_days;
             $leaveType->max_leave_per_month = $request->max_leave_per_month;
+            $leaveType->salary_type = $request->salary_type;
+            $leaveType->rate = $request->rate;
             $leaveType->created_by = auth()->id();
             $leaveType->created_at = Carbon::now();
             $leaveType->save();
@@ -51,6 +53,8 @@ class LeaveTypeSettingsService
             $leaveType->description = $request->description;
             $leaveType->annual_leave_days = $request->annual_leave_days;
             $leaveType->max_leave_per_month = $request->max_leave_per_month;
+            $leaveType->salary_type = $request->salary_type;
+            $leaveType->rate = $request->rate;
             $leaveType->updated_by = auth()->id();
             $leaveType->updated_at = Carbon::now();
             $leaveType->save();

@@ -25,6 +25,8 @@ class StoreLeaveTypeSettingsRequest extends FormRequest
             'title' => 'required',
             'annual_leave_days' => 'required|numeric|min:0',
             'max_leave_per_month' => 'required|numeric|min:0',
+            'salary_type' => 'required',
+            'rate' => 'required|numeric|min:0',
         ];
     }
 }

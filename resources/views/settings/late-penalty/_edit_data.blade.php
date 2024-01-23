@@ -29,8 +29,8 @@
                     <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
                     <select class="select2 select-step" name="salary_type" required>
                         <option value="">Select Type</option>
-                        <option value="0" {{($item->salary_type == 0) ? 'selected' : ''}}>Basic Salary</option>
-                        <option value="1" {{($item->salary_type == 1) ? 'selected' : ''}}>Gross Salary</option>
+                        <option value="0" {{($item->salary_type == $item::SALARY_TYPE_BASIC_SALARY) ? 'selected' : ''}}>Basic Salary</option>
+                        <option value="1" {{($item->salary_type == $item::SALARY_TYPE_GROSS_SALARY) ? 'selected' : ''}}>Gross Salary</option>
 
                     </select>
                 </div>
