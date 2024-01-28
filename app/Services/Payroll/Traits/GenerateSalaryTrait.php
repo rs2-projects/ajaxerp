@@ -125,6 +125,7 @@ trait GenerateSalaryTrait
         $startDate = Carbon::parse($salary->start_date);
         $endDate = Carbon::parse($salary->end_date);
         $totalDays = $endDate->diffInDays($startDate);
+        $totalDays = $totalDays+1;
 
 
         $monthly_basic_salary = $basic_salary;
@@ -255,6 +256,7 @@ trait GenerateSalaryTrait
                 }
             } else {
                 $absent_days++;
+                $total_working_days++;
             }
 
             $normal_day_overtime_hour = $attendanceReport->normal_day_overtime;
@@ -277,22 +279,22 @@ trait GenerateSalaryTrait
             $startDate->addDay();
         }
 
-        $daily_basic_salary = $monthly_basic_salary / (($total_working_days != '0') ? $total_working_days : 1);
-        $hourly_basic_salary = $daily_basic_salary / (($this->settingsOfficeTimeType->working_hour != '0') ? $this->settingsOfficeTimeType->working_hour : 1);
-        $minute_basic_salary = $hourly_basic_salary / 60;
-
-
-
-        $daily_gross_salary = $monthly_gross_salary / (($total_working_days != '0') ? $total_working_days : 1);
-        $hourly_gross_salary = $daily_gross_salary / (($this->settingsOfficeTimeType->working_hour != '0') ? $this->settingsOfficeTimeType->working_hour : 1);
-
-        $minute_gross_salary = $hourly_gross_salary / 60;
 
         if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
             $current_period_salary = $monthly_gross_salary / 2;
         } else {
             $current_period_salary = $monthly_gross_salary;
         }
+
+        $daily_basic_salary = $net_basic_salary / (($total_working_days != '0') ? $total_working_days : 1);
+        $hourly_basic_salary = $daily_basic_salary / (($this->settingsOfficeTimeType->working_hour != '0') ? $this->settingsOfficeTimeType->working_hour : 1);
+        $minute_basic_salary = $hourly_basic_salary / 60;
+
+        $daily_gross_salary = $current_period_salary / (($total_working_days != '0') ? $total_working_days : 1);
+        $hourly_gross_salary = $daily_gross_salary / (($this->settingsOfficeTimeType->working_hour != '0') ? $this->settingsOfficeTimeType->working_hour : 1);
+
+        $minute_gross_salary = $hourly_gross_salary / 60;
+
 
         if($this->settingsOvertimeType->salary_type == SettingsOvertimeType::SALARY_TYPE_GROSS_SALARY) {
             $normal_day_overtime_rate_per_hour = ($hourly_gross_salary * $this->settingsOvertimeType->rate) / 100;
