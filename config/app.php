@@ -79,7 +79,7 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Manila',
+    'timezone' => env('TIMEZONE','Asia/Manila'),
 
     /*
     |--------------------------------------------------------------------------

@@ -153,4 +153,15 @@ class SalaryDetails extends Model
         'deleted_at',
         ];
 
+
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'employee_id', 'id');
+    }
+
+    public function getTotalOverTimeAmountAttribute()
+    {
+        return $this->normal_day_overtime_amount + $this->special_day_overtime_amount;
+    }
+
 }

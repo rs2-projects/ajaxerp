@@ -2,14 +2,16 @@
 
 namespace App\Helpers\AttendanceHelper;
 
+use App\Helpers\SalarySetHelper;
 use App\Models\AttendanceHistory;
+use App\Models\SettingsLatePenalty;
 use Carbon\Carbon;
 
 class AttendanceLateEarlyHelper
 {
-    public static function getLateEarlyDetails($office_time, $attendance_activity_history, $day_type)
+    public static function getLateEarlyDetails($office_time, $attendance_activity_history, $day_type, $salarySet=null)
     {
-        $late_early_minutes = self::getLateEarlyMinutesFromActivity($office_time, $attendance_activity_history, $day_type);
+        $late_early_minutes = self::getLateEarlyMinutesFromActivity($office_time, $attendance_activity_history, $day_type, $salarySet);
 
         $late_early_minutes['late_hour'] = minutesToHourString($late_early_minutes['late_minutes']);
         $late_early_minutes['early_hour'] = minutesToHourString($late_early_minutes['early_minutes']);
@@ -17,7 +19,7 @@ class AttendanceLateEarlyHelper
         return $late_early_minutes;
     }
 
-    public static function getLateEarlyMinutesFromActivity($office_time, $attendance_activity_history, $day_type) {
+    public static function getLateEarlyMinutesFromActivity($office_time, $attendance_activity_history, $day_type, $salarySet=null) {
         $is_present = false;
         $is_late = true;
         $is_early = true;
@@ -26,14 +28,25 @@ class AttendanceLateEarlyHelper
         $punch_in_time = null;
         $punch_out_time = null;
 
+        $settingsLatePenalty = SettingsLatePenalty::where('id', $salarySet->settings_late_penalty_id)
+            ->where('status', SettingsLatePenalty::STATUS_ACTIVE)
+            ->where('deleted', SettingsLatePenalty::DELETED_NO)
+            ->first();
+        $late_count_minutes = 0;
+        if (!empty($settingsLatePenalty)) {
+            $late_count_minutes = $settingsLatePenalty->late_count_minutes;
+        }
+
         if ($day_type == 'general') {
             $first_in = $attendance_activity_history->where('type', AttendanceHistory::TYPE_IN)->first();
             $last_out = $attendance_activity_history->where('type', AttendanceHistory::TYPE_OUT)->last();
             if (!empty($first_in)) {
                 $is_present = true;
                 $punch_in_time = $first_in->datetime;
-                if (Carbon::parse($first_in->datetime)->format('H:i') > Carbon::parse($office_time->start_time)->format('H:i')) {
-                    $total_late_minutes = Carbon::parse(Carbon::parse($first_in->datetime)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($office_time->start_time)->format('H:i')));
+                $officeStartTime = Carbon::parse($office_time->start_time)->addMinutes($late_count_minutes)->format('H:i');
+//                dd($firstInTime);
+                if (Carbon::parse($first_in->datetime)->format('H:i') > Carbon::parse($officeStartTime)->format('H:i')) {
+                    $total_late_minutes = Carbon::parse(Carbon::parse($first_in->datetime)->format('H:i'))->diffInMinutes(Carbon::parse(Carbon::parse($officeStartTime)->format('H:i')));
                     $is_late = true;
                 } else {
                     $is_late = false;

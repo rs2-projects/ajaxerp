@@ -44,14 +44,6 @@ class GenerateSalaryController extends BackendController
         return redirect()->back()->with(['success' => 'Salary Generated Successfully']);
     }
 
-    public function salaryList()
-    {
-        $this->setPageTitle("Salary List");
-        $this->setActiveMenu('payroll.generate-salary.salary-list');
-
-        return $this->view('payroll.generate-salary.salary-list');
-    }
-
     public function getSalaryGenerateDetails(Request $request)
     {
         $salary_ids = Salary::where('salary_year', $request->year)

@@ -13,6 +13,7 @@ use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
+use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
@@ -354,9 +355,19 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'generate-salary'], function () {
             Route::get('/', [GenerateSalaryController::class, 'index'])->name('payroll.generate-salary');
             Route::post('create', [GenerateSalaryController::class, 'create'])->name('payroll.generate-salary.create');
-            Route::get('salary-list', [GenerateSalaryController::class, 'salaryList'])->name('payroll.generate-salary.salary-list');
             Route::get('get-salary-generate-details',[GenerateSalaryController::class, 'getSalaryGenerateDetails'])->name('payroll.generate-salary.get-salary-generate-details');
             Route::get('get-salary-set-by-salary-type',[GenerateSalaryController::class, 'getSalarySetBySalaryType'])->name('payroll.generate-salary.get-salary-set-by-salary-type');
+        });
+
+        // generated Salary Route Start
+        Route::group(['prefix' => 'generated-salary-list'], function () {
+            Route::get('/', [GeneratedSalaryController::class, 'index'])->name('payroll.generated-salary');
+            Route::post('/filtered', [GeneratedSalaryController::class, 'indexFiltered'])->name('payroll.generated-salary.filtered');
+            Route::get('/{id}/details', [GeneratedSalaryController::class, 'details'])->name('payroll.generated-salary.details');
+            Route::post('/{id}/details/filtered', [GeneratedSalaryController::class, 'detailsFiltered'])->name('payroll.generated-salary.details.filtered');
+           /* Route::get('/{id}/edit', [GeneratedSalaryController::class, 'edit'])->name('payroll.generated-salary.edit');
+            Route::post('/{id}/update', [GeneratedSalaryController::class, 'update'])->name('payroll.generated-salary.update');
+            Route::get('/{id}/delete', [GeneratedSalaryController::class, 'delete'])->name('payroll.generated-salary.delete');*/
         });
 
     });

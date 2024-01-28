@@ -87,7 +87,7 @@ class AttendanceHelper
         $workingTimeDetails = AttendanceWorkingTimeHelper::getWorkingTimeDetails($attendance_activity_history);
 
         //check and get late time
-        $lateEarlyTimeDetails = AttendanceLateEarlyHelper::getLateEarlyDetails($office_time, $attendance_activity_history, $day_type);
+        $lateEarlyTimeDetails = AttendanceLateEarlyHelper::getLateEarlyDetails($office_time, $attendance_activity_history, $day_type, $salary_set);
 
 
 

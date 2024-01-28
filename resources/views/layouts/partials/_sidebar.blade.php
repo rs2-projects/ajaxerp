@@ -87,14 +87,14 @@
                     </ul>
                 </li>
                 <li class="submenu">
-                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.generate-salary' || $activeMenu == 'payroll.generate-salary.salary-list') ? 'active' : '' }} noti-dot"><i class="la la-money"></i> <span> Payroll</span> <span class="menu-arrow"></span></a>
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.generate-salary' || $activeMenu == 'payroll.generated-salary') ? 'active' : '' }} noti-dot"><i class="la la-money"></i> <span> Payroll</span> <span class="menu-arrow"></span></a>
                     <ul>
 
                         <li>
                             <a href="{{ route('payroll.generate-salary') }}" class="{{ ($activeMenu == 'payroll.generate-salary') ? 'active' : '' }}"> <span>Generate Salary</span></a>
                         </li>
                         <li>
-                            <a href="{{ route('payroll.generate-salary.salary-list') }}" class="{{ ($activeMenu == 'payroll.generate-salary.salary-list') ? 'active' : '' }}"><span>Salary List</span></a>
+                            <a href="{{ route('payroll.generated-salary') }}" class="{{ ($activeMenu == 'payroll.generated-salary') ? 'active' : '' }}"><span>Salary List</span></a>
                         </li>
                     </ul>
                 </li>
