@@ -62,13 +62,10 @@
                 <div class="erp-action-t">
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                        {{--<div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="{{ route('hr.employee.details', $item->id) }}"><i class="la la-puzzle-piece m-r-5"></i> Details</a>
-                            <a class="dropdown-item" href="{{ route('hr.employee.edit',$item->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.employee.delete',$item->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                            <a class="dropdown-item" href="#"><i class="la la-crosshairs m-r-5"></i> Attendance</a>
-                            <a class="dropdown-item" href="#"><i class="la la-question m-r-5"></i> Leave</a>
-                        </div>--}}
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" onclick="editItem({{$item->id}})" href="javascript:void(0)"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                            <a class="dropdown-item" onclick="showItem({{$item->id}})" href="javascript:void(0)"><i class="fa-solid fa-eye m-r-5"></i> Show</a>
+                        </div>
                     </div>
                 </div>
             </div>

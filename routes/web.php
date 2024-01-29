@@ -365,6 +365,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/filtered', [GeneratedSalaryController::class, 'indexFiltered'])->name('payroll.generated-salary.filtered');
             Route::get('/{id}/details', [GeneratedSalaryController::class, 'details'])->name('payroll.generated-salary.details');
             Route::post('/{id}/details/filtered', [GeneratedSalaryController::class, 'detailsFiltered'])->name('payroll.generated-salary.details.filtered');
+            Route::get('/details/{salary_details_id}/salary-details/edit', [GeneratedSalaryController::class, 'salaryDetailsEdit'])->name('payroll.generated-salary.details.salary-details.edit');
+            Route::post('/details/{salary_details_id}/salary-details/update', [GeneratedSalaryController::class, 'salaryDetailsUpdate'])->name('payroll.generated-salary.details.salary-details.update');
+            Route::get('/details/{salary_details_id}/salary-details/show', [GeneratedSalaryController::class, 'salaryDetailsShow'])->name('payroll.generated-salary.details.salary-details.show');
+
            /* Route::get('/{id}/edit', [GeneratedSalaryController::class, 'edit'])->name('payroll.generated-salary.edit');
             Route::post('/{id}/update', [GeneratedSalaryController::class, 'update'])->name('payroll.generated-salary.update');
             Route::get('/{id}/delete', [GeneratedSalaryController::class, 'delete'])->name('payroll.generated-salary.delete');*/

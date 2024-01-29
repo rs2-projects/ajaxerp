@@ -62,4 +62,52 @@ class GeneratedSalaryController extends BackendController
 
         return $this->returnAjaxSuccess(['view' => $view]);
     }
+
+    public function salaryDetailsEdit($id)
+    {
+        try {
+            $data = $this->service->getSalaryDetailsEditData($id);
+            if (empty($data['salaryDetails'])){
+                return $this->returnAjaxException(new \Exception("Data not found"));
+            }
+
+            $view = view('payroll.generated-salary._edit_salary_details_data')
+                ->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+
+        }catch (\Exception $e){
+            return $this->returnAjaxException($e);
+        }
+    }
+
+    public function salaryDetailsUpdate(Request $request, $id)
+    {
+        try {
+            $this->service->salaryDetailsUpdate($request, $id);
+            return $this->returnAjaxSuccess([], 'Salary details updated successfully');
+        }catch (\Exception $e){
+           return $this->returnAjaxException($e);
+        }
+    }
+
+    public function salaryDetailsShow($id)
+    {
+        try {
+            $data = $this->service->getSalaryDetailsShowData($id);
+            if (empty($data['salaryDetails'])){
+                return $this->returnAjaxException(new \Exception("Data not found"));
+            }
+
+            $view = view('payroll.generated-salary._show_salary_details_data')
+                ->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+
+        }catch (\Exception $e){
+            return $this->returnAjaxException($e);
+        }
+    }
 }

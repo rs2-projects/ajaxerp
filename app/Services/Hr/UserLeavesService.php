@@ -3,6 +3,7 @@
 namespace App\Services\Hr;
 
 use App\Helpers\AttendanceHelper\AttendanceLeaveHelper;
+use App\Helpers\AttendanceHistoryHelper;
 use App\Helpers\LeaveHelper;
 use App\Helpers\SalarySetHelper;
 use App\Models\SettingsLeaveType;
@@ -639,6 +640,9 @@ class UserLeavesService
                 $userLeaveDetail->updated_at = Carbon::now();
                 $userLeaveDetail->updated_by = auth()->user()->id;
                 $userLeaveDetail->save();
+
+                // call attendanceReportCreateOrUpdate function
+                AttendanceHistoryHelper::attendanceReportCreateOrUpdate($check_user->id, $start_date->format('Y-m-d'), 2);
 
                 $start_date->addDay();
             }

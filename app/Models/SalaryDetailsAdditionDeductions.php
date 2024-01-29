@@ -50,4 +50,9 @@ class SalaryDetailsAdditionDeductions extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function settingsSalaryTypeDetails()
+    {
+        return $this->belongsTo(SettingsSalaryTypeDetails::class, 'settings_salary_type_details_id', 'id');
+    }
 }

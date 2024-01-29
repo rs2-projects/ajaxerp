@@ -164,4 +164,15 @@ class SalaryDetails extends Model
         return $this->normal_day_overtime_amount + $this->special_day_overtime_amount;
     }
 
+    public function salaryDetailsAdditions()
+    {
+        return $this->hasMany(SalaryDetailsAdditionDeductions::class, 'salary_details_id', 'id')
+            ->where('type', SalaryDetailsAdditionDeductions::TYPE_EARNING);
+    }
+
+    public function salaryDetailsDeductions()
+    {
+        return $this->hasMany(SalaryDetailsAdditionDeductions::class, 'salary_details_id', 'id')
+            ->where('type', SalaryDetailsAdditionDeductions::TYPE_DEDUCTION);
+    }
 }
