@@ -13849,6 +13849,16 @@ a.em-profile-wrap:hover {
     color: #7fc241;
 }
 
+   .mini-sidebar .sidebar-expanded {
+       display: none;
+   }
+    .sidebar-expanded-false {
+        display: none;
+    }
+   .mini-sidebar .sidebar-expanded-false {
+       display: inline-block;
+   }
+
 /* Media QUERY Start*/
 @media only screen and (max-width: 766px) {
   .my-attendance-wrapper .my-attendance-box-item:nth-child(1) {

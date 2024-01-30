@@ -6,7 +6,8 @@
             <img src="{{ asset('assets') }}/img/logo.webp" >
         </a>
         <a href="{{ route('dashboard') }}" class="logo2">
-            <img src="{{ asset('assets') }}/img/logo.webp"  alt="Logo">
+            <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded" alt="Logo">
+            <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded-false" alt="Logo">
         </a>
     </div>
     <!-- /Logo -->
