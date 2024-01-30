@@ -433,6 +433,7 @@ trait GenerateSalaryTrait
         //selected deduction minus
         $deduction_amount = 0;
         if($this->settingsSalaryDeductionType != null) {
+            $salaryDetails->settings_deduction_type_id = $this->settingsSalaryDeductionType->id;
             $salaryDetails->deduction_rate_type = $this->settingsSalaryDeductionType->rate_type;
             $salaryDetails->deduction_salary_type = $this->settingsSalaryDeductionType->salary_type;
             $salaryDetails->deduction_rate = $this->settingsSalaryDeductionType->rate;

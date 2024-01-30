@@ -175,4 +175,9 @@ class SalaryDetails extends Model
         return $this->hasMany(SalaryDetailsAdditionDeductions::class, 'salary_details_id', 'id')
             ->where('type', SalaryDetailsAdditionDeductions::TYPE_DEDUCTION);
     }
+
+    public function settingsDeductionType()
+    {
+        return $this->belongsTo(SettingsSalaryDeductionType::class, 'settings_deduction_type_id', 'id');
+    }
 }

@@ -7,7 +7,7 @@
         </a>
         <a href="{{ route('dashboard') }}" class="logo2">
             <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded" alt="Logo">
-            <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded-false" alt="Logo">
+            <img src="{{ asset('assets') }}/img/logo-mini.png" class="sidebar-expanded-false" alt="Logo">
         </a>
     </div>
     <!-- /Logo -->

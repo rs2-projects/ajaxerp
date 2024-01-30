@@ -48,7 +48,7 @@ class GeneratedSalaryService
     public function getSalaryDetailsEditData($id)
     {
         try {
-            $salaryDetails = SalaryDetails::with('employee','salaryDetailsAdditions', 'salaryDetailsDeductions')
+            $salaryDetails = SalaryDetails::with('employee','salaryDetailsAdditions', 'salaryDetailsDeductions','settingsDeductionType')
                 ->where('id', $id)
                 ->where('deleted', SalaryDetails::DELETED_NO)
                 ->first();
@@ -87,7 +87,7 @@ class GeneratedSalaryService
             if (!$salarySettingsSalarySets) {
                 throw new \Exception("Data not found");
             }
-
+            // salary details table data update
             $currentNetPayableSalary = $salaryDetails->net_payable_salary;
             $currentCustomAddAmount = $salaryDetails->custom_add_amount;
             $currentCustomDeductAmount = $salaryDetails->custom_deduct_amount;
@@ -99,16 +99,38 @@ class GeneratedSalaryService
             $salaryDetails->custom_add_amount = $request->custom_add_amount??null;
             $salaryDetails->custom_deduct_amount_text = $request->custom_deduct_amount_text??null;
             $salaryDetails->custom_deduct_amount = $request->custom_deduct_amount??null;
-            $salaryDetails->net_payable_salary = 0;
+            $salaryDetails->net_payable_salary = $newNetPayableSalary;
             $salaryDetails->save();
 
+
+            // salaries table data update
             $salaryCurrentTotalAmountToPay = $salary->total_amount_to_pay;
             $salaryCurrentTotalBonusAmount = $salary->total_bonus_amount;
             $salaryCurrentTotalDeductionAmount = $salary->total_deduction_amount;
 
-            /*$salaryNewTotalAmountToPay = ($salaryCurrentTotalAmountToPay - $salaryCurrentTotalBonusAmount) + $request->custom_add_amount;
-            $salaryNewTotalAmountToPay =*/
+            $salaryNewTotalAmountToPay = $salaryCurrentTotalAmountToPay + $request->custom_add_amount - $request->custom_deduct_amount + $currentCustomAddAmount - $currentCustomDeductAmount;
+            $salaryNewTotalBonusAmount = $salaryCurrentTotalBonusAmount + $request->custom_add_amount - $currentCustomAddAmount;
+            $salaryNewTotalDeductionAmount = $salaryCurrentTotalDeductionAmount - $request->custom_deduct_amount + $currentCustomDeductAmount;
 
+            $salary->total_amount_to_pay = $salaryNewTotalAmountToPay;
+            $salary->total_bonus_amount = $salaryNewTotalBonusAmount;
+            $salary->total_deduction_amount = $salaryNewTotalDeductionAmount;
+            $salary->save();
+
+
+            // salary_settings_salary_sets table data update
+            $salarySettingsSalarySetsCurrentTotalAmountToPay = $salarySettingsSalarySets->total_amount_to_pay;
+            $salarySettingsSalarySetsCurrentTotalBonusAmount = $salarySettingsSalarySets->total_bonus_amount;
+            $salarySettingsSalarySetsCurrentTotalDeductionAmount = $salarySettingsSalarySets->total_deduction_amount;
+
+            $salarySettingsSalarySetsNewTotalAmountToPay = $salarySettingsSalarySetsCurrentTotalAmountToPay + $request->custom_add_amount - $request->custom_deduct_amount + $currentCustomAddAmount - $currentCustomDeductAmount;
+            $salarySettingsSalarySetsNewTotalBonusAmount = $salarySettingsSalarySetsCurrentTotalBonusAmount + $request->custom_add_amount - $currentCustomAddAmount;
+            $salarySettingsSalarySetsNewTotalDeductionAmount = $salarySettingsSalarySetsCurrentTotalDeductionAmount - $request->custom_deduct_amount + $currentCustomDeductAmount;
+
+            $salarySettingsSalarySets->total_amount_to_pay = $salarySettingsSalarySetsNewTotalAmountToPay;
+            $salarySettingsSalarySets->total_bonus_amount = $salarySettingsSalarySetsNewTotalBonusAmount;
+            $salarySettingsSalarySets->total_deduction_amount = $salarySettingsSalarySetsNewTotalDeductionAmount;
+            $salarySettingsSalarySets->save();
 
         }catch (\Exception $e){
             DB::rollBack();
