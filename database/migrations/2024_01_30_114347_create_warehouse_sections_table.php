@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('warehouse_sections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('warehouse_id');
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 

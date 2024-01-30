@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('acc_coa_category_id');
             $table->unsignedBigInteger('acc_coa_sub_category_id');
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
             $table->string('slug', 255)->nullable();
             $table->string('account_no', 255)->nullable();
             $table->text('description')->nullable();

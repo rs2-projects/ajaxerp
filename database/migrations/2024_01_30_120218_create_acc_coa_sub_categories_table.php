@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('acc_coa_sub_categories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('acc_coa_category_id');
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
             $table->string('slug', 255)->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_account_type')->default(0)->comment('0=No,1=Yes');

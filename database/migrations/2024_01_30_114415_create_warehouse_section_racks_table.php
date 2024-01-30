@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('warehouse_id');
             $table->unsignedBigInteger('warehouse_section_id');
-            $table->string('name', 255);
+            $table->string('name', 255)->index();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 

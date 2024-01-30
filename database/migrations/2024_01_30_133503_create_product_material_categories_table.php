@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('acc_coa_categories', function (Blueprint $table) {
+        Schema::create('product_material_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255)->index();
-            $table->unsignedSmallInteger('type')->default(0)->comment('0=Assets,1=Liabilities & Credit Cards,2=Income,3=Expenses,4=Equity');
             $table->text('description')->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
-            $table->comment('Accounting -> Chart of Account Categories');
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('acc_coa_categories');
+        Schema::dropIfExists('product_material_categories');
     }
 };

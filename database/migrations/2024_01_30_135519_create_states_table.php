@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('warehouses', function (Blueprint $table) {
+        Schema::create('states', function (Blueprint $table) {
             $table->id();
-
-            $table->string('name', 255)->index();
-            $table->string('address', 255)->nullable();
-            $table->text('description')->nullable();
-
-            \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+            $table->unsignedInteger('country_id');
+            $table->string('name', 128)->index();
+            $table->string('state_code', 128)->nullable();
+            $table->tinyInteger('status')->default(1);
         });
     }
 
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('warehouses');
+        Schema::dropIfExists('states');
     }
 };
