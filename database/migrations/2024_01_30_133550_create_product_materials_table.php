@@ -23,6 +23,13 @@ return new class extends Migration
             $table->unsignedInteger('low_stock_at_least')->default(0);
             $table->text('description')->nullable();
 
+            /*qty info*/
+            $table->unsignedInteger('total_purchased_qty')->default(0);
+            $table->unsignedInteger('total_used_qty')->default(0);
+            $table->unsignedInteger('total_returned_qty')->default(0);
+            $table->unsignedInteger('total_damage_qty')->default(0);
+            $table->unsignedInteger('available_qty')->default(0);
+
             /*material info*/
             $table->string('color', 64)->nullable();
             $table->string('working_temperature', 64)->nullable();
