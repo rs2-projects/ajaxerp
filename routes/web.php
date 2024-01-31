@@ -388,6 +388,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/create', [WarehouseController::class, 'store'])->name('inventory.warehouse.store');
             Route::get('/{id}/edit', [WarehouseController::class, 'edit'])->name('inventory.warehouse.edit');
             Route::post('/{id}/update', [WarehouseController::class, 'update'])->name('inventory.warehouse.update');
+            Route::get('/{id}/show', [WarehouseController::class, 'show'])->name('inventory.warehouse.show');
             Route::get('/{id}/delete', [WarehouseController::class, 'delete'])->name('inventory.warehouse.delete');
             Route::get('/{id}/change-status/{status}', [WarehouseController::class, 'statusUpdate'])->name('inventory.warehouse.change-status');
         });

@@ -77,3 +77,6 @@
 .new-wsb-table-body-item .erp-step-input-block .form-control {
     padding-right: 20px;
 }
+.new-warehouse-section-body-add-btn .add-section-wh-btn {
+    margin-top: 9px !important;
+}

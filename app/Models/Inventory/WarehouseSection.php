@@ -38,4 +38,9 @@ class WarehouseSection extends Model
         'deleted_at',
         'deleted_by'
     ];
+
+    public function racks()
+    {
+        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_section_id', 'id');
+    }
 }

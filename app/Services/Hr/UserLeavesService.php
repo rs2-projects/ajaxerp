@@ -200,6 +200,10 @@ class UserLeavesService
                 $userLeaveDetail->updated_by = auth()->user()->id;
                 $userLeaveDetail->save();
 
+                // attendance history helper call createOrUpdate
+
+                AttendanceHistoryHelper::attendanceReportCreateOrUpdate($check_user->id, $start_date->format('Y-m-d'), 2);
+
                 $start_date->addDay();
             }
 

@@ -17,7 +17,13 @@
                     <tr>
                         <td><strong>Net Basic Salary</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->net_basic_salary) }} </span></td>
                     </tr>
-                    @php($total_earning = $salaryDetails->net_basic_salary)
+                    <tr>
+                        <td><strong>Total Over Time</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount) }} </span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total Bonus</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->total_bonus_amount) }} </span></td>
+                    </tr>
+                    @php($total_earning = $salaryDetails->net_basic_salary + $salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount + $salaryDetails->total_bonus_amount)
                     @if(count($salaryDetails->salaryDetailsAdditions) > 0)
                         @foreach($salaryDetails->salaryDetailsAdditions as $addition)
                             <tr>
@@ -49,7 +55,25 @@
                 <h4 class="m-b-10"><strong>Deductions</strong></h4>
                 <table class="table table-bordered">
                     <tbody>
-                    @php($total_deduction = 0)
+                    <tr>
+                        <td><strong>Absent</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->absent_day_amount) }} </span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Late</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->late_amount) }} </span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Early Departure</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->early_departure_amount) }} </span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Extra Leave</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->extra_leave_amount) }} </span></td>
+                    </tr>
+                    @if($salaryDetails->settings_deduction_type_id != null)
+                        <tr>
+                            <td><strong>{{$salaryDetails->settingsDeductionType->title??'N/A'}}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->deduction_amount) }} </span></td>
+                        </tr>
+                    @endif
+
+                    @php($total_deduction = $salaryDetails->absent_day_amount+$salaryDetails->late_amount+$salaryDetails->early_departure_amount+$salaryDetails->extra_leave_amount+$salaryDetails->deduction_amount)
                     @if(count($salaryDetails->salaryDetailsDeductions) > 0)
                         @foreach($salaryDetails->salaryDetailsDeductions as $deduction)
                             <tr>

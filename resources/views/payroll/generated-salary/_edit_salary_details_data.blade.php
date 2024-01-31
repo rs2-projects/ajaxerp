@@ -22,7 +22,10 @@
                     <tr>
                         <td><strong>Total Over Time</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount) }} </span></td>
                     </tr>
-                    @php($total_earning = $salaryDetails->net_basic_salary + $salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount)
+                    <tr>
+                        <td><strong>Total Bonus</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ showAmount($salaryDetails->total_bonus_amount) }} </span></td>
+                    </tr>
+                    @php($total_earning = $salaryDetails->net_basic_salary + $salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount + $salaryDetails->total_bonus_amount)
                     @if(count($salaryDetails->salaryDetailsAdditions) > 0)
                         @foreach($salaryDetails->salaryDetailsAdditions as $addition)
                             <tr>

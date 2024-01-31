@@ -39,4 +39,14 @@ class Warehouse extends Model
         'deleted_at',
         'deleted_by'
     ];
+
+    public function sections()
+    {
+        return $this->hasMany(WarehouseSection::class, 'warehouse_id', 'id');
+    }
+
+    public function racks()
+    {
+        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_id', 'id');
+    }
 }

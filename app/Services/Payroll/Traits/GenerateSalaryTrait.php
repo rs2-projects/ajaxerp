@@ -145,6 +145,7 @@ trait GenerateSalaryTrait
                 $additionDeduction = new SalaryDetailsAdditionDeductions();
                 $additionDeduction->salary_id = $salary->id;
                 $additionDeduction->salary_details_id = $salaryDetails->id;
+                $additionDeduction->settings_salary_type_id = $this->settingsSalaryType->id;
                 $additionDeduction->settings_salary_type_details_id = $salaryTypeDetail->id;
 
                 $additionDeduction->type = $salaryTypeDetail->type;
@@ -168,7 +169,11 @@ trait GenerateSalaryTrait
                 $additionDeduction->save();
             }
         }
-        $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+            $monthly_gross_salary = $monthly_basic_salary + ($default_added_salary * 2) - ($default_deducted_salary * 2);
+        } else {
+            $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+        }
         /*if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
             $monthly_gross_salary = $monthly_basic_salary + (($default_added_salary / 2) - ($default_deducted_salary / 2));
         } else {
@@ -485,6 +490,7 @@ trait GenerateSalaryTrait
             + $special_day_overtime_amount
             + $employee_total_bonus_amount
             - $total_absent_penalty_amount
+            - $total_extra_leave_amounts
             - $late_amount
             - $early_departure_amount
             - $deduction_amount;
