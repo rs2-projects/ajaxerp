@@ -168,12 +168,12 @@ trait GenerateSalaryTrait
                 $additionDeduction->save();
             }
         }
-
-        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+        $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+        /*if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
             $monthly_gross_salary = $monthly_basic_salary + (($default_added_salary / 2) - ($default_deducted_salary / 2));
         } else {
-            $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
-        }
+
+        }*/
 
 
         $total_working_days = 0;
@@ -354,12 +354,13 @@ trait GenerateSalaryTrait
         $salaryDetails->monthly_basic_salary = $monthly_basic_salary;
         $salaryDetails->daily_basic_salary = $daily_basic_salary;
         $salaryDetails->net_basic_salary = $net_basic_salary;
+
         if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
 
-            $salaryDetails->monthly_total_added_salary = $default_added_salary;
-            $salaryDetails->total_added_salary = $default_added_salary / 2;
-            $salaryDetails->monthly_total_deducted_salary = $default_deducted_salary;
-            $salaryDetails->total_deducted_salary = $default_deducted_salary / 2;
+            $salaryDetails->monthly_total_added_salary = $default_added_salary * 2;
+            $salaryDetails->total_added_salary = $default_added_salary;
+            $salaryDetails->monthly_total_deducted_salary = $default_deducted_salary * 2;
+            $salaryDetails->total_deducted_salary = $default_deducted_salary;
 
         } else {
             $salaryDetails->monthly_total_added_salary = $default_added_salary;
