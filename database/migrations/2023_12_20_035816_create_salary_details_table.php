@@ -40,8 +40,10 @@ return new class extends Migration
             $table->decimal('daily_basic_salary', 12, 2)->default(0)->comment('without any deduction and addition');
             $table->decimal('net_basic_salary', 12,2)->default(0)->comment('based on worked days with calculate using absent, and extra leaves during salary period');
 
-            $table->decimal('total_added_salary', 12, 2)->default(0)->comment('salary default addition from settings_salary_type_details');
-            $table->decimal('total_deducted_salary', 12, 2)->default(0)->comment('salary default deduction from settings_salary_type_details');
+            $table->decimal('monthly_total_added_salary', 12, 2)->default(0)->comment('salary default addition from settings_salary_type_details based on total month');
+            $table->decimal('total_added_salary', 12, 2)->default(0)->comment('salary default addition from settings_salary_type_details based on current salary period');
+            $table->decimal('monthly_total_deducted_salary', 12, 2)->default(0)->comment('salary default deduction from settings_salary_type_details based on total month');
+            $table->decimal('total_deducted_salary', 12, 2)->default(0)->comment('salary default deduction from settings_salary_type_details based on current salary period');
 
             $table->decimal('monthly_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');
             $table->decimal('daily_salary', 12, 2)->default(0)->comment('with calculate default addition and deduction');

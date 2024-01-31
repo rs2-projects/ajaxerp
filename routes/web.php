@@ -13,6 +13,7 @@ use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
+use App\Http\Controllers\Inventory\WarehouseController;
 use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
@@ -376,6 +377,22 @@ Route::group(['middleware' => 'auth'], function () {
 
     });
     //Payroll routes end
+
+    // inventory route start
+    Route::group(['prefix' => 'inventory'], function () {
+        // warehouse route start
+        Route::group(['prefix' => 'warehouse'], function () {
+            Route::get('/', [WarehouseController::class, 'index'])->name('inventory.warehouse.index');
+            Route::post('/filtered', [WarehouseController::class, 'indexFiltered'])->name('inventory.warehouse.filtered');
+            Route::get('/create', [WarehouseController::class, 'create'])->name('inventory.warehouse.create');
+            Route::post('/create', [WarehouseController::class, 'store'])->name('inventory.warehouse.store');
+            Route::get('/{id}/edit', [WarehouseController::class, 'edit'])->name('inventory.warehouse.edit');
+            Route::post('/{id}/update', [WarehouseController::class, 'update'])->name('inventory.warehouse.update');
+            Route::get('/{id}/delete', [WarehouseController::class, 'delete'])->name('inventory.warehouse.delete');
+            Route::get('/{id}/change-status/{status}', [WarehouseController::class, 'statusUpdate'])->name('inventory.warehouse.change-status');
+        });
+    });
+    // inventory route end
 
     // User Resignation Route Start
     Route::group(['prefix' => 'user-resignation'], function () {

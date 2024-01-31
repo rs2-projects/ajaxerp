@@ -82,7 +82,7 @@ trait GenerateSalaryTrait
 
         foreach ($employees as $employee) {
             $salaryDetail = $this->generateEmployeeSalary($employee);
-            $total_salary_amount += $salaryDetail->net_payable_salary;
+            $total_salary_amount += ($salaryDetail->net_payable_salary - $salaryDetail->total_bonus_amount + $salaryDetail->deduction_amount);
             $total_bonus_amount += $salaryDetail->total_bonus_amount;
             $total_deduction_amount += $salaryDetail->deduction_amount;
         }
@@ -169,7 +169,11 @@ trait GenerateSalaryTrait
             }
         }
 
-        $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+            $monthly_gross_salary = $monthly_basic_salary + (($default_added_salary / 2) - ($default_deducted_salary / 2));
+        } else {
+            $monthly_gross_salary = $monthly_basic_salary + $default_added_salary - $default_deducted_salary;
+        }
 
 
         $total_working_days = 0;
@@ -189,6 +193,8 @@ trait GenerateSalaryTrait
         $total_special_day_overtime_minutes = 0;
         $total_late_minutes = 0;
         $total_early_departure_minutes = 0;
+
+        $allSalaryDetailsLeaves = [];
 
         while ($startDate->lte($endDate)) {
 
@@ -214,17 +220,13 @@ trait GenerateSalaryTrait
                 $salaryDetailsLeave->salary_type = $attendanceReport->settingsLeaveType->salary_type;
                 $salaryDetailsLeave->rate = $attendanceReport->settingsLeaveType->rate;
 
-                if ($attendanceReport->leave_type == AttendanceReport::LEAVE_TYPE_UNPAID) {
-                    if ($attendanceReport->settingsLeaveType->salary_type == SettingsLeaveType::SALARY_TYPE_GROSS_SALARY) {
-                        $extra_leave_deduct_amount = ($monthly_gross_salary * $attendanceReport->settingsLeaveType->rate) / 100;
-                    } else {
-                        $extra_leave_deduct_amount = ($monthly_basic_salary * $attendanceReport->settingsLeaveType->rate) / 100;
-                    }
-                } else {
-                    $extra_leave_deduct_amount = 0;
+                if ($attendanceReport->leave_type == AttendanceReport::LEAVE_TYPE_PAID) {
+                    $paid_leave_days++;
+                } elseif ($attendanceReport->leave_type == AttendanceReport::LEAVE_TYPE_UNPAID) {
+                    $extra_leave_days++;
                 }
-                $salaryDetailsLeave->amount = $extra_leave_deduct_amount;
-                $total_extra_leave_amounts += $extra_leave_deduct_amount;
+
+                $salaryDetailsLeave->amount = 0;
 
                 $salaryDetailsLeave->status = SalaryDetailsLeaves::STATUS_ACTIVE;
                 $salaryDetailsLeave->created_by = auth()->id();
@@ -233,13 +235,11 @@ trait GenerateSalaryTrait
                 $salaryDetailsLeave->updated_at = Carbon::now();
                 $salaryDetailsLeave->save();
 
+                $allSalaryDetailsLeaves[] = $salaryDetailsLeave;
+
                 $total_working_days++;
                 $total_leave_days++;
-                if ($attendanceReport->leave_type == AttendanceReport::LEAVE_TYPE_PAID) {
-                    $paid_leave_days++;
-                } elseif ($attendanceReport->leave_type == AttendanceReport::LEAVE_TYPE_UNPAID) {
-                    $extra_leave_days++;
-                }
+
 
             } elseif ($attendanceReport->is_present == AttendanceReport::IS_PRESENT_PRESENT) {
                 $total_working_days++;
@@ -295,6 +295,22 @@ trait GenerateSalaryTrait
 
         $minute_gross_salary = $hourly_gross_salary / 60;
 
+        foreach ($allSalaryDetailsLeaves as $salaryDetailsLeave) {
+            if ($salaryDetailsLeave->leave_type == AttendanceReport::LEAVE_TYPE_UNPAID) {
+                if($salaryDetailsLeave->salary_type == SettingsLeaveType::SALARY_TYPE_GROSS_SALARY) {
+                    $extra_leave_deduct_amount = ($daily_gross_salary * $salaryDetailsLeave->rate) / 100;
+                } else {
+                    $extra_leave_deduct_amount = ($daily_basic_salary * $salaryDetailsLeave->rate) / 100;
+                }
+            } else {
+                $extra_leave_deduct_amount = 0;
+            }
+
+            $salaryDetailsLeave->amount = $extra_leave_deduct_amount;
+            $salaryDetailsLeave->save();
+
+            $total_extra_leave_amounts += $extra_leave_deduct_amount;
+        }
 
         if($this->settingsOvertimeType->salary_type == SettingsOvertimeType::SALARY_TYPE_GROSS_SALARY) {
             $normal_day_overtime_rate_per_hour = ($hourly_gross_salary * $this->settingsOvertimeType->rate) / 100;
@@ -338,8 +354,20 @@ trait GenerateSalaryTrait
         $salaryDetails->monthly_basic_salary = $monthly_basic_salary;
         $salaryDetails->daily_basic_salary = $daily_basic_salary;
         $salaryDetails->net_basic_salary = $net_basic_salary;
-        $salaryDetails->total_added_salary = $default_added_salary;
-        $salaryDetails->total_deducted_salary = $default_deducted_salary;
+        if($salary->salary_generate_type == Salary::SALARY_GENERATE_TYPE_HALF_MONTH) {
+
+            $salaryDetails->monthly_total_added_salary = $default_added_salary;
+            $salaryDetails->total_added_salary = $default_added_salary / 2;
+            $salaryDetails->monthly_total_deducted_salary = $default_deducted_salary;
+            $salaryDetails->total_deducted_salary = $default_deducted_salary / 2;
+
+        } else {
+            $salaryDetails->monthly_total_added_salary = $default_added_salary;
+            $salaryDetails->total_added_salary = $default_added_salary;
+            $salaryDetails->monthly_total_deducted_salary = $default_deducted_salary;
+            $salaryDetails->total_deducted_salary = $default_deducted_salary;
+        }
+
         $salaryDetails->monthly_salary = $monthly_gross_salary;
         $salaryDetails->daily_salary = $daily_gross_salary;
         $salaryDetails->current_period_salary = $current_period_salary;
@@ -455,6 +483,7 @@ trait GenerateSalaryTrait
             + $normal_day_overtime_amount
             + $special_day_overtime_amount
             + $employee_total_bonus_amount
+            - $total_absent_penalty_amount
             - $late_amount
             - $early_departure_amount
             - $deduction_amount;

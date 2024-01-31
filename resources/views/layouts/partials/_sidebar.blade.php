@@ -177,6 +177,12 @@
                     </ul>
                 </li>--}}
 
+                <li class="menu-title">
+                    <span>Warehouse</span>
+                </li>
+                <li>
+                    <a href="{{ route('inventory.warehouse.index') }}" class="{{ ($activeMenu == 'inventory.warehouse.index' || $activeMenu == 'inventory.warehouse.create') ? 'active' : '' }}"><i class="la la-icons"></i> <span>Warehouse</span></a>
+                </li>
 
                 <li class="menu-title">
                     <span>Administration</span>
