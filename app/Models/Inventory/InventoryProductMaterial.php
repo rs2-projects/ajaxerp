@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Product;
+namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AssetProduct extends Model
+class InventoryProductMaterial extends Model
 {
     use HasFactory;
 }

@@ -40,8 +40,6 @@ return new class extends Migration
 
             /*warehouse info*/
             $table->unsignedBigInteger('warehouse_id')->nullable();
-            $table->unsignedBigInteger('warehouse_section_id')->nullable();
-            $table->unsignedBigInteger('warehouse_section_rack_id')->nullable();
 
             $table->text('comments')->nullable();
 
@@ -51,8 +49,6 @@ return new class extends Migration
             $table->foreign('product_material_category_id')->references('id')->on('product_material_categories');
             $table->foreign('tax_id')->references('id')->on('acc_coa_accounts');
             $table->foreign('warehouse_id')->references('id')->on('warehouses');
-            $table->foreign('warehouse_section_id')->references('id')->on('warehouse_sections');
-            $table->foreign('warehouse_section_rack_id')->references('id')->on('warehouse_section_racks');
 
         });
     }
