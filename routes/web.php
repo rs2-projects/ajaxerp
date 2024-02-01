@@ -459,4 +459,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/{id}/update', [AttendanceController::class, 'update'])->name('user.attendance.update');
         Route::get('/{id}/delete', [AttendanceController::class, 'delete'])->name('user.attendance.delete');
     });
+
+    //include product materials route file
+    include 'product_materials.php';
+    //asset products
+    include 'asset_product.php';
 });
