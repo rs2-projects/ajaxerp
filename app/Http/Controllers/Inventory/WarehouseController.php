@@ -72,7 +72,6 @@ class WarehouseController extends BackendController
 
     public function update(UpdateWarehouseRequest $request, $id)
     {
-        return $this->returnAjaxSuccess([], 'Under development');
         try {
             $this->service->update($request, $id);
         }catch (\Exception $e) {

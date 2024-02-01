@@ -34,13 +34,15 @@
                                         <div class="add-section-main-wrapper">
                                             @if(count($warehouse->sections) > 0)
                                                 @foreach($warehouse->sections as $key=>$section)
-                                                    <input type="hidden" name="hidden_section_ids[]" value="{{ $section->id }}">
                                                     <div class="new-warehouse-section-body d-flex flex-wrap gap-2 justify-content-between" data-index="{{$key}}">
                                                         <div class="new-wsb-item flex-40">
                                                             <div class="input-block mb-0 erp-step-input-block">
+                                                                <input type="hidden" name="hidden_section_ids[{{$key}}]" value="{{ $section->id }}">
                                                                 <label class="col-form-label">Section  <span class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control mb-2" value="{{ $section->name }}" name="section_name[{{$key}}]" required placeholder="Section Name here">
-
+                                                                @if($key > 0)
+                                                                    <a href="javascript:void(0)" onclick="removeSection(this)" class="remove-section-btn">Remove This Section</a>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                         <div class="new-wsb-item flex-58">
@@ -61,15 +63,19 @@
                                                                         <div class="add-sub-section-main-wrapper">
                                                                             @if(count($section->racks) > 0)
                                                                                 @foreach($section->racks as $keyR=>$rack)
-                                                                                    <input type="hidden" name="hidden_section_rack_ids[{{$key}}][]" value="{{ $rack->id }}">
                                                                                     <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center position-relative">
+
                                                                                         <div class="new-wsb-table-body-item">
                                                                                             <h5>{{$keyR+1}}</h5>
                                                                                         </div>
                                                                                         <div class="new-wsb-table-body-item">
                                                                                             <div class="input-block mb-0 erp-step-input-block">
+                                                                                                <input type="hidden" name="hidden_section_rack_ids[{{$key}}][]" value="{{ $rack->id }}">
                                                                                                 <input type="text" value="{{ $rack->name }}" name="subsection[{{$key}}][]" required class="form-control subsection_input" placeholder="subsection name here">
                                                                                             </div>
+                                                                                            @if($keyR > 0)
+                                                                                                <a href="javascript:void(0)" onclick="removeSubSection(this)" class="remove-subsection-btn"> <i class="fa fa-times-circle"></i> </a>
+                                                                                            @endif
                                                                                         </div>
                                                                                     </div>
                                                                                 @endforeach

@@ -80,6 +80,7 @@ class WarehouseService
 
     public function update($request, $id)
     {
+//        dd($request->all());
         DB::beginTransaction();
         try {
             $warehouse = Warehouse::where('deleted', Warehouse::DELETED_NO)
@@ -102,9 +103,9 @@ class WarehouseService
                     $section_ids = $request->hidden_section_ids;
                 }
 
-                $deleteSections = WarehouseSection::where('warehouse_id', $warehouse->id)
+                $deleteSections = WarehouseSection::whereNotIn('id', $section_ids)
+                    ->where('warehouse_id', $warehouse->id)
                     ->where('deleted', WarehouseSection::DELETED_NO)
-                    ->whereNotIn('id', $section_ids)
                     ->get();
 
                 if (count($deleteSections) > 0){
@@ -128,6 +129,7 @@ class WarehouseService
                 // update or create
                 foreach ($request->section_name as $key=>$section){
                     if (isset($request->hidden_section_ids[$key]) && $request->hidden_section_ids[$key] !='') {
+                       /* var_dump($request->hidden_section_ids[$key]);*/
                         $warehouseSection = WarehouseSection::where('deleted', WarehouseSection::DELETED_NO)
                             ->where('id', $request->hidden_section_ids[$key])
                             ->first();
@@ -141,18 +143,72 @@ class WarehouseService
                             if (isset($request->hidden_section_rack_ids[$key]) && $request->hidden_section_rack_ids[$key] !=''){
                                 $section_rack_ids = $request->hidden_section_rack_ids[$key];
                             }
-
-                            $deleteRacks = WarehouseSectionRack::where('warehouse_section_id', $warehouseSection->id)
-                                ->where('deleted', WarehouseSectionRack::DELETED_NO)
+                            /*dd($section_rack_ids);*/
+                            $deleteRacks = WarehouseSectionRack::where('deleted', WarehouseSectionRack::DELETED_NO)
+                                ->where('warehouse_section_id', $warehouseSection->id)
+                                ->where('warehouse_id', $warehouse->id)
                                 ->whereNotIn('id', $section_rack_ids)
                                 ->get();
-
+                            /*dd($deleteRacks);*/
                             if (count($deleteRacks) > 0){
                                 foreach ($deleteRacks as $deleteRack){
                                     $deleteRack->deleted = WarehouseSectionRack::DELETED_YES;
                                     $deleteRack->deleted_at = Carbon::now();
                                     $deleteRack->deleted_by = auth()->user()->id;
                                     $deleteRack->save();
+                                }
+                            }
+
+                            if (is_array($request->subsection[$key]) && count($request->subsection[$key]) > 0){
+                                foreach ($request->subsection[$key] as $key2=>$subsection){
+                                    if ($request->subsection[$key][$key2] !=''){
+                                        if (isset($request->hidden_section_rack_ids[$key][$key2]) && $request->hidden_section_rack_ids[$key][$key2] !='') {
+                                            $warehouseSectionRack = WarehouseSectionRack::where('deleted', WarehouseSectionRack::DELETED_NO)
+                                                ->where('id', $request->hidden_section_rack_ids[$key][$key2])
+                                                ->first();
+                                            if ($warehouseSectionRack) {
+                                                $warehouseSectionRack->name = $subsection;
+                                                $warehouseSectionRack->updated_at = Carbon::now();
+                                                $warehouseSectionRack->updated_by = auth()->user()->id;
+                                                $warehouseSectionRack->save();
+                                            }
+                                        }else{
+                                            $warehouseSectionRack = new WarehouseSectionRack();
+                                            $warehouseSectionRack->warehouse_id = $warehouse->id;
+                                            $warehouseSectionRack->warehouse_section_id = $warehouseSection->id;
+                                            $warehouseSectionRack->name = $subsection;
+                                            $warehouseSectionRack->created_at = Carbon::now();
+                                            $warehouseSectionRack->created_by = auth()->user()->id;
+                                            $warehouseSectionRack->updated_at = Carbon::now();
+                                            $warehouseSectionRack->updated_by = auth()->user()->id;
+                                            $warehouseSectionRack->save();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        $warehouseSection = new WarehouseSection();
+                        $warehouseSection->warehouse_id = $warehouse->id;
+                        $warehouseSection->name = $request->section_name[$key];
+                        $warehouseSection->created_at = Carbon::now();
+                        $warehouseSection->created_by = auth()->user()->id;
+                        $warehouseSection->updated_at = Carbon::now();
+                        $warehouseSection->updated_by = auth()->user()->id;
+                        $warehouseSection->save();
+
+                        if (is_array($request->subsection[$key]) && count($request->subsection[$key]) > 0){
+                            foreach ($request->subsection[$key] as $key2=>$subsection){
+                                if ($request->subsection[$key][$key2] !=''){
+                                    $warehouseSectionRack = new WarehouseSectionRack();
+                                    $warehouseSectionRack->warehouse_id = $warehouse->id;
+                                    $warehouseSectionRack->warehouse_section_id = $warehouseSection->id;
+                                    $warehouseSectionRack->name = $subsection;
+                                    $warehouseSectionRack->created_at = Carbon::now();
+                                    $warehouseSectionRack->created_by = auth()->user()->id;
+                                    $warehouseSectionRack->updated_at = Carbon::now();
+                                    $warehouseSectionRack->updated_by = auth()->user()->id;
+                                    $warehouseSectionRack->save();
                                 }
                             }
                         }

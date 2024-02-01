@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Accounting\ChartOfAccountController;
 use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\BotController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Hr\ContractorConroller;
 use App\Http\Controllers\Hr\DepartmentController;
@@ -44,12 +46,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::group(['middleware' => 'guest'], function () {
     Route::get('login', [LoginController::class, 'showLogin'])->name('login');
     Route::post('login', [LoginController::class, 'login'])->name('login');
 });
 
 Route::group(['middleware' => 'auth'], function () {
+
+    //bot route start
+    /*Route::get('chart-of-accounts', [BotController::class,'chartOfAccounts']);*/
+    //bot route end
 
     Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
 
@@ -394,6 +401,26 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
     // inventory route end
+
+    // Accounting route start
+    Route::group(['prefix' => 'accounting'], function (){
+
+        // chart of accounts route start
+        Route::group(['prefix' => 'chart-of-accounts'], function () {
+            Route::get('/', [ChartOfAccountController::class, 'index'])->name('accounting.chart-of-accounts.index');
+            Route::post('/filtered', [ChartOfAccountController::class, 'indexFiltered'])->name('accounting.chart-of-accounts.filtered');
+            Route::get('/create', [ChartOfAccountController::class, 'create'])->name('accounting.chart-of-accounts.create');
+            Route::post('/create', [ChartOfAccountController::class, 'store'])->name('accounting.chart-of-accounts.store');
+            Route::get('/{id}/edit', [ChartOfAccountController::class, 'edit'])->name('accounting.chart-of-accounts.edit');
+            Route::post('/{id}/update', [ChartOfAccountController::class, 'update'])->name('accounting.chart-of-accounts.update');
+            Route::get('/{id}/delete', [ChartOfAccountController::class, 'delete'])->name('accounting.chart-of-accounts.delete');
+            Route::get('/{id}/change-status/{status}', [ChartOfAccountController::class, 'statusUpdate'])->name('accounting.chart-of-accounts.change-status');
+        });
+        // chart of accounts route end
+
+
+    });
+    // Accounting route end
 
     // User Resignation Route Start
     Route::group(['prefix' => 'user-resignation'], function () {

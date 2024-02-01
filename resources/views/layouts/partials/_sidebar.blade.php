@@ -185,6 +185,13 @@
                 </li>
 
                 <li class="menu-title">
+                    <span>Accounting</span>
+                </li>
+                <li>
+                    <a href="{{ route('accounting.chart-of-accounts.index') }}" class="{{ ($activeMenu == 'accounting.chart-of-accounts.index') ? 'active' : '' }}"><i class="la la-git"></i> <span>Chart Of Account</span></a>
+                </li>
+
+                <li class="menu-title">
                     <span>Administration</span>
                 </li>
 

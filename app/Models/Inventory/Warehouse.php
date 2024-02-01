@@ -42,11 +42,11 @@ class Warehouse extends Model
 
     public function sections()
     {
-        return $this->hasMany(WarehouseSection::class, 'warehouse_id', 'id');
+        return $this->hasMany(WarehouseSection::class, 'warehouse_id', 'id')->where('deleted', WarehouseSection::DELETED_NO);
     }
 
     public function racks()
     {
-        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_id', 'id');
+        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_id', 'id')->where('deleted', WarehouseSectionRack::DELETED_NO);
     }
 }

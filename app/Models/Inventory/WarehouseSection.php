@@ -41,6 +41,6 @@ class WarehouseSection extends Model
 
     public function racks()
     {
-        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_section_id', 'id');
+        return $this->hasMany(WarehouseSectionRack::class, 'warehouse_section_id', 'id')->where('deleted', WarehouseSectionRack::DELETED_NO);
     }
 }

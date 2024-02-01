@@ -81,6 +81,11 @@
 
                         </div>
                     </div>
+                    <div class="col-12 mt-3">
+                        <div class="nw-warehouse-add-btn text-center">
+                            <a href="{{ route('inventory.warehouse.edit',$warehouse->id) }}" class=" erp-search-btn text-center">Edit Warehouse</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
