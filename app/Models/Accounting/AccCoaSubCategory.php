@@ -65,4 +65,8 @@ class AccCoaSubCategory extends Model
         'deleted',
     ];
 
+    public function accounts():\Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(AccCoaAccount::class, 'acc_coa_sub_category_id', 'id');
+    }
 }

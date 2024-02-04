@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class State extends Model
 {
     use HasFactory;
+    protected $table = 'states';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'country_id',
+        'name',
+        'state_code',
+        'status'
+    ];
 }

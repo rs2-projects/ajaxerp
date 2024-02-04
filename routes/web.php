@@ -15,6 +15,7 @@ use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
+use App\Http\Controllers\Inventory\ProductMaterialCategoryController;
 use App\Http\Controllers\Inventory\WarehouseController;
 use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\Settings\OverTimeSettingsController;
 use App\Http\Controllers\Settings\SalaryDeductionTypeSettingsController;
 use App\Http\Controllers\Settings\SalaryTypeSettingsController;
 use App\Http\Controllers\Settings\TerminationTypeSettingsController;
+use App\Http\Controllers\Settings\VatTaxTypeSettingsController;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\User\LeavesController;
 use App\Http\Controllers\User\ResignationController;
@@ -202,6 +204,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [SalaryDeductionTypeSettingsController::class, 'statusUpdate'])->name('settings.salary-deduction-type.change-status');
         });
 
+        // Vat Tax Type Settings start
+        Route::group(['prefix' => 'vat-tax-type'], function () {
+            Route::get('/', [VatTaxTypeSettingsController::class, 'index'])->name('settings.vat-tax-type.index');
+            Route::post('/filtered', [VatTaxTypeSettingsController::class, 'indexFiltered'])->name('settings.vat-tax-type.filtered');
+            Route::post('/create', [VatTaxTypeSettingsController::class, 'store'])->name('settings.vat-tax-type.store');
+            Route::get('/{id}/edit', [VatTaxTypeSettingsController::class, 'edit'])->name('settings.vat-tax-type.edit');
+            Route::post('/{id}/update', [VatTaxTypeSettingsController::class, 'update'])->name('settings.vat-tax-type.update');
+            Route::get('/{id}/delete', [VatTaxTypeSettingsController::class, 'delete'])->name('settings.vat-tax-type.delete');
+            Route::get('/{id}/change-status/{status}', [VatTaxTypeSettingsController::class, 'statusUpdate'])->name('settings.vat-tax-type.change-status');
+        });
 
     });
     //setting route end
@@ -399,6 +411,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/delete', [WarehouseController::class, 'delete'])->name('inventory.warehouse.delete');
             Route::get('/{id}/change-status/{status}', [WarehouseController::class, 'statusUpdate'])->name('inventory.warehouse.change-status');
         });
+
+        // product material category route start
+        Route::group(['prefix' => 'product-material-category'], function () {
+            Route::get('/', [ProductMaterialCategoryController::class, 'index'])->name('inventory.product-material-category.index');
+            Route::post('/filtered', [ProductMaterialCategoryController::class, 'indexFiltered'])->name('inventory.product-material-category.filtered');
+            Route::get('/create', [ProductMaterialCategoryController::class, 'create'])->name('inventory.product-material-category.create');
+            Route::post('/create', [ProductMaterialCategoryController::class, 'store'])->name('inventory.product-material-category.store');
+            Route::get('/{id}/edit', [ProductMaterialCategoryController::class, 'edit'])->name('inventory.product-material-category.edit');
+            Route::post('/{id}/update', [ProductMaterialCategoryController::class, 'update'])->name('inventory.product-material-category.update');
+            Route::get('/{id}/delete', [ProductMaterialCategoryController::class, 'delete'])->name('inventory.product-material-category.delete');
+            Route::get('/{id}/change-status/{status}', [ProductMaterialCategoryController::class, 'statusUpdate'])->name('inventory.product-material-category.change-status');
+        });
     });
     // inventory route end
 
@@ -410,9 +434,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', [ChartOfAccountController::class, 'index'])->name('accounting.chart-of-accounts.index');
             Route::post('/filtered', [ChartOfAccountController::class, 'indexFiltered'])->name('accounting.chart-of-accounts.filtered');
             Route::get('/create', [ChartOfAccountController::class, 'create'])->name('accounting.chart-of-accounts.create');
-            Route::post('/create', [ChartOfAccountController::class, 'store'])->name('accounting.chart-of-accounts.store');
-            Route::get('/{id}/edit', [ChartOfAccountController::class, 'edit'])->name('accounting.chart-of-accounts.edit');
-            Route::post('/{id}/update', [ChartOfAccountController::class, 'update'])->name('accounting.chart-of-accounts.update');
+            Route::post('/account-create', [ChartOfAccountController::class, 'accountStore'])->name('accounting.chart-of-accounts.account-store');
+            Route::get('/{id}/edit', [ChartOfAccountController::class, 'accountEdit'])->name('accounting.chart-of-accounts.account-edit');
+            Route::post('/{id}/update', [ChartOfAccountController::class, 'accountUpdate'])->name('accounting.chart-of-accounts.account-update');
             Route::get('/{id}/delete', [ChartOfAccountController::class, 'delete'])->name('accounting.chart-of-accounts.delete');
             Route::get('/{id}/change-status/{status}', [ChartOfAccountController::class, 'statusUpdate'])->name('accounting.chart-of-accounts.change-status');
         });

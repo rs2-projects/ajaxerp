@@ -62,4 +62,14 @@ class AccCoaAccount extends Model
         'deleted_by'
     ];
 
+    public function category():\Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(AccCoaCategory::class, 'acc_coa_category_id', 'id');
+    }
+
+    public function subCategory():\Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(AccCoaSubCategory::class, 'acc_coa_sub_category_id', 'id');
+    }
+
 }

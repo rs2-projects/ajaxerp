@@ -177,6 +177,21 @@
                     </ul>
                 </li>--}}
 
+                    <li class="menu-title">
+                        <span>Inventory</span>
+                    </li>
+                    <li class="submenu">
+                        <a href="javascript:void(0);" class="noti-dot {{ ($activeMenu == 'inventory.product-material-category.index') ? 'active' : '' }}"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li>
+                                <a href="material-list.html" class=""> <span>Material List</span></a>
+                            </li>
+                            <li>
+                                <a href="{{ route('inventory.product-material-category.index') }}" class="{{ ($activeMenu == 'inventory.product-material-category.index') ? 'active' : '' }}"> <span>Category</span></a>
+                            </li>
+                        </ul>
+                    </li>
+
                 <li class="menu-title">
                     <span>Warehouse</span>
                 </li>

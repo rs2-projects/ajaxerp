@@ -54,6 +54,13 @@
                     <a href="{{ route('settings.salary-deduction-type') }}" class="{{ ($activeMenu == 'settings.salary-deduction-type')?'active':'' }}"><i class="la la-crosshairs"></i> <span>Salary Deduction Type</span></a>
                 </li>
 
+                <li class="menu-title">
+                    <span>Tax Setting</span>
+                </li>
+                <li>
+                    <a href="{{ route('settings.vat-tax-type.index') }}" class="{{ ($activeMenu == 'settings.vat-tax-type.index') ? 'active' : '' }}"><i class="la la-ioxhost"></i> <span>Vat Tax</span></a>
+                </li>
+
             </ul>
         </div>
     </div>
