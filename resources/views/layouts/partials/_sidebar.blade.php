@@ -181,7 +181,7 @@
                         <span>Inventory</span>
                     </li>
                     <li class="submenu">
-                        <a href="javascript:void(0);" class="noti-dot {{ ($activeMenu == 'inventory.product-material.index' || 'inventory.product-material-category.index') ? 'active' : '' }}"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
+                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
                         <ul>
                             <li>
                                 <a href="{{ route('inventory.product-material.index') }}" class="{{ ($activeMenu == 'inventory.product-material.index') ? 'active' : ''}}"> <span>Material List</span></a>
@@ -192,10 +192,10 @@
                         </ul>
                     </li>
                     <li class="submenu">
-                        <a href="javascript:void(0);" class="noti-dot {{ ($activeMenu == 'inventory.asset-product-category.index' || 'inventory.asset-product.index') ? 'active' : '' }}"><i class="la la-object-ungroup"></i> <span> Assets</span> <span class="menu-arrow"></span></a>
+                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.asset-product-category.index' || $activeMenu == 'inventory.asset-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Assets</span> <span class="menu-arrow"></span></a>
                         <ul>
                             <li>
-                                <a href="{{ route('inventory.asset-product.index') }}" class="{{ ($activeMenu == 'inventory.asset-product.index') ? 'active' : "" }}"> <span>Assets List</span></a>
+                                <a href="{{ route('inventory.asset-product.index') }}" class="{{ ($activeMenu == 'inventory.asset-product.index') ? 'active' : '' }}"> <span>Assets List</span></a>
                             </li>
                             <li>
                                 <a href="{{ route('inventory.asset-product-category.index') }}" class="{{ ($activeMenu == 'inventory.asset-product-category.index') ? 'active' : '' }}"> <span>Category</span></a>

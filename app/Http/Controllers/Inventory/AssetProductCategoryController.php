@@ -24,7 +24,7 @@ class AssetProductCategoryController extends BackendController
     public function index()
     {
         $this->setPageTitle("Asset Product Category");
-        $this->setActiveMenu('inventory.assets.asset-product-category.index');
+        $this->setActiveMenu('inventory.asset-product-category.index');
 
         return  $this->view('inventory.assets.asset-product-category.index');
     }

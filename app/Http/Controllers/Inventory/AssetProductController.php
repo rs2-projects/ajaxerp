@@ -24,7 +24,7 @@ class AssetProductController extends BackendController
     public function index()
     {
         $this->setPageTitle("Asset Product");
-        $this->setActiveMenu('inventory.assets.asset-product.index');
+        $this->setActiveMenu('inventory.asset-product.index');
 
         return  $this->view('inventory.assets.asset-product.index');
     }
