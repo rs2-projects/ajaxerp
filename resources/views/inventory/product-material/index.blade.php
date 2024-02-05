@@ -65,7 +65,7 @@
 @endsection
 
 @section('modals')
-
+    @include('inventory.product-material._add_product_material')
 @endsection
 
 @section('css')
@@ -86,7 +86,7 @@
             keyword_filtered: ''
         };
         $(document).ready(function() {
-            // getData();
+            getData();
 
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
@@ -132,7 +132,7 @@
         });
 
         function getData(){
-            getPaginatedListData("{{ route('inventory.product-material-category.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('inventory.product-material.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {

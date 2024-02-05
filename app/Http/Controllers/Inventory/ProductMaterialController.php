@@ -23,8 +23,8 @@ class ProductMaterialController extends BackendController
     {
         $this->setPageTitle("Product Material");
         $this->setActiveMenu('inventory.product-material.index');
-
-        return  $this->view('inventory.product-material.index');
+        $data = $this->service->indexData();
+        return  $this->view('inventory.product-material.index')->with($data);
     }
 
     public function indexFiltered(Request $request)
