@@ -16,6 +16,7 @@ use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
 use App\Http\Controllers\Hr\UserTerminationController;
 use App\Http\Controllers\Inventory\ProductMaterialCategoryController;
+use App\Http\Controllers\Inventory\ProductMaterialController;
 use App\Http\Controllers\Inventory\WarehouseController;
 use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
@@ -422,6 +423,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [ProductMaterialCategoryController::class, 'update'])->name('inventory.product-material-category.update');
             Route::get('/{id}/delete', [ProductMaterialCategoryController::class, 'delete'])->name('inventory.product-material-category.delete');
             Route::get('/{id}/change-status/{status}', [ProductMaterialCategoryController::class, 'statusUpdate'])->name('inventory.product-material-category.change-status');
+        });
+
+        // product material route start
+        Route::group(['prefix' => 'product-material'], function () {
+            Route::get('/', [ProductMaterialController::class, 'index'])->name('inventory.product-material.index');
+            Route::post('/filtered', [ProductMaterialController::class, 'indexFiltered'])->name('inventory.product-material.filtered');
+            Route::get('/create', [ProductMaterialController::class, 'create'])->name('inventory.product-material.create');
+            Route::post('/create', [ProductMaterialController::class, 'store'])->name('inventory.product-material.store');
+            Route::get('/{id}/edit', [ProductMaterialController::class, 'edit'])->name('inventory.product-material.edit');
+            Route::post('/{id}/update', [ProductMaterialController::class, 'update'])->name('inventory.product-material.update');
+            Route::get('/{id}/delete', [ProductMaterialController::class, 'delete'])->name('inventory.product-material.delete');
+            Route::get('/{id}/change-status/{status}', [ProductMaterialController::class, 'statusUpdate'])->name('inventory.product-material.change-status');
         });
     });
     // inventory route end
