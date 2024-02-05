@@ -4,7 +4,7 @@ namespace App\Http\Requests\Inventory\AssetProductCategory;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAssetCategoryRequest extends FormRequest
+class UpdateAssetProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

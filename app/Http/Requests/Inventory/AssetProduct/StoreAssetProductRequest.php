@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Inventory\AssetProductCategory;
+namespace App\Http\Requests\Inventory\AssetProduct;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAssetCategoryRequest extends FormRequest
+class StoreAssetProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
