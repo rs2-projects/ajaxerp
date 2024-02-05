@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Inventory;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\Inventory\AssetProductCategory\StoreAssetProductRequest;
-use App\Http\Requests\Inventory\AssetProductCategory\UpdateAssetProductRequest;
+use App\Http\Requests\Inventory\AssetProduct\StoreAssetProductRequest;
+use App\Http\Requests\Inventory\AssetProduct\UpdateAssetProductRequest;
 use App\Services\Inventory\AssetProductService;
 
 class AssetProductController extends BackendController
@@ -23,7 +23,7 @@ class AssetProductController extends BackendController
 
     public function index()
     {
-        $this->setPageTitle("Asset Product");
+        $this->setPageTitle("Asset Products");
         $this->setActiveMenu('inventory.asset-product.index');
 
         return  $this->view('inventory.assets.asset-product.index');

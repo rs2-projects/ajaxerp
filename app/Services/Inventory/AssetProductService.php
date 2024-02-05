@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Models\Products\AssetProduct;
+use App\Models\Products\AssetProductCategory;
 
 class AssetProductService
 {
@@ -20,20 +21,26 @@ class AssetProductService
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-
+            
+        $data['categories'] = AssetProductCategory::where('deleted', AssetProductCategory::DELETED_NO)
+            ->where('status', AssetProductCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')->get();
+        
+        dd($data['categories']);
         return $data;
     }
 
     public function store($request)
     {
-        $category = new AssetProduct();
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->created_by = auth()->user()->id;
-        $category->created_at = now();
-        $category->updated_by = auth()->user()->id;
-        $category->updated_at = now();
-        $category->save();
+        $product = new AssetProduct();
+        $product->asset_product_category_id = $request->category;
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->created_by = auth()->user()->id;
+        $product->created_at = now();
+        $product->updated_by = auth()->user()->id;
+        $product->updated_at = now();
+        $product->save();
     }
 
     public function editData($id)
@@ -49,30 +56,30 @@ class AssetProductService
 
     public function update($request, $id)
     {
-        $category = AssetProduct::where('id', $id)
+        $product = AssetProduct::where('id', $id)
             ->where('deleted', AssetProduct::DELETED_NO)
             ->first();
-        if (!$category) {
+        if (!$product) {
             throw new \Exception('Asset Product not found');
         }
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->updated_by = auth()->user()->id;
-        $category->updated_at = now();
-        $category->save();
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->updated_by = auth()->user()->id;
+        $product->updated_at = now();
+        $product->save();
     }
 
     public function delete($id)
     {
-        $category = AssetProduct::where('id', $id)
+        $product = AssetProduct::where('id', $id)
             ->where('deleted', AssetProduct::DELETED_NO)
             ->first();
-        if (!$category) {
+        if (!$product) {
             throw new \Exception('Asset Product not found');
-        }AssetProduct
-        $category->deleted = AssetProduct::DELETED_YES;
-        $category->deleted_by = auth()->user()->id;
-        $category->deleted_at = now();
-        $category->save();
+        }
+        $product->deleted = AssetProduct::DELETED_YES;
+        $product->deleted_by = auth()->user()->id;
+        $product->deleted_at = now();
+        $product->save();
     }
 }
