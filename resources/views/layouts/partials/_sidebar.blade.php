@@ -191,6 +191,17 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="submenu">
+                        <a href="javascript:void(0);" class="noti-dot {{ ($activeMenu == 'inventory.asset-product-category.index') ? 'active' : '' }}"><i class="la la-object-ungroup"></i> <span> Assets</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li>
+                                <a href="finished-good-list.html" class=""> <span>Assets List</span></a>
+                            </li>
+                            <li>
+                                <a href="{{ route('inventory.asset-product-category.index') }}" class="{{ ($activeMenu == 'inventory.asset-product-category.index') ? 'active' : '' }}"> <span>Category</span></a>
+                            </li>
+                        </ul>
+                    </li>
 
                 <li class="menu-title">
                     <span>Warehouse</span>
