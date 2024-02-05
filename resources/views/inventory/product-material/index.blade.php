@@ -77,7 +77,9 @@
 @endsection
 
 @section('js_plugins')
-
+    <!-- MULTI SELECT JS-->
+    <script src="{{asset('assets/plugins/multipleselect/multiple-select.js')}}"></script>
+    <script src="{{asset('assets/plugins/multipleselect/multi-select.js')}}"></script>
 @endsection
 
 @section('js')
@@ -87,13 +89,14 @@
         };
         $(document).ready(function() {
             getData();
-
+            initSectionMultipleSelect();
+            initRackMultipleSelect();
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
             });
 
-            $("#categoryStoreForm").on('submit', function (e) {
+            $("#productMaterialStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(self)[0]);
@@ -102,7 +105,7 @@
 
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
-                        $("#addCategoryModal").modal('hide');
+                        $("#addProductMaterial").modal('hide');
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         getData();
@@ -139,6 +142,33 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
+        function changeWarehouse(select){
+            let warehouse_id = $(select).val();
+            let url = "{{ route('inventory.product-material.get-sections-by-warehouse') }}";
+            ajaxGet(url, {warehouse_id:warehouse_id}, function (response) {
+                if (response.status == 200) {
+                    $("#sections_id").html(response.view);
+                    initSectionMultipleSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            });
+
+        }
+
+        function changeSections(select){
+            let section_ids = $(select).val();
+            let url = "{{ route('inventory.product-material.get-racks-by-sections') }}";
+            ajaxGet(url, {section_ids:section_ids}, function (response) {
+                if (response.status == 200) {
+                    $("#racks_id").html(response.view);
+                    initRackMultipleSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            });
+        }
+
         function editItem(id){
             let url = "{{route('inventory.product-material-category.edit', ':id')}}";
             url = url.replace(':id', id);
@@ -150,6 +180,35 @@
                     toastr.error(response.message);
                 }
             }, 'default');
+        }
+
+        function initSectionMultipleSelect(){
+            $('#sections_id').multipleSelect({
+                filter: true,
+                placeholder: 'Select Sections',
+                minimumCountSelected: 6,
+                filterPlaceholder: 'Search Sections',
+                selectAll: true,
+                onOpen: function () {
+                    $(".section-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).replaceWith("Select All Sections");
+                },
+            });
+        }
+        function initRackMultipleSelect(){
+            $('#racks_id').multipleSelect({
+                filter: true,
+                placeholder: 'Select Racks',
+                minimumCountSelected: 6,
+                filterPlaceholder: 'Search Racks',
+                selectAll: true,
+                onOpen: function () {
+                    $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).replaceWith("Select All Racks");
+                },
+            });
         }
 
     </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventory\ProductMaterial\StoreProductMaterialRequest;
 use App\Services\Inventory\ProductMaterialService;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,36 @@ class ProductMaterialController extends BackendController
     {
         $data = $this->service->indexFilteredData($request);
         $view = $this->view('inventory.product-material._index_filtered')
+            ->with($data)
+            ->render();
+
+        return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+    }
+
+    public function store(StoreProductMaterialRequest $request)
+    {
+        try {
+            $this->service->storeData($request);
+            return $this->returnAjaxSuccess([], 'Data Save Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function getSectionsByWarehouse(Request $request)
+    {
+        $data = $this->service->getSectionsByWarehouseData($request);
+        $view = $this->view('inventory.product-material.__section_options')
+            ->with($data)
+            ->render();
+
+        return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+    }
+
+    public function getRacksBySections(Request $request)
+    {
+        $data = $this->service->getRacksBySectionsData($request);
+        $view = $this->view('inventory.product-material.__rack_options')
             ->with($data)
             ->render();
 

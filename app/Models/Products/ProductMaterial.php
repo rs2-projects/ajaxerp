@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\Inventory\Warehouse;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -90,5 +91,17 @@ class ProductMaterial extends Model
         'deleted_by'
     ];
 
+    public function getShowImageAttribute()
+    {
+        if ($this->image != null && $this->image != '') {
+            return asset($this->image);
+        }
+        return asset('assets/img/placeholder.jpg');
+    }
+
+
+    public function materialWarehouseSections(){
+        return $this->hasMany(ProductMaterialSection::class, 'product_material_id', 'id');
+    }
 
 }

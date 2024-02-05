@@ -2,6 +2,8 @@
 
 namespace App\Models\Products;
 
+use App\Models\Inventory\Warehouse;
+use App\Models\Inventory\WarehouseSection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,4 +26,13 @@ class ProductMaterialSection extends Model
         'warehouse_section_id',
         'status',
     ];
+
+    public function warehouseSection()
+    {
+        return $this->belongsTo(WarehouseSection::class, 'warehouse_section_id', 'id');
+    }
+
+    public function productMaterialRacks(){
+        return $this->hasMany(ProductMaterialRack::class, 'warehouse_section_id', 'id');
+    }
 }

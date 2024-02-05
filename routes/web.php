@@ -435,6 +435,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/update', [ProductMaterialController::class, 'update'])->name('inventory.product-material.update');
             Route::get('/{id}/delete', [ProductMaterialController::class, 'delete'])->name('inventory.product-material.delete');
             Route::get('/{id}/change-status/{status}', [ProductMaterialController::class, 'statusUpdate'])->name('inventory.product-material.change-status');
+            Route::get('/get-sections-by-warehouse', [ProductMaterialController::class, 'getSectionsByWarehouse'])->name('inventory.product-material.get-sections-by-warehouse');
+            Route::get('/get-racks-by-sections', [ProductMaterialController::class, 'getRacksBySections'])->name('inventory.product-material.get-racks-by-sections');
         });
     });
     // inventory route end
