@@ -24,27 +24,24 @@
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" class="form-control search-product-in" placeholder="Product Name / Code">
+                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Product Name / Code">
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item flex-20">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box">
-                                                <option>Select Category</option>
-                                                <option>Product Category</option>
-                                                <option>Product Category</option>
-                                                <option>Product Category</option>
-                                                <option>Product Category </option>
-                                                <option>Product Category</option>
-
+                                            <select class="select floating select2-box" id="category_filtered">
+                                                <option value="">Select Category</option>
+                                                @foreach($material_categories as $material_category)
+                                                    <option value="{{ $material_category->id }}"> {{ $material_category->name }} </option>
+                                                @endforeach
                                             </select>
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
-                                            <button class=" erp-search-btn">Search</button>
+                                            <button class=" erp-search-btn" type="button" onclick="getData()">Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -66,6 +63,7 @@
 
 @section('modals')
     @include('inventory.product-material._add_product_material')
+    @include('inventory.product-material._edit_product_material')
 @endsection
 
 @section('css')
@@ -85,7 +83,8 @@
 @section('js')
     <script>
         var filterData = {
-            keyword_filtered: ''
+            keyword_filtered: '',
+            category_filtered: ''
         };
         $(document).ready(function() {
             getData();
@@ -94,6 +93,11 @@
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
+            });
+
+            filterData.category_filtered = $("#category_filtered").val()
+            $("#category_filtered").on('change', function () {
+                filterData.category_filtered = $(this).val();
             });
 
             $("#productMaterialStoreForm").on('submit', function (e) {
@@ -115,22 +119,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#categoryUpdateForm", function(e) {
-                e.preventDefault();
-                var formData = new FormData($(this)[0]);
-                $(".ie-span").text("").hide();
-                var url = $(this).attr('action');
 
-                formPost(url, formData, function (res){
-                    if(res.status == 200){
-                        $("#editCategoryModal").modal('hide');
-                        showSuccessAlert('Success',res.message)
-                        getData();
-                    }else{
-                        showErrorAlert('Error',res.message)
-                    }
-                }, 'show_input_error');
-            });
 
         });
 
@@ -170,12 +159,12 @@
         }
 
         function editItem(id){
-            let url = "{{route('inventory.product-material-category.edit', ':id')}}";
+            let url = "{{route('inventory.product-material.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
-                    $("#edit_category_modal_body").html(response.view);
-                    $("#editCategoryModal").modal('show');
+                    $("#edit_product_material_modal_body").html(response.view);
+                    $("#editProductMaterialModal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }

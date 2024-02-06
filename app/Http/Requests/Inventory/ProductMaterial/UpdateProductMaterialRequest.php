@@ -11,7 +11,7 @@ class UpdateProductMaterialRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,15 @@ class UpdateProductMaterialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'code' => 'required',
+            'product_material_category_id' => 'required',
+            'unit_type' => 'required',
+            'low_stock_warning' => 'required|numeric|min:0',
+            'low_stock_at_least' => 'required|numeric|min:0',
+           /* 'warehouse_id' => 'required',
+            'sections' => 'required|array',
+            'racks' => 'required|array',*/
         ];
     }
 }

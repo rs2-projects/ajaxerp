@@ -53,7 +53,23 @@ class ProductMaterialService
     }
     public function indexFilteredData($request)
     {
+
+        $keyword_filtered = $request->keyword_filtered;
+        $category_filtered = $request->category_filtered;
+
         $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('name', 'like', '%'.$keyword_filtered.'%');
+                        $q->orWhere('code', 'like', '%'.$keyword_filtered.'%');
+
+                }
+            })
+            ->where(function ($q) use ($category_filtered){
+                if ($category_filtered !=''){
+                    $q->where('product_material_category_id', $category_filtered);
+                }
+            })
             ->orderBy('name', 'asc')
             ->paginate($this->paginate_limit);
 
@@ -145,6 +161,161 @@ class ProductMaterialService
         return $product_material;
     }
 
+    public function editData($id)
+    {
+        try {
+            $data['product_material'] = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$data['product_material']) {
+                throw new \Exception('Product Material not found');
+            }
+
+            $data['material_categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+                ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            $subCat = AccCoaSubCategory::where('is_sales_tax', AccCoaSubCategory::IS_SALES_TAX_YES)
+                ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
+                ->where('deleted', AccCoaSubCategory::DELETED_NO)
+                ->first();
+            $subCatId = $subCat->id;
+            if (empty($subCat)) {
+                $subCatId = 0;
+            }
+            $data['vats'] = AccCoaAccount::where('acc_coa_sub_category_id', $subCatId)
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            $data['units'] = ProductMaterial::UNIT_TYPES;
+
+            $data['warehouses'] = Warehouse::where('deleted', Warehouse::DELETED_NO)
+                ->where('status', Warehouse::STATUS_ACTIVE)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            $data['product_material_sections'] = ProductMaterialSection::where('product_material_id', $id)
+                ->where('status', ProductMaterialSection::STATUS_ACTIVE)
+                ->pluck('warehouse_section_id')
+                ->toArray();
+
+            $data['product_material_racks'] = ProductMaterialRack::where('product_material_id', $id)
+                ->where('status', ProductMaterialRack::STATUS_ACTIVE)
+                ->pluck('warehouse_rack_id')
+                ->toArray();
+
+            $data['sections'] = WarehouseSection::where('warehouse_id', $data['product_material']->warehouse_id)
+                ->whereIn('id', $data['product_material_sections'])
+                ->where('deleted', WarehouseSection::DELETED_NO)
+                ->where('status', WarehouseSection::STATUS_ACTIVE)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            $data['racks'] = WarehouseSectionRack::where('warehouse_id', $data['product_material']->warehouse_id)
+                ->whereIn('id', $data['product_material_racks'])
+                ->where('deleted', WarehouseSectionRack::DELETED_NO)
+                ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            return $data;
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function updateData($request, $id)
+    {
+        DB::beginTransaction();
+        try {
+
+            $product_material = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$product_material) {
+                throw new \Exception('Product Material not found');
+            }
+
+            $check_code = ProductMaterial::where('code', $request->code)
+                ->where('id', '!=', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!empty($check_code)) {
+                throw new \Exception("Code already exists");
+            }
+
+            $image_path = $product_material->image;
+            if ($request->hasFile('image')) {
+                $imageUploadService = new ImageUploadService();
+                $image_path = $imageUploadService->update($request->image, 'inventory/product-material', $product_material->image);
+                $image_path = $image_path['path'];
+            }
+
+            $product_material->name = $request->name;
+            $product_material->image = $image_path??$product_material->image;
+            $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->code = $request->code;
+            $product_material->unit_type = $request->unit_type;
+            $product_material->low_stock_warning = $request->low_stock_warning;
+            $product_material->low_stock_at_least = $request->low_stock_at_least;
+            $product_material->tax_id = $request->tax_id;
+            $product_material->description = $request->description;
+            $product_material->color = $request->color;
+            $product_material->working_temperature = $request->working_temperature;
+            $product_material->length = $request->length;
+            $product_material->width = $request->width;
+            $product_material->thickness = $request->thickness;
+            $product_material->remarks = $request->remarks;
+            $product_material->updated_by = auth()->user()->id;
+            $product_material->updated_at = Carbon::now();
+            $product_material->save();
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+
+        return $product_material;
+    }
+
+    public function deleteData($id)
+    {
+        try {
+            $product_material = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$product_material) {
+                throw new \Exception('Product Material not found');
+            }
+            $product_material->deleted = ProductMaterial::DELETED_YES;
+            $product_material->deleted_by = auth()->user()->id;
+            $product_material->deleted_at = now();
+            $product_material->save();
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
+    public function statusUpdateData($id, $status)
+    {
+        try {
+            $product_material = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$product_material) {
+                throw new \Exception('Product Material not found');
+            }
+            $product_material->status = $status;
+            $product_material->updated_by = auth()->user()->id;
+            $product_material->updated_at = now();
+            $product_material->save();
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
     public function getSectionsByWarehouseData($request)
     {
         $warehouse_id = $request->warehouse_id;

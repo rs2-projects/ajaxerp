@@ -43,8 +43,8 @@
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>Active</span></a>
                                 <div class="dropdown-menu dropdown-menu-right">
 
-                                    <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
-                                    <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
 
 
                                 </div>
@@ -59,7 +59,7 @@
                                     {{ $warehouseSection->warehouseSection->name??'N/A' }} (<span>
                                         @if(count($warehouseSection->productMaterialRacks) > 0)
                                             @foreach($warehouseSection->productMaterialRacks as $rack)
-                                                {{ $rack->warehouseSectionRack->name??'N/A' }}{{ !$loop->last ? ',' : '' }}
+                                                {{ $rack->warehouseSectionRack->name??''}}
                                             @endforeach
                                         @endif
                                     </span>)
@@ -74,8 +74,8 @@
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
 
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
                                 </div>
                             </div>

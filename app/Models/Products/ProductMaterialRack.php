@@ -25,13 +25,13 @@ class ProductMaterialRack extends Model
         'warehouse_id',
         'product_material_id',
         'warehouse_section_id',
-        'warehouse_section_rack_id',
+        'warehouse_rack_id',
         'status',
     ];
 
 
     public function warehouseSectionRack()
     {
-        return $this->belongsTo(WarehouseSectionRack::class, 'warehouse_section_rack_id', 'id');
+        return $this->belongsTo(WarehouseSectionRack::class, 'warehouse_rack_id', 'id');
     }
 }

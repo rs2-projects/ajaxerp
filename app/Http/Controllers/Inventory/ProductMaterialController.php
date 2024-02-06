@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inventory;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Inventory\ProductMaterial\StoreProductMaterialRequest;
+use App\Http\Requests\Inventory\ProductMaterial\UpdateProductMaterialRequest;
 use App\Services\Inventory\ProductMaterialService;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,50 @@ class ProductMaterialController extends BackendController
         try {
             $this->service->storeData($request);
             return $this->returnAjaxSuccess([], 'Data Save Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $this->setPageTitle("Edit Product Material");
+            $this->setActiveMenu('inventory.product-material.index');
+
+            $data = $this->service->editData($id);
+             return $this->view('inventory.product-material.edit')
+                ->with($data);
+        }catch (\Exception $e) {
+            return redirect()->route('inventory.product-material.index')->with('error', $e->getMessage());
+        }
+    }
+
+    public function update(UpdateProductMaterialRequest $request, $id)
+    {
+        try {
+            $this->service->updateData($request, $id);
+            return $this->returnAjaxSuccess([], 'Data Update Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->service->deleteData($id);
+            return $this->returnAjaxSuccess([], 'Data Delete Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([], 'Status Update Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
