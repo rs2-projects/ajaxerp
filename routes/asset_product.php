@@ -29,3 +29,18 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status');
     });
 });
+
+
+Route::group(['prefix' => 'procurement'], function () {
+    // suppliers route start
+    Route::group(['prefix' => 'supplier'], function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('procurement.supplier.index');
+        Route::post('/filtered', [SupplierController::class, 'indexFiltered'])->name('procurement.supplier.filtered');
+        Route::get('/create', [SupplierController::class, 'create'])->name('procurement.supplier.create');
+        Route::post('/create', [SupplierController::class, 'store'])->name('procurement.supplier.store');
+        Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('procurement.supplier.edit');
+        Route::post('/{id}/update', [SupplierController::class, 'update'])->name('procurement.supplier.update');
+        Route::get('/{id}/delete', [SupplierController::class, 'delete'])->name('procurement.supplier.delete');
+        Route::get('/{id}/change-status/{status}', [SupplierController::class, 'statusUpdate'])->name('procurement.supplier.change-status');
+    });
+});

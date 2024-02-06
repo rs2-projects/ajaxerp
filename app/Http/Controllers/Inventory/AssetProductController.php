@@ -25,8 +25,9 @@ class AssetProductController extends BackendController
     {
         $this->setPageTitle("Asset Products");
         $this->setActiveMenu('inventory.asset-product.index');
+        $data = $this->service->indexData();
 
-        return  $this->view('inventory.assets.asset-product.index');
+        return  $this->view('inventory.assets.asset-product.index')->with($data);
     }
 
     public function indexFiltered(Request $request)

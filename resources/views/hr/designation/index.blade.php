@@ -123,8 +123,6 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
-
-
         function editItem(id){
             let url = "{{route('hr.designation.edit', ':id')}}";
             url = url.replace(':id', id);

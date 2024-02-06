@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Inventory\AssetProductCategory;
+namespace App\Http\Requests\Inventory\AssetProduct;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,6 +23,7 @@ class UpdateAssetProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'asset_product_category_id' => 'required'
         ];
     }
 }

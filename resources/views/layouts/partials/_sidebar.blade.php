@@ -98,6 +98,34 @@
                         </li>
                     </ul>
                 </li>
+                {{-- procurement --}}
+                <li class="submenu">
+                    <a href="javascript:void(0);" class="noti-dot"><i class="la la-object-group"></i> <span>
+                            Procurement</span> <span class="menu-arrow"></span></a>
+                    <ul>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"> <span>Assets</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href=""><span>Purchase Request</span></a></li>
+                                <li><a href=""><span>Purchase Request(Admin)</span></a></li>
+                                <li><a href="" class=""> <span>Purchase Order(P.O)</span></a></li>
+                            </ul>
+                        </li>
+                        <li class="submenu">
+                            <a href="javascript:void(0);"> <span>Production Materials</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                <li><a href="" class=""> <span>Purchase Order (P.O)</span></a></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('procurement.supplier.index') }}" class="{{ ($activeMenu == 'procurement.supplier.index') ? 'active' : '' }}"> <span>Suppliers</span></a>
+                        </li>
+
+                    </ul>
+                </li>
                 {{--<li class="submenu">
                     <a href="javascript:void(0);" class="noti-dot"><i class="la la-cube"></i> <span> HR Factory Force</span> <span class="menu-arrow"></span></a>
                     <ul>

@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Inventory\AssetProduct;
+namespace App\Http\Requests\Procurement\Supplier;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAssetProductRequest extends FormRequest
+class StoreSupplierRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,8 +22,7 @@ class StoreAssetProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'asset_product_category_id' => 'required'
+            //
         ];
     }
 }

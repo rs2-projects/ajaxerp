@@ -14,30 +14,26 @@
                     <div class="erp-modal-body-content">
                         <div class="input-block mb-2">
                             <label class="col-form-label">Product Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" name="name" required>
+                            <input class="form-control" type="text" name="name">
                             <span class="name_error ie-span"></span>
                         </div>
                         <div class="input-block mb-2">
                             <label class="col-form-label">Category <span class="text-danger">*</span></label>
-                            <select class="select select-step" name="category">
-                                <option>Select Category</option>
-                                {{-- @foreach($categories as $category)
-                                    <option value="1">Category-01</option>
-                                @endforeach --}}
-                                <option value="1">Category-01</option>
-                                <option value="2">Category-02</option>
+                            <select class="select floating select2-box" name="asset_product_category_id">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
                             </select>
-                            <span class="name_error ie-span"></span>
+                            <span class="asset_product_category_id_error ie-span"></span>
                         </div>
                         <div class="input-block mb-2">
                             <label class="col-form-label">Product Image</label>
-                            <input type="file" class="form-control" name="image">
-                            <span class="name_error ie-span"></span>
+                            <input type="file" class="form-control " name="image" accept="image/*">
                         </div>
 
                         <div class="input-block mb-3">
                             <label class="col-form-label">Description </label>
-
                             <textarea cols="30" rows="3" class="form-control" name="description"></textarea>
                         </div>
                         <div class="submit-section mt-2">
