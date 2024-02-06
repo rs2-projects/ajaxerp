@@ -40,7 +40,7 @@
     </div>
     <!--End::row-1 -->
 
-    <div id="additionalBankInfo" class="mt-3" style="display: none;">
+    <div id="additionalBankInfo" style="display: none;">
         <div class="erp-deduction-wrapper position-relative mt-3 filter-row d-flex flex-wrap align-items-center justify-content-between">
             <div class="delete-btn-box bank-info-remove" id="removeAdditionalBankInfo">
                 <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
@@ -79,6 +79,32 @@
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Note</label>
                         <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="supplierOtherContact" style="display: none;">
+        <div class="supplier-other-contact-parent erp-deduction-wrapper position-relative filter-row mt-3 d-flex flex-wrap align-items-center justify-content-between flex-100">
+            <div class="delete-btn-box bank-info-remove" id="removeOtherContact">
+                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
+            </div>
+            <div class="erp-filter-item flex-32"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Name <span class="text-danger">*</span> </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-32"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Email <span class="text-danger">*</span> </label>
+                        <input type="email" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-32"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Phone <span class="text-danger">*</span> </label>
+                    <input type="tel" class="form-control " placeholder="">
                 </div>
             </div>
         </div>
@@ -206,15 +232,17 @@
         }
         
         $(document).on("click", "#removeAdditionalBankInfo" , function (){
-            alert(1)
+            $(this).closest('.erp-deduction-wrapper').remove();
         });
 
-        // function removeAdditionalBankInfo(){
-        //     var wrapper = btn.closest('.erp-deduction-wrapper');
-        //     wrapper.parentNode.removeChild(wrapper);
-        //     alert(2)
-        //     //$(this).closest('.erp-deduction-wrapper').remove();
-        // }
+        function addOtherContacts(){
+            var item = $('#supplierOtherContact').html();
+            $('#supplierOtherContactContainer').append(item);
+        }
+        $(document).on("click", "#removeOtherContact" , function (){
+            $(this).closest('.supplier-other-contact-parent').remove();
+        });
+        
     </script>
 @endsection
 

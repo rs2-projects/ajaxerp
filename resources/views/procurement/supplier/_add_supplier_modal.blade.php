@@ -322,33 +322,35 @@
                                                 <h4 class="offcanvas-title-erp">Others Contact</h4>
                                                 
                                             </div>
-                                            <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100">
-                                                <div class="erp-filter-item flex-32"> 
-                                                    <div class="input-block mb-0 erp-step-input-block ">
-                                                        <label class="col-form-label">Name <span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control " placeholder="">
+
+                                            <div id="supplierOtherContactContainer" class="w-100">
+                                                <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100">
+                                                    <div class="erp-filter-item flex-32"> 
+                                                        <div class="input-block mb-0 erp-step-input-block ">
+                                                            <label class="col-form-label">Name <span class="text-danger">*</span> </label>
+                                                                <input type="text" class="form-control " placeholder="">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="erp-filter-item flex-32"> 
-                                                    <div class="input-block mb-0 erp-step-input-block ">
-                                                        <label class="col-form-label">Email <span class="text-danger">*</span> </label>
-                                                            <input type="email" class="form-control " placeholder="">
+                                                    <div class="erp-filter-item flex-32"> 
+                                                        <div class="input-block mb-0 erp-step-input-block ">
+                                                            <label class="col-form-label">Email <span class="text-danger">*</span> </label>
+                                                                <input type="email" class="form-control " placeholder="">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="erp-filter-item flex-32"> 
-                                                    <div class="input-block mb-0 erp-step-input-block ">
-                                                        <label class="col-form-label">Phone <span class="text-danger">*</span> </label>
-                                                        <input type="tel" class="form-control " placeholder="">
+                                                    <div class="erp-filter-item flex-32"> 
+                                                        <div class="input-block mb-0 erp-step-input-block ">
+                                                            <label class="col-form-label">Phone <span class="text-danger">*</span> </label>
+                                                            <input type="tel" class="form-control " placeholder="">
+                                                        </div>
                                                     </div>
+                                                    {{-- <div class="erp-filter-item flex-32"> 
+                                                        <div class="delete-btn-box">
+                                                            <a href="#" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
+                                                        </div>
+                                                    </div> --}}
                                                 </div>
-                                                <div class="erp-filter-item flex-32"> 
-                                                    <div class="delete-btn-box">
-                                                        <a href="#" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
-                                                    </div>
-                                                </div>
-                                            
                                             </div>
-                                            
+
                                         </div>
                                         <div class="add-more-row mt-4">
                                             <a href="javascript:void(0);" onclick="addOtherContacts()" class="add-tds ad-more-row-btn"><i class="fa-solid fa-plus"></i></a>
