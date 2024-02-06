@@ -2,6 +2,7 @@
 
 namespace App\Models\Products;
 
+use App\Models\Accounting\AccCoaAccount;
 use App\Models\Inventory\Warehouse;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -102,6 +103,11 @@ class ProductMaterial extends Model
 
     public function materialWarehouseSections(){
         return $this->hasMany(ProductMaterialSection::class, 'product_material_id', 'id');
+    }
+
+    public function tax(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
 }
