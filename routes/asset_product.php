@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
+use App\Http\Controllers\Procurement\Supplier\SupplierController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start

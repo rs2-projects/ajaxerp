@@ -4,7 +4,7 @@
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i> Add Category</a>
+                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
 
             </div>
         </div>
@@ -21,7 +21,7 @@
 
                                     <div class="erp-filter-item flex-30">
                                         <div class="search-box table-search position-relative">
-                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="Category Name">
+                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="Name / Company">
                                             <button class="btn position-absolute search-btn" type="button" onclick="getData()"><i class="fa-solid fa-magnifying-glass"></i></button>
                                         </div>
                                     </div>
@@ -42,8 +42,8 @@
 @endsection
 
 @section('modals')
-    @include('inventory.assets.asset-product-category._add_category_modal')
-    @include('inventory.assets.asset-product-category._edit_category_modal')
+    @include('procurement.supplier._add_supplier_modal')
+    @include('procurement.supplier._edit_supplier_modal')
 @endsection
 
 @section('css')
@@ -71,7 +71,7 @@
                 filterData.keyword_filtered = $(this).val();
             });
 
-            $("#categoryStoreForm").on('submit', function (e) {
+            $("#supplierStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(self)[0]);
@@ -80,7 +80,7 @@
 
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
-                        $("#addCategoryModal").modal('hide');
+                        $("#addSupplierModal").modal('hide');
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         getData();
@@ -90,7 +90,7 @@
                 }, 'show_input_error');
             });
 
-            $(document).on("submit", "#categoryUpdateForm", function(e) {
+            $(document).on("submit", "#supplierUpdateForm", function(e) {
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
@@ -98,7 +98,7 @@
 
                 formPost(url, formData, function (res){
                     if(res.status == 200){
-                        $("#editCategoryModal").modal('hide');
+                        $("#editSupplierModal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
@@ -110,7 +110,7 @@
         });
 
         function getData(){
-            getPaginatedListData("{{ route('inventory.asset-product-category.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('procurement.supplier.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
@@ -118,18 +118,17 @@
         }
 
         function editItem(id){
-            let url = "{{route('inventory.asset-product-category.edit', ':id')}}";
+            let url = "{{route('procurement.supplier.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
-                    $("#edit_category_modal_body").html(response.view);
-                    $("#editCategoryModal").modal('show');
+                    $("#edit_suuplier_modal_body").html(response.view);
+                    $("#editSupplierModal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }
             }, 'default');
         }
-
     </script>
 @endsection
 
