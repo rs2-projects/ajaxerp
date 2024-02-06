@@ -100,7 +100,7 @@
                 </li>
                 {{-- procurement --}}
                 <li class="submenu">
-                    <a href="javascript:void(0);" class="noti-dot"><i class="la la-object-group"></i> <span>
+                    <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index' || $activeMenu == 'procurement.supplier.index') ? 'active' : '' }} noti-dot"><i class="la la-object-group"></i> <span>
                             Procurement</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
@@ -113,10 +113,10 @@
                             </ul>
                         </li>
                         <li class="submenu">
-                            <a href="javascript:void(0);"> <span>Production Materials</span> <span
+                            <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Production Materials</span> <span
                                     class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href="" class=""> <span>Purchase Order (P.O)</span></a></li>
+                                <li><a href="{{ route('procurement.product-material-purchase.index') }}" class="{{ ($activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Purchase Order (P.O)</span></a></li>
                             </ul>
                         </li>
 

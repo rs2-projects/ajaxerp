@@ -20,6 +20,7 @@ use App\Http\Controllers\Inventory\ProductMaterialController;
 use App\Http\Controllers\Inventory\WarehouseController;
 use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
+use App\Http\Controllers\Procurement\ProductMaterial\ProductMaterialPurchaseController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -440,6 +441,24 @@ Route::group(['middleware' => 'auth'], function () {
         });
     });
     // inventory route end
+
+    // Procurement route start
+    Route::group(['prefix' => 'procurement'], function (){
+       // product-material-purchase route start
+        Route::group(['prefix' => 'product-material-purchase'], function () {
+            Route::get('/', [ProductMaterialPurchaseController::class, 'index'])->name('procurement.product-material-purchase.index');
+            Route::post('/filtered', [ProductMaterialPurchaseController::class, 'indexFiltered'])->name('procurement.product-material-purchase.filtered');
+            Route::get('/create', [ProductMaterialPurchaseController::class, 'create'])->name('procurement.product-material-purchase.create');
+            Route::post('/create', [ProductMaterialPurchaseController::class, 'store'])->name('procurement.product-material-purchase.store');
+            Route::get('/{id}/edit', [ProductMaterialPurchaseController::class, 'edit'])->name('procurement.product-material-purchase.edit');
+            Route::post('/{id}/update', [ProductMaterialPurchaseController::class, 'update'])->name('procurement.product-material-purchase.update');
+            Route::get('/{id}/delete', [ProductMaterialPurchaseController::class, 'delete'])->name('procurement.product-material-purchase.delete');
+            Route::get('/{id}/change-status/{status}', [ProductMaterialPurchaseController::class, 'statusUpdate'])->name('procurement.product-material-purchase.change-status');
+        });
+       // materials purchase order route end
+    });
+    // Procurement route End
+
 
     // Accounting route start
     Route::group(['prefix' => 'accounting'], function (){
