@@ -4,7 +4,7 @@
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
+                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addSupplierModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
 
             </div>
         </div>
@@ -39,6 +39,50 @@
         </div>
     </div>
     <!--End::row-1 -->
+
+    <div id="additionalBankInfo" class="mt-3" style="display: none;">
+        <div class="erp-deduction-wrapper position-relative mt-3 filter-row d-flex flex-wrap align-items-center justify-content-between">
+            <div class="delete-btn-box bank-info-remove" id="removeAdditionalBankInfo">
+                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Bank Name </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Account Name </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Branch Name </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Routing Number </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Swift Code </label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Note</label>
+                        <input type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -47,7 +91,11 @@
 @endsection
 
 @section('css')
-
+    <style> 
+        .delete-btn-box.bank-info-remove {
+            top: 10px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -55,7 +103,8 @@
 @endsection
 
 @section('js_plugins')
-
+    <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
+    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
 @endsection
 
 @section('js')
@@ -65,6 +114,27 @@
         };
         $(document).ready(function() {
             getData();
+
+            $(".select-step").select2({
+                closeOnSelect: true,
+                containerCssClass: "select2-box-container",
+                dropdownCssClass: "select2-box-dropdown",
+                width: '100%'
+
+            });
+            $('.employee-multiselect').multipleSelect({
+                filter: true,
+                placeholder: 'Select Product',
+                minimumCountSelected: 8,
+                filterPlaceholder: 'Search Product',
+                selectAll: true,
+                onOpen: function () {
+                    $(".employee-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).replaceWith("Select All Product");
+                },
+            });
+            
 
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
@@ -129,6 +199,22 @@
                 }
             }, 'default');
         }
+
+        function addAdditionalBankInfo(){
+            var item = $('#additionalBankInfo').html();
+            $('#additionalBankInfoContainer').append(item);
+        }
+        
+        $(document).on("click", "#removeAdditionalBankInfo" , function (){
+            alert(1)
+        });
+
+        // function removeAdditionalBankInfo(){
+        //     var wrapper = btn.closest('.erp-deduction-wrapper');
+        //     wrapper.parentNode.removeChild(wrapper);
+        //     alert(2)
+        //     //$(this).closest('.erp-deduction-wrapper').remove();
+        // }
     </script>
 @endsection
 
