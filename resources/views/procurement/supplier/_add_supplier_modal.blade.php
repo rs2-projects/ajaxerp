@@ -1,7 +1,7 @@
 <!-- Add Category Modal -->
 <div id="addSupplierModal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <form style="width:100%" action="{{ route('inventory.asset-product.store') }}" id="productStoreForm" method="POST">
+        <form style="width:100%" action="{{ route('procurement.supplier.store') }}" id="supplierStoreForm" method="POST">
             @csrf
             <div class="modal-content">
                 <div class="modal-header erp-modal-header">
@@ -10,37 +10,9 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                {{-- <div class="modal-body erp-modal-body">
-                    <div class="erp-modal-body-content">
-                        <div class="input-block mb-2">
-                            <label class="col-form-label">Product Name <span class="text-danger">*</span></label>
-                            <input class="form-control" type="text" name="name">
-                            <span class="name_error ie-span"></span>
-                        </div>
-                        <div class="input-block mb-2">
-                            <label class="col-form-label">Category <span class="text-danger">*</span></label>
-                            
-                            </select>
-                            <span class="asset_product_category_id_error ie-span"></span>
-                        </div>
-                        <div class="input-block mb-2">
-                            <label class="col-form-label">Product Image</label>
-                            <input type="file" class="form-control " name="image" accept="image/*">
-                        </div>
-
-                        <div class="input-block mb-3">
-                            <label class="col-form-label">Description </label>
-                            <textarea cols="30" rows="3" class="form-control" name="description"></textarea>
-                        </div>
-                        <div class="submit-section mt-2">
-                            <button class="btn btn-primary submit-btn" type="submit">Save</button>
-                        </div>
-                    </div>
-                </div> --}}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            
                             <div class="erp-salary-tab-offcanvas">
                                 <ul class="nav nav-tabs erp-nav-tabs justify-content-center" id="myTab" role="tablist">
                                     <li class="nav-item erp-nav-item" role="presentation">
@@ -67,25 +39,25 @@
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Business or Person <span class="text-red">*</span></label>
-                                                        <input type="text" class="form-control " >
+                                                        <input type="text" name="business_name" class="form-control" >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Upload Photo </label>
-                                                        <input type="file" class="form-control " >
+                                                        <input type="file" name="image" class="form-control" >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Email(H.O) <span class="text-red">*</span></label>
-                                                        <input type="email" class="form-control " >
+                                                        <input type="email" name="email" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Phone(H.O) <span class="text-red">*</span></label>
-                                                        <input type="tel" class="form-control " >
+                                                        <input type="tel" name="phone" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-100 mt-3"> 
@@ -94,13 +66,13 @@
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">First Name </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input type="text" name="contact_first_name" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Last Name </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="contact_last_name" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-100 mt-3"> 
@@ -109,7 +81,7 @@
                                             <div class="erp-filter-item flex-100"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Lead Time Status </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="lead_time_status" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                         </div>
@@ -120,51 +92,39 @@
                                             <div class="erp-filter-item flex-100"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Address </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="address" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">City </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="city" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Zip Code </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="zip_code" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                         
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Country <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" >
-                                                        <option>Select Country</option>
-                                                        <option>Bangladesh</option>
-                                                        <option>India</option>
-                                                        <option>Pakistan</option>
-                                                        <option>USA</option>
-                                                        <option>UK</option>
-                                                        <option>Canada</option>
-                                                        <option>China</option>
-                                                        
+                                                    <select class="select select-step" id="country_id" name="country_id">
+                                                        <option value="">Select Country</option>
+                                                        @foreach($countries as $country)
+                                                            <option value="{{$country->id}}">{{$country->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">State <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" >
-                                                        <option>Select Province / State</option>
-                                                        <option>Dhaka</option>
-                                                        <option>Chittagong</option>
-                                                        <option>Khulna</option>
-                                                        <option>Rajshahi</option>
-                                                        <option>Rangpur</option>
-                                                        <option>Sylhet</option>
-
-                                                        
+                                                    <select class="select select-step" id="state_id" name="state_id">
+                                                        <option value="">Select Province / State</option>
+ 
                                                     </select>
                                                 </div>
                                             </div>
@@ -184,37 +144,43 @@
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Bank Name </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="bank_name[]" type="text" class="form-control" placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="erp-filter-item flex-48"> 
+                                                        <div class="input-block mb-0 erp-step-input-block ">
+                                                            <label class="col-form-label">Account No </label>
+                                                                <input name="account_no[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Account Name </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="account_name[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Branch Name </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="branch[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Routing Number </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="routing_number[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Swift Code </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="swift_code[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Note</label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                                <input name="notes[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -229,53 +195,20 @@
                                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-100"> 
                                                 <div class="input-block erp-step-input-block mb-2">
-                                                    <label class="col-form-label">Material Product <span class="text-danger">*</span></label>
-                                                    <select class="employee-multiselect" multiple="multiple" >
-                                                        <option>Marker</option>
-                                                        <option>Pen</option>
-                                                        <option>Pencil</option>
-                                                        <option>Eraser</option>
-                                                        <option>Sharpner</option>
-                                                        <option>Scale</option>
-                                                        <option>Stapler</option>
-                                                        <option>Stapler Pin</option>
-                                                        <option>Stapler Remover</option>
-                                                        <option>Scissor</option>
-                                                        <option>Glue</option>
-                                                        <option>Calculator</option>
-                                                        <option>Highlighter</option>
-                                                        <option>File</option>
-                                                        <option>Folder</option>
-                                                        <option>Clip</option>
-                                                        <option>Pin</option>
-                                                        <option>Pin Cushion</option>
-                                                        <option>Push Pin</option>
-                                                        
+                                                    <label class="col-form-label">Material Product</label>
+                                                    <select class="employee-multiselect" name="material_products[]" multiple="multiple" >
+                                                        @foreach($material_products as $material)
+                                                            <option value="{{$material->id}}">{{$material->name}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
                                                 <div class="input-block erp-step-input-block mb-2">
-                                                    <label class="col-form-label">Asset Product <span class="text-danger">*</span></label>
-                                                    <select class="employee-multiselect" multiple="multiple" >
-                                                        <option>Marker</option>
-                                                        <option>Pen</option>
-                                                        <option>Pencil</option>
-                                                        <option>Eraser</option>
-                                                        <option>Sharpner</option>
-                                                        <option>Scale</option>
-                                                        <option>Stapler</option>
-                                                        <option>Stapler Pin</option>
-                                                        <option>Stapler Remover</option>
-                                                        <option>Scissor</option>
-                                                        <option>Glue</option>
-                                                        <option>Calculator</option>
-                                                        <option>Highlighter</option>
-                                                        <option>File</option>
-                                                        <option>Folder</option>
-                                                        <option>Clip</option>
-                                                        <option>Pin</option>
-                                                        <option>Pin Cushion</option>
-                                                        <option>Push Pin</option>
+                                                    <label class="col-form-label">Asset Product</label>
+                                                    <select class="employee-multiselect" name="asset_products[]" multiple="multiple" >
+                                                        @foreach($asset_products as $asset)
+                                                            <option value="{{$asset->id}}">{{$asset->name}}</option>
+                                                        @endforeach
                                                         
                                                     </select>
                                                 </div>
@@ -296,22 +229,21 @@
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Fax </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="fax" type="text" class="form-control " >
                                                 
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Website </label>
-                                                        <input type="text" class="form-control " >
+                                                        <input name="website" type="text" class="form-control " >
                                                 
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Notes </label>
-                                                        <input type="text" class="form-control ">
-                                                
+                                                        <input name="notes" type="text" class="form-control ">
                                                 </div>
                                             </div>
                                         
@@ -327,20 +259,20 @@
                                                 <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100">
                                                     <div class="erp-filter-item flex-32"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <label class="col-form-label">Name <span class="text-danger">*</span> </label>
-                                                                <input type="text" class="form-control " placeholder="">
+                                                            <label class="col-form-label">Name</label>
+                                                                <input name="contact_name[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-32"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <label class="col-form-label">Email <span class="text-danger">*</span> </label>
-                                                                <input type="email" class="form-control " placeholder="">
+                                                            <label class="col-form-label">Email</label>
+                                                                <input name="contact_email[]" type="email" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-32"> 
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <label class="col-form-label">Phone <span class="text-danger">*</span> </label>
-                                                            <input type="tel" class="form-control " placeholder="">
+                                                            <label class="col-form-label">Phone</label>
+                                                            <input name="contact_phone[]" type="tel" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     {{-- <div class="erp-filter-item flex-32"> 

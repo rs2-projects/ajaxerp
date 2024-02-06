@@ -22,7 +22,9 @@ class UpdateSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'business_name' => 'required',
+            'email' => 'required',
+            'phone' => 'required'
         ];
     }
 }

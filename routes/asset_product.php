@@ -43,5 +43,6 @@ Route::group(['prefix' => 'procurement'], function () {
         Route::post('/{id}/update', [SupplierController::class, 'update'])->name('procurement.supplier.update');
         Route::get('/{id}/delete', [SupplierController::class, 'delete'])->name('procurement.supplier.delete');
         Route::get('/{id}/change-status/{status}', [SupplierController::class, 'statusUpdate'])->name('procurement.supplier.change-status');
+        Route::get('/get-states-by-country', [SupplierController::class, 'getStatesByCountry'])->name('procurement.supplier.get-states-by-country');
     });
 });

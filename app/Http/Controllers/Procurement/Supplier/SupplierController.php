@@ -17,7 +17,7 @@ class SupplierController extends BackendController
     {
         $this->addBreadcrumbs('Procurement', route('dashboard'), 'fa fa-home');
         $this->addBreadcrumbs('Supplier');
-
+        
         $this->service = new SupplierService();
     }
 
@@ -25,8 +25,9 @@ class SupplierController extends BackendController
     {
         $this->setPageTitle("Suupliers");
         $this->setActiveMenu('procurement.supplier.index');
+        $data = $this->service->indexData();
 
-        return  $this->view('procurement.supplier.index');
+        return  $this->view('procurement.supplier.index')->with($data);
     }
 
     public function indexFiltered(Request $request)
@@ -37,6 +38,16 @@ class SupplierController extends BackendController
             ->render();
 
         return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
+    public function getStatesByCountry(Request $request)
+    {
+        $data = $this->service->getStatesByCountry($request);
+        $view = $this->view('procurement.supplier.__state_options')
+            ->with($data)
+            ->render();
+
+        return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
     }
 
     public function store(StoreSupplierRequest $request)

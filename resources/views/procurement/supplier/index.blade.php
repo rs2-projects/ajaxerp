@@ -48,37 +48,43 @@
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Bank Name </label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="bank_name[]" type="text" class="form-control" placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48"> 
+                <div class="input-block mb-0 erp-step-input-block ">
+                    <label class="col-form-label">Account No </label>
+                        <input name="account_no[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Account Name </label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="account_name[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Branch Name </label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="branch[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Routing Number </label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="routing_number[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Swift Code </label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="swift_code[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Note</label>
-                        <input type="text" class="form-control " placeholder="">
+                        <input name="notes[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
         </div>
@@ -91,20 +97,20 @@
             </div>
             <div class="erp-filter-item flex-32"> 
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Name <span class="text-danger">*</span> </label>
-                        <input type="text" class="form-control " placeholder="">
+                    <label class="col-form-label">Name</label>
+                        <input name="contact_name[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-32"> 
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Email <span class="text-danger">*</span> </label>
-                        <input type="email" class="form-control " placeholder="">
+                    <label class="col-form-label">Email</label>
+                        <input name="contact_email[]" type="email" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-32"> 
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Phone <span class="text-danger">*</span> </label>
-                    <input type="tel" class="form-control " placeholder="">
+                    <label class="col-form-label">Phone</label>
+                    <input name="contact_phone[]" type="tel" class="form-control " placeholder="">
                 </div>
             </div>
         </div>
@@ -241,6 +247,18 @@
         }
         $(document).on("click", "#removeOtherContact" , function (){
             $(this).closest('.supplier-other-contact-parent').remove();
+        });
+
+        $("#country_id").change(function(){
+            let country_id = $(this).val();
+            let url = "{{ route('procurement.supplier.get-states-by-country') }}";
+            ajaxGet(url, {country_id:country_id}, function (response) {
+                if (response.status == 200) {
+                    $("#state_id").html(response.view);
+                } else {
+                    toastr.error(response.message);
+                }
+            });
         });
         
     </script>
