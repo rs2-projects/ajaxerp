@@ -48,19 +48,19 @@
                                         <div class="supplier-invoice-input-box">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Batch No. </label>
-                                                <div ><input class="form-control " type="text"></div>
+                                                <div ><input class="form-control " name="batch_no" type="text"></div>
                                             </div>
                                         </div>
                                         <div class="supplier-invoice-input-box">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Purchase Date </label>
-                                                <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
+                                                <div class="cal-icon"><input class="form-control datetimepicker" name="purchase_date" type="text"></div>
                                             </div>
                                         </div>
                                         <div class="supplier-invoice-input-box">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Estimate Delivery Date </label>
-                                                <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
+                                                <div class="cal-icon"><input class="form-control datetimepicker" name="delivery_date" type="text"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -90,15 +90,16 @@
                                     </div>
                                 </div>
                                 <div class="purchase-order-product-body-wrapper">
-                                    <div class="po-order-product-body-inner-main-wrapper">
+                                    <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
                                         <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                             <div class="purchase-order-product-body-item">
+                                                <input type="hidden" name="product_material_id" v-bind:value="cartItem.id">
                                                 <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                     <div class="em-pro-img-box">
-                                                        <img src="assets/img/product/product.png" alt="">
+                                                        <img :src="cartItem.show_image" alt="">
                                                     </div>
                                                     <div class="em-pro-details-box po-product">
-                                                        <h5>Garments Raw Matarial</h5>
+                                                        <h5>@{{ cartItem.name }}</h5>
                                                     </div>
                                                 </div>
 
@@ -107,7 +108,7 @@
                                                 <div class="purchase-order-product-body-item-inner">
                                                     <div class="purchase-order-product-body-item-inner-content">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <textarea class="form-control auto-grow-input" placeholder="Description"></textarea>
+                                                            <textarea class="form-control auto-grow-input" name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -116,7 +117,7 @@
                                                 <div class="purchase-order-product-body-item-inner">
                                                     <div class="purchase-order-product-body-item-inner-content">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <input type="text" class="form-control text-center" placeholder="Color">
+                                                            <input type="text" class="form-control text-center" name="color[]" v-model="cartItem.color" placeholder="Color">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -125,7 +126,7 @@
                                                 <div class="purchase-order-product-body-item-inner">
                                                     <div class="purchase-order-product-body-item-inner-content">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <input type="text" class="form-control text-center" placeholder="QTY">
+                                                            <input type="text" name="qty[]" min="1" v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -134,7 +135,7 @@
                                                 <div class="purchase-order-product-body-item-inner">
                                                     <div class="purchase-order-product-body-item-inner-content">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <input type="text" class="form-control text-center" placeholder="Price">
+                                                            <input type="number" min="0" v-model="cartItem.price" name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -142,9 +143,11 @@
                                             <div class="purchase-order-product-body-item">
                                                 <div class="purchase-order-product-body-item-inner">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end total-amount-product pe-2">$ 10554544540</h4>
+                                                        <h4 class="text-end total-amount-product pe-2">
+                                                        {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                        </h4>
                                                         <div class="po-product-delete-icon-box">
-                                                            <a href="#"><i class="fa fa-trash"></i></a>
+                                                            <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -153,23 +156,23 @@
                                                 <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
                                                     <div class="po-order-product-body-mesurement-item">
                                                         <h4>Product Code :</h4>
-                                                        <p>#10013</p>
+                                                        <p># @{{ cartItem.code  }}</p>
                                                     </div>
                                                     <div class="po-order-product-body-mesurement-item">
                                                         <h4>Unit :</h4>
-                                                        <p>Pcs</p>
+                                                        <p>@{{ cartItem.unit_type }}</p>
                                                     </div>
                                                     <div class="po-order-product-body-mesurement-item">
                                                         <h4>Length :</h4>
-                                                        <p>573 ft</p>
+                                                        <p>@{{ cartItem.length }}</p>
                                                     </div>
                                                     <div class="po-order-product-body-mesurement-item">
                                                         <h4>Width :</h4>
-                                                        <p>573 m</p>
+                                                        <p>@{{ cartItem.width }}</p>
                                                     </div>
                                                     <div class="po-order-product-body-mesurement-item">
                                                         <h4>Thickness :</h4>
-                                                        <p>3 cm</p>
+                                                        <p>@{{ cartItem.thickness }}</p>
                                                     </div>
                                                 </div>
 
@@ -179,21 +182,22 @@
                                                     <div class="po-vat-tax-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                             <label class="col-form-label">Vat </label>
-                                                            <select class="select select-step" >
-                                                                <option>Select Tax</option>
-                                                                <option>Govt Vat 10.00%</option>
-                                                                <option>Govt Vat 20.84%</option>
-                                                                <option>Govt Vat 30.33%</option>
-
+                                                            <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <option value="" >Select Tax</option>
+                                                                <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
+                                                                    @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                </option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="po-vat-tax-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end total-amount-product pe-2">$ 5933</h4>
-                                                            <div class="po-product-delete-icon-box two">
+                                                            <h4 class="text-end total-amount-product pe-2">
+                                                               {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                            </h4>
+                                                            {{--<div class="po-product-delete-icon-box two">
                                                                 <a href="#"><i class="fa fa-times"></i></a>
-                                                            </div>
+                                                            </div>--}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -205,7 +209,7 @@
                                         <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
                                         <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                             <div class="custom-searcable-input-wrap">
-                                                <input type="text" class="form-control" placeholder="Search Products">
+                                                <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                             </div>
                                             <div class="search-product-item-wrapper custom-card-scroll" >
                                                 <div class="search-product-item" v-for="singleItem in allItems" :key="singleItem.id" @click="addItemToCart(singleItem)">
@@ -256,7 +260,9 @@
                                                 </div>
                                                 <div class="po-vat-tax-item grand-total-item">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end sub-total-amount pe-2">$ 45332</h4>
+                                                        <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol()}}
+                                                            <span class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
+                                                        </h4>
 
                                                     </div>
                                                 </div>
@@ -267,7 +273,9 @@
                                                 </div>
                                                 <div class="po-vat-tax-item grand-total-item">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end sub-total-amount pe-2">$ 0</h4>
+                                                        <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol()}}
+                                                            <span class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
+                                                        </h4>
 
                                                     </div>
                                                 </div>
@@ -278,29 +286,31 @@
                                                     <div class="invoice-switcher-box d-flex align-items-center gap-2">
                                                         <div class="invoice-switcher-item">
                                                             <div class="radio-inputs">
-                                                                <label>
-                                                                    <input class="radio-input instagram" type="radio" name="engine" />
+                                                                <label for="discount-fixed" :class="{checked:(discount_type == 1)}">
+                                                                    <input class="radio-input instagram" type="radio" id="discount-fixed" name="discount_type" value="1" style="display: none;"  v-model="discount_type" v-on:change="changeDiscountType" :checked="discount_type == 1" />
                                                                     <span class="radio-tile instagram">
-																						<span class="radio-icon"> $</span>
-																					  </span>
+                                                                        <span class="radio-icon"> {{getCurrencySymbol()}}</span>
+                                                                   </span>
                                                                 </label>
 
-                                                                <label>
-                                                                    <input class="radio-input twitter" type="radio" name="engine" />
+                                                                <label for="discount-percent" :class="{checked:(discount_type == 0)}">
+                                                                    <input class="radio-input twitter" type="radio" id="discount-percent" name="discount_type" value="0" style="display: none;" v-model="discount_type" v-on:change="changeDiscountType" :checked="discount_type == 0" />
                                                                     <span class="radio-tile twitter">
-																						<span class="radio-icon">%</span>
-																					  </span>
+                                                                        <span class="radio-icon">%</span>
+                                                                    </span>
                                                                 </label>
                                                             </div>
                                                         </div>
                                                         <div class="invoice-switcher-item">
-                                                            <input type="number" class="form-control custom-switcher-value text-center" placeholder="0">
+                                                            <input type="number" step="0.01" v-model="discount_value" name="discount_value" class="form-control custom-switcher-value text-center" placeholder="0">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="po-vat-tax-item grand-total-item">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end sub-total-amount pe-2">$ 0</h4>
+                                                        <h4 class="text-end sub-total-amount pe-2">
+                                                            {{getCurrencySymbol()}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
+                                                        </h4>
 
                                                     </div>
                                                 </div>
@@ -311,7 +321,9 @@
                                                 </div>
                                                 <div class="po-vat-tax-item grand-total-item">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end total-amount-product pe-2">$ 59,444433</h4>
+                                                        <h4 class="text-end total-amount-product pe-2">
+                                                            {{getCurrencySymbol()}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
+                                                        </h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -322,7 +334,7 @@
                                             <div class="po-order-product-note-terms-item">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label pt-0">Notes / Terms</label>
-                                                    <textarea class="form-control" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer"></textarea>
+                                                    <textarea class="form-control" name="note" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -334,9 +346,9 @@
                                                 <label for="payment_status_checkbox">
                                                     <span class="switch-x-text">Payment Status </span>
                                                     <span class="switch-x-toggletext">
-																		<span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Unpaid</span>
-																		<span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>Paid</span>
-																	  </span>
+                                                        <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Unpaid</span>
+                                                        <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>Paid</span>
+                                                    </span>
                                                 </label>
                                             </div>
                                         </div>
@@ -392,7 +404,7 @@
                                     <div class="purchase-order-product-footer-body-inner">
                                         <div class="purchase-order-product-footer-body-item">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <textarea class="form-control" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
+                                                <textarea class="form-control" name="footer_text" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -422,11 +434,14 @@
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
-
+    <!-- Datetimepicker JS -->
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
@@ -434,6 +449,31 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+
+        $(document).ready(function () {
+            initializeDatepicker();
+        });
+
+        function initTaxSelect2() {
+            $('.select-step').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                //format: 'DD/MM/YYYY',
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
+        }
+
         var { createApp } = Vue;
 
         var vueApp = createApp({
@@ -442,11 +482,63 @@
                     allItems:[],
                     item_search: '',
                     cartItems:[],
+                    system_tax_items:[],
                     open_select_item: false,
+                    discount_type: 0,
+                    discount_value: 0,
+                    discount_amount: 0,
+                    paying_amount: 0,
                 }
             },
             computed: {
-
+                cartSubTotalWithoutVatAmount() {
+                    let cst_amount = 0;
+                    if (this.cartItems.length > 0) {
+                        for (let key in this.cartItems) {
+                            let item = this.cartItems[key];
+                            cst_amount += parseFloat(item.spt_amount_wv);
+                        }
+                    } else {
+                        cst_amount = 0;
+                    }
+                    return cst_amount;
+                },
+                cartTotalVatAmount() {
+                    let vat_amount = 0;
+                    if (this.cartItems.length > 0) {
+                        for (let key in this.cartItems) {
+                            let item = this.cartItems[key];
+                            vat_amount += parseFloat(item.vat_amount);
+                        }
+                    } else {
+                        vat_amount = 0;
+                    }
+                    return vat_amount;
+                },
+                cartGrandTotalAmount() {
+                    let total_amount = 0;
+                    if (this.cartItems.length > 0) {
+                        for (let key in this.cartItems) {
+                            let item = this.cartItems[key];
+                            // total_amount += parseFloat(item.vat_amount);
+                            total_amount += parseFloat(item.spt_amount);
+                        }
+                    } else {
+                        total_amount = 0;
+                    }
+                    this.discount_amount = 0;
+                    if(this.discount_value != 0) {
+                        if(this.discount_type == 0) {
+                            //0=percentage
+                            this.discount_amount = (total_amount * this.discount_value) / 100;
+                        } else {
+                            //fixed
+                            this.discount_amount = this.discount_value;
+                        }
+                    }
+                    total_amount = total_amount - this.discount_amount;
+                    return total_amount;
+                },
             },
             methods: {
                 openSelectItemModal() {
@@ -459,16 +551,89 @@
                         .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
                         .then(response => (this.allItems = response.data.product_materials));
                 },
+                getTaxItems() {
+                    axios
+                        .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
+                        .then(response => (this.system_tax_items = response.data));
+                },
 
                 addItemToCart(item) {
+
+                    let exists = this.cartItems.findIndex(o => o.id === item.id);
+                    if (exists >= 0) {
+                        // exists.qty++;
+                        this.incrementQty(exists);
+                    } else {
+                        item.qty = 1;
+                        item.price = 0;
+                        item.spt_amount = 0;
+                        item.spt_amount_wv = 0;
+                        let ab = this.cartItems.push(item);
+                        this.updateCartItemPrice(ab - 1);
+                    }
+                    setTimeout(function () {
+                        initTaxSelect2();
+                    }, 300);
                     this.open_select_item = !this.open_select_item;
                 },
+                incrementQty(index) {
+                    this.cartItems[index].qty++;
+                    this.updateCartItemPrice(index);
+                },
+                updateQty(index) {
+                    let qty = this.cartItems[index].qty;
+                    if(qty <= 0) {
+                        this.cartItems[index].qty = 0;
+                    } else {
+                        // console.log(qty);
+                        this.cartItems[index].qty = parseInt(qty);
+                    }
+                    this.updateCartItemPrice(index);
+                },
+                decrementQty(index) {
+                    if(this.cartItems[index].qty <= 1) {
+                        this.cartItems[index].qty = 1;
+                    } else {
+                        this.cartItems[index].qty--;
+                    }
+                    this.updateCartItemPrice(index);
+                },
+                removeItem(index) {
+                    this.cartItems.splice(index,1);
+                },
+                updatePrice(index) {
+                    this.updateCartItemPrice(index);
+                },
+                updateCartItemPrice(index) {
+                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
+                    this.cartItems[index].spt_amount_wv = priceWithoutVat;
+                    this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+                },
+
+                changeDiscountType() {
+
+                },
+                changeTax(cartItemIndex, new_tax_id) {
+                    let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
+                    this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
+                    this.updateCartItemPrice(cartItemIndex);
+                }
             },
             mounted () {
                 this.getSearchedItems();
+                this.getTaxItems();
             }
 
         }).mount('#VueApp');
+
+        function taxChangeOutside(select) {
+            let new_tax_id = $(select).val();
+            console.log(new_tax_id);
+            let cartItemIndex = $(select).attr('data-cartItemIndex');
+            vueApp.changeTax(cartItemIndex, new_tax_id);
+        }
+
     </script>
 @endsection
 

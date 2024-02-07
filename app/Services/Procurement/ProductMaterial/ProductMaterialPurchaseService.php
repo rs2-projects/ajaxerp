@@ -2,6 +2,8 @@
 
 namespace App\Services\Procurement\ProductMaterial;
 
+use App\Models\Accounting\AccCoaAccount;
+use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Products\ProductMaterial;
 
 class ProductMaterialPurchaseService
@@ -13,7 +15,7 @@ class ProductMaterialPurchaseService
         return $data;
     }
 
-    public function getAllProductMaterials($reqeust)
+    public function getAllProductMaterials($request)
     {
         if(isset($request->q) && ($request->q != '') && ($request->q != null)) {
             $search_keyword = $request->q;
@@ -28,13 +30,21 @@ class ProductMaterialPurchaseService
             ->where('deleted', ProductMaterial::DELETED_NO)
             ->get()
             ->map(function ($item) {
+                if($item->tax == null) {
+                    $itemTax = (object) [
+                        'id' => null,
+                        'name' => null,
+                        'tax_rate' => 0,
+                    ];
+                } else {
+                    $itemTax = $item->tax;
+                }
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
                     'code' => $item->code,
                     'show_image' => asset($item->show_image),
-                    'tax' => $item->tax,
-                    'tax_rate' => $item->tax->rate,
+                    'tax' => $itemTax,
                     'unit_type' => $item::UNIT_TYPES[$item->unit_type],
                     'description' => $item->description,
                     'color' => $item->color,
@@ -45,5 +55,25 @@ class ProductMaterialPurchaseService
             });
         return $data;
 
+    }
+
+    public function getAllTaxes($request)
+    {
+        $coaSubCat = AccCoaSubCategory::where('is_sales_tax', AccCoaSubCategory::IS_SALES_TAX_YES)
+            ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
+            ->where('deleted', AccCoaSubCategory::DELETED_NO)
+            ->first();
+        if (!empty($coaSubCat)) {
+            $data['vat_taxes'] = AccCoaAccount::where('acc_coa_sub_category_id', $coaSubCat->id)
+
+                ->where('status', AccCoaAccount::STATUS_ACTIVE)
+                ->where('deleted',AccCoaAccount::DELETED_NO)
+                ->get();
+        } else {
+            $data['vat_taxes'] = [];
+        }
+
+
+        return $data;
     }
 }

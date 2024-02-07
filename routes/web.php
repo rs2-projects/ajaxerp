@@ -456,6 +456,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [ProductMaterialPurchaseController::class, 'statusUpdate'])->name('procurement.product-material-purchase.change-status');
 
             Route::get('/get-all-product-materials',[ProductMaterialPurchaseController::class, 'getAllProductMaterials'])->name('procurement.product-material-purchase.get-all-product-materials');
+            Route::get('/get-all-taxes',[ProductMaterialPurchaseController::class, 'getAllTaxes'])->name('procurement.product-material-purchase.get-all-taxes');
         });
        // materials purchase order route end
     });

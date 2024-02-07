@@ -51,4 +51,11 @@ class ProductMaterialPurchaseController extends BackendController
 
         return response()->json($data);
     }
+
+    public function getAllTaxes(Request $request)
+    {
+        $data = $this->service->getAllTaxes($request);
+
+        return response()->json($data['vat_taxes']);
+    }
 }
