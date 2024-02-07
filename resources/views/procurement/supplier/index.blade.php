@@ -42,49 +42,52 @@
 
     <div id="additionalBankInfo" style="display: none;">
         <div class="erp-deduction-wrapper position-relative mt-3 filter-row d-flex flex-wrap align-items-center justify-content-between">
-            <div class="delete-btn-box bank-info-remove" id="removeAdditionalBankInfo">
+            <div class="delete-btn-box bank-info-remove" onclick="removeAdditionalBankInfo(this)" id="removeAdditionalBankInfo">
                 <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Bank Name </label>
-                        <input name="bank_name[]" type="text" class="form-control" placeholder="">
+                    <input name="bank_name[]" required type="text" class="form-control" placeholder="">
+                    <span class="bank_name_error ie-span"></span>
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Account No </label>
-                        <input name="account_no[]" type="text" class="form-control " placeholder="">
+                    <input name="account_no[]" type="text" class="form-control " placeholder="" required>
+                    <span class="account_no_error ie-span"></span>
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Account Name </label>
-                        <input name="account_name[]" type="text" class="form-control " placeholder="">
+                    <input name="account_name[]" type="text" class="form-control " placeholder="" required>
+                    <span class="account_name_error ie-span"></span>
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Branch Name </label>
-                        <input name="branch[]" type="text" class="form-control " placeholder="">
+                    <input name="branch[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Routing Number </label>
-                        <input name="routing_number[]" type="text" class="form-control " placeholder="">
+                    <input name="routing_number[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Swift Code </label>
-                        <input name="swift_code[]" type="text" class="form-control " placeholder="">
+                    <input name="swift_code[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Note</label>
-                        <input name="notes[]" type="text" class="form-control " placeholder="">
+                    <input name="notes[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
         </div>
@@ -92,19 +95,19 @@
 
     <div id="supplierOtherContact" style="display: none;">
         <div class="supplier-other-contact-parent erp-deduction-wrapper position-relative filter-row mt-3 d-flex flex-wrap align-items-center justify-content-between flex-100">
-            <div class="delete-btn-box bank-info-remove" id="removeOtherContact">
+            <div class="delete-btn-box bank-info-remove" onclick="removeOtherContact(this)">
                 <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
             </div>
             <div class="erp-filter-item flex-32"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Name</label>
-                        <input name="contact_name[]" type="text" class="form-control " placeholder="">
+                    <input name="contact_name[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-32"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Email</label>
-                        <input name="contact_email[]" type="email" class="form-control " placeholder="">
+                    <input name="contact_email[]" type="email" class="form-control " placeholder="">
                 </div>
             </div>
             <div class="erp-filter-item flex-32"> 
@@ -127,6 +130,10 @@
         .delete-btn-box.bank-info-remove {
             top: 10px;
         }
+        .edit-img-src{
+            margin-left: 5px;
+            border-radius: 5px;
+        }
     </style>
 @endsection
 
@@ -146,7 +153,9 @@
         };
         $(document).ready(function() {
             getData();
-
+            initMaterialProductMultipleSelect();
+            initAssteProductMultipleSelect();
+            
             $(".select-step").select2({
                 closeOnSelect: true,
                 containerCssClass: "select2-box-container",
@@ -154,19 +163,6 @@
                 width: '100%'
 
             });
-            $('.employee-multiselect').multipleSelect({
-                filter: true,
-                placeholder: 'Select Product',
-                minimumCountSelected: 8,
-                filterPlaceholder: 'Search Product',
-                selectAll: true,
-                onOpen: function () {
-                    $(".employee-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
-                        return this.nodeType === 3;
-                    }).replaceWith("Select All Product");
-                },
-            });
-            
 
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
@@ -226,6 +222,9 @@
                 if (response.status == 200) {
                     $("#edit_suuplier_modal_body").html(response.view);
                     $("#editSupplierModal").modal('show');
+                    initializeSelect();
+                    initMaterialProductMultipleSelect();
+                    initAssteProductMultipleSelect();
                 } else {
                     toastr.error(response.message);
                 }
@@ -234,32 +233,72 @@
 
         function addAdditionalBankInfo(){
             var item = $('#additionalBankInfo').html();
-            $('#additionalBankInfoContainer').append(item);
+            $('.additionalBankInfoContainer').append(item);
         }
         
-        $(document).on("click", "#removeAdditionalBankInfo" , function (){
-            $(this).closest('.erp-deduction-wrapper').remove();
-        });
+        // $(document).on("click", "#removeAdditionalBankInfo" , function (){
+        //     $(this).closest('.erp-deduction-wrapper').remove();
+        // });
+        function removeAdditionalBankInfo(element){
+            $(element).closest('.erp-deduction-wrapper').remove();
+        }
 
         function addOtherContacts(){
             var item = $('#supplierOtherContact').html();
-            $('#supplierOtherContactContainer').append(item);
+            $('.supplierOtherContactContainer').append(item);
         }
-        $(document).on("click", "#removeOtherContact" , function (){
-            $(this).closest('.supplier-other-contact-parent').remove();
-        });
 
-        $("#country_id").change(function(){
-            let country_id = $(this).val();
+        function removeOtherContact(element){
+            $(element).closest('.supplier-other-contact-parent').remove();
+        }
+
+        function getCountryWiseStates(select){
+            let country_id = $(select).val();
             let url = "{{ route('procurement.supplier.get-states-by-country') }}";
             ajaxGet(url, {country_id:country_id}, function (response) {
                 if (response.status == 200) {
-                    $("#state_id").html(response.view);
+                    $(".state_id").html(response.view);
                 } else {
                     toastr.error(response.message);
                 }
             });
-        });
+        }
+
+        function initializeSelect() {
+            $('.select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+        function initAssteProductMultipleSelect(){
+            $('.asset-multiselect').multipleSelect({
+                filter: true,
+                placeholder: 'Select Product',
+                minimumCountSelected: 6,
+                filterPlaceholder: 'Search Product',
+                selectAll: true,
+                onOpen: function () {
+                    $(".asset-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).replaceWith("Select All Products");
+                },
+            });
+        }
+        function initMaterialProductMultipleSelect(){
+            $('.material-multiselect').multipleSelect({
+                filter: true,
+                placeholder: 'Select Product',
+                minimumCountSelected: 6,
+                filterPlaceholder: 'Search Product',
+                selectAll: true,
+                onOpen: function () {
+                    $(".material-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).replaceWith("Select All Products");
+                },
+            });
+        }
         
     </script>
 @endsection

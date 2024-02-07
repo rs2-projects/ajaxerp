@@ -11,7 +11,7 @@ class UpdateSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,10 @@ class UpdateSupplierRequest extends FormRequest
         return [
             'business_name' => 'required',
             'email' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'bank_name' => 'required',
+            'account_name' => 'required',
+            'account_no' => 'required',
         ];
     }
 }

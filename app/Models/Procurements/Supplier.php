@@ -53,4 +53,28 @@ class Supplier extends Model
         'deleted_at',
     ];
     
+    public function getShowImageAttribute()
+    {
+        if ($this->image != null && $this->image != '') {
+            return asset($this->image);
+        }
+        return asset('assets/img/placeholder.jpg');
+    }
+
+    public function supplierBanks()
+    {
+        return $this->hasMany(SupplierBank::class, 'supplier_id', 'id');
+    }
+    public function supplierContacts()
+    {
+        return $this->hasMany(SupplierContact::class, 'supplier_id', 'id');
+    }
+    public function supplierMaterials()
+    {
+        return $this->hasMany(SupplierProductMaterial::class, 'supplier_id', 'id');
+    }
+    public function supplierAssets()
+    {
+        return $this->hasMany(SupplierAssetProduct::class, 'supplier_id', 'id');
+    }
 }

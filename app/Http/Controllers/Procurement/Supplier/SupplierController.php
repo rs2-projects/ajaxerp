@@ -64,7 +64,7 @@ class SupplierController extends BackendController
     {
         try {
             $data = $this->service->editData($id);
-            $view = $this->view('inventory.assets.asset-product._edit_data')
+            $view = $this->view('procurement.supplier._edit_data')
                 ->with($data)
                 ->render();
             return $this->returnAjaxSuccess(['view' => $view]);
