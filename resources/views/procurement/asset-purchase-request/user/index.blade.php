@@ -1,38 +1,100 @@
 @extends('layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row">
+   <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addSupplierModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
-
+                <a href="{{route('procurement.user.asset-purchase-request.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Request</a>
+                <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-excel"></i> Export To Excel</a>
+                <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-pdf"></i> Generate PDF</a>
             </div>
         </div>
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
                     <div class="my-attendance-report-wrapper">
-                        <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
-                            <div class="erp-filter-box d-flex align-items-center justify-content-start flex-100">
-                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-100">
-                                    <div class="erp-filter-item flex-7">
+                        <div class="erp-header-main-wrap d-flex justify-content-end align-items-center mb-4">
+                        
+                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
+                                
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
+                                    <div class="erp-filter-item">
                                         <h6 class="me-2">Search By: </h6>
                                     </div>
-
-                                    <div class="erp-filter-item flex-30">
-                                        <div class="search-box table-search position-relative">
-                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="Name / Company">
-                                            <button class="btn position-absolute search-btn" type="button" onclick="getData()"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    <div class="erp-filter-item flex-25"> 
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <input type="text" class="form-control search-product-in" placeholder="Purchase Order">
+                                        
                                         </div>
                                     </div>
-
+                                    <div class="erp-filter-item flex-25"> 
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box"> 
+                                                <option>Select Month</option>
+                                                <option>January</option>
+                                                <option>February</option>
+                                                <option>March</option>
+                                                <option>April</option>
+                                                <option>May</option>
+                                                <option>June</option>
+                                                <option>July</option>
+                                                <option>August</option>
+                                                <option>September</option>
+                                                <option>October</option>
+                                                <option>November</option>
+                                                <option>December</option>
+                                            </select>
+                                        
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item flex-25"> 
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box"> 
+                                                <option>Select Year</option>
+                                                <option>2023</option>
+                                                <option>2022</option>
+                                                <option>2021</option>
+                                                <option>Last Year</option>
+                                                <option>Last Two Years</option>
+                                            
+                                            </select>
+                                        
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item"> 
+                                        <div class="erp-search-btn-wrap">
+                                            <button class=" erp-search-btn">Search</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    
+                        <div class="erp-leave-tab-wrapper">
+                            <ul class="nav nav-tabs erp-nav-tabs justify-content-center" id="myTab" role="tablist">
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link active erp-nav-link" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">All Purchase Request</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">New P.R</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Pending P.R</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved P.R</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" id="revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Declined P.R</button>
+                                </li>
+                                
+                                </ul>
 
-                        <div class="table-main-wrapper pt-4" id="ajax-data-load">
+                                {{-- tab contents from __index_filter --}}
 
                         </div>
+                    
+                        
                     </div>
                 </div>
             </div>
@@ -40,89 +102,11 @@
     </div>
     <!--End::row-1 -->
 
-    <div id="additionalBankInfo" style="display: none;">
-        <div class="erp-deduction-wrapper position-relative mt-3 filter-row d-flex flex-wrap align-items-center justify-content-between">
-            <div class="delete-btn-box bank-info-remove" onclick="removeAdditionalBankInfo(this)" id="removeAdditionalBankInfo">
-                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Bank Name </label>
-                    <input name="bank_name[]" required type="text" class="form-control" placeholder="">
-                    <span class="bank_name_error ie-span"></span>
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Account No </label>
-                    <input name="account_no[]" type="text" class="form-control " placeholder="" required>
-                    <span class="account_no_error ie-span"></span>
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Account Name </label>
-                    <input name="account_name[]" type="text" class="form-control " placeholder="" required>
-                    <span class="account_name_error ie-span"></span>
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Branch Name </label>
-                    <input name="branch[]" type="text" class="form-control " placeholder="">
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Routing Number </label>
-                    <input name="routing_number[]" type="text" class="form-control " placeholder="">
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Swift Code </label>
-                    <input name="swift_code[]" type="text" class="form-control " placeholder="">
-                </div>
-            </div>
-            <div class="erp-filter-item flex-48"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Note</label>
-                    <input name="notes[]" type="text" class="form-control " placeholder="">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="supplierOtherContact" style="display: none;">
-        <div class="supplier-other-contact-parent erp-deduction-wrapper position-relative filter-row mt-3 d-flex flex-wrap align-items-center justify-content-between flex-100">
-            <div class="delete-btn-box bank-info-remove" onclick="removeOtherContact(this)">
-                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
-            </div>
-            <div class="erp-filter-item flex-32"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Name</label>
-                    <input name="contact_name[]" type="text" class="form-control " placeholder="" required>
-                </div>
-            </div>
-            <div class="erp-filter-item flex-32"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Email</label>
-                    <input name="contact_email[]" type="email" class="form-control " placeholder="">
-                </div>
-            </div>
-            <div class="erp-filter-item flex-32"> 
-                <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Phone</label>
-                    <input name="contact_phone[]" type="tel" class="form-control " placeholder="">
-                </div>
-            </div>
-        </div>
-    </div>
+    
 @endsection
 
 @section('modals')
-    @include('procurement.supplier._add_supplier_modal')
-    @include('procurement.supplier._edit_supplier_modal')
+   
 @endsection
 
 @section('css')

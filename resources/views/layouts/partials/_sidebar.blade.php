@@ -107,7 +107,7 @@
                             <a href="javascript:void(0);"> <span>Assets</span> <span
                                     class="menu-arrow"></span></a>
                             <ul>
-                                <li><a href=""><span>Purchase Request</span></a></li>
+                                <li><a href="{{ route('procurement.user.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.user.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request</span></a></li>
                                 <li><a href=""><span>Purchase Request(Admin)</span></a></li>
                                 <li><a href="" class=""> <span>Purchase Order(P.O)</span></a></li>
                             </ul>

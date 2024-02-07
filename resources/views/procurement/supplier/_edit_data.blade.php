@@ -314,7 +314,7 @@
                                                 <div class="erp-filter-item flex-32"> 
                                                     <div class="input-block mb-0 erp-step-input-block ">
                                                         <label class="col-form-label">Name</label>
-                                                        <input value="{{$supplier_contact->name}}" name="contact_name[]" type="text" class="form-control " placeholder="">
+                                                        <input value="{{$supplier_contact->name}}" name="contact_name[]" type="text" class="form-control " placeholder="" required>
                                                     </div>
                                                 </div>
                                                 <div class="erp-filter-item flex-32"> 
@@ -337,7 +337,7 @@
                                             <div class="erp-filter-item flex-32"> 
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Name</label>
-                                                    <input name="contact_name[]" type="text" class="form-control " placeholder="">
+                                                    <input name="contact_name[]" type="text" class="form-control " placeholder="" required>
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-32"> 
