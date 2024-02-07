@@ -4,7 +4,12 @@ namespace App\Services\Procurement\ProductMaterial;
 
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
+use App\Models\Procurements\ProductMaterialPurchase;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Models\Procurements\Supplier;
 use App\Models\Products\ProductMaterial;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ProductMaterialPurchaseService
 {
@@ -13,6 +18,116 @@ class ProductMaterialPurchaseService
     {
         $data = [];
         return $data;
+    }
+
+    public function store($request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $purchase = new ProductMaterialPurchase();
+            $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_NEW;
+            $purchase->supplier_id = $request->supplier_id;
+            $purchase->batch_number = $request->batch_number;
+            $purchase->purchase_date = $request->purchase_date;
+            $purchase->discount_type = $request->discount_type;
+            $purchase->discount_value = $request->discount_value;
+            $purchase->estimated_delivery_date = $request->estimated_delivery_date;
+            $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_UNPAID;
+            $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
+            $purchase->is_revised = ProductMaterialPurchase::IS_REVISED_NO;
+            $purchase->is_backed = ProductMaterialPurchase::IS_BACKED_NO;
+            $purchase->notes = $request->notes;
+            $purchase->invoice_footer = $request->invoice_footer;
+            $purchase->created_at = Carbon::now();
+            $purchase->created_by = auth()->user()->id;
+            $purchase->updated_at = Carbon::now();
+            $purchase->updated_by = auth()->user()->id;
+            $purchase->save();
+            $purchase->purchase_id = "PO - ".(1000 + $purchase->id);
+            $purchase->save();
+
+
+            $subtotal_amount = 0;
+            $total_vat_amount = 0;
+
+            if(isset($request->product_id) && is_array($request->product_id)){
+                foreach ($request->product_id as $key=>$product){
+                    $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
+                        ->where('deleted', ProductMaterial::DELETED_NO)
+                        ->where('id', $product)
+                        ->first();
+
+                    if(empty($productMaterial)){
+                        continue;
+                    }
+
+                    $qty = $request->qty[$key];
+                    $price = $request->price[$key];
+                    $tax_id = $request->tax[$key];
+
+                    $amount_without_tax = $qty * $price;
+                    $amount_with_tax = 0;
+                    $tax_rate = 0;
+                    $tax_amount = 0;
+                    if($tax_id != null){
+                        $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
+                            ->where('deleted', AccCoaAccount::DELETED_NO)
+                            ->where('id', $tax_id)
+                            ->first();
+                        if(!empty($tax)){
+                            $tax_rate = $tax->tax_rate;
+                            $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
+                            $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        }
+                    }
+
+                    $purchaseDetails = new ProductMaterialPurchaseDetails();
+                    $purchaseDetails->product_material_purchase_id = $purchase->id;
+                    $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->description = $request->description[$key];
+                    $purchaseDetails->color = $request->color[$key];
+                    $purchaseDetails->qty = $qty;
+                    $purchaseDetails->unit_price = $price;
+                    $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->tax_id = $tax_id;
+                    $purchaseDetails->tax_rate = $tax_rate;
+                    $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
+                    $purchaseDetails->has_damage = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
+                    $purchaseDetails->has_missing = ProductMaterialPurchaseDetails::HAS_MISSING_NO;
+                    $purchaseDetails->created_at = Carbon::now();
+                    $purchaseDetails->created_by = auth()->user()->id;
+                    $purchaseDetails->updated_at = Carbon::now();
+                    $purchaseDetails->updated_by = auth()->user()->id;
+                    $purchaseDetails->save();
+
+                    $subtotal_amount += $purchaseDetails->total_price;
+                    $total_vat_amount += $purchaseDetails->tax_amount;
+
+                }
+            }
+            $total_discount_amount = 0;
+            if($purchase->discount_type == ProductMaterialPurchase::DISCOUNT_TYPE_PERCENTAGE){
+                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+            }else{
+                $total_discount_amount = $purchase->discount_value;
+            }
+
+            $purchase->subtotal_amount = $subtotal_amount;
+            $purchase->total_vat_amount = $total_vat_amount;
+            $purchase->total_discount_amount = $total_discount_amount;
+            $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->save();
+
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
     }
 
     public function getAllProductMaterials($request)
@@ -73,6 +188,32 @@ class ProductMaterialPurchaseService
             $data['vat_taxes'] = [];
         }
 
+
+        return $data;
+    }
+
+    public function getAllSuppliers($request)
+    {
+        if(isset($request->q) && ($request->q != '') && ($request->q != null)) {
+            $search_keyword = $request->q;
+        } else {
+            $search_keyword = null;
+        }
+
+        $data['suppliers'] = Supplier::where('status', Supplier::STATUS_ACTIVE)
+            ->where('deleted', Supplier::DELETED_NO)
+            ->when($search_keyword, function ($q) use($search_keyword){
+                $q->where(function ($j) use ($search_keyword) {
+                        $j->where('business_name', 'LIKE', '%'.$search_keyword.'%')
+                        ->orWhere('phone', 'LIKE', '%'.$search_keyword.'%');
+                });
+            })
+            ->get()
+            ->map(function ($supplier) {
+                $supplier->show_image_full_url = asset($supplier->show_image);
+                $supplier->contact_full_name = $supplier->full_name;
+                return $supplier;
+            });
 
         return $data;
     }

@@ -52,13 +52,17 @@ class Supplier extends Model
         'deleted_by',
         'deleted_at',
     ];
-    
     public function getShowImageAttribute()
     {
         if ($this->image != null && $this->image != '') {
             return asset($this->image);
         }
         return asset('assets/img/placeholder.jpg');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->contact_first_name.' '.$this->contact_last_name;
     }
 
     public function supplierBanks()

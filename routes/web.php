@@ -457,6 +457,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::get('/get-all-product-materials',[ProductMaterialPurchaseController::class, 'getAllProductMaterials'])->name('procurement.product-material-purchase.get-all-product-materials');
             Route::get('/get-all-taxes',[ProductMaterialPurchaseController::class, 'getAllTaxes'])->name('procurement.product-material-purchase.get-all-taxes');
+            Route::get('/get-all-suppliers',[ProductMaterialPurchaseController::class, 'getAllSuppliers'])->name('procurement.product-material-purchase.get-all-suppliers');
         });
        // materials purchase order route end
     });

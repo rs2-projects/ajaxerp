@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Procurement\ProductMaterial;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Procurement\ProductMaterial\StorePurchaseReqeust;
 use App\Services\Procurement\ProductMaterial\ProductMaterialPurchaseService;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,18 @@ class ProductMaterialPurchaseController extends BackendController
         return $this->view('procurement.product-material-purchase.create');
     }
 
+    public function store(StorePurchaseReqeust $reqeust)
+    {
+        /*dd($reqeust->all());*/
+        try {
+            $this->service->store($reqeust);
+
+            return $this->returnAjaxSuccess([], 'Purchase Order Created Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
     public function getAllProductMaterials(Request $request)
     {
         $data = $this->service->getAllProductMaterials($request);
@@ -57,5 +70,12 @@ class ProductMaterialPurchaseController extends BackendController
         $data = $this->service->getAllTaxes($request);
 
         return response()->json($data['vat_taxes']);
+    }
+
+    public function getAllSuppliers(Request $request)
+    {
+        $data = $this->service->getAllSuppliers($request);
+
+        return response()->json($data['suppliers']);
     }
 }

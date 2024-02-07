@@ -80,3 +80,16 @@
 .new-warehouse-section-body-add-btn .add-section-wh-btn {
     margin-top: 9px !important;
 }
+
+.supplier-add-button-box a.as-btn{
+    background: linear-gradient(to right, #b70000 0%, #f43b48 100%);
+}
+.purchase-save-all-btn-box button{
+    background: linear-gradient(to right, #37B34A 0%, #8BC53F 100%);
+    padding: 11px 40px;
+    color: #fff;
+    font-weight: 800;
+    border-radius: 100px;
+    font-size: 16px;
+    border: none;
+}
