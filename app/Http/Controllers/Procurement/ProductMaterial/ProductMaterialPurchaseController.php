@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Procurement\ProductMaterial;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Procurement\ProductMaterial\StorePurchaseReqeust;
+use App\Http\Requests\Procurement\ProductMaterial\UpdatePurchaseReqeust;
 use App\Services\Procurement\ProductMaterial\ProductMaterialPurchaseService;
 use Illuminate\Http\Request;
 
@@ -24,26 +25,23 @@ class ProductMaterialPurchaseController extends BackendController
     {
         $this->setPageTitle("Product Material Purchase");
         $this->setActiveMenu('procurement.product-material-purchase.index');
-
-        return  $this->view('procurement.product-material-purchase.index');
+        $data = $this->service->indexData();
+        return  $this->view('procurement.product-material-purchase.index')->with($data);
     }
 
     public function indexFiltered(Request $request)
     {
         $data = $this->service->indexFilteredData($request);
-        $view = $this->view('procurement.product-material-purchase._index_filtered')
-            ->with($data)
-            ->render();
 
-        return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
     }
 
     public function create()
     {
         $this->setPageTitle("New Purchase Order");
         $this->setActiveMenu('procurement.product-material-purchase.index');
-
-        return $this->view('procurement.product-material-purchase.create');
+        $data = $this->service->createData();
+        return $this->view('procurement.product-material-purchase.create')->with($data);
     }
 
     public function store(StorePurchaseReqeust $reqeust)
@@ -53,6 +51,45 @@ class ProductMaterialPurchaseController extends BackendController
             $this->service->store($reqeust);
 
             return $this->returnAjaxSuccess([], 'Purchase Order Created Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Purchase Order");
+        $this->setActiveMenu('procurement.product-material-purchase.index');
+
+        $data = $this->service->editData($id);
+
+        return $this->view('procurement.product-material-purchase.edit')->with($data);
+    }
+
+    public function getEditPurchaseData(Request $request, $id)
+    {
+        $data = $this->service->getEditPurchaseData($request, $id);
+
+        return response()->json($data);
+    }
+
+    public function update(UpdatePurchaseReqeust $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+
+            return $this->returnAjaxSuccess([], 'Purchase Order Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $this->service->statusUpdate($id, $status);
+
+            return $this->returnAjaxSuccess([], 'Status Updated Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

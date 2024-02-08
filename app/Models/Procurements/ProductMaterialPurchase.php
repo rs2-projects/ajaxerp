@@ -26,7 +26,7 @@ class ProductMaterialPurchase extends Model
     const PAYMENT_STATUS_PAID = 2;
     const PAYMENT_STATUSES = [
         self::PAYMENT_STATUS_UNPAID => 'Unpaid',
-        self::PAYMENT_STATUS_PARTIAL_PAID => 'Partial Paid',
+        self::PAYMENT_STATUS_PARTIAL_PAID => 'Partial',
         self::PAYMENT_STATUS_PAID => 'Paid',
     ];
 
@@ -127,4 +127,14 @@ class ProductMaterialPurchase extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
+    }
+
+    public function purchaseDetails()
+    {
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id');
+    }
 }

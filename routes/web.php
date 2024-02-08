@@ -451,6 +451,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/create', [ProductMaterialPurchaseController::class, 'create'])->name('procurement.product-material-purchase.create');
             Route::post('/create', [ProductMaterialPurchaseController::class, 'store'])->name('procurement.product-material-purchase.store');
             Route::get('/{id}/edit', [ProductMaterialPurchaseController::class, 'edit'])->name('procurement.product-material-purchase.edit');
+            Route::get('/{id}/edit-purchase-data-get', [ProductMaterialPurchaseController::class, 'getEditPurchaseData'])->name('procurement.product-material-purchase.get-edit-purchase-data');
             Route::post('/{id}/update', [ProductMaterialPurchaseController::class, 'update'])->name('procurement.product-material-purchase.update');
             Route::get('/{id}/delete', [ProductMaterialPurchaseController::class, 'delete'])->name('procurement.product-material-purchase.delete');
             Route::get('/{id}/change-status/{status}', [ProductMaterialPurchaseController::class, 'statusUpdate'])->name('procurement.product-material-purchase.change-status');

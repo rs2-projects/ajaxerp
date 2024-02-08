@@ -64,7 +64,11 @@
                         <h4 class="text-center d-table-title {{strtolower($purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status])}}-status">{{ $purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status] }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
+                            <a href="investigation.html" class="make-payment-btn">Investigation</a>
+                        @else
+                            <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                        @endif
                     </td>
 
 
@@ -73,9 +77,6 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
-                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    @endif
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
                                 </div>

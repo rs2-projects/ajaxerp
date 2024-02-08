@@ -26,7 +26,6 @@ class StorePurchaseReqeust extends FormRequest
             'purchase_date' => 'required|date',
             'estimated_delivery_date' => 'required|date',
             'batch_number' => 'required|string',
-
         ];
     }
 }

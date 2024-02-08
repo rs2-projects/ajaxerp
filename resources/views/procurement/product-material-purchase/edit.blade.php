@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('procurement.product-material-purchase.store') }}" id="purchaseStoreForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('procurement.product-material-purchase.update',$purchase->id) }}" id="purchaseUpdateForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -74,19 +74,19 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
-                                                    <div ><input class="form-control "  name="batch_number" type="text"></div>
+                                                    <div ><input class="form-control " name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Purchase Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchaseDate }}" name="purchase_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->purchase_date }}" name="purchase_date" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Estimate Delivery Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker"  value="{{ $estimatedDeliveryDate }}" name="estimated_delivery_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->estimated_delivery_date }}" name="estimated_delivery_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -170,7 +170,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                            {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                                {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
@@ -219,7 +219,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                   {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                    {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                                 {{--<div class="po-product-delete-icon-box two">
                                                                     <a href="#"><i class="fa fa-times"></i></a>
@@ -360,12 +360,12 @@
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
                                                         <label class="col-form-label pt-0">Notes / Terms</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer"></textarea>
+                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer">{{ $purchase->notes }}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="po-order-product-payment-status d-none">
+                                        {{--<div class="po-order-product-payment-status d-none">
                                             <div class="po-order-product-payment-status-item">
                                                 <div class="checkbox-wrapper-35">
                                                     <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
@@ -418,7 +418,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>--}}
                                     </div>
 
                                 </div>
@@ -430,7 +430,7 @@
                                         <div class="purchase-order-product-footer-body-inner">
                                             <div class="purchase-order-product-footer-body-item">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
+                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!">{{ $purchase->invoice_footer }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -569,9 +569,9 @@
                     supplier_search: '',
                     selected_supplier:null,
                     open_select_item: false,
-                    discount_type: 0,
-                    discount_value: 0,
-                    discount_amount: 0,
+                    discount_type: "{{ $purchase->discount_type }}",
+                    discount_value: "{{ $purchase->discount_value }}",
+                    discount_amount: "{{ $purchase->discount_amount }}",
                     paying_amount: 0,
 
                 }
@@ -639,7 +639,7 @@
                     } else if(this.cartItems.length <= 0) {
                         showInfoAlert('Opps!', 'Please add at-least 1 Product!');
                     } else {
-                        purchaseStoreFormSubmit();
+                        purchaseUpdateFormSubmit();
                     }
                 },
                 getSearchedItems() {
@@ -660,6 +660,7 @@
                 addItemToCart(item) {
 
                     let exists = this.cartItems.findIndex(o => o.id === item.id);
+                    console.log(exists);
                     if (exists >= 0) {
                         // exists.qty++;
                         this.incrementQty(exists);
@@ -673,7 +674,7 @@
                     }
                     setTimeout(function () {
                         initTaxSelect2();
-                    }, 300);
+                    }, 1000);
                     this.open_select_item = !this.open_select_item;
                 },
                 incrementQty(index) {
@@ -722,12 +723,25 @@
                     let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
                     this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
                     this.updateCartItemPrice(cartItemIndex);
-                }
+                },
+                getPurchaseData() {
+                    axios
+                        .get('{{ route('procurement.product-material-purchase.get-edit-purchase-data',$purchase->id) }}')
+                        .then(response => {
+                            this.cartItems = response.data.cartItems;
+                            this.selected_supplier = response.data.supplier;
+
+                            for (let i in this.cartItems) {
+                                this.updateCartItemPrice(i);
+                            }
+                        });
+                },
             },
             mounted () {
                 this.getSearchedItems();
                 this.getTaxItems();
                 this.getSuppliers();
+                this.getPurchaseData();
             }
 
         }).mount('#VueApp');
@@ -739,9 +753,9 @@
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }
 
-        function purchaseStoreFormSubmit(){
+        function purchaseUpdateFormSubmit(){
 
-            var self = $("#purchaseStoreForm");
+            var self = $("#purchaseUpdateForm");
             var formData = new FormData($(self)[0]);
             $(".ie-span").text("").hide();
             var url = $(self).attr('action');

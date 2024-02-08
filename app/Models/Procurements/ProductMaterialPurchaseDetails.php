@@ -2,6 +2,8 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\Accounting\AccCoaAccount;
+use App\Models\Products\ProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +35,20 @@ class ProductMaterialPurchaseDetails extends Model
         self::HAS_MISSING_YES => 'Yes',
     ];
 
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [
+        self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
+
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    const DELETEDS = [
+        self::DELETED_NO => 'No',
+        self::DELETED_YES => 'Yes',
+    ];
+
     protected $fillable = [
         'product_material_purchase_id',
         'product_material_id',
@@ -61,5 +77,15 @@ class ProductMaterialPurchaseDetails extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function productMaterial()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'product_material_id', 'id');
+    }
+
+    public function tax()
+    {
+        return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
+    }
 
 }
