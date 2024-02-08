@@ -22,7 +22,7 @@ class StoreUserPurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required'
         ];
     }
 }

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered " role="document">
         <div class="modal-content">
             <div class="modal-header erp-modal-header">
-                <h5 class="modal-title">Add Material</h5>
+                <h5 class="modal-title">Add Asset Products</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -46,12 +46,12 @@
                                 <textarea rows="1" id="item_desc" class="form-control"></textarea>
                             </div>
                         </div>
-                        <div class="nprf-item flex-100">
+                        {{-- <div class="nprf-item flex-100">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">File Attachment</label>
-                                <input class="form-control " type="file" placeholder="">
+                                <input class="form-control file_attachment" id="fileInput" type="file" placeholder="">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="nprf-item d-flex justify-content-center mt-3 gap-3 flex-100">
                             <div class="nw-p-add-btn text-center d-inline-block">
                                 <button class=" erp-search-btn text-center" onclick="addPurchaseRequestBtn()"><i class="fa-regular fa-floppy-disk me-2"></i>Save</button>

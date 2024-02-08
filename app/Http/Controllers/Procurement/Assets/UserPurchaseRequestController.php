@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Procurement\Assets;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Procurement\Assets\UserPurchaseRequest\StoreUserPurchaseRequest;
 use App\Services\Procurement\Assets\UserPurchaseRequestService;
 use Illuminate\Http\Request;
 
@@ -28,14 +29,6 @@ class UserPurchaseRequestController extends BackendController
         return $this->view('procurement.asset-purchase-request.user.index');
     }
 
-    public function create()
-    {
-        $this->setPageTitle("Asset Purchase Request");
-        $this->setActiveMenu('procurement.user.asset-purchase-request.index');
-        $data = $this->service->createData();
-        return $this->view('procurement.asset-purchase-request.user._create_purchase_request')->with($data);
-    }
-
     public function getAssetProducts(Request $request)
     {
         $data = $this->service->getAssetProducts($request);
@@ -44,5 +37,23 @@ class UserPurchaseRequestController extends BackendController
             ->render();
 
         return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+    }
+
+    public function create()
+    {
+        $this->setPageTitle("Asset Purchase Request");
+        $this->setActiveMenu('procurement.user.asset-purchase-request.index');
+        $data = $this->service->createData();
+        return $this->view('procurement.asset-purchase-request.user._create_purchase_request')->with($data);
+    }
+
+    public function store(StoreUserPurchaseRequest $request)
+    {
+        try {
+            $this->service->store($request);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Asset Purchase Request created successfully');
     }
 }
