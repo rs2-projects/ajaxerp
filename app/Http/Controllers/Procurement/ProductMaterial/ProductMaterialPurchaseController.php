@@ -66,6 +66,7 @@ class ProductMaterialPurchaseController extends BackendController
         return $this->view('procurement.product-material-purchase.edit')->with($data);
     }
 
+
     public function getEditPurchaseData(Request $request, $id)
     {
         $data = $this->service->getEditPurchaseData($request, $id);
@@ -79,6 +80,48 @@ class ProductMaterialPurchaseController extends BackendController
             $this->service->update($request, $id);
 
             return $this->returnAjaxSuccess([], 'Purchase Order Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function createRevisedOrder($id)
+    {
+        $this->setPageTitle("Revised Order");
+        $this->setActiveMenu('procurement.product-material-purchase.index');
+
+        $data = $this->service->createRevisedOrderData($id);
+
+        return $this->view('procurement.product-material-purchase.create_revised_order')->with($data);
+    }
+
+    public function storeRevisedOrder(UpdatePurchaseReqeust $reqeust, $id)
+    {
+        try {
+            $this->service->storeRevisedOrderData($reqeust, $id);
+
+            return $this->returnAjaxSuccess([], 'Revised Order Created Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function createBackOrder($id)
+    {
+        $this->setPageTitle("Back Order");
+        $this->setActiveMenu('procurement.product-material-purchase.index');
+
+        $data = $this->service->createBackOrderData($id);
+
+        return $this->view('procurement.product-material-purchase.create_back_order')->with($data);
+    }
+
+    public function storeBackOrder(UpdatePurchaseReqeust $reqeust, $id)
+    {
+        try {
+            $this->service->storeBackOrderData($reqeust, $id);
+
+            return $this->returnAjaxSuccess([], 'Back Order Created Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

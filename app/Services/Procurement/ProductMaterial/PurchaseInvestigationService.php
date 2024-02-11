@@ -3,6 +3,11 @@
 namespace App\Services\Procurement\ProductMaterial;
 
 use App\Models\Procurements\ProductMaterialPurchase;
+use App\Models\Procurements\ProductMaterialPurchaseDetailDamageFile;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Services\Common\ImageUploadService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseInvestigationService
 {
@@ -24,5 +29,172 @@ class PurchaseInvestigationService
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
+    }
+
+    public function updateData($request, $id)
+    {
+//        dd($request->all());
+        DB::beginTransaction();
+        try {
+            $purchase = ProductMaterialPurchase::where('id', $id)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+
+            if (!$purchase) {
+                throw new \Exception('Purchase Order Not Found');
+            }
+//            dd($request->all());
+
+            $has_damage = 0;
+            $has_missing = 0;
+
+            if (is_array($request->purchase_detail_id) && count($request->purchase_detail_id) > 0) {
+                foreach ($request->purchase_detail_id as $key => $value) {
+
+                    if (!isset($request->is_perfect[$key]) && !isset($request->has_damage[$key]) && !isset($request->has_missing[$key])) {
+                        throw new \Exception('Please select at least one option');
+                    }
+
+                    $purchaseDetail = ProductMaterialPurchaseDetails::where('id', $value)
+                        ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                        ->first();
+
+                    if (!$purchaseDetail) {
+                        throw new \Exception('Purchase Detail Not Found');
+                    }
+
+                    if (isset($request->is_perfect[$key]) && ($request->is_perfect[$key])) {
+                        $purchaseDetail->is_perfect = 1;
+                        //item perfect do the rest of function
+                        $purchaseDetail->has_damage = $purchaseDetail::HAS_DAMAGE_NO;
+                        $purchaseDetail->damage_qty = 0;
+                        $purchaseDetail->damage_remarks = $request->damage_remarks[$key];
+
+                        $purchaseDetail->has_missing = $purchaseDetail::HAS_MISSING_NO;
+                        $purchaseDetail->missing_qty = 0;
+                        $purchaseDetail->missing_remarks = $request->missing_remarks[$key];
+
+                        $has_damage = 0;
+                        $has_missing = 0;
+
+                    } else {
+                        $purchaseDetail->is_perfect = 0;
+                        //check if has damage and do the rest of functions
+                        if (isset($request->has_damage[$key]) && ($request->has_damage[$key])) {
+                            $purchaseDetail->has_damage = $purchaseDetail::HAS_DAMAGE_YES;
+                            $purchaseDetail->damage_qty = $request->damage_qty[$key];
+                            $purchaseDetail->damage_remarks = $request->damage_remarks[$key];
+
+                            $has_damage = 1;
+                        } else {
+                            $purchaseDetail->has_damage = $purchaseDetail::HAS_DAMAGE_NO;
+                            $purchaseDetail->damage_qty = 0;
+                            $purchaseDetail->damage_remarks = $request->damage_remarks[$key];
+
+                            $has_damage = 0;
+                        }
+                        //check if has missing and do the rest of functions
+
+                        if (isset($request->has_missing[$key]) && ($request->has_missing[$key])) {
+                            $purchaseDetail->has_missing = $purchaseDetail::HAS_MISSING_YES;
+                            $purchaseDetail->missing_qty = $request->missing_qty[$key];
+                            $purchaseDetail->missing_remarks = $request->missing_remarks[$key];
+
+                            $has_missing = 1;
+                        } else {
+                            $purchaseDetail->has_missing = $purchaseDetail::HAS_MISSING_NO;
+                            $purchaseDetail->missing_qty = 0;
+                            $purchaseDetail->missing_remarks = $request->missing_remarks[$key];
+
+                            $has_missing = 0;
+                        }
+                    }
+                    $purchaseDetail->updated_by = auth()->user()->id;
+                    $purchaseDetail->updated_at = Carbon::now();
+                    $purchaseDetail->save();
+
+                    // delete previous files
+
+                    $unlinkAndDelete = ProductMaterialPurchaseDetailDamageFile::where('product_material_purchase_detail_id', $value)
+                        ->get();
+
+                    if(count($unlinkAndDelete) > 0){
+                        foreach($unlinkAndDelete as $unlink){
+
+                            if($unlink->file_path !='' && file_exists(getExactFilePath($unlink->file_path))) {
+
+                                unlink(getExactFilePath($unlink->file_path));
+                            }
+
+                            $unlink->delete();
+                        }
+                    }
+
+
+
+                    if(isset($request->file_type_damage) && is_array($request->file_type_damage)) {
+                        if(isset($request->file_type_damage[$key]) && is_array($request->file_type_damage[$key])) {
+                            foreach($request->file_type_damage[$key] as $fileKey=>$damageFile){
+                                if($request->hasFile('file_type_damage.'.$key.'.'.$fileKey)){
+                                    $file = $request->file('file_type_damage.'.$key.'.'.$fileKey);
+                                    $imageUploadService = new ImageUploadService();
+                                    $image_path = $imageUploadService->store($file, 'material-purchase/investigation/');
+
+                                    $damageFileStore = new ProductMaterialPurchaseDetailDamageFile();
+                                    $damageFileStore->product_material_purchase_id = $purchase->id;
+                                    $damageFileStore->product_material_purchase_detail_id = $purchaseDetail->id;
+                                    $damageFileStore->file_type = ProductMaterialPurchaseDetailDamageFile::FILE_TYPE_DAMAGE;
+                                    $damageFileStore->file_path = $image_path['path']??null;
+                                    $damageFileStore->created_by = auth()->user()->id;
+                                    $damageFileStore->created_at = Carbon::now();
+                                    $damageFileStore->updated_by = auth()->user()->id;
+                                    $damageFileStore->updated_at = Carbon::now();
+                                    $damageFileStore->save();
+
+                                }
+                            }
+                        }
+                    }
+
+                    if(isset($request->file_type_missing) && is_array($request->file_type_missing)) {
+                        if(isset($request->file_type_missing[$key]) && is_array($request->file_type_missing[$key])) {
+                            foreach($request->file_type_missing[$key] as $fileKey=>$missingFile){
+                                if($request->hasFile('file_type_missing.'.$key.'.'.$fileKey)){
+                                    $file = $request->file('file_type_missing.'.$key.'.'.$fileKey);
+                                    $imageUploadService = new ImageUploadService();
+                                    $image_path = $imageUploadService->store($file, 'material-purchase/investigation/');
+
+                                    $missingFileStore = new ProductMaterialPurchaseDetailDamageFile();
+                                    $missingFileStore->product_material_purchase_id = $purchase->id;
+                                    $missingFileStore->product_material_purchase_detail_id = $purchaseDetail->id;
+                                    $missingFileStore->file_type = ProductMaterialPurchaseDetailDamageFile::FILE_TYPE_MISSING;
+                                    $missingFileStore->file_path = $image_path['path']??null;
+                                    $missingFileStore->created_by = auth()->user()->id;
+                                    $missingFileStore->created_at = Carbon::now();
+                                    $missingFileStore->updated_by = auth()->user()->id;
+                                    $missingFileStore->updated_at = Carbon::now();
+                                    $missingFileStore->save();
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $purchase->purchase_status = $purchase::PURCHASE_STATUS_DELIVERED;
+            $purchase->has_damage = $has_damage;
+            $purchase->has_missing = $has_missing;
+            $purchase->updated_by = auth()->user()->id;
+            $purchase->updated_at = Carbon::now();
+            $purchase->save();
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+
+        return $purchase;
     }
 }

@@ -135,6 +135,6 @@ class ProductMaterialPurchase extends Model
 
     public function purchaseDetails()
     {
-        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id');
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO);
     }
 }

@@ -457,6 +457,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/delete', [ProductMaterialPurchaseController::class, 'delete'])->name('procurement.product-material-purchase.delete');
             Route::get('/{id}/change-status/{status}', [ProductMaterialPurchaseController::class, 'statusUpdate'])->name('procurement.product-material-purchase.change-status');
 
+            // create and back purchase order
+            Route::get('/{id}/create-revised-order', [ProductMaterialPurchaseController::class, 'createRevisedOrder'])->name('procurement.product-material-purchase.create-revised-order');
+            Route::post('/{id}/create-revised-order', [ProductMaterialPurchaseController::class, 'storeRevisedOrder'])->name('procurement.product-material-purchase.store-revised-order');
+            Route::get('/{id}/create-back-order', [ProductMaterialPurchaseController::class, 'createBackOrder'])->name('procurement.product-material-purchase.create-back-order');
+            Route::post('/{id}/create-back-order', [ProductMaterialPurchaseController::class, 'storeBackOrder'])->name('procurement.product-material-purchase.store-back-order');
+
             Route::get('/get-all-product-materials',[ProductMaterialPurchaseController::class, 'getAllProductMaterials'])->name('procurement.product-material-purchase.get-all-product-materials');
             Route::get('/get-all-taxes',[ProductMaterialPurchaseController::class, 'getAllTaxes'])->name('procurement.product-material-purchase.get-all-taxes');
             Route::get('/get-all-suppliers',[ProductMaterialPurchaseController::class, 'getAllSuppliers'])->name('procurement.product-material-purchase.get-all-suppliers');
@@ -466,7 +472,7 @@ Route::group(['middleware' => 'auth'], function () {
         // purchase investigation route start
         Route::group(['prefix' => 'purchase-investigation'], function () {
             Route::get('/{purchase_id}', [PurchaseInvestigationController::class, 'index'])->name('procurement.purchase-investigation.index');
-            Route::get('/{purchase_id}/update', [PurchaseInvestigationController::class, 'update'])->name('procurement.purchase-investigation.update');
+            Route::post('/{purchase_id}/update', [PurchaseInvestigationController::class, 'update'])->name('procurement.purchase-investigation.update');
         });
     });
     // Procurement route End

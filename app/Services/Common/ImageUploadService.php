@@ -13,7 +13,7 @@ class ImageUploadService
                 throw new \Exception("Invalid Type!");
             }
             if($image == null) {
-                throw new \Exception('Empty Image');
+                throw new \Exception('Empty Image!');
             }
 
             if($name === null) {
@@ -40,7 +40,7 @@ class ImageUploadService
         ];
     }
 
-    public function update($image, $path='', $old_image_path, $name=null, $type='webp'): array
+    public function update($image, $path='', $old_image_path='', $name=null, $type='webp'): array
     {
         try {
             if(!$this->validateType($type)) {

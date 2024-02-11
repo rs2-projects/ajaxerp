@@ -74,6 +74,8 @@
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.product-material-purchase.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
+                                    <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-revised-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Revised P.O</a>
+                                    <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 

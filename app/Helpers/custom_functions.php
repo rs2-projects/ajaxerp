@@ -123,3 +123,14 @@ if (!function_exists('hoursToMinutes')) {
         return $totalMinutes;
     }
 }
+
+if (!function_exists('getExactFilePath')) {
+    function getExactFilePath($path)
+    {
+        if($path == '') {
+            return '';
+        }
+        $path = substr($path, 8);
+        return storage_path('app/public/'.$path);
+    }
+}

@@ -28,6 +28,7 @@
                                                 @foreach($purchase->purchaseDetails as $key=>$purchaseDetail)
                                                     <tr class="erp-tbody-tr">
                                                         <td class="erp-tbody-td">
+                                                            <input type="hidden" name="purchase_detail_id[]" value="{{ $purchaseDetail->id }}">
                                                             <h4 class="d-table-title">{{$key+1}}</h4>
                                                         </td>
                                                         <td class="erp-tbody-td text-start">
@@ -50,7 +51,7 @@
                                                         </td>
                                                         <td class="erp-tbody-td text-center">
                                                             <label class="col-form-label">
-                                                                <input type="checkbox" name="is_perfect[]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Is it Perfect</span>
+                                                                <input type="checkbox" name="is_perfect[{{ $key }}]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Is it Perfect</span>
                                                             </label>
                                                         </td>
                                                         <td class="erp-tbody-td text-center">
@@ -59,13 +60,13 @@
                                                                     <div class="issue-box-child-wrap d-flex align-items-center justify-content-end">
                                                                         <div class="issue-box-child-item">
                                                                             <label class="col-form-label">
-                                                                                <input type="checkbox" name="has_damage[]" class="has_damage" {{ ($purchaseDetail->has_damage == $purchaseDetail::HAS_DAMAGE_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Damage</span>
+                                                                                <input type="checkbox" name="has_damage[{{ $key }}]" class="has_damage" {{ ($purchaseDetail->has_damage == $purchaseDetail::HAS_DAMAGE_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Damage</span>
                                                                             </label>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box position-relative">
                                                                                 <label class="col-form-label">Qty </label>
-                                                                                <input type="text" class="form-control " name="damage_qty[]" value="{{ $purchaseDetail->damage_qty }}">
+                                                                                <input type="number" class="form-control " min="0" max="{{ $purchaseDetail->qty }}" name="damage_qty[]" value="{{ $purchaseDetail->damage_qty }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
@@ -77,7 +78,7 @@
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box-2 position-relative">
 
-                                                                                <input type="file" class="form-control " multiple name="file_type_damage[]">
+                                                                                <input type="file" class="form-control " multiple name="file_type_damage[{{ $key }}][]">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -86,13 +87,13 @@
                                                                     <div class="issue-box-child-wrap d-flex align-items-center justify-content-end">
                                                                         <div class="issue-box-child-item">
                                                                             <label class="col-form-label">
-                                                                                <input type="checkbox" name="has_missing[]" class="has_missing" {{ ($purchaseDetail->has_missing == $purchaseDetail::HAS_MISSING_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Missing</span>
+                                                                                <input type="checkbox" name="has_missing[{{ $key }}]" class="has_missing" {{ ($purchaseDetail->has_missing == $purchaseDetail::HAS_MISSING_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Missing</span>
                                                                             </label>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box position-relative">
                                                                                 <label class="col-form-label">Qty </label>
-                                                                                <input type="text" class="form-control " name="missing_qty[]" value="{{ $purchaseDetail->missing_qty }}">
+                                                                                <input type="number" class="form-control " min="0" max="{{ $purchaseDetail->qty }}"  name="missing_qty[]" value="{{ $purchaseDetail->missing_qty }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
@@ -104,7 +105,7 @@
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box-2 position-relative">
 
-                                                                                <input type="file" class="form-control " multiple name="file_type_missing[]">
+                                                                                <input type="file" class="form-control " multiple name="file_type_missing[{{ $key }}][]">
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -169,8 +170,9 @@
         $(document).ready(function () {
             $(document).on('change', '.is_perfect', function () {
                 if ($(this).is(':checked')) {
-                    $(this).closest('tr').find('.has_damage').prop('checked', false);
+                    $(this).closest('tr').find('.has_damage').prop('checked', false)
                     $(this).closest('tr').find('.has_missing').prop('checked', false);
+
                 }
             });
             $(document).on('change', '.has_damage', function () {
@@ -190,9 +192,11 @@
                 $(".ie-span").text("").hide();
                 var url = $(this).attr('action');
 
+
                 formPost(url, formData, function (res){
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message)
+                        window.location.href = "{{ route('procurement.product-material-purchase.index') }}"
                     }else{
                         showErrorAlert('Error',res.message)
                     }
