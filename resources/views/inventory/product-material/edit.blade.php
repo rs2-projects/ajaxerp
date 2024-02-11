@@ -16,9 +16,9 @@
                                     <li class="nav-item erp-nav-item" role="presentation">
                                         <button class="nav-link erp-nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab" aria-controls="profile" aria-selected="false" tabindex="-1">Materials Info</button>
                                     </li>
-{{--                                    <li class="nav-item erp-nav-item" role="presentation">--}}
-{{--                                        <button class="nav-link erp-nav-link" id="warehouse-tab" data-bs-toggle="tab" data-bs-target="#warehouse" type="button" role="tab" aria-controls="profile" aria-selected="false" tabindex="-1">Warehouse Info</button>--}}
-{{--                                    </li>--}}
+                                    <li class="nav-item erp-nav-item" role="presentation">
+                                        <button class="nav-link erp-nav-link" id="warehouse-tab" data-bs-toggle="tab" data-bs-target="#warehouse" type="button" role="tab" aria-controls="profile" aria-selected="false" tabindex="-1">Warehouse Info</button>
+                                    </li>
 
 
                                 </ul>
@@ -146,7 +146,7 @@
                                         </div>
 
                                     </div>
-                                    {{--<div class="tab-pane fade " id="warehouse" role="tabpanel" aria-labelledby="warehouse-tab">
+                                    <div class="tab-pane fade " id="warehouse" role="tabpanel" aria-labelledby="warehouse-tab">
                                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-100">
                                                 <div class="input-block erp-step-input-block mb-0 two">
@@ -190,7 +190,7 @@
 
                                         </div>
 
-                                    </div>--}}
+                                    </div>
 
                                 </div>
                             </div>
@@ -236,8 +236,8 @@
     <script>
         $(document).ready(function() {
 
-            /*initSectionMultipleSelect();
-            initRackMultipleSelect();*/
+            initSectionMultipleSelect();
+            initRackMultipleSelect();
 
             $("#productMaterialUpdateForm").on('submit', function (e) {
                 var self = this;
@@ -272,6 +272,7 @@
 
         }
         function changeSections(select){
+
             let section_ids = $(select).val();
             let url = "{{ route('inventory.product-material.get-racks-by-sections') }}";
             ajaxGet(url, {section_ids:section_ids}, function (response) {

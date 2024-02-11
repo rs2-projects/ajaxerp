@@ -21,6 +21,7 @@ use App\Http\Controllers\Inventory\WarehouseController;
 use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Procurement\ProductMaterial\ProductMaterialPurchaseController;
+use App\Http\Controllers\Procurement\ProductMaterial\PurchaseInvestigationController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -461,6 +462,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/get-all-suppliers',[ProductMaterialPurchaseController::class, 'getAllSuppliers'])->name('procurement.product-material-purchase.get-all-suppliers');
         });
        // materials purchase order route end
+
+        // purchase investigation route start
+        Route::group(['prefix' => 'purchase-investigation'], function () {
+            Route::get('/{purchase_id}', [PurchaseInvestigationController::class, 'index'])->name('procurement.purchase-investigation.index');
+            Route::get('/{purchase_id}/update', [PurchaseInvestigationController::class, 'update'])->name('procurement.purchase-investigation.update');
+        });
     });
     // Procurement route End
 

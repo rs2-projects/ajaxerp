@@ -24,6 +24,7 @@ class ProductMaterialRack extends Model
     protected $fillable = [
         'warehouse_id',
         'product_material_id',
+        'product_material_section_id',
         'warehouse_section_id',
         'warehouse_rack_id',
         'status',

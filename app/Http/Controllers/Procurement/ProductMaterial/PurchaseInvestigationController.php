@@ -18,4 +18,21 @@ class PurchaseInvestigationController extends BackendController
 
         $this->service = new PurchaseInvestigationService();
     }
+
+    public function index($purchase_id)
+    {
+        try {
+            $this->setPageTitle("Material Purchase Investigation");
+            $this->setActiveMenu('procurement.product-material-purchase.index');
+
+            $data = $this->service->indexData($purchase_id);
+
+
+        }catch (\Exception $e) {
+            return redirect()->route('procurement.product-material-purchase.index')->with('error', $e->getMessage());
+        }
+
+        return $this->view('procurement.product-material-purchase.purchase-investigation.index')->with($data);
+
+    }
 }

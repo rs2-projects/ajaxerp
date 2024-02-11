@@ -33,6 +33,6 @@ class ProductMaterialSection extends Model
     }
 
     public function productMaterialRacks(){
-        return $this->hasMany(ProductMaterialRack::class, 'warehouse_section_id', 'id');
+        return $this->hasMany(ProductMaterialRack::class, 'product_material_section_id', 'id');
     }
 }

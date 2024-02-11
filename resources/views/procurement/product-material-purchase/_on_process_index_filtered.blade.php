@@ -65,9 +65,9 @@
                     </td>
                     <td class="erp-tbody-td text-center">
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
-                            <a href="investigation.html" class="make-payment-btn">Investigation</a>
+                            <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
                         @else
-                            <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                            <a href="javascript:void(0)" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
                         @endif
                     </td>
 

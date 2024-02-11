@@ -78,6 +78,7 @@ class ProductMaterialService
 
     public function storeData($request)
     {
+
         DB::beginTransaction();
         try {
 
@@ -119,6 +120,7 @@ class ProductMaterialService
             $product_material->updated_at = Carbon::now();
             $product_material->save();
 
+            $product_material_section_ids = [];
             if (count($request->sections) > 0) {
                 foreach ($request->sections as $key=>$section) {
                     $product_material_section = new ProductMaterialSection();
@@ -126,6 +128,8 @@ class ProductMaterialService
                     $product_material_section->product_material_id = $product_material->id;
                     $product_material_section->warehouse_section_id = $section;
                     $product_material_section->save();
+
+                    $product_material_section_ids[$section] = $product_material_section->id;
                 }
             }else{
                 throw new \Exception("Please select at least one section");
@@ -138,11 +142,13 @@ class ProductMaterialService
                         ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
                         ->first();
                     if (!empty($checkRack)) {
+
                         $product_material_rack = new ProductMaterialRack();
-                        $product_material_rack->warehouse_id = $request->warehouse_id;
+                        $product_material_rack->warehouse_id = $checkRack->warehouse_id;
                         $product_material_rack->product_material_id = $product_material->id;
+                        $product_material_rack->product_material_section_id = $product_material_section_ids[$checkRack->warehouse_section_id] ?? null;
                         $product_material_rack->warehouse_section_id = $checkRack->warehouse_section_id;
-                        $product_material_rack->warehouse_rack_id = $rack;
+                        $product_material_rack->warehouse_rack_id = $checkRack->id;
                         $product_material_rack->save();
                     }
                 }
@@ -150,7 +156,7 @@ class ProductMaterialService
                 throw new \Exception("Please select at least one rack");
             }
 
-
+//            dd('1ok');
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -207,7 +213,7 @@ class ProductMaterialService
                 ->toArray();
 
             $data['sections'] = WarehouseSection::where('warehouse_id', $data['product_material']->warehouse_id)
-                ->whereIn('id', $data['product_material_sections'])
+//                ->whereIn('id', $data['product_material_sections'])
                 ->where('deleted', WarehouseSection::DELETED_NO)
                 ->where('status', WarehouseSection::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
@@ -228,6 +234,7 @@ class ProductMaterialService
 
     public function updateData($request, $id)
     {
+
         DB::beginTransaction();
         try {
 
@@ -256,6 +263,7 @@ class ProductMaterialService
             $product_material->name = $request->name;
             $product_material->image = $image_path??$product_material->image;
             $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->warehouse_id = $request->warehouse_id;
             $product_material->code = $request->code;
             $product_material->unit_type = $request->unit_type;
             $product_material->low_stock_warning = $request->low_stock_warning;
@@ -268,9 +276,64 @@ class ProductMaterialService
             $product_material->width = $request->width;
             $product_material->thickness = $request->thickness;
             $product_material->remarks = $request->remarks;
+            $product_material->comments = $request->comments;
             $product_material->updated_by = auth()->user()->id;
             $product_material->updated_at = Carbon::now();
             $product_material->save();
+
+            $product_material_section_ids = [];
+
+            ProductMaterialRack::where('product_material_id', $id)
+                ->whereNotIn('warehouse_rack_id', $request->racks)
+                ->delete();
+
+            ProductMaterialSection::where('product_material_id', $id)
+                ->whereNotIn('warehouse_section_id', $request->sections)
+                ->delete();
+
+            if (count($request->sections) > 0) {
+                foreach ($request->sections as $key=>$section) {
+                    $product_material_section = ProductMaterialSection::where('product_material_id', $id)
+                        ->where('warehouse_section_id', $section)
+                        ->first();
+                    if (!$product_material_section) {
+                        $product_material_section = new ProductMaterialSection();
+                    }
+                    $product_material_section->warehouse_id = $product_material->warehouse_id;
+                    $product_material_section->product_material_id = $product_material->id;
+                    $product_material_section->warehouse_section_id = $section;
+                    $product_material_section->save();
+
+                    $product_material_section_ids[$section] = $product_material_section->id;
+                }
+
+            }else{
+                throw new \Exception("Please select at least one section");
+            }
+
+            if (count($request->racks) > 0) {
+                foreach ($request->racks as $key2=>$rack) {
+                    $checkRack = WarehouseSectionRack::where('id', $rack)
+                        ->where('deleted', WarehouseSectionRack::DELETED_NO)
+                        ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
+                        ->first();
+                    if (!empty($checkRack)) {
+
+                        $product_material_rack = ProductMaterialRack::where('product_material_id', $id)
+                            ->where('warehouse_rack_id', $rack)
+                            ->first();
+                        if (!$product_material_rack) {
+                            $product_material_rack = new ProductMaterialRack();
+                        }
+                        $product_material_rack->warehouse_id = $checkRack->warehouse_id;
+                        $product_material_rack->product_material_id = $product_material->id;
+                        $product_material_rack->product_material_section_id = $product_material_section_ids[$checkRack->warehouse_section_id] ?? null;
+                        $product_material_rack->warehouse_section_id = $checkRack->warehouse_section_id;
+                        $product_material_rack->warehouse_rack_id = $checkRack->id;
+                        $product_material_rack->save();
+                    }
+                }
+            }
 
         }catch (\Exception $e) {
             DB::rollBack();

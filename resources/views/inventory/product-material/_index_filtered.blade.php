@@ -59,7 +59,7 @@
                                     {{ $warehouseSection->warehouseSection->name??'N/A' }} (<span>
                                         @if(count($warehouseSection->productMaterialRacks) > 0)
                                             @foreach($warehouseSection->productMaterialRacks as $rack)
-                                                {{ $rack->warehouseSectionRack->name??''}}
+                                                {{ $rack->warehouseSectionRack->name??''}} <span class="text-red">,</span>
                                             @endforeach
                                         @endif
                                     </span>)
