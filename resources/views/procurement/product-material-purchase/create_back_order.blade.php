@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('procurement.product-material-purchase.store-revised-order',$purchase->id) }}" id="purchaseUpdateForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('procurement.product-material-purchase.store-back-order',$purchase->id) }}" id="purchaseUpdateForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -74,19 +74,19 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
-                                                    <div ><input class="form-control " name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
+                                                    <div ><input class="form-control " name="batch_number"  type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Purchase Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->purchase_date }}" name="purchase_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ \Carbon\Carbon::now() }}" name="purchase_date" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Estimate Delivery Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->estimated_delivery_date }}" name="estimated_delivery_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ \Carbon\Carbon::now() }}" name="estimated_delivery_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>

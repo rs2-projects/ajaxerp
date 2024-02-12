@@ -21,13 +21,25 @@
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" class="form-control search-product-in" placeholder="Purchase Order">
+                                            <input type="text" class="form-control search-product-in" id="keyword_filtered" placeholder="Purchase Order">
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box" name="month" id="month">
+                                            <select class="select floating select2-box" id="year_filtered" onchange="yearFiltered(this)">
+                                                <option value="">Select Year</option>
+                                                @for($i=2023; $i <= \Carbon\Carbon::now()->format('Y'); $i++)
+                                                    <option value="{{$i}}">{{$i}}</option>
+                                                @endfor
+                                                <option value="last_year">Last Year</option>
+                                                <option value="last_two_year">Last Two Years</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item flex-25 month-filtered-hide-show" style="display: none">
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box" id="month_filtered">
                                                 <option value="">Select Month</option>
                                                 @foreach($months as $key=>$month)
                                                     <option value="{{$key}}">{{ ucfirst($month) }}</option>
@@ -36,23 +48,9 @@
 
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-25">
-                                        <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box">
-                                                <option>Select Year</option>
-                                                <option>2023</option>
-                                                <option>2022</option>
-                                                <option>2021</option>
-                                                <option>Last Year</option>
-                                                <option>Last Two Years</option>
-
-                                            </select>
-
-                                        </div>
-                                    </div>
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
-                                            <button class=" erp-search-btn">Search</button>
+                                            <button class="erp-search-btn" type="button" onclick="getData()">Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1543,7 +1541,7 @@
     <script>
         var filterData = {
             keyword_filtered: '',
-            status_filtered: 'all_purchase'
+            status_filtered: 'all_purchase',
         };
         $(document).ready(function() {
             getData();
@@ -1558,6 +1556,8 @@
 
                 getData();
             });
+
+
         });
 
 
@@ -1568,6 +1568,7 @@
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
+
 
     </script>
 @endsection
