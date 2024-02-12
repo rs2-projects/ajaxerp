@@ -54,4 +54,9 @@ class AssetProductPurchaseRequest extends Model
         'deleted_by',
         'deleted_at',
     ];
+    
+    public function purchase_request_details()
+    {
+        return $this->hasMany(AssetProductPurchaseRequestDetails::class, 'asset_product_purchase_request_id', 'id');
+    }
 }

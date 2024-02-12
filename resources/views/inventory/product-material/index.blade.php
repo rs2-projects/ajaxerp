@@ -64,6 +64,7 @@
 @section('modals')
     @include('inventory.product-material._add_product_material')
     @include('inventory.product-material._edit_product_material')
+    @include('inventory.product-material._purchase_history_modal')
 @endsection
 
 @section('css')
@@ -158,13 +159,26 @@
             });
         }
 
-        function editItem(id){
+        /*function editItem(id){
             let url = "{{route('inventory.product-material.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     $("#edit_product_material_modal_body").html(response.view);
                     $("#editProductMaterialModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }*/
+
+        function purchaseHistory(id){
+            let url = "{{route('inventory.product-material.purchase-history', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#purchase_history_modal_body").html(response.view);
+                    $("#purchaseHistoryModal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }

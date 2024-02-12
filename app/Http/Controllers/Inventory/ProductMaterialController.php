@@ -73,6 +73,19 @@ class ProductMaterialController extends BackendController
         }
     }
 
+    public function purchaseHistory($id)
+    {
+        try {
+            $data = $this->service->purchaseHistory($id);
+            $view = $this->view('inventory.product-material._purchase_history_data')->with($data)
+                ->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
     public function delete($id)
     {
         try {

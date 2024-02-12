@@ -1,4 +1,4 @@
-<div id="editPurchaseRequestModal" class="modal custom-modal fade" role="dialog">
+<div id="editPurchaseRequestModal" class="modal custom-modal fade" role="dialog" data-bs-hidden="updateRowData">
     <div class="modal-dialog modal-dialog-centered " role="document">
         <div class="modal-content">
             <div class="modal-header erp-modal-header">
@@ -16,7 +16,7 @@
                         <div class="nprf-item flex-100">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">Category <span class="text-danger">*</span></label>
-                                <select class="select select-step" id="categor_edit" name="" onchange="categoryChangeHandler(this)" required>
+                                <select class="select select-step category" id="category_edit" name="" onchange="categoryChangeHandler(this)" required>
                                     <option value="">Select Category</option>
                                         @foreach ($asset_categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -37,18 +37,19 @@
                         <div class="nprf-item flex-23">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">QTY <span class="text-red">*</span></label>
-                                <input class="form-control" id="item_qty_edit" type="text" placeholder="" required>
+                                <input class="form-control item_qty" id="item_qty_edit" type="text" placeholder="" required>
                             </div>
                         </div>
                         <div class="nprf-item flex-100">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">Description</label>
-                                <textarea rows="1" id="item_desc_edit" class="form-control"></textarea>
+                                <textarea rows="1" id="item_desc_edit" class="form-control item_desc"></textarea>
                             </div>
                         </div>
                         <div class="nprf-item d-flex justify-content-center mt-3 gap-3 flex-100">
                             <div class="nw-p-add-btn text-center d-inline-block">
-                                <button class=" erp-search-btn text-center" onclick="addPurchaseRequestBtn()"><i class="fa-regular fa-floppy-disk me-2"></i>Save</button>
+                                <button class=" erp-search-btn text-center" onclick="editRowPurchaseRequest()"><i class="fa-regular fa-floppy-disk me-2"></i>Save</button>
+                                
                             </div>
                             <div class="nw-p-add-btn text-center d-inline-block rbtn">
                                 <button class=" erp-search-btn text-center"><i class="fa-solid fa-trash me-2"></i>Remove</button>

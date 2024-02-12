@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Procurement\Assets;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Procurement\Assets\UserPurchaseRequest\StoreUserPurchaseRequest;
+use App\Http\Requests\Procurement\Assets\UserPurchaseRequest\UpdateUserPurchaseRequest;
 use App\Services\Procurement\Assets\UserPurchaseRequestService;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,6 @@ class UserPurchaseRequestController extends BackendController
         $this->setPageTitle("Asset Purchase Request");
         $this->setActiveMenu('procurement.user.asset-purchase-request.index');
         // $data = $this->service->indexData();
-        // return  $this->view('procurement.supplier.index')->with($data);
         return $this->view('procurement.asset-purchase-request.user.index');
     }
 
@@ -62,5 +62,34 @@ class UserPurchaseRequestController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Asset Purchase Request created successfully');
+    }
+
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Purchase Request");
+        $this->setActiveMenu('procurement.user.asset-purchase-request.index');
+        $data = $this->service->editData($id);
+        return $this->view('procurement.asset-purchase-request.user._edit_purchase_request')->with($data);
+    }
+
+    public function update(UpdateUserPurchaseRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+
+            return $this->returnAjaxSuccess([], 'Purchase Request Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->service->delete($id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Asset Purchase Request deleted successfully');
     }
 }

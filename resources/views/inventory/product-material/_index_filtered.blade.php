@@ -34,7 +34,7 @@
                     </td>
 
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">Check Status</a>
+                        <a href="javascript:void(0)" class="last-cal-status-btn" onclick="purchaseHistory({{$product_material->id}})">Check Status</a>
                     </td>
 
                     <td class="erp-tbody-td text-center">

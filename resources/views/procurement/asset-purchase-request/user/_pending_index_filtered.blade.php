@@ -31,7 +31,7 @@
                     </td>
                     <td class="text-center erp-tbody-td">
                         @if($pr->request_status == $pr::REQUEST_STATUS_ADDITIONAL_INFO)
-                        <a href="" class="text-center d-table-title add-more-status">Add More Info</a>
+                        <a href="{{ route('procurement.user.asset-purchase-request.edit',$pr->id) }}" class="text-center d-table-title add-more-status">Add More Info</a>
                         @endif
                     </td>
                 </tr>
