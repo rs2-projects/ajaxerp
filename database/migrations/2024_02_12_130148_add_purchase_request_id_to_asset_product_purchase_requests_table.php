@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('asset_product_purchase_requests', function (Blueprint $table) {
-            $table->string('purchase_request_id')->after('id')->comment('auto generate');
+            $table->string('purchase_request_id', 64)->after('id')->comment('auto generate');
         });
     }
 

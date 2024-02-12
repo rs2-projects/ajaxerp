@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="new-purchase-wrapper">
-                <form action="{{ route('procurement.user.asset-purchase-request.store') }}" id="purchaseRequestStoreForm" method="POST">
+                <form action="{{ route('procurement.user.asset-purchase-request.update',$purchase_request->id) }}" id="purchaseRequestUpdateForm" method="POST">
                     @csrf
                     <div class="row justify-content-center gap-4">
                         <div class="col-md-12">
@@ -15,7 +15,7 @@
                                             <div class="purchase-request-title-box mb-2">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Title <span class="text-red">*</span></label>
-                                                    <input class="form-control" name="title" id="purchase_title" type="text" placeholder="Enter a Title Here" required="">
+                                                    <input class="form-control" value="{{$purchase_request->title}}" name="title" id="purchase_title" type="text" placeholder="Enter a Title Here" required="">
                                                 </div>
                                             </div>
                                             <div class="#table-responsive">
@@ -31,7 +31,35 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody class="erp-tbody" id="purchaseRequestTableBody">
-
+                                                        @foreach ($purchase_request->purchase_request_details as $prequest_detail)
+                                                            <tr class="erp-tbody-tr" data-category-id="{{$prequest_detail->asset_product_category_id}}" data-product-id="{{$prequest_detail->asset_product_id}}" data-qty="{{$prequest_detail->qty}}" data-description="{{$prequest_detail->description}}">
+                                                                
+                                                                <input type="hidden" name="puchase_details_id[]" value="{{$prequest_detail->id}}">
+                                                                <input type="hidden" class="asset_product_category_id" name="asset_product_category_id[]" value="{{$prequest_detail->asset_product_category_id}}">
+                                                                <input type="hidden" class="asset_product_id" name="asset_product_id[]" value="{{$prequest_detail->asset_product_id}}">
+                                                                <input type="hidden" class="asset_qty" name="qty[]" value="{{$prequest_detail->qty}}">
+                                                                <input type="hidden" class="asset_desc" name="description[]" value="{{$prequest_detail->description}}">
+                                                                <td class="erp-tbody-td text-start cat_name">{{$prequest_detail->asset_category->name}}</td>
+                                                                <td class="erp-tbody-td text-center p_name">{{$prequest_detail->asset_product->name}}</td>
+                                                                <td class="erp-tbody-td text-center qtty">{{$prequest_detail->qty}}</td>
+                                                                <td class="erp-tbody-td text-center descs">{{$prequest_detail->description}}</td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <input name="image[]" class="form-control file_attachment" type="file">
+                                                                </td>
+                                                                <td class="text-end erp-tbody-td">
+                                                                    <div class="erp-action-t">
+                                                                        <div class="dropdown dropdown-action">
+                                                                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                                <button class="dropdown-item edit-row" type="button" onclick="editRowData(this)"><i class="fa-solid fa-pencil m-r-5"></i> Edit</button>
+                                                                                <a class="dropdown-item delete-row" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            
+                                                        @endforeach
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -41,7 +69,7 @@
                                             <div class="production-instrucion-output-selection-wrapper">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Note</span></label>
-                                                    <textarea rows="2" name="note" id="purchase_note" class="form-control"></textarea>
+                                                    <textarea rows="2" name="note" id="purchase_note" class="form-control">{{$purchase_request->description}}</textarea>
                                                 </div>	
                                             </div>
                                         </div>
@@ -227,6 +255,11 @@
             row.attr('data-qty', updatedQty);
             row.attr('data-description', updatedDescription);
             
+            row.find('.asset_product_category_id').val(updatedCategory);
+            row.find('.asset_product_id').val(updatedProduct);
+            row.find('.asset_qty').val(updatedQty);
+            row.find('.asset_desc').val(updatedDescription);
+            
             row.find('.cat_name').text($('#category_edit option:selected').text());
             row.find('.p_name').text($('#product_edit option:selected').text());
             row.find('.qtty').text(updatedQty);
@@ -248,7 +281,7 @@
         });
 
         $(document).ready(function() {
-            $("#purchaseRequestStoreForm").on("submit", function(e) {
+            $("#purchaseRequestUpdateForm").on("submit", function(e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(this)[0]);
