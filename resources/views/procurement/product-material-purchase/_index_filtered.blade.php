@@ -89,9 +89,8 @@
                                 <div class="dropdown-menu dropdown-menu-right">
                                     @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
                                         <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                     @endif
-                                    <a class="dropdown-item" href="javascript:void(0)"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
                                 </div>
                             </div>
                         </div>

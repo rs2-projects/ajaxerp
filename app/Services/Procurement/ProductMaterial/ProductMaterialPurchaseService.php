@@ -54,12 +54,24 @@ class ProductMaterialPurchaseService
 
     public function getAllPurchaseOrders($request)
     {
-        $keyword_filtered = $request->keyword_filtered;
+        $keyword_filtered = $request->keyword_filtered??null;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
+
+
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -73,6 +85,8 @@ class ProductMaterialPurchaseService
     public function getNewPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_NEW)
@@ -80,6 +94,14 @@ class ProductMaterialPurchaseService
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -93,6 +115,8 @@ class ProductMaterialPurchaseService
     public function getOnProcessPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS)
@@ -100,6 +124,14 @@ class ProductMaterialPurchaseService
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -113,6 +145,8 @@ class ProductMaterialPurchaseService
     public function getDeliveredPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_DELIVERED)
@@ -120,6 +154,14 @@ class ProductMaterialPurchaseService
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -133,6 +175,8 @@ class ProductMaterialPurchaseService
     public function getRevisedPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('is_revised', ProductMaterialPurchase::IS_REVISED_YES)
@@ -140,6 +184,14 @@ class ProductMaterialPurchaseService
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -153,6 +205,8 @@ class ProductMaterialPurchaseService
     public function getBackPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('is_backed', ProductMaterialPurchase::IS_BACKED_YES)
@@ -160,6 +214,14 @@ class ProductMaterialPurchaseService
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
                     $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
                 }
             })
             ->orderBy('id', 'DESC')
@@ -748,6 +810,37 @@ class ProductMaterialPurchaseService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function deleteData($id)
+    {
+        try {
+
+            $purchase = ProductMaterialPurchase::where('id', $id)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+            if(empty($purchase)){
+                throw new \Exception("Purchase Order Not Found");
+            }
+
+            $purchase->deleted = ProductMaterialPurchase::DELETED_YES;
+            $purchase->deleted_at = Carbon::now();
+            $purchase->deleted_by = auth()->user()->id;
+            $purchase->save();
+
+            $purchaseDetails = ProductMaterialPurchaseDetails::where('product_material_purchase_id', $id)
+                ->get();
+
+            foreach ($purchaseDetails as $purchaseDetail){
+                $purchaseDetail->deleted = ProductMaterialPurchaseDetails::DELETED_YES;
+                $purchaseDetail->deleted_at = Carbon::now();
+                $purchaseDetail->deleted_by = auth()->user()->id;
+                $purchaseDetail->save();
+            }
+
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function statusUpdate($id, $status)

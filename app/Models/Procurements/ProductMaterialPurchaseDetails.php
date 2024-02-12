@@ -55,6 +55,8 @@ class ProductMaterialPurchaseDetails extends Model
         'description',
         'color',
         'qty',
+        'used_qty',
+        'available_qty',
         'unit_price',
         'total_price',
         'tax_id',
@@ -81,6 +83,11 @@ class ProductMaterialPurchaseDetails extends Model
     public function productMaterial()
     {
         return $this->belongsTo(ProductMaterial::class, 'product_material_id', 'id');
+    }
+
+    public function materialPurchase()
+    {
+        return $this->belongsTo(ProductMaterialPurchase::class, 'product_material_purchase_id', 'id');
     }
 
     public function tax()

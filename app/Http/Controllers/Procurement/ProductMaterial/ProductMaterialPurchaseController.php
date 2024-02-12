@@ -127,6 +127,16 @@ class ProductMaterialPurchaseController extends BackendController
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $this->service->deleteData($id);
+
+            return $this->returnAjaxSuccess([], 'Purchase Order Deleted Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
     public function statusUpdate($id, $status)
     {
         try {

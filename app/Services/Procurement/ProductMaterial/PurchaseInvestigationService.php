@@ -5,6 +5,7 @@ namespace App\Services\Procurement\ProductMaterial;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetailDamageFile;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Models\Products\ProductMaterial;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -55,12 +56,57 @@ class PurchaseInvestigationService
                         throw new \Exception('Please select at least one option');
                     }
 
+
                     $purchaseDetail = ProductMaterialPurchaseDetails::where('id', $value)
                         ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                         ->first();
 
                     if (!$purchaseDetail) {
                         throw new \Exception('Purchase Detail Not Found');
+                    }
+
+                    $productMaterial = ProductMaterial::where('id', $purchaseDetail->product_material_id)
+                        ->where('deleted', ProductMaterial::DELETED_NO)
+                        ->first();
+
+                    if (isset($request->is_perfect[$key]) && ($request->is_perfect[$key])) {
+                        $requestDamageQty = 0;
+                        $requestMissingQty = 0;
+                    }else{
+                        if (isset($request->has_damage[$key]) && ($request->has_damage[$key])) {
+                            $requestDamageQty = $request->damage_qty[$key];
+                        }else{
+                            $requestDamageQty = 0;
+                        }
+
+                        if (isset($request->has_missing[$key]) && ($request->has_missing[$key])) {
+                            $requestMissingQty = $request->missing_qty[$key];
+                        }else{
+                            $requestMissingQty = 0;
+                        }
+                    }
+
+                    $totalDamageMissingQty = $requestDamageQty + $requestMissingQty;
+
+                    if ($totalDamageMissingQty > $purchaseDetail->qty) {
+                        throw new \Exception('Damage and Missing Quantity can not be greater than Purchased Quantity');
+                    }
+
+
+                    if ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_NO &&
+                        $purchaseDetail->has_damage == $purchaseDetail::HAS_DAMAGE_NO &&
+                        $purchaseDetail->has_missing == $purchaseDetail::HAS_MISSING_NO)
+                    {
+                        $productAvailableQty = $productMaterial->available_qty + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
+
+                        $purchaseDetailAvailableQty = $purchaseDetail->available_qty + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
+                    } else {
+
+                        $productAvailableQty = $productMaterial->available_qty - ($purchaseDetail->qty - $purchaseDetail->damage_qty - $purchaseDetail->missing_qty)
+                            + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
+
+                        $purchaseDetailAvailableQty = $purchaseDetail->available_qty - ($purchaseDetail->qty - $purchaseDetail->damage_qty - $purchaseDetail->missing_qty)
+                            + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
                     }
 
                     if (isset($request->is_perfect[$key]) && ($request->is_perfect[$key])) {
@@ -108,10 +154,21 @@ class PurchaseInvestigationService
 
                             $has_missing = 0;
                         }
+
                     }
+                    $purchaseDetail->available_qty = $purchaseDetailAvailableQty;
                     $purchaseDetail->updated_by = auth()->user()->id;
                     $purchaseDetail->updated_at = Carbon::now();
+
                     $purchaseDetail->save();
+
+                    $productMaterial->total_purchased_qty = $productAvailableQty;
+                    $productMaterial->available_qty = $productAvailableQty;
+                    $productMaterial->updated_by = auth()->user()->id;
+                    $productMaterial->updated_at = Carbon::now();
+                    $productMaterial->save();
+
+
 
                     // delete previous files
 

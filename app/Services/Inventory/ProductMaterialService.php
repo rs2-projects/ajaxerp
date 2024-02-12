@@ -7,6 +7,7 @@ use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Inventory\Warehouse;
 use App\Models\Inventory\WarehouseSection;
 use App\Models\Inventory\WarehouseSectionRack;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use App\Models\Products\ProductMaterialRack;
@@ -342,6 +343,28 @@ class ProductMaterialService
         DB::commit();
 
         return $product_material;
+    }
+
+    public function purchaseHistory($id)
+    {
+        try {
+         $data['productMaterial'] = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$data['productMaterial']) {
+                throw new \Exception('Product Material not found');
+            }
+
+            $data['purchase_history'] = ProductMaterialPurchaseDetails::where('product_material_id', $id)
+                ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('available_qty', '>', 0)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            return $data;
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function deleteData($id)

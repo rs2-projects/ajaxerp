@@ -435,6 +435,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/create', [ProductMaterialController::class, 'store'])->name('inventory.product-material.store');
             Route::get('/{id}/edit', [ProductMaterialController::class, 'edit'])->name('inventory.product-material.edit');
             Route::post('/{id}/update', [ProductMaterialController::class, 'update'])->name('inventory.product-material.update');
+            Route::get('/{id}/purchase-history', [ProductMaterialController::class, 'purchaseHistory'])->name('inventory.product-material.purchase-history');
             Route::get('/{id}/delete', [ProductMaterialController::class, 'delete'])->name('inventory.product-material.delete');
             Route::get('/{id}/change-status/{status}', [ProductMaterialController::class, 'statusUpdate'])->name('inventory.product-material.change-status');
             Route::get('/get-sections-by-warehouse', [ProductMaterialController::class, 'getSectionsByWarehouse'])->name('inventory.product-material.get-sections-by-warehouse');

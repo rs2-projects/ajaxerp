@@ -77,8 +77,9 @@
                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-revised-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Revised P.O</a>
                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                    @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
