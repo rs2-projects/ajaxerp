@@ -26,8 +26,100 @@ class UserPurchaseRequestService
 
         return $data;
     }
+    public function getNextRequestId(){
+        $maxId = AssetProductPurchaseRequest::max('purchase_request_id');
+        $numericPart = (int)substr($maxId, 3);
+        $newId = 'PR-' . ($numericPart + 1);
+        return $newId;
+
+    }
+    public function indexFilteredData($request)
+    {
+        $purchase_status = $request->status_filtered;
+
+        switch ($purchase_status){
+            case 'all_requests':
+                return $this->getAllPurchaseRequests($request);
+                break;
+            case 'new_requests':
+                return $this->getNewPurchaseRequests($request);
+                break;
+            case 'pending_requests':
+                return $this->getPendingPurchaseRequests($request);
+                break;
+            case 'approved_requests':
+                return $this->getApprovedPurchaseRequests($request);
+                break;
+            case 'declined_requests':
+                return $this->getDeclinedPurchaseRequests($request);
+                break;
+        }
+    }
+
+    public function getAllPurchaseRequests($request)
+    {
+        $data['all_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->orderBy('request_status', 'ASC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.asset-purchase-request.user._index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getNewPurchaseRequests($request)
+    {
+        $data['new_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->where('request_status', AssetProductPurchaseRequest::REQUEST_STATUS_NEW)
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.asset-purchase-request.user._new_index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getPendingPurchaseRequests($request)
+    {
+        $data['pending_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->whereIn('request_status', [
+                AssetProductPurchaseRequest::REQUEST_STATUS_ADDITIONAL_INFO,
+                AssetProductPurchaseRequest::REQUEST_STATUS_INFO_SUBMITTED
+            ])
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.asset-purchase-request.user._pending_index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getApprovedPurchaseRequests($request)
+    {
+        $data['approved_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->where('request_status', AssetProductPurchaseRequest::REQUEST_STATUS_APPROVED)
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.asset-purchase-request.user._approved_index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getDeclinedPurchaseRequests($request)
+    {
+        $data['declined_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->where('request_status', AssetProductPurchaseRequest::REQUEST_STATUS_DECLINED)
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.asset-purchase-request.user._declined_index_filtered', $data)->render();
+
+        return $data;
+    }
 
     public function createData(){
+        $data['request_id'] = $this->getNextRequestId();
         $data['asset_categories'] = AssetProductCategory::where('deleted', AssetProductCategory::DELETED_NO)
             ->where('status', AssetProductCategory::STATUS_ACTIVE)
             ->orderBy('name', 'asc')->get();
@@ -47,7 +139,8 @@ class UserPurchaseRequestService
             $purchase_request->updated_by = auth()->user()->id;
             $purchase_request->updated_at = Carbon::now();
             $purchase_request->save();
-
+            $purchase_request->purchase_request_id = "PR - ".(1000 + $purchase_request->id);
+            $purchase_request->save();
           
             if (isset($request->asset_product_id) && is_array($request->asset_product_id) && count($request->asset_product_id) > 0) {
                 foreach ($request->asset_product_id as $key=>$product_id) {
@@ -78,6 +171,5 @@ class UserPurchaseRequestService
         }
         DB::commit();
 
-        // return $purchase_request;
     }
 }

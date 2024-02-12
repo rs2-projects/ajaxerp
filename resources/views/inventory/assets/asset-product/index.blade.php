@@ -64,7 +64,12 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .edit-img-src{
+            margin-left: 5px;
+            border-radius: 5px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

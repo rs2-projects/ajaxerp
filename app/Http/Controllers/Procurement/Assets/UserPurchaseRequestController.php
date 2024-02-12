@@ -39,6 +39,13 @@ class UserPurchaseRequestController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
     }
 
+    public function indexFiltered(Request $request)
+    {
+        $data = $this->service->indexFilteredData($request);
+
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+
     public function create()
     {
         $this->setPageTitle("Asset Purchase Request");

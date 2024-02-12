@@ -17,6 +17,13 @@
             </select>
             <span class="asset_product_category_id_error ie-span"></span>
         </div>
+        <div class="input-block mb-2">
+            <label class="col-form-label">Product Image</label>
+            <div class="d-flex">
+                <input type="file" class="form-control " name="image" accept="image/*">
+                <img class="edit-img-src" src="{{ $item->show_image }}" width="30">
+            </div>
+        </div>
 
         <div class="input-block mb-3">
             <label class="col-form-label">Description </label>

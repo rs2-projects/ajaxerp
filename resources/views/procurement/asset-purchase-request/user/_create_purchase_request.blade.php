@@ -18,7 +18,7 @@
                                                     <input class="form-control" name="title" id="purchase_title" type="text" placeholder="Enter a Title Here" required="">
                                                 </div>
                                             </div>
-                                            <div class="table-responsive">
+                                            <div class="#table-responsive">
                                                 <table class="table mb-0 erp-table">
                                                     <thead class="erp-thead">
                                                         <tr class="erp-tr">
@@ -54,8 +54,7 @@
                         </div>
                         <div class="col-12">
                             <div class="nw-warehouse-add-btn-2 text-center">
-                                {{-- <a href="javascript:void(0);" type="submit" id="generatePuchaseRequest" class=" erp-search-btn text-center"></a> --}}
-                                <button class="erp-search-btn text-center" type="submit">Generate Purchase Request</button>
+                               <button class="erp-search-btn text-center" type="submit">Generate Purchase Request</button>
                             </div>
                         </div>
                     </div>
@@ -72,6 +71,7 @@
 
 @section('modals')
     @include('procurement.asset-purchase-request.user._add_purchase_request_modal')
+    @include('procurement.asset-purchase-request.user._edit_purchase_request_modal')
 @endsection
 
 @section('css')
@@ -157,7 +157,7 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item edit-row" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                     <a class="dropdown-item delete-row" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                 </div>
                             </div>
@@ -169,6 +169,10 @@
             resetRequestModal();
             $("#addPurchaseRequestModal").modal('hide');
         }
+
+        $(document).on('click', '.edit-row', function() {
+            $("#editPurchaseRequestModal").modal('show');
+        });
 
         $(document).on('click', '.delete-row', function() {
             $(this).closest('tr').remove();

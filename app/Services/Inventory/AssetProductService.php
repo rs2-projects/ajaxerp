@@ -85,8 +85,17 @@ class AssetProductService
         if (!$product) {
             throw new \Exception('Asset Product not found');
         }
+
+        $image_path = null;
+        if ($request->hasFile('image')) {
+            $imageUploadService = new ImageUploadService();
+            $image_path = $imageUploadService->store($request->image, 'inventory/asset-product');
+            $image_path = $image_path['path'];
+        }
+
         $product->asset_product_category_id = $request->asset_product_category_id;
         $product->name = $request->name;
+        $product->image = $image_path?? $product->image;
         $product->description = $request->description;
         $product->updated_by = auth()->user()->id;
         $product->updated_at = now();
