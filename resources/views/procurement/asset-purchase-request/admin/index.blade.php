@@ -55,7 +55,10 @@
                                     <button class="nav-link erp-nav-link" data="new_requests" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">New P.R</button>
                                 </li>
                                 <li class="nav-item erp-nav-item" role="presentation">
-                                    <button class="nav-link erp-nav-link" data="pending_requests" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Pending P.R</button>
+                                    <button class="nav-link erp-nav-link" data="requested_info" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Requested Info</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" data="info_submitted" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Info Submitted</button>
                                 </li>
                                 <li class="nav-item erp-nav-item" role="presentation">
                                     <button class="nav-link erp-nav-link" data="approved_requests" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved P.R</button>
@@ -89,7 +92,7 @@
 @endsection
 
 @section('modals')
-   
+   @include('procurement.asset-purchase-request.admin._purchase_request_details')
 @endsection
 
 @section('css')
@@ -145,14 +148,32 @@
             $('#end_date_filtered').on('dp.change', function(e){
                 filterData.end_date_filtered = $(this).val();
             });
+
+            // Toggle request info message box when the link is clicked
+            $(".req-info-btn").click(function() {
+				$(".d-purchase-req-wrapper").slideToggle();
+			  });
         });
 
         function getData(){
-            getPaginatedListData("{{ route('procurement.user.asset-purchase-request.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('procurement.admin.asset-purchase-request.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function editItem(id){
+            let url = "{{route('inventory.asset-product-category.edit', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#edit_category_modal_body").html(response.view);
+                    $("#editCategoryModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
         function initializeDatepicker() {
