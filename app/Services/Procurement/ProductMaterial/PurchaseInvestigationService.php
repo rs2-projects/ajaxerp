@@ -2,6 +2,7 @@
 
 namespace App\Services\Procurement\ProductMaterial;
 
+use App\Models\Inventory\InventoryProductMaterial;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetailDamageFile;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
@@ -100,12 +101,35 @@ class PurchaseInvestigationService
                         $productAvailableQty = $productMaterial->available_qty + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
 
                         $purchaseDetailAvailableQty = $purchaseDetail->available_qty + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
+
+                        // inventory product material store
+                        $inventoryProductMaterialQty = $purchaseDetail->qty - $requestDamageQty - $requestMissingQty;
+                        $inventoryProductMaterial = new InventoryProductMaterial();
+                        $inventoryProductMaterial->product_material_category_id = $productMaterial->product_material_category_id;
+                        $inventoryProductMaterial->product_material_id = $productMaterial->id;
+                        $inventoryProductMaterial->type = $inventoryProductMaterial::TYPE_IN;
+                        $inventoryProductMaterial->reference_type = $inventoryProductMaterial::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
+                        $inventoryProductMaterial->reference_id = $purchaseDetail->id;
+                        $inventoryProductMaterial->created_by = auth()->user()->id;
+                        $inventoryProductMaterial->created_at = Carbon::now();
+
+
                     } else {
 
                         $productAvailableQty = $productMaterial->available_qty - ($purchaseDetail->qty - $purchaseDetail->damage_qty - $purchaseDetail->missing_qty)
                             + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
 
                         $purchaseDetailAvailableQty = $purchaseDetail->available_qty - ($purchaseDetail->qty - $purchaseDetail->damage_qty - $purchaseDetail->missing_qty)
+                            + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
+
+                        // inventory product material table update
+                        $inventoryProductMaterial = InventoryProductMaterial::where('product_material_id', $purchaseDetail->product_material_id)
+                            ->where('reference_id', $purchaseDetail->id)
+                            ->where('type', InventoryProductMaterial::TYPE_IN)
+                            ->where('deleted', InventoryProductMaterial::DELETED_NO)
+                            ->first();
+
+                        $inventoryProductMaterialQty = $inventoryProductMaterial->quantity - ($purchaseDetail->qty - $purchaseDetail->damage_qty - $purchaseDetail->missing_qty)
                             + ($purchaseDetail->qty - $requestDamageQty - $requestMissingQty);
                     }
 
@@ -167,6 +191,12 @@ class PurchaseInvestigationService
                     $productMaterial->updated_by = auth()->user()->id;
                     $productMaterial->updated_at = Carbon::now();
                     $productMaterial->save();
+
+
+                    $inventoryProductMaterial->quantity = $inventoryProductMaterialQty;
+                    $inventoryProductMaterial->updated_at = Carbon::now();
+                    $inventoryProductMaterial->updated_by = auth()->user()->id;
+                    $inventoryProductMaterial->save();
 
 
 
