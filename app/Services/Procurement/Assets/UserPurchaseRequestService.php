@@ -59,6 +59,7 @@ class UserPurchaseRequestService
     public function getAllPurchaseRequests($request)
     {
         $data['all_requests'] = AssetProductPurchaseRequest::where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->where('status', AssetProductPurchaseRequest::STATUS_ACTIVE)
             ->orderBy('request_status', 'ASC')
             ->orderBy('purchase_request_id', 'DESC')
             ->paginate($this->paginate_limit);
@@ -182,6 +183,7 @@ class UserPurchaseRequestService
 
         $data['purchase_request'] = AssetProductPurchaseRequest::where('id', $id)
             ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->where('status', AssetProductPurchaseRequest::STATUS_ACTIVE)
             ->first();
         if (empty($data['purchase_request'])) {
             return redirect()->back()->with(['failed' => 'Invalid Purchase Request!']);
@@ -259,5 +261,19 @@ class UserPurchaseRequestService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function delete($id)
+    {
+        $asset_purchase = AssetProductPurchaseRequest::where('id', $id)
+            ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->first();
+        if (!$asset_purchase) {
+            throw new \Exception('Asset Purchase request not found');
+        }
+        $asset_purchase->deleted = AssetProductPurchaseRequest::DELETED_YES;
+        $asset_purchase->deleted_by = auth()->user()->id;
+        $asset_purchase->deleted_at = now();
+        $asset_purchase->save();
     }
 }
