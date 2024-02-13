@@ -87,9 +87,11 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
+                                    @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW || $purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_REVISED_OR_BACKED && $purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
                                         <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0)"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @endif
                                     @endif
                                 </div>
                             </div>

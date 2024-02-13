@@ -95,9 +95,9 @@ class Transaction extends Model
     public static function boot(){
         parent::boot();
 
-        static::created(function($transaction){
-            $transaction->transaction_id = 1000 + $transaction->id;
-            $transaction->save();
+        static::created(function($model){
+            $model->transaction_id = 1000 + $model->id;
+            $model->save();
         });
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('transaction_id', 32)->index()->comment('auto generated unique transaction id');
+            $table->string('transaction_id', 32)->index()->nullable()->comment('auto generated unique transaction id');
             $table->unsignedTinyInteger('paid_type')->comment('0=unpaid, 1=paid');
             $table->unsignedTinyInteger('transaction_type')->index()->comment('0=deposit,1=withdraw');
             $table->date('transaction_date')->index()->comment('transaction date');

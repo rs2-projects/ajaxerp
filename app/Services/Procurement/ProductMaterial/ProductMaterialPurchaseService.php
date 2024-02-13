@@ -4,6 +4,7 @@ namespace App\Services\Procurement\ProductMaterial;
 
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
+use App\Models\Accounting\Transaction;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\Supplier;
@@ -246,6 +247,13 @@ class ProductMaterialPurchaseService
         DB::beginTransaction();
         try {
 
+            $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $request->batch_number)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+            if (!empty($checkBatchNumber)) {
+                throw new \Exception("Batch Number already exists");
+            }
+
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_NEW;
             $purchase->supplier_id = $request->supplier_id;
@@ -436,6 +444,15 @@ class ProductMaterialPurchaseService
                 throw new \Exception("Purchase Order Not Found");
             }
 
+            $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $request->batch_number)
+                ->where('id', '!=', $id)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+
+            if (!empty($checkBatchNumber)) {
+                throw new \Exception("Batch Number already exists");
+            }
+
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
             $purchase->purchase_date = $request->purchase_date;
@@ -571,6 +588,13 @@ class ProductMaterialPurchaseService
                 throw new \Exception("Purchase Order Not Found");
             }
 
+            $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $request->batch_number)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+            if (!empty($checkBatchNumber)) {
+                throw new \Exception("Batch Number already exists");
+            }
+
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_REVISED;
             $purchase->purchase_create_prev_id = $id;
@@ -702,6 +726,13 @@ class ProductMaterialPurchaseService
                 ->first();
             if (empty($checkPurchase)) {
                 throw new \Exception("Purchase Order Not Found");
+            }
+
+            $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $request->batch_number)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+            if (!empty($checkBatchNumber)) {
+                throw new \Exception("Batch Number already exists");
             }
 
             $purchase = new ProductMaterialPurchase();
@@ -845,6 +876,7 @@ class ProductMaterialPurchaseService
 
     public function statusUpdate($id, $status)
     {
+        DB::beginTransaction();
         try {
             $purchase = ProductMaterialPurchase::where('id', $id)
                 ->where('deleted', ProductMaterialPurchase::DELETED_NO)
@@ -856,9 +888,44 @@ class ProductMaterialPurchaseService
             $purchase->purchase_status = $status;
             $purchase->save();
 
+            if ($status == $purchase::PURCHASE_STATUS_ON_PROCESS){
+                $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
+                    ->where('reference_id', $id)
+                    ->where('deleted', Transaction::DELETED_NO)
+                    ->first();
+                if(empty($transaction)){
+                    $account = AccCoaAccount::where('slug', 'purchase-products')
+                        ->where('deleted', AccCoaAccount::DELETED_NO)
+                        ->first();
+
+                    $transaction = new Transaction();
+                    $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
+                    $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+                    $transaction->transaction_date = $purchase->purchase_date;
+                    $transaction->account_id = $account->id;
+                    $transaction->category_id = $account->acc_coa_category_id;
+                    $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
+                    $transaction->reference_id = $id;
+                    $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
+                    $transaction->net_amount = $purchase->payable_amount;
+                    $transaction->total_vat_amount = 0;
+                    $transaction->total_amount = $purchase->payable_amount;
+                    $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
+                    $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
+                    $transaction->created_at = Carbon::now();
+                    $transaction->created_by = auth()->user()->id;
+                    $transaction->updated_at = Carbon::now();
+                    $transaction->updated_by = auth()->user()->id;
+                    $transaction->save();
+                }
+            }
+
         }catch (\Exception $e) {
+            DB::rollBack();
             throw new \Exception($e->getMessage());
         }
+
+        DB::commit();
     }
 
     public function getAllProductMaterials($request)

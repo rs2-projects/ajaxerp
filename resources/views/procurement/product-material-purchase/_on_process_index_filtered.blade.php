@@ -67,7 +67,7 @@
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
                             <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
                         @else
-                            <a href="javascript:void(0)" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
                         @endif
                     </td>
 
@@ -76,10 +76,10 @@
                         <div class="erp-action-t">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
+                                {{--<div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
                     </td>
