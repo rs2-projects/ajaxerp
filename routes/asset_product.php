@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Procurement\Assets\UserPurchaseRequestController;
+use App\Http\Controllers\Procurement\Assets\AdminPurchaseRequestController;
 use App\Http\Controllers\Procurement\Supplier\SupplierController;
 
 Route::group(['prefix' => 'inventory'], function () {
@@ -55,7 +56,21 @@ Route::group(['prefix' => 'procurement'], function () {
         Route::post('/create', [UserPurchaseRequestController::class, 'store'])->name('procurement.user.asset-purchase-request.store');
         Route::get('/{id}/edit', [UserPurchaseRequestController::class, 'edit'])->name('procurement.user.asset-purchase-request.edit');
         Route::post('/{id}/update', [UserPurchaseRequestController::class, 'update'])->name('procurement.user.asset-purchase-request.update');
+        Route::get('/{id}/add-more-info', [UserPurchaseRequestController::class, 'addMoreInfo'])->name('procurement.user.asset-purchase-request.add-more-info');
+        Route::post('/{id}/add-more-info/store', [UserPurchaseRequestController::class, 'storAddMoreInfo'])->name('procurement.user.asset-purchase-request.add-more-info.update');
         Route::get('/{id}/delete', [UserPurchaseRequestController::class, 'delete'])->name('procurement.user.asset-purchase-request.delete');
         Route::get('/asset-products-by-category', [UserPurchaseRequestController::class, 'getAssetProducts'])->name('procurement.asset-purchase-request.products-by-category');
+    });
+
+    //admin purchase request route start
+    Route::group(['prefix' => 'admin/asset-purchase-request'], function () {
+        Route::get('/', [AdminPurchaseRequestController::class, 'index'])->name('procurement.admin.asset-purchase-request.index');
+        Route::post('/filtered', [AdminPurchaseRequestController::class, 'indexFiltered'])->name('procurement.admin.asset-purchase-request.filtered');
+        Route::get('/{id}/edit', [AdminPurchaseRequestController::class, 'edit'])->name('procurement.admin.asset-purchase-request.edit');
+        Route::post('/{id}/update', [AdminPurchaseRequestController::class, 'update'])->name('procurement.admin.asset-purchase-request.update');
+        Route::get('/{id}/add-more-info', [AdminPurchaseRequestController::class, 'addMoreInfo'])->name('procurement.admin.asset-purchase-request.add-more-info');
+        Route::post('/{id}/add-more-info/store', [AdminPurchaseRequestController::class, 'storAddMoreInfo'])->name('procurement.admin.asset-purchase-request.add-more-info.update');
+        Route::get('/{id}/delete', [AdminPurchaseRequestController::class, 'delete'])->name('procurement.admin.asset-purchase-request.delete');
+        Route::get('/asset-products-by-category', [AdminPurchaseRequestController::class, 'getAssetProducts'])->name('procurement.asset-purchase-request.products-by-category');
     });
 });

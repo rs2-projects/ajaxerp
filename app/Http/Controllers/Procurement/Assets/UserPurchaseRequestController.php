@@ -83,6 +83,25 @@ class UserPurchaseRequestController extends BackendController
         }
     }
 
+    public function addMoreInfo($id)
+    {
+        $this->setPageTitle("Add More Info");
+        $this->setActiveMenu('procurement.user.asset-purchase-request.index');
+        $data = $this->service->addMoreInfo($id);
+        return $this->view('procurement.asset-purchase-request.user._add_more_info')->with($data);
+    }
+
+    public function storAddMoreInfo(UpdateUserPurchaseRequest $request, $id)
+    {
+        try {
+            $this->service->storAddMoreInfo($request, $id);
+
+            return $this->returnAjaxSuccess([], 'More Info Added Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
     public function delete($id)
     {
         try {
