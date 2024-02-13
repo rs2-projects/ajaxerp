@@ -91,10 +91,19 @@
 
     </div>
     <!--End::row-1 -->
+    <div id="receiptItemWrap" style="display: none;">
+        <div class="multiple-receipt-item flex-100">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">Upload Receipt <span class="text-danger" onclick="removeReceipt(this)"><i class="fa fa-times-circle"></i></span></label>
+                <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('modals')
-
+    @include('common.modals._make_payment_modal')
 @endsection
 
 @section('css')
@@ -143,6 +152,24 @@
             $('#end_date_filtered').on('dp.change', function(e){
                 filterData.end_date_filtered = $(this).val();
             });
+            $(document).on("submit", "#makePaymentFormSubmit", function(e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#make-payment-modal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
 
         });
 
@@ -153,6 +180,32 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function makePayment(id){
+            let url = "{{route('procurement.product-material-purchase.make-payment', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#make-payment-modal-data").html(response.view);
+                    $("#make-payment-modal").modal('show');
+
+                    initializeDatepicker();
+                    initPaymentMethodSelect2();
+                    initPaymentAccountSelect2();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function addReceipt(){
+            let receiptItemWrap = $("#receiptItemWrap").html();
+            $("#receiptItemMain").append(receiptItemWrap);
+        }
+
+        function removeReceipt(element){
+            $(element).closest('.multiple-receipt-item').remove();
         }
 
         function initializeDatepicker() {
@@ -168,6 +221,18 @@
             });
         }
 
+        function initPaymentMethodSelect2() {
+            $('.select-step.payment-method').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+        function initPaymentAccountSelect2() {
+            $('.select-step.payment-account').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
 
     </script>
 @endsection

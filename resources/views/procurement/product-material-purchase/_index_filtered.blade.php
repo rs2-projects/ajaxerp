@@ -77,7 +77,7 @@
                             @endif
 
                         @else
-                            <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
                         @endif
                     </td>
 

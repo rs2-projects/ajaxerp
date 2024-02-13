@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionReceipt extends Model
 {
     use HasFactory;
+    protected $table = 'transaction_receipts';
+
+    protected $fillable = [
+        'transaction_id',
+        'receipt',
+        'status',
+    ];
 }

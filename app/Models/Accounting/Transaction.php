@@ -91,4 +91,14 @@ class Transaction extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public static function boot(){
+        parent::boot();
+
+        static::created(function($transaction){
+            $transaction->transaction_id = 1000 + $transaction->id;
+            $transaction->save();
+        });
+    }
+
 }

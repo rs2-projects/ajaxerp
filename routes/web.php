@@ -22,6 +22,7 @@ use App\Http\Controllers\Payroll\GeneratedSalaryController;
 use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Procurement\ProductMaterial\ProductMaterialPurchaseController;
 use App\Http\Controllers\Procurement\ProductMaterial\PurchaseInvestigationController;
+use App\Http\Controllers\Procurement\ProductMaterial\PurchaseMakePaymentController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -467,6 +468,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/get-all-product-materials',[ProductMaterialPurchaseController::class, 'getAllProductMaterials'])->name('procurement.product-material-purchase.get-all-product-materials');
             Route::get('/get-all-taxes',[ProductMaterialPurchaseController::class, 'getAllTaxes'])->name('procurement.product-material-purchase.get-all-taxes');
             Route::get('/get-all-suppliers',[ProductMaterialPurchaseController::class, 'getAllSuppliers'])->name('procurement.product-material-purchase.get-all-suppliers');
+
+            // make payment
+            Route::get('/{id}/make-payment', [PurchaseMakePaymentController::class, 'makePayment'])->name('procurement.product-material-purchase.make-payment');
+            Route::post('/{id}/make-payment-submit', [PurchaseMakePaymentController::class, 'makePaymentSubmit'])->name('procurement.product-material-purchase.make-payment-submit');
         });
        // materials purchase order route end
 
