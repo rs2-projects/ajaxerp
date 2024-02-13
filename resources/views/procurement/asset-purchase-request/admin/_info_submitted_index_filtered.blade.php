@@ -27,7 +27,7 @@
                         <h4 class="text-center d-table-title">{{ $pr->description }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">Check Info</a>
+                        <a href="javascript:void(0);" onclick="getRequestDetails({{$pr->id}})" class="last-cal-status-btn">Check Info</a>
                     </td>
                     <td class="text-center erp-tbody-td">
                         <div class="erp-action-t">

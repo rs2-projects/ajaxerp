@@ -7,7 +7,7 @@
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
             <th class="erp-th text-center">Status </th>
-            {{-- <th class="text-end erp-th">Action</th> --}}
+            <th class="text-end erp-th">Purchase Order</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -27,21 +27,12 @@
                         <h4 class="text-center d-table-title">{{ $pr->description }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
-
                         <h4 class="text-center d-table-title {{strtolower($pr::REQUEST_STATUSES[$pr->request_status])}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
                     </td>
 
-                    {{-- <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$pr->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    </td> --}}
+                    <td class="text-center erp-tbody-td">
+                        <a href="javascript:void(0);" onclick="getApprovedRequestDetails({{$pr->id}})" class="text-center d-table-title mpo-btn">Make Purchase Order</a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

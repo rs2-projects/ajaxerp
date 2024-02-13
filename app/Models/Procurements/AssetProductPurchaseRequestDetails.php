@@ -46,6 +46,14 @@ class AssetProductPurchaseRequestDetails extends Model
         'deleted_at',
     ];
 
+    public function getShowImageAttribute()
+    {
+        if ($this->file != null && $this->file != '') {
+            return asset($this->file);
+        }
+        return asset('assets/img/placeholder.jpg');
+    }
+
     public function asset_category()
     {
         return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');

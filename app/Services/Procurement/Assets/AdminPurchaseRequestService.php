@@ -217,6 +217,71 @@ class AdminPurchaseRequestService
         return $data;
     }
 
+    public function detailsData($id)
+    {
+        $data['request_details'] = AssetProductPurchaseRequest::where('id', $id)
+            ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->first();
+        if (!$data['request_details']) {
+            throw new \Exception('Asset Purchase Request not found');
+        }
+        return $data;
+    }
+
+    public function storeRequestedInfo($request)
+    {
+        $purchase_request = AssetProductPurchaseRequest::where('id', $request->request_id)
+            ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->first();
+        if (!$purchase_request) {
+            throw new \Exception('Asset Purchase Request not found');
+        }
+        $purchase_request->additional_info = $request->additional_info;
+        $purchase_request->request_status = 3;
+        $purchase_request->updated_by = auth()->user()->id;
+        $purchase_request->updated_at = now();
+        $purchase_request->save();
+    }
+
+    // public function approvedDetails($id)
+    // {
+    //     $data['request_details'] = AssetProductPurchaseRequest::where('id', $id)
+    //         ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+    //         ->first();
+    //     if (!$data['request_details']) {
+    //         throw new \Exception('Asset Purchase Request not found');
+    //     }
+    //     return $data;
+    // }
+
+    public function decline($id)
+    {
+        $purchase_request = AssetProductPurchaseRequest::where('id', $id)
+            ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->first();
+        if (!$purchase_request) {
+            throw new \Exception('Asset Purchase Request not found');
+        }
+        $purchase_request->request_status = 2;
+        $purchase_request->updated_by = auth()->user()->id;
+        $purchase_request->updated_at = now();
+        $purchase_request->save();
+    }
+
+    public function approve($id)
+    {
+        $purchase_request = AssetProductPurchaseRequest::where('id', $id)
+            ->where('deleted', AssetProductPurchaseRequest::DELETED_NO)
+            ->first();
+        if (!$purchase_request) {
+            throw new \Exception('Asset Purchase Request not found');
+        }
+        $purchase_request->request_status = 1;
+        $purchase_request->updated_by = auth()->user()->id;
+        $purchase_request->updated_at = now();
+        $purchase_request->save();
+    }
+
     public function delete($id)
     {
         $asset_purchase = AssetProductPurchaseRequest::where('id', $id)

@@ -104,12 +104,12 @@
                             Procurement</span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="submenu">
-                            <a href="javascript:void(0);"> <span>Assets</span> <span
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "> <span>Assets</span> <span
                                     class="menu-arrow"></span></a>
                             <ul>
                                 <li><a href="{{ route('procurement.user.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.user.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request</span></a></li>
-                                <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}"><span>Purchase Request(Admin)</span></a></li>
-                                <li><a href="" class=""> <span>Purchase Order(P.O)</span></a></li>
+                                <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.admin.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request(Admin)</span></a></li>
+                                <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <span>Purchase Order(P.O)</span></a></li>
                             </ul>
                         </li>
                         <li class="submenu">

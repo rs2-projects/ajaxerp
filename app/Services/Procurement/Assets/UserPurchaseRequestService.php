@@ -6,7 +6,7 @@ use App\Models\Procurements\AssetProductPurchaseRequest;
 use App\Models\Procurements\AssetProductPurchaseRequestDetails;
 use App\Models\Products\AssetProduct;
 use App\Models\Products\AssetProductCategory;
-use App\Services\Common\ImageUploadService;
+use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +21,8 @@ class UserPurchaseRequestService
     {
         $category_id = $request->category_id;
         $data['products'] = AssetProduct::where('asset_product_category_id', $category_id)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->where('status', AssetProduct::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
 
@@ -239,7 +241,7 @@ class UserPurchaseRequestService
                 foreach ($request->asset_product_id as $key=>$product_id) {
                     $image_path = null;
                     if ($request->hasFile('image') && isset($request->image[$key])) {
-                        $imageUploadService = new ImageUploadService();
+                        $imageUploadService = new FileUploadService();
                         $image_path = $imageUploadService->store($request->image[$key], 'procurement/assets_purchase_request');
                         $image_path = $image_path['path'];
                     }
@@ -307,7 +309,7 @@ class UserPurchaseRequestService
                     
                     $image_path = null;
                     if ($request->hasFile('image') && isset($request->image[$key])) {
-                        $imageUploadService = new ImageUploadService();
+                        $imageUploadService = new FileUploadService();
                         $image_path = $imageUploadService->store($request->image[$key], 'procurement/assets_purchase_request');
                         $image_path = $image_path['path'];
                     }
@@ -392,7 +394,7 @@ class UserPurchaseRequestService
                     
                     $image_path = null;
                     if ($request->hasFile('image') && isset($request->image[$key])) {
-                        $imageUploadService = new ImageUploadService();
+                        $imageUploadService = new FileUploadService();
                         $image_path = $imageUploadService->store($request->image[$key], 'procurement/assets_purchase_request');
                         $image_path = $image_path['path'];
                     }

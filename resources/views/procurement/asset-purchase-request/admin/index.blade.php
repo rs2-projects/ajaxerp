@@ -4,7 +4,6 @@
    <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-                <a href="{{route('procurement.user.asset-purchase-request.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Request</a>
                 <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-excel"></i> Export To Excel</a>
                 <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-pdf"></i> Generate PDF</a>
             </div>
@@ -92,7 +91,8 @@
 @endsection
 
 @section('modals')
-   @include('procurement.asset-purchase-request.admin._purchase_request_details')
+   @include('procurement.asset-purchase-request.admin._purchase_request_details_modal')
+   @include('procurement.asset-purchase-request.admin._make_purchase_order_modal')
 @endsection
 
 @section('css')
@@ -150,9 +150,9 @@
             });
 
             // Toggle request info message box when the link is clicked
-            $(".req-info-btn").click(function() {
-				$(".d-purchase-req-wrapper").slideToggle();
-			  });
+            $(document).on('click', '.req-info-btn', function(){
+                $(".d-purchase-req-wrapper").slideToggle();
+            });
         });
 
         function getData(){
@@ -163,18 +163,48 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
-        function editItem(id){
-            let url = "{{route('inventory.asset-product-category.edit', ':id')}}";
+        function getRequestDetails(id){
+            let url = "{{route('procurement.admin.asset-purchase-request.request-details', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
-                    $("#edit_category_modal_body").html(response.view);
-                    $("#editCategoryModal").modal('show');
+                    $("#purchase_request_details_modal_body").html(response.view);
+                    $("#purchaseRequestDetailsModal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }
             }, 'default');
         }
+
+        function getApprovedRequestDetails(id){
+            let url = "{{route('procurement.admin.asset-purchase-request.approved-request-details', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#approved_purchase_request_details_modal_body").html(response.view);
+                    $("#approvedPurchaseRequestDetailsModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        $(document).on("submit", "#requestMoreInfoStoreForm", function(e) {
+            e.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $(".ie-span").text("").hide();
+            var url = $(this).attr('action');
+
+            formPost(url, formData, function (res){
+                if(res.status == 200){
+                    $("#purchaseRequestDetailsModal").modal('hide');
+                    showSuccessAlert('Success',res.message)
+                    getData();
+                }else{
+                    showErrorAlert('Error',res.message)
+                }
+            }, 'show_input_error');
+        });
 
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
@@ -187,6 +217,56 @@
                 }
             });
         }
+
+        function approvePurchaseRequest(uri) {
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to approve this puchase request?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(
+                        uri,
+                        {},
+                        function (response) {
+                            $("#purchaseRequestDetailsModal").modal('hide');
+                            toastr.success(response.message);
+                            getData();
+                        }
+                    );
+                } else if (result.isDenied) {
+
+                }
+            })
+        }
+
+        function declinePuchaseRequest(uri) {
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to decline this puchase request?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(
+                        uri,
+                        {},
+                        function (response) {
+                            $("#purchaseRequestDetailsModal").modal('hide');
+                            toastr.success(response.message);
+                            getData();
+                        }
+                    );
+                } else if (result.isDenied) {
+
+                }
+            })
+        }
+
+        
     </script>
 @endsection
 

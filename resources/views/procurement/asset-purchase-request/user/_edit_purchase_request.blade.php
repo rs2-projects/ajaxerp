@@ -43,8 +43,11 @@
                                                                 <td class="erp-tbody-td text-center p_name">{{$prequest_detail->asset_product->name}}</td>
                                                                 <td class="erp-tbody-td text-center qtty">{{$prequest_detail->qty}}</td>
                                                                 <td class="erp-tbody-td text-center descs">{{$prequest_detail->description}}</td>
-                                                                <td class="erp-tbody-td text-center">
-                                                                    <input name="image[]" class="form-control file_attachment" type="file">
+                                                                <td class="erp-tbody-td text-center d-flex align-items-center justify-content-between">
+                                                                    <input name="image[]" class="form-control file_attachment" type="file" style="width: 75%">
+                                                                    <a href="{{ $prequest_detail->show_image }}" target="_blank" class="text-center d-table-title attachement-file-box" style="padding-left: 5px">
+                                                                        <img src="{{asset('assets/img/attachment.png')}}" alt=""> {{$prequest_detail->file ? 'Attachment' : 'No Attachment'}}
+                                                                    </a>
                                                                 </td>
                                                                 <td class="text-end erp-tbody-td">
                                                                     <div class="erp-action-t">

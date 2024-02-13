@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Procurement\Assets\AdminPurchaseRequest;
+namespace App\Http\Requests\Procurement\Assets\PurchaseOrder;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAdminPurchaseRequest extends FormRequest
+class UpdatePurchaseOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
