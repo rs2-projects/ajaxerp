@@ -82,7 +82,7 @@ class PurchaseMakePaymentService
             $transaction->net_amount = $request->amount;
             $transaction->total_vat_amount = 0;
             $transaction->total_amount = $request->amount;
-            $transaction->description = "Product Material Purchase Payment".$purchase->purchase_id;
+            $transaction->description = "Product Material Purchase Payment ".$purchase->purchase_id;
             $transaction->note = $request->note;
             $transaction->created_at = Carbon::now();
             $transaction->created_by = auth()->user()->id;
