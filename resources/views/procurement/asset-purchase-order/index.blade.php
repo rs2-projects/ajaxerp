@@ -61,10 +61,7 @@
                                     <button class="nav-link erp-nav-link" data="delivered_purchase" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Delivered P.O</button>
                                 </li>
                                 <li class="nav-item erp-nav-item" role="presentation">
-                                    <button class="nav-link erp-nav-link" data="revised_purchase" id="revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Revised P.O</button>
-                                </li>
-                                <li class="nav-item erp-nav-item" role="presentation">
-                                    <button class="nav-link erp-nav-link" data="back_purchase" id="back-purchase-tab" data-bs-toggle="tab" data-bs-target="#back-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Back P.O</button>
+                                    <button class="nav-link erp-nav-link" data="cancelled_purchase" id="revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Cancelled P.O</button>
                                 </li>
                             </ul>
 
@@ -107,7 +104,12 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .em-pro-details-box h5{
+            width: 100%;
+            padding-top: 4px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -140,13 +142,10 @@
 
             $('.status_type li').on('click', function () {
                 filterData.status_filtered = $('.status_type .active').attr('data');
-
                 getData();
             });
             $('#start_date_filtered').on('dp.change', function(e){
-
                 filterData.start_date_filtered = $(this).val();
-
             });
 
             $('#end_date_filtered').on('dp.change', function(e){
@@ -175,7 +174,7 @@
 
 
         function getData(){
-            getPaginatedListData("{{ route('procurement.product-material-purchase.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('procurement.asset-purchase-order.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
@@ -189,7 +188,6 @@
                 if (response.status == 200) {
                     $("#make-payment-modal-data").html(response.view);
                     $("#make-payment-modal").modal('show');
-
                     initializeDatepicker();
                     initPaymentMethodSelect2();
                     initPaymentAccountSelect2();
@@ -210,7 +208,6 @@
 
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
-                //format: 'DD/MM/YYYY',
                 format: 'YYYY-MM-DD',
                 icons: {
                     up: "fa fa-angle-up",

@@ -10,9 +10,7 @@
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
-            {{-- <th class="erp-th text-center">Status </th> --}}
             <th class="erp-th text-center">Record Payment </th>
-            <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -55,39 +53,11 @@
 
                         <h4 class="text-center d-table-title {{strtolower($purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status])}}-status">{{ $purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status] }}</h4>
                     </td>
-                    {{-- <td>
-                        <h4 class="text-center d-table-title {{strtolower($purchase_order::PURCHASE_STATUSES[$purchase_order->purchase_status])}}-status">{{ $purchase_order::PURCHASE_STATUSES[$purchase_order->purchase_status] }}</h4>
-                    </td> --}}
                     <td class="erp-tbody-td text-center">
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
-                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES)
-                                    <h4 class="text-center d-table-title missing-status">Missing</h4>
-                                @endif
-                                @if($purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                    <h4 class="text-center d-table-title damage-status">Damage</h4>
-                                @endif
-                            @else
-                                <h4 class="text-center d-table-title perfect-status">Perfect</h4>
-                            @endif
-
+                            <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
                         @else
                             <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
-                        @endif
-                    </td>
-                    <td class="text-end erp-tbody-td">
-                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
-                            <div class="erp-action-t">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right"> 
-                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.asset-purchase-order.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
                         @endif
                     </td>
                 </tr>

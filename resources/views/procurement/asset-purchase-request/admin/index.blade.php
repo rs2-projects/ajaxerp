@@ -206,6 +206,17 @@
             }, 'show_input_error');
         });
 
+        // $(document).on("submit", "#makePurchaseOrderFormSubmit", function(e) {
+            // console.log("working")
+            // e.preventDefault();
+            //var formData = new FormData($(this)[0]);
+            //console.log(formData);
+            // var url = $(this).attr('action');
+            // var redirectUrl = url + '?' + formData;
+            // window.location.href = redirectUrl;
+        // });
+
+
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
                 format: 'YYYY-MM-DD',

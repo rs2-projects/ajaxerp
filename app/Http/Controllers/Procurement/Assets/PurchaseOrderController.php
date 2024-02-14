@@ -27,12 +27,49 @@ class PurchaseOrderController extends BackendController
         return  $this->view('procurement.asset-purchase-order.index');
     }
 
-    public function create()
+    public function indexFiltered(Request $request)
+    {
+        $data = $this->service->indexFilteredData($request);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+
+    public function create(Request $request)
     {
         $this->setPageTitle("New Purchase Order(Assets)");
         $this->setActiveMenu('procurement.asset-purchase-order.index');
         $data = $this->service->createData();
+        $data['request_id'] = $request->request_id;
+        $data['details_id'] = $request->details_id;
         return $this->view('procurement.asset-purchase-order.create')->with($data);
+    }
+
+    public function getSelectedPurchaseData(Request $request)
+    {
+        $details_ids = $request->input('details_ids');
+        $data = $this->service->getSelectedPurchaseData($details_ids);
+        return response()->json($data);
+    }
+
+    public function store(StorePurchaseOrderRequest $reqeust)
+    {
+        try {
+            $this->service->store($reqeust);
+
+            return $this->returnAjaxSuccess([], 'Asset Purchase Order Created Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $this->service->statusUpdate($id, $status);
+
+            return $this->returnAjaxSuccess([], 'Status Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 
     public function getAllAssetProducts(Request $request)
