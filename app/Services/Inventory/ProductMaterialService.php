@@ -50,6 +50,8 @@ class ProductMaterialService
             ->orderBy('name', 'asc')
             ->get();
 
+        $data['total_product'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)->count();
+
         return $data;
     }
     public function indexFilteredData($request)

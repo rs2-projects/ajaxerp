@@ -30,7 +30,7 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="text-center d-table-title" data-bs-toggle="modal" data-bs-target="#check_status">4234343</a>
+                        <a href="javascript:void(0)" class="text-center d-table-title" >{{ $product_material->available_qty??0 }}</a>
                     </td>
 
                     <td class="erp-tbody-td text-center">
@@ -58,7 +58,11 @@
                                 <h4 class="text-start d-table-title">
                                     {{ $warehouseSection->warehouseSection->name??'N/A' }} (<span>
                                         @if(count($warehouseSection->productMaterialRacks) > 0)
-                                            @foreach($warehouseSection->productMaterialRacks as $rack)
+                                            @foreach($warehouseSection->productMaterialRacks as $rackKey=>$rack)
+                                                @if($rackKey == 2)
+                                                    ...
+                                                    @break
+                                                @endif
                                                 {{ $rack->warehouseSectionRack->name??''}} <span class="text-red">,</span>
                                             @endforeach
                                         @endif

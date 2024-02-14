@@ -14,7 +14,7 @@
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-box-header">
-                                <h4>Total Product : 108 </h4>
+                                <h4>Total Product : <span class="total-material-product" id="total_product">{{ $total_product }}</span> </h4>
                             </div>
                             <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
 
@@ -114,6 +114,8 @@
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         getData();
+                        let total_product = parseInt($("#total_product").text());
+                        $("#total_product").text(total_product+1);
                     }else{
                         showErrorAlert('Error',res.message)
                     }

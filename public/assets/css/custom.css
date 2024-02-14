@@ -93,3 +93,10 @@
     font-size: 16px;
     border: none;
 }
+
+.erp-box-header .total-material-product {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+}
