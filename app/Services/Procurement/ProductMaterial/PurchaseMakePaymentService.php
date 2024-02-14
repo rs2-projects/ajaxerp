@@ -69,6 +69,16 @@ class PurchaseMakePaymentService
                 throw new \Exception("Account not found");
             }
 
+            // payment amount validation
+            if ($request->amount <= 0) {
+                throw new \Exception("Invalid amount");
+            }
+
+            if ($request->amount > $purchase->due_amount) {
+                throw new \Exception("Payment amount can't be greater than due amount");
+            }
+
+
             // Create Transaction
             $transaction = new Transaction();
             $transaction->paid_type = Transaction::PAID_TYPE_PAID;
@@ -93,6 +103,11 @@ class PurchaseMakePaymentService
             $purchase->paid_amount = $purchase->paid_amount + $request->amount;
             $purchase->due_amount = $purchase->payable_amount - $purchase->paid_amount;
             $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_PARTIAL_PAID;
+
+            if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){
+                $purchase->purchase_status = $purchase::PURCHASE_STATUS_ON_PROCESS;
+            }
+
             $purchase->updated_at = Carbon::now();
             $purchase->updated_by = auth()->user()->id;
             $purchase->save();

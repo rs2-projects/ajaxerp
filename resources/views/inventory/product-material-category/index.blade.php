@@ -15,13 +15,13 @@
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-filter-box d-flex align-items-center justify-content-start flex-100">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-100">
-                                    <div class="erp-filter-item flex-5">
+                                    <div class="erp-filter-item flex-10">
                                         <h6 class="me-2">Search By: </h6>
                                     </div>
 
                                     <div class="erp-filter-item flex-30">
                                         <div class="search-box table-search position-relative">
-                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="category">
+                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="Name/Description">
                                             <button class="btn position-absolute search-btn" type="button" onclick="getData()"><i class="fa-solid fa-magnifying-glass"></i></button>
                                         </div>
                                     </div>

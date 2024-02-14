@@ -40,7 +40,7 @@
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($product_material->status == $product_material::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>Active</span></a>
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $product_material::STATUSES[$product_material->status] }}</span></a>
                                 <div class="dropdown-menu dropdown-menu-right">
 
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>

@@ -17,6 +17,7 @@ class ProductMaterialCategoryService
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('name', 'like', '%'.$keyword_filtered.'%');
+                    $q->orWhere('description', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);

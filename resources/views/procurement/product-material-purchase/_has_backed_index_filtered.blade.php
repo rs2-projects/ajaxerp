@@ -10,7 +10,7 @@
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
-            <th class="erp-th text-center">Record Payment </th>
+            {{--<th class="erp-th text-center">Record Payment </th>--}}
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
@@ -23,7 +23,14 @@
                     <td class="erp-tbody-td text-start">
                         <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
-                        @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
+                        @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES && $purchase_order->is_backed == $purchase_order::IS_BACKED_YES)
+                            <div class="back-order-status">
+                                <span>Back Order</span>
+                            </div>
+                            <div class="revised-status">
+                                <span>Revised Order</span>
+                            </div>
+                        @elseif($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
                             <div class="revised-status">
                                 <span>Revised Order</span>
                             </div>
@@ -63,23 +70,9 @@
 
                         <h4 class="text-center d-table-title {{strtolower($purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status])}}-status">{{ $purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status] }}</h4>
                     </td>
-                    <td class="erp-tbody-td text-center">
-                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
-                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES)
-                                    <h4 class="text-center d-table-title missing-status">Missing</h4>
-                                @endif
-                                @if($purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                    <h4 class="text-center d-table-title damage-status">Damage</h4>
-                                @endif
-                            @else
-                                <h4 class="text-center d-table-title perfect-status">Perfect</h4>
-                            @endif
-
-                        @else
-                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
-                        @endif
-                    </td>
+                    {{--<td class="erp-tbody-td text-center">
+                        <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                    </td>--}}
 
 
                     <td class="text-end erp-tbody-td">
@@ -87,10 +80,8 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.product-material-purchase.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
-                                    @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
-                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    @if($purchase_order->is_revised == $purchase_order::IS_REVISED_NO)
+                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-revised-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Revised P.O</a>
                                     @endif
                                 </div>
                             </div>

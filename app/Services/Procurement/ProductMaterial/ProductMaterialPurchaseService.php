@@ -50,6 +50,13 @@ class ProductMaterialPurchaseService
             case 'back_purchase':
                 return $this->getBackPurchaseOrders($request);
                 break;
+            case 'has_revised_purchase':
+                return $this->getHasRevisedPurchaseOrders($request);
+                break;
+            case 'has_backed_purchase':
+                return $this->getHasBackedPurchaseOrders($request);
+                break;
+
         }
     }
 
@@ -91,6 +98,7 @@ class ProductMaterialPurchaseService
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
             ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_NEW)
+            ->where('purchase_create_type', ProductMaterialPurchase::PURCHASE_CREATE_TYPE_NEW)
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
@@ -180,7 +188,8 @@ class ProductMaterialPurchaseService
         $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
-            ->where('is_revised', ProductMaterialPurchase::IS_REVISED_YES)
+            ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_NEW)
+            ->where('purchase_create_type', ProductMaterialPurchase::PURCHASE_CREATE_TYPE_REVISED)
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
@@ -210,7 +219,8 @@ class ProductMaterialPurchaseService
         $end_date_filtered = $request->end_date_filtered??null;
 
         $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
-            ->where('is_backed', ProductMaterialPurchase::IS_BACKED_YES)
+            ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_NEW)
+            ->where('purchase_create_type', ProductMaterialPurchase::PURCHASE_CREATE_TYPE_BACKED)
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->where(function ($q) use($keyword_filtered){
                 if($keyword_filtered != null){
@@ -229,6 +239,68 @@ class ProductMaterialPurchaseService
             ->paginate($this->paginate_limit);
 
         $data['view'] = view('procurement.product-material-purchase._back_index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getHasRevisedPurchaseOrders($request)
+    {
+        $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
+
+        $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
+            ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_REVISED_OR_BACKED)
+            ->where('is_revised', ProductMaterialPurchase::IS_REVISED_YES)
+            ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            ->where(function ($q) use($keyword_filtered){
+                if($keyword_filtered != null){
+                    $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
+                }
+            })
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.product-material-purchase._has_revised_index_filtered', $data)->render();
+
+        return $data;
+    }
+
+    public function getHasBackedPurchaseOrders($request)
+    {
+        $keyword_filtered = $request->keyword_filtered;
+        $start_date_filtered = $request->start_date_filtered??null;
+        $end_date_filtered = $request->end_date_filtered??null;
+
+        $data['purchase_orders'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
+            ->where('purchase_status', ProductMaterialPurchase::PURCHASE_STATUS_REVISED_OR_BACKED)
+            ->where('is_backed', ProductMaterialPurchase::IS_BACKED_YES)
+            ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            ->where(function ($q) use($keyword_filtered){
+                if($keyword_filtered != null){
+                    $q->where('purchase_id', 'LIKE', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->where(function ($q) use($start_date_filtered,$end_date_filtered){
+                if($start_date_filtered != null){
+                    $q->whereDate('purchase_date', '>=', $start_date_filtered);
+                }
+                if($end_date_filtered != null){
+                    $q->whereDate('purchase_date', '<=', $end_date_filtered);
+                }
+            })
+            ->orderBy('id', 'DESC')
+            ->paginate($this->paginate_limit);
+
+        $data['view'] = view('procurement.product-material-purchase._has_backed_index_filtered', $data)->render();
 
         return $data;
     }
@@ -581,10 +653,10 @@ class ProductMaterialPurchaseService
         DB::beginTransaction();
         try {
 
-            $checkPurchase = ProductMaterialPurchase::where('id', $id)
+            $parentPurchase = ProductMaterialPurchase::where('id', $id)
                 ->where('deleted', ProductMaterialPurchase::DELETED_NO)
                 ->first();
-            if (empty($checkPurchase)) {
+            if (empty($parentPurchase)) {
                 throw new \Exception("Purchase Order Not Found");
             }
 
@@ -597,7 +669,7 @@ class ProductMaterialPurchaseService
 
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_REVISED;
-            $purchase->purchase_create_prev_id = $id;
+            $purchase->purchase_create_prev_id = $parentPurchase->id;
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
             $purchase->purchase_date = $request->purchase_date;
@@ -605,10 +677,8 @@ class ProductMaterialPurchaseService
             $purchase->discount_value = $request->discount_value;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
             $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_UNPAID;
-            $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
-            $purchase->is_revised = ProductMaterialPurchase::IS_REVISED_YES;
-            $purchase->revised_by = auth()->user()->id;
-            $purchase->revised_at = Carbon::now();
+            $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
+            $purchase->is_revised = ProductMaterialPurchase::IS_REVISED_NO;
             $purchase->is_backed = ProductMaterialPurchase::IS_BACKED_NO;
             $purchase->notes = $request->notes;
             $purchase->invoice_footer = $request->invoice_footer;
@@ -695,6 +765,14 @@ class ProductMaterialPurchaseService
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->save();
 
+            $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
+            $parentPurchase->is_revised = $parentPurchase::IS_REVISED_YES;
+            $parentPurchase->revised_by = auth()->user()->id;
+            $parentPurchase->revised_at = Carbon::now();
+            $parentPurchase->updated_at = Carbon::now();
+            $parentPurchase->updated_by = auth()->user()->id;
+            $parentPurchase->save();
+
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -721,10 +799,10 @@ class ProductMaterialPurchaseService
         DB::beginTransaction();
         try {
 
-            $checkPurchase = ProductMaterialPurchase::where('id', $id)
+            $parentPurchase = ProductMaterialPurchase::where('id', $id)
                 ->where('deleted', ProductMaterialPurchase::DELETED_NO)
                 ->first();
-            if (empty($checkPurchase)) {
+            if (empty($parentPurchase)) {
                 throw new \Exception("Purchase Order Not Found");
             }
 
@@ -737,7 +815,7 @@ class ProductMaterialPurchaseService
 
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_BACKED;
-            $purchase->purchase_create_prev_id = $id;
+            $purchase->purchase_create_prev_id = $parentPurchase->id;
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
             $purchase->purchase_date = $request->purchase_date;
@@ -745,11 +823,9 @@ class ProductMaterialPurchaseService
             $purchase->discount_value = $request->discount_value;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
             $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_UNPAID;
-            $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
+            $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
             $purchase->is_revised = ProductMaterialPurchase::IS_REVISED_NO;
-            $purchase->is_backed = ProductMaterialPurchase::IS_BACKED_YES;
-            $purchase->backed_by = auth()->user()->id;
-            $purchase->backed_at = Carbon::now();
+            $purchase->is_backed = ProductMaterialPurchase::IS_BACKED_NO;
             $purchase->notes = $request->notes;
             $purchase->invoice_footer = $request->invoice_footer;
             $purchase->created_at = Carbon::now();
@@ -834,6 +910,14 @@ class ProductMaterialPurchaseService
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->save();
+
+            $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
+            $parentPurchase->is_backed = $parentPurchase::IS_BACKED_YES;
+            $parentPurchase->backed_by = auth()->user()->id;
+            $parentPurchase->backed_at = Carbon::now();
+            $parentPurchase->updated_at = Carbon::now();
+            $parentPurchase->updated_by = auth()->user()->id;
+            $parentPurchase->save();
 
 
         }catch (\Exception $e) {

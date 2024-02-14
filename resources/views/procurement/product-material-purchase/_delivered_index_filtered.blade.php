@@ -1,18 +1,18 @@
 <div class="">
     <table class="table mb-0 erp-table">
         <thead class="erp-thead">
-        <tr class="erp-tr">
-            <th class="erp-th">SL</th>
-            <th class="erp-th">P.O No </th>
-            <th class="erp-th text-center">Estimate Delivery Date </th>
-            <th class="erp-th text-center">Supplier </th>
-            <th class="erp-th text-center">Product </th>
-            <th class="erp-th text-center">Total Amount </th>
-            <th class="erp-th text-center">Due Amount </th>
-            <<th class="erp-th text-center">Investigation Status </th>
-            <th class="erp-th text-center">Payment Status </th>
-            <th class="text-end erp-th">Action</th>
-        </tr>
+            <tr class="erp-tr">
+                <th class="erp-th">SL</th>
+                <th class="erp-th">P.O No </th>
+                <th class="erp-th text-center">Estimate Delivery Date </th>
+                <th class="erp-th text-center">Supplier </th>
+                <th class="erp-th text-center">Product </th>
+                <th class="erp-th text-center">Total Amount </th>
+                <th class="erp-th text-center">Due Amount </th>
+                <th class="erp-th text-center">Investigation Status </th>
+                <th class="erp-th text-center">Payment Status </th>
+                <th class="text-end erp-th">Action</th>
+            </tr>
         </thead>
         <tbody class="erp-tbody">
             @foreach($purchase_orders as $purchase_order)

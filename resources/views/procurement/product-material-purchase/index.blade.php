@@ -66,6 +66,12 @@
                                 <li class="nav-item erp-nav-item" role="presentation">
                                     <button class="nav-link erp-nav-link" data="back_purchase" id="back-purchase-tab" data-bs-toggle="tab" data-bs-target="#back-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Back P.O</button>
                                 </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" data="has_revised_purchase" id="has-revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#has-revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Has Revised P.O</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" data="has_backed_purchase" id="has-backed-purchase-tab" data-bs-toggle="tab" data-bs-target="#has-backed-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Has Backed P.O</button>
+                                </li>
                             </ul>
 
                             <div class="tab-content" id="myTabContent">

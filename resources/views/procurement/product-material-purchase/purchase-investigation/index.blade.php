@@ -66,7 +66,7 @@
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box position-relative">
                                                                                 <label class="col-form-label">Qty </label>
-                                                                                <input type="number" class="form-control " min="0" max="{{ $purchaseDetail->qty }}" name="damage_qty[]" value="{{ $purchaseDetail->damage_qty }}">
+                                                                                <input type="number" class="form-control damage_qty" min="0" max="{{ $purchaseDetail->qty }}" name="damage_qty[]" value="{{ $purchaseDetail->damage_qty }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
@@ -93,7 +93,7 @@
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box position-relative">
                                                                                 <label class="col-form-label">Qty </label>
-                                                                                <input type="number" class="form-control " min="0" max="{{ $purchaseDetail->qty }}"  name="missing_qty[]" value="{{ $purchaseDetail->missing_qty }}">
+                                                                                <input type="number" class="form-control missing_qty" min="0" max="{{ $purchaseDetail->qty }}"  name="missing_qty[]" value="{{ $purchaseDetail->missing_qty }}">
                                                                             </div>
                                                                         </div>
                                                                         <div class="issue-box-child-item">
@@ -173,16 +173,31 @@
                     $(this).closest('tr').find('.has_damage').prop('checked', false)
                     $(this).closest('tr').find('.has_missing').prop('checked', false);
 
+                    $(this).closest('tr').find('.damage_qty').val(0);
+                    $(this).closest('tr').find('.damage_qty').removeAttr('required');
+                    $(this).closest('tr').find('.damage_qty').attr('min', 0);
+
+                    $(this).closest('tr').find('.missing_qty').val(0);
+                    $(this).closest('tr').find('.missing_qty').removeAttr('required');
+                    $(this).closest('tr').find('.missing_qty').attr('min', 0);
+
                 }
             });
             $(document).on('change', '.has_damage', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('tr').find('.is_perfect').prop('checked', false);
+
+                    $(this).closest('tr').find('.damage_qty').attr('required', 'required');
+                    $(this).closest('tr').find('.damage_qty').attr('min', 1);
+
+
                 }
             });
             $(document).on('change', '.has_missing', function () {
                 if ($(this).is(':checked')) {
                     $(this).closest('tr').find('.is_perfect').prop('checked', false);
+                    $(this).closest('tr').find('.missing_qty').attr('required', 'required');
+                    $(this).closest('tr').find('.missing_qty').attr('min', 1);
                 }
             });
 

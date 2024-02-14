@@ -47,16 +47,11 @@ class PurchaseInvestigationService
             }
 //            dd($request->all());
 
-            $has_damage = 0;
-            $has_missing = 0;
+            /*$has_damage = 0;
+            $has_missing = 0;*/
 
             if (is_array($request->purchase_detail_id) && count($request->purchase_detail_id) > 0) {
                 foreach ($request->purchase_detail_id as $key => $value) {
-
-                    if (!isset($request->is_perfect[$key]) && !isset($request->has_damage[$key]) && !isset($request->has_missing[$key])) {
-                        throw new \Exception('Please select at least one option');
-                    }
-
 
                     $purchaseDetail = ProductMaterialPurchaseDetails::where('id', $value)
                         ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
@@ -64,6 +59,10 @@ class PurchaseInvestigationService
 
                     if (!$purchaseDetail) {
                         throw new \Exception('Purchase Detail Not Found');
+                    }
+
+                    if (!isset($request->is_perfect[$key]) && !isset($request->has_damage[$key]) && !isset($request->has_missing[$key])) {
+                        throw new \Exception('Please select at least one option for '. $purchaseDetail->productMaterial->name);
                     }
 
                     $productMaterial = ProductMaterial::where('id', $purchaseDetail->product_material_id)
@@ -76,12 +75,18 @@ class PurchaseInvestigationService
                     }else{
                         if (isset($request->has_damage[$key]) && ($request->has_damage[$key])) {
                             $requestDamageQty = $request->damage_qty[$key];
+                            if($requestDamageQty <= 0){
+                                throw new \Exception('Damage Quantity must be greater than 0 for '. $purchaseDetail->productMaterial->name);
+                            }
                         }else{
                             $requestDamageQty = 0;
                         }
 
                         if (isset($request->has_missing[$key]) && ($request->has_missing[$key])) {
                             $requestMissingQty = $request->missing_qty[$key];
+                            if($requestMissingQty <= 0){
+                                throw new \Exception('Missing Quantity must be greater than 0 for '. $purchaseDetail->productMaterial->name);
+                            }
                         }else{
                             $requestMissingQty = 0;
                         }
@@ -144,8 +149,8 @@ class PurchaseInvestigationService
                         $purchaseDetail->missing_qty = 0;
                         $purchaseDetail->missing_remarks = $request->missing_remarks[$key];
 
-                        $has_damage = 0;
-                        $has_missing = 0;
+                        /*$has_damage = 0;
+                        $has_missing = 0;*/
 
                     } else {
                         $purchaseDetail->is_perfect = 0;
@@ -155,13 +160,13 @@ class PurchaseInvestigationService
                             $purchaseDetail->damage_qty = $request->damage_qty[$key];
                             $purchaseDetail->damage_remarks = $request->damage_remarks[$key];
 
-                            $has_damage = 1;
+                            /*$has_damage = 1;*/
                         } else {
                             $purchaseDetail->has_damage = $purchaseDetail::HAS_DAMAGE_NO;
                             $purchaseDetail->damage_qty = 0;
                             $purchaseDetail->damage_remarks = $request->damage_remarks[$key];
 
-                            $has_damage = 0;
+                            /*$has_damage = 0;*/
                         }
                         //check if has missing and do the rest of functions
 
@@ -270,11 +275,45 @@ class PurchaseInvestigationService
             }
 
             $purchase->purchase_status = $purchase::PURCHASE_STATUS_DELIVERED;
-            $purchase->has_damage = $has_damage;
-            $purchase->has_missing = $has_missing;
             $purchase->updated_by = auth()->user()->id;
             $purchase->updated_at = Carbon::now();
             $purchase->save();
+
+            // check if any purchase details are has missing
+            $checkPurchaseDetailHasMissing = ProductMaterialPurchaseDetails::where('product_material_purchase_id', $purchase->id)
+                ->where('has_missing', ProductMaterialPurchaseDetails::HAS_MISSING_YES)
+                ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->get();
+            if (count($checkPurchaseDetailHasMissing) > 0) {
+                $purchase->has_missing = $purchase::HAS_MISSING_YES;
+                $purchase->updated_by = auth()->user()->id;
+                $purchase->updated_at = Carbon::now();
+                $purchase->save();
+            }else{
+                $purchase->has_missing = $purchase::HAS_MISSING_NO;
+                $purchase->updated_by = auth()->user()->id;
+                $purchase->updated_at = Carbon::now();
+                $purchase->save();
+            }
+
+            // check if any purchase details are has damage
+            $checkPurchaseDetailHasDamage = ProductMaterialPurchaseDetails::where('product_material_purchase_id', $purchase->id)
+                ->where('has_damage', ProductMaterialPurchaseDetails::HAS_DAMAGE_YES)
+                ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->get();
+            if (count($checkPurchaseDetailHasDamage) > 0) {
+                $purchase->has_damage = $purchase::HAS_DAMAGE_YES;
+                $purchase->updated_by = auth()->user()->id;
+                $purchase->updated_at = Carbon::now();
+                $purchase->save();
+            }else{
+                $purchase->has_damage = $purchase::HAS_DAMAGE_NO;
+                $purchase->updated_by = auth()->user()->id;
+                $purchase->updated_at = Carbon::now();
+                $purchase->save();
+            }
+
+
 
         }catch (\Exception $e) {
             DB::rollBack();

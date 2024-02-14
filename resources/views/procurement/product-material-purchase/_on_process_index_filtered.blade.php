@@ -11,7 +11,7 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
-            <th class="text-end erp-th">Action</th>
+            {{--<th class="text-end erp-th">Action</th>--}}
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -72,17 +72,17 @@
                     </td>
 
 
-                    <td class="text-end erp-tbody-td">
+                    {{--<td class="text-end erp-tbody-td">
                         <div class="erp-action-t">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                {{--<div class="dropdown-menu dropdown-menu-right">
+                                <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
-                                </div>--}}
+                                </div>
                             </div>
                         </div>
-                    </td>
+                    </td>--}}
                 </tr>
             @endforeach
         </tbody>
