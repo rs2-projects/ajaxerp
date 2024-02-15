@@ -94,13 +94,6 @@ if (!function_exists('getCurrencySymbol')) {
     }
 }
 
-if (!function_exists('hasUserPermission')) {
-    function hasUserPermission(...$permissions)
-    {
-        return in_array(auth()->user()->type, $permissions);
-    }
-}
-
 if (!function_exists('minutesToHourString')) {
     function minutesToHourString($minutes)
     {

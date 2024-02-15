@@ -42,6 +42,8 @@ class LoginService
         }
 
         Auth::login($user, $request->remember_me ?? 0);
+
+        $user->resetPermissionSession();
     }
 
 }

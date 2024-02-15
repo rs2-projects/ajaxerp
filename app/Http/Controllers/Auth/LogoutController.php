@@ -10,6 +10,7 @@ class LogoutController extends AuthController
     public function logout()
     {
         Auth::logout();
+        session()->remove('session_permissions');
         return redirect()->route('login');
     }
 
