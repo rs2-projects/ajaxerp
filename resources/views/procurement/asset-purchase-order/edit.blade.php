@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('procurement.asset-purchase-order.store') }}" id="assetPurchaseOrderStoreForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('procurement.asset-purchase-order.update',$purchase->id) }}" id="purchaseUpdateForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -74,19 +74,19 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
-                                                    <div ><input class="form-control" name="batch_number" type="text"></div>
+                                                    <div ><input class="form-control " required name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Purchase Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchaseDate }}" name="purchase_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->purchase_date }}" name="purchase_date" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Estimate Delivery Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker"  value="{{ $estimatedDeliveryDate }}" name="estimated_delivery_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchase->estimated_delivery_date }}" name="estimated_delivery_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -116,12 +116,10 @@
                                         </div>
                                     </div>
                                     <div class="purchase-order-product-body-wrapper">
-                                        <input type="hidden" name="asset_product_purchase_request_id" value="{{$request_id}}">
                                         <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
-                                                    <input type="hidden" name="asset_product_purchase_request_detail_id[]" v-bind:value="cartItem.details_id">
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
@@ -145,7 +143,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="text" class="form-control text-center" name="warranty[]" v-model="cartItem.warranty" placeholder="Warranty">
+                                                                <input type="text" class="form-control text-center" name="warranty[]" v-model="cartItem.warranty" placeholder="Color">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -163,7 +161,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="number" min="0" v-model="cartItem.price" name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" required placeholder="Price">
+                                                                <input type="number" min="0" v-model="cartItem.price" name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -172,7 +170,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                            {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                                {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
@@ -187,16 +185,15 @@
                                                             <p> @{{ cartItem.category_name }}</p>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                                 <div class="purchase-order-product-body-vat-tax flex-100">
                                                     <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <select class="select select-step vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="" >Select Tax</option>
-                                                                    <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id">
+                                                                    <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ stItem.tax_rate }}%
                                                                     </option>
                                                                 </select>
@@ -205,7 +202,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                   {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                    {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                             </div>
                                                         </div>
@@ -326,13 +323,12 @@
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
                                                         <label class="col-form-label pt-0">Notes / Terms</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer"></textarea>
+                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer">{{ $purchase->notes }}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                                 <div class="purchase-order-product-footer-wrapper">
                                     <div class="purchase-order-product-footer-header">
@@ -342,7 +338,7 @@
                                         <div class="purchase-order-product-footer-body-inner">
                                             <div class="purchase-order-product-footer-body-item">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
+                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!">{{ $purchase->invoice_footer }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -378,7 +374,7 @@
                                 </div>
                                 <div class="slp-details-box">
                                     <h5>@{{ selected_supplier.business_name }}</h5>
-                                    <p class="supplier-person-name">@{{ selected_supplier.contact_full_name }}</p>
+                                    <p class="supplier-person-name">@{{ selected_supplier.contact_first_name }}</p>
                                 </div>
                             </div>
                             <div class="sl-search-view">
@@ -395,7 +391,7 @@
                                         </div>
                                         <div class="slp-details-box">
                                             <h5>@{{ supplier.business_name }}</h5>
-                                            <p class="supplier-person-name">@{{ supplier.contact_full_name }}</p>
+                                            <p class="supplier-person-name">@{{ supplier.contact_first_name }} @{{ supplier.contact_last_name }}</p>
                                         </div>
                                     </a>
                                 </div>
@@ -442,7 +438,7 @@
         });
 
         function initTaxSelect2() {
-            $('.select-step').select2({
+            $('.vat-tax-select2').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
@@ -480,10 +476,11 @@
                     supplier_search: '',
                     selected_supplier:null,
                     open_select_item: false,
-                    discount_type: 0,
-                    discount_value: 0,
-                    discount_amount: 0,
-                    paying_amount: 0
+                    discount_type: "{{ $purchase->discount_type }}",
+                    discount_value: "{{ $purchase->discount_value }}",
+                    discount_amount: "{{ $purchase->discount_amount }}",
+                    paying_amount: 0,
+
                 }
             },
             computed: {
@@ -531,7 +528,7 @@
                             this.discount_amount = this.discount_value;
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
+                    total_amount = total_amount - parseFloat(this.discount_amount);
                     return total_amount;
                 },
             },
@@ -548,7 +545,7 @@
                     } else if(this.cartItems.length <= 0) {
                         showInfoAlert('Opps!', 'Please add at-least 1 Product!');
                     } else {
-                        purchaseStoreFormSubmit();
+                        purchaseUpdateFormSubmit();
                     }
                 },
                 getSearchedItems() {
@@ -581,7 +578,7 @@
                     }
                     setTimeout(function () {
                         initTaxSelect2();
-                    }, 300);
+                    }, 100);
                     this.open_select_item = !this.open_select_item;
                 },
                 incrementQty(index) {
@@ -606,7 +603,11 @@
                 updateCartItemPrice(index) {
                     let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
-                    this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                    if(this.cartItems[index].tax == null) {
+                        this.cartItems[index].vat_amount = 0;
+                    } else {
+                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                    }
                     this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
                 },
                 changeSupplier(index) {
@@ -614,28 +615,30 @@
                     $("#addSupplierModal").modal('hide');
                 },
                 changeTax(cartItemIndex, new_tax_id) {
-                    let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
-                    this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
-                    this.updateCartItemPrice(cartItemIndex);
+                    if(new_tax_id == 0) {
+                        this.cartItems[cartItemIndex].tax = null;
+                        this.updateCartItemPrice(cartItemIndex);
+                    } else {
+                        let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
+                        this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
+                        this.updateCartItemPrice(cartItemIndex);
+                    }
                 },
                 getPurchaseData() {
-                    let urlParams = new URLSearchParams(window.location.search);
-                    let details_ids = urlParams.getAll('details_id[]');
-                    if(details_ids.length > 0){
-                        let url = '{{ route('procurement.asset-purchase-order.get-selected-purchase-data') }}';
-                        axios
-                            .get(url, { params: { details_ids: details_ids } })
-                            .then(response => {
-                                this.cartItems = response.data.cartItems;
+                    axios
+                        .get('{{ route('procurement.asset-purchase-order.get-edit-purchase-data',$purchase->id) }}')
+                        .then(response => {
+                            this.cartItems = response.data.cartItems;
+                            this.selected_supplier = response.data.supplier;
 
-                                for (let i in this.cartItems) {
-                                    this.updateCartItemPrice(i);
-                                }
-                            });
-                    }
-                }
-
-                
+                            for (let i in this.cartItems) {
+                                this.updateCartItemPrice(i);
+                            }
+                            setTimeout(function () {
+                                initTaxSelect2();
+                            }, 100);
+                        });
+                },
             },
             mounted () {
                 this.getSearchedItems();
@@ -648,13 +651,13 @@
 
         function taxChangeOutside(select) {
             let new_tax_id = $(select).val();
-            console.log(new_tax_id);
             let cartItemIndex = $(select).attr('data-cartItemIndex');
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }
 
-        function purchaseStoreFormSubmit(){
-            var self = $("#assetPurchaseOrderStoreForm");
+        function purchaseUpdateFormSubmit(){
+
+            var self = $("#purchaseUpdateForm");
             var formData = new FormData($(self)[0]);
             var url = $(self).attr('action');
 
@@ -663,7 +666,7 @@
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
                         window.location.href = "{{route('procurement.asset-purchase-order.index')}}";
-                    }, 100);
+                    }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)
                 }

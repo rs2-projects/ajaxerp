@@ -109,6 +109,35 @@
             width: 100%;
             padding-top: 4px;
         }
+        .table.erp-table>:not(caption)>*>*{
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        .on.process-status{
+            display: inline-block;
+            background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important;
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
+        .canceled-status{
+            display: inline-block;
+            background: #ff0000;
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
+        .delivered-status{
+            display: inline-block;
+            background: var(--bg-gradiant-primary);
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
+        }
     </style>
 @endsection
 
@@ -182,7 +211,7 @@
         }
 
         function makePayment(id){
-            let url = "{{route('procurement.product-material-purchase.make-payment', ':id')}}";
+            let url = "{{route('procurement.asset-purchase-order.make-payment', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
@@ -229,6 +258,29 @@
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
+        }
+
+        function declinePuchaseRequest(uri) {
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to cancel this puchase order?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(
+                        uri,
+                        {},
+                        function (response) {
+                            toastr.success(response.message);
+                            getData();
+                        }
+                    );
+                } else if (result.isDenied) {
+
+                }
+            })
         }
 
     </script>

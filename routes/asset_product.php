@@ -5,6 +5,7 @@ use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Procurement\Assets\UserPurchaseRequestController;
 use App\Http\Controllers\Procurement\Assets\AdminPurchaseRequestController;
+use App\Http\Controllers\Procurement\Assets\PuchaseOrderPaymentController;
 use App\Http\Controllers\Procurement\Assets\PurchaseOrderController;
 use App\Http\Controllers\Procurement\Supplier\SupplierController;
 
@@ -84,11 +85,24 @@ Route::group(['prefix' => 'procurement'], function () {
         Route::post('/create', [PurchaseOrderController::class, 'store'])->name('procurement.asset-purchase-order.store');
         Route::get('/selected-purchase-data-get', [PurchaseOrderController::class, 'getSelectedPurchaseData'])->name('procurement.asset-purchase-order.get-selected-purchase-data');
 
+        // edit 
+        Route::get('/{id}/edit', [PurchaseOrderController::class, 'edit'])->name('procurement.asset-purchase-order.edit');
+        Route::get('/{id}/get-edit-purchase-data', [PurchaseOrderController::class, 'getEditPurchaseData'])->name('procurement.asset-purchase-order.get-edit-purchase-data');
+        Route::post('/{id}/update', [PurchaseOrderController::class, 'update'])->name('procurement.asset-purchase-order.update');
+            
         Route::get('/get-all-asset-products',[PurchaseOrderController::class, 'getAllAssetProducts'])->name('procurement.asset-purchase-order.get-all-asset-products');
         Route::get('/get-all-taxes',[PurchaseOrderController::class, 'getAllTaxes'])->name('procurement.asset-purchase-order.get-all-taxes');
         Route::get('/get-all-suppliers',[PurchaseOrderController::class, 'getAllSuppliers'])->name('procurement.asset-purchase-order.get-all-suppliers');
         Route::get('/{id}/delete', [PurchaseOrderController::class, 'delete'])->name('procurement.asset-purchase-order.delete');
+        Route::get('/{id}/cancel', [PurchaseOrderController::class, 'cancel'])->name('procurement.asset-purchase-order.cancel');
         Route::get('/{id}/change-status/{status}', [PurchaseOrderController::class, 'statusUpdate'])->name('procurement.asset-purchase-order.change-status');
 
-     });
+        // investigation
+        Route::get('/{purchase_id}/investigate', [PurchaseOrderController::class, 'investigate'])->name('procurement.asset-purchase-order.investigate');
+        Route::post('/{purchase_id}/investigate', [PurchaseOrderController::class, 'investigateStore'])->name('procurement.asset-purchase-order.investigate.store');
+    
+        // make payment
+        Route::get('/{id}/make-payment', [PuchaseOrderPaymentController::class, 'makePayment'])->name('procurement.asset-purchase-order.make-payment');
+        Route::post('/{id}/make-payment-submit', [PuchaseOrderPaymentController::class, 'makePaymentSubmit'])->name('procurement.asset-purchase-order.make-payment-submit');
+    });
 });

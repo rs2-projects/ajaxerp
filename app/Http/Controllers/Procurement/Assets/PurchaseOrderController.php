@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Procurement\Assets;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Procurement\Assets\PurchaseOrder\StorePurchaseOrderRequest;
+use App\Http\Requests\Procurement\Assets\PurchaseOrder\UpdatePurchaseOrderRequest;
 use App\Services\Procurement\Assets\PurchaseOrder\PurchaseOrderService;
 use Illuminate\Http\Request;
 
@@ -39,7 +40,6 @@ class PurchaseOrderController extends BackendController
         $this->setActiveMenu('procurement.asset-purchase-order.index');
         $data = $this->service->createData();
         $data['request_id'] = $request->request_id;
-        $data['details_id'] = $request->details_id;
         return $this->view('procurement.asset-purchase-order.create')->with($data);
     }
 
@@ -56,6 +56,55 @@ class PurchaseOrderController extends BackendController
             $this->service->store($reqeust);
 
             return $this->returnAjaxSuccess([], 'Asset Purchase Order Created Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Asset Purchase Order");
+        $this->setActiveMenu('procurement.asset-purchase-order.index');
+
+        $data = $this->service->editData($id);
+
+        return $this->view('procurement.asset-purchase-order.edit')->with($data);
+    }
+
+
+    public function getEditPurchaseData(Request $request, $id)
+    {
+        $data = $this->service->getEditPurchaseData($request, $id);
+
+        return response()->json($data);
+    }
+
+    public function update(UpdatePurchaseOrderRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+
+            return $this->returnAjaxSuccess([], 'Purchase Order Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->service->deleteData($id);
+            return $this->returnAjaxSuccess([], 'Asset Purchase Order Deleted Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function cancel($id)
+    {
+        try {
+            $this->service->cancelData($id);
+            return $this->returnAjaxSuccess([], 'Asset Purchase Order Cancelled Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
@@ -91,5 +140,24 @@ class PurchaseOrderController extends BackendController
         $data = $this->service->getAllSuppliers($request);
 
         return response()->json($data['suppliers']);
+    }
+
+    //investigation...
+    public function investigate($purchase_id)
+    {
+        $this->setPageTitle("Asset Purchase Order Investigation");
+        $this->setActiveMenu('procurement.asset-purchase-order.index');
+        $data = $this->service->investigateData($purchase_id);
+        return $this->view('procurement.asset-purchase-order._investigate_order')->with($data);
+    }
+
+    public function investigateStore(Request $request, $purchase_id)
+    {
+        try {
+            $this->service->investigateStore($request, $purchase_id);
+            return $this->returnAjaxSuccess([], 'Purchase Investigation Completed Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

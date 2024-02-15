@@ -9,8 +9,6 @@
             <th class="erp-th text-center">Product </th>
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
-            <<th class="erp-th text-center">Investigation Status </th>
-            <th class="erp-th text-center">Payment Status </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
@@ -49,23 +47,6 @@
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->due_amount }}</h4>
 
-                    </td>
-                    <td class="erp-tbody-td text-center">
-                        @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES)
-                                <h4 class="text-center d-table-title missing-status">Missing</h4>
-                            @endif
-                            @if($purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                <h4 class="text-center d-table-title damage-status">Damage</h4>
-                            @endif
-                        @else
-                            <h4 class="text-center d-table-title perfect-status">Perfect</h4>
-                        @endif
-                    </td>
-                    <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title {{strtolower($purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status])}}-status">
-                            {{ $purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status] }}
-                        </h4>
                     </td>
                     <td class="text-end erp-tbody-td">
                         {{-- <div class="erp-action-t">

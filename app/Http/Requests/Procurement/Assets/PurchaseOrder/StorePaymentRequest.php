@@ -4,7 +4,7 @@ namespace App\Http\Requests\Procurement\Assets\PurchaseOrder;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePurchaseOrderRequest extends FormRequest
+class StorePaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,10 @@ class UpdatePurchaseOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'supplier_id' => 'required|integer',
-            'purchase_date' => 'required|date',
-            'estimated_delivery_date' => 'required|date',
-            'batch_number' => 'required|string',
+            'amount' => 'required|numeric|min:0.01',
+            'payment_method' => 'required|in:'.implode(',', array_keys(\App\Models\Procurements\AssetProductPurchasePayment::PAYMENT_METHODS)),
+            'date' => 'required|date',
+            'account_id' => 'required|exists:acc_coa_accounts,id',
         ];
     }
 }
