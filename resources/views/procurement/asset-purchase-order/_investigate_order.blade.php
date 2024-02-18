@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <form action="{{ route('procurement.purchase-investigation.update',$purchase->id) }}" id="investigationUpdateForm" method="post" enctype="multipart/form-data">
+        <form action="{{ route('procurement.asset-purchase-order.investigate.store',$purchase->id) }}" id="investigationUpdateForm" method="post" enctype="multipart/form-data">
             @csrf
             <div class="erp-employee-list-wrapper">
                 <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -34,12 +34,10 @@
                                                         <td class="erp-tbody-td text-start">
                                                             <a href="javascript:void(0)" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                                 <div class="em-pro-img-box">
-                                                                    <img src="{{ asset($purchaseDetail->productMaterial->show_image) }}" alt="">
+                                                                    <img src="{{ asset($purchaseDetail->assetProduct->show_image) }}" alt="">
                                                                 </div>
                                                                 <div class="em-pro-details-box">
-                                                                    <h5>{{ $purchaseDetail->productMaterial->name??'N/A' }}</h5>
-                                                                    <p class="em-id">Code: <span> #{{ $purchaseDetail->productMaterial->code??'N/A' }}</span></p>
-
+                                                                    <h5>{{ $purchaseDetail->assetProduct->name??'N/A' }}</h5>
                                                                 </div>
                                                             </a>
                                                         </td>
@@ -51,7 +49,7 @@
                                                         </td>
                                                         <td class="erp-tbody-td text-center">
                                                             <label class="col-form-label">
-                                                                <input type="checkbox" name="is_perfect[{{ $key }}]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Is it Perfect</span>
+                                                                <input type="checkbox" name="is_perfect[{{ $key }}]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Perfect</span>
                                                             </label>
                                                         </td>
                                                         <td class="erp-tbody-td text-center">
@@ -77,7 +75,6 @@
                                                                         </div>
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box-2 position-relative">
-
                                                                                 <input type="file" class="form-control " multiple name="file_type_damage[{{ $key }}][]">
                                                                             </div>
                                                                         </div>
@@ -104,7 +101,6 @@
                                                                         </div>
                                                                         <div class="issue-box-child-item">
                                                                             <div class="input-block mb-0 erp-step-input-block issue-form-box-2 position-relative">
-
                                                                                 <input type="file" class="form-control " multiple name="file_type_missing[{{ $key }}][]">
                                                                             </div>
                                                                         </div>
@@ -115,21 +111,17 @@
                                                     </tr>
                                                 @endforeach
                                             @endif
-
                                             </tbody>
                                         </table>
                                     </div>
-
                                 </div>
-
                             </div>
                             <div class="erp-filter-box d-flex align-items-center justify-content-center flex-100 pt-4">
 
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-center flex-100">
-
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
-                                            <button class="erp-search-btn" type="submit">Save</button>
+                                            <button class="erp-search-btn" type="submit">Save Investigation</button>
                                         </div>
                                     </div>
                                 </div>
@@ -200,12 +192,11 @@
                 var formData = new FormData($(this)[0]);
                 $(".ie-span").text("").hide();
                 var url = $(this).attr('action');
-
-
+                
                 formPost(url, formData, function (res){
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message)
-                        window.location.href = "{{ route('procurement.product-material-purchase.index') }}"
+                        window.location.href = "{{ route('procurement.asset-purchase-order.index') }}"
                     }else{
                         showErrorAlert('Error',res.message)
                     }

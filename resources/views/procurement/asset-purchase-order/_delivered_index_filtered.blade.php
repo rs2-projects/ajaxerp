@@ -68,16 +68,16 @@
                         </h4>
                     </td>
                     <td class="text-end erp-tbody-td">
-                        {{-- <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                                        <a class="dropdown-item" href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
-                                    @endif
+                        @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.investigate',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div> --}}
+                        @endif
                     </td>
                 </tr>
             @endforeach
