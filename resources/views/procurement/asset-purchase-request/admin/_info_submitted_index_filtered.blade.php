@@ -6,8 +6,10 @@
             <th class="erp-th">Purchase Request # </th>
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
-            <th class="erp-th text-center">Status </th>
-            <th class="text-center erp-th">Action</th>
+            @if(hasPermission('manage-asset-product-purchase-request'))
+                <th class="erp-th text-center">Status </th>
+                <th class="text-center erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -26,19 +28,21 @@
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ $pr->description }}</h4>
                     </td>
-                    <td class="erp-tbody-td text-center">
-                        <a href="javascript:void(0);" onclick="getRequestDetails({{$pr->id}})" class="last-cal-status-btn">Check Info</a>
-                    </td>
-                    <td class="text-center erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.admin.asset-purchase-request.delete',$pr->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                    @if(hasPermission('manage-asset-product-purchase-request'))
+                        <td class="erp-tbody-td text-center">
+                            <a href="javascript:void(0);" onclick="getRequestDetails({{$pr->id}})" class="last-cal-status-btn">Check Info</a>
+                        </td>
+                        <td class="text-center erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.admin.asset-purchase-request.delete',$pr->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

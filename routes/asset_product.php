@@ -8,6 +8,8 @@ use App\Http\Controllers\Procurement\Assets\AdminPurchaseRequestController;
 use App\Http\Controllers\Procurement\Assets\PuchaseOrderPaymentController;
 use App\Http\Controllers\Procurement\Assets\PurchaseOrderController;
 use App\Http\Controllers\Procurement\Supplier\SupplierController;
+use App\Http\Controllers\Settings\UserRoleController;
+use App\Http\Controllers\Settings\UserRolePermissionController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start
@@ -105,4 +107,22 @@ Route::group(['prefix' => 'procurement'], function () {
         Route::get('/{id}/make-payment', [PuchaseOrderPaymentController::class, 'makePayment'])->name('procurement.asset-purchase-order.make-payment');
         Route::post('/{id}/make-payment-submit', [PuchaseOrderPaymentController::class, 'makePaymentSubmit'])->name('procurement.asset-purchase-order.make-payment-submit');
     });
+});
+
+Route::group(['prefix' => 'settings'], function () {
+    Route::group(['prefix' => 'role-management'], function () {
+        Route::get('/', [UserRoleController::class, 'index'])->name('settings.role-management.index');
+        Route::post('/filtered', [UserRoleController::class, 'indexFiltered'])->name('settings.role-management.filtered');
+        Route::get('/create', [UserRoleController::class, 'create'])->name('settings.role-management.create');
+        Route::post('/create', [UserRoleController::class, 'store'])->name('settings.role-management.store');
+        Route::get('/{id}/edit', [UserRoleController::class, 'edit'])->name('settings.role-management.edit');
+        Route::post('/{id}/update', [UserRoleController::class, 'update'])->name('settings.role-management.update');
+        Route::get('/{id}/delete', [UserRoleController::class, 'delete'])->name('settings.role-management.delete');
+        Route::get('/{id}/change-status/{status}', [UserRoleController::class, 'statusUpdate'])->name('settings.role-management.change-status');
+    });
+    // role permission
+    Route::group(['prefix' => 'role-permission'], function () {
+        Route::get('/{id}', [UserRolePermissionController::class, 'index'])->name('settings.role-permission.index');
+        Route::post('{id}/create', [UserRolePermissionController::class, 'store'])->name('settings.role-permission.store');
+      });
 });

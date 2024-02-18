@@ -875,7 +875,8 @@ class PurchaseOrderService
                         }
 
                     }
-                    // not clear..
+                    
+                    //TODO:: need to discuss
                     //$purchaseDetail->available_qty = $purchaseDetailAvailableQty;
                     $purchaseDetail->updated_by = auth()->user()->id;
                     $purchaseDetail->updated_at = Carbon::now();

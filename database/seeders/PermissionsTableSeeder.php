@@ -28,6 +28,10 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'manage-tax-settings',
                     'title' => 'Manage Tax Settings'
                 ],
+                [
+                    'slug' => 'manage-role-permission-settings',
+                    'title' => 'Manage Role Permission Settings'
+                ],
             ],
 
             // HR

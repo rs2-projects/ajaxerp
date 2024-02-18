@@ -7,7 +7,9 @@
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
             <th class="erp-th text-center">Status </th>
-            <th class="text-end erp-th">Purchase Order</th>
+            @if(hasPermission('manage-asset-product-purchase-orders'))
+                <th class="text-end erp-th">Purchase Order</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -29,10 +31,11 @@
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title {{strtolower($pr::REQUEST_STATUSES[$pr->request_status])}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
                     </td>
-
-                    <td class="text-center erp-tbody-td">
-                        <a href="javascript:void(0);" onclick="getApprovedRequestDetails({{$pr->id}})" class="text-center d-table-title mpo-btn">Make Purchase Order</a>
-                    </td>
+                    @if(hasPermission('manage-asset-product-purchase-orders'))
+                        <td class="text-center erp-tbody-td">
+                            <a href="javascript:void(0);" onclick="getApprovedRequestDetails({{$pr->id}})" class="text-center d-table-title mpo-btn">Make Purchase Order</a>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

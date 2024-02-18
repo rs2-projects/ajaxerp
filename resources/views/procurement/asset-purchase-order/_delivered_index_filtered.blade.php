@@ -11,7 +11,9 @@
             <th class="erp-th text-center">Due Amount </th>
             <<th class="erp-th text-center">Investigation Status </th>
             <th class="erp-th text-center">Payment Status </th>
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission( 'manage-asset-product-purchase-orders'))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -67,18 +69,20 @@
                             {{ $purchase_order::PAYMENT_STATUSES[$purchase_order->payment_status] }}
                         </h4>
                     </td>
-                    <td class="text-end erp-tbody-td">
-                        @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
-                            <div class="erp-action-t">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.investigate',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
+                    @if(hasPermission( 'manage-asset-product-purchase-orders'))
+                        <td class="text-end erp-tbody-td">
+                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
+                                <div class="erp-action-t">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.investigate',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
-                    </td>
+                            @endif
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

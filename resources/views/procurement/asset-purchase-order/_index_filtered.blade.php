@@ -11,8 +11,12 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Status </th>
             <th class="erp-th text-center">Payment Status </th>
-            <th class="erp-th text-center">Record Payment </th>
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission( 'asset-product-purchase-order-payment' ))
+                <th class="erp-th text-center">Record Payment </th>
+            @endif
+            @if(hasPermission( 'manage-asset-product-purchase-orders'))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -75,32 +79,38 @@
                         @else
                             <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
                         @endif --}} 
-                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID && $purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_ON_PROCESS)
-                            <a href="{{ route('procurement.asset-purchase-order.investigate',$purchase_order->id) }}" class="complete-status">Investigation</a>
+                        @if(hasPermission( 'manage-asset-product-purchase-orders'))
+                            @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID && $purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_ON_PROCESS)
+                                <a href="{{ route('procurement.asset-purchase-order.investigate',$purchase_order->id) }}" class="complete-status">Investigation</a>
+                            @endif
                         @endif
-                        @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID && ($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW || $purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_ON_PROCESS))
-                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                        @if(hasPermission( 'asset-product-purchase-order-payment' ))
+                            @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID && ($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW || $purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_ON_PROCESS))
+                                <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @endif
                         @endif
                     </td>
-                    <td class="text-end erp-tbody-td">
-                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
-                            <div class="erp-action-t">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right"> 
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.asset-purchase-order.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
-                                        @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID)
-                                            <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        @endif
-                                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="declinePuchaseRequest('{{ route('procurement.asset-purchase-order.cancel',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-solid fa-ban m-r-5"></i> Cancel</a>
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.asset-purchase-order.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                        @endif
+                    @if(hasPermission( 'manage-asset-product-purchase-orders'))
+                        <td class="text-end erp-tbody-td">
+                            @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)
+                                <div class="erp-action-t">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right"> 
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.asset-purchase-order.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
+                                            @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID)
+                                                <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            @endif
+                                            @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="declinePuchaseRequest('{{ route('procurement.asset-purchase-order.cancel',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-solid fa-ban m-r-5"></i> Cancel</a>
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.asset-purchase-order.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
-                    </td>
+                            @endif
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>
