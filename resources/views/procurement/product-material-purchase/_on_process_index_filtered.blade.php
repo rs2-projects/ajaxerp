@@ -10,7 +10,9 @@
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
-            <th class="erp-th text-center">Record Payment </th>
+            @if(hasPermission( 'manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
+                <th class="erp-th text-center">Record Payment </th>
+            @endif
             {{--<th class="text-end erp-th">Action</th>--}}
         </tr>
         </thead>
@@ -65,9 +67,13 @@
                     </td>
                     <td class="erp-tbody-td text-center">
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
-                            <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
+                            @if(hasPermission( 'manage-product-material-purchase-orders' ))
+                                <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
+                            @endif
                         @else
-                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @if(hasPermission( 'product-material-purchase-order-payment' ))
+                                <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @endif
                         @endif
                     </td>
 

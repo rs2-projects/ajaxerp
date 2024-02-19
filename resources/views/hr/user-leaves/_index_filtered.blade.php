@@ -7,9 +7,9 @@
             <th class="erp-th text-center">Reason </th>
             <th class="erp-th text-center">Status </th>
             <th class="erp-th text-center">Approved By </th>
-
-
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission('manage-employee-leave'))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
     </thead>
     <tbody class="erp-tbody">
@@ -51,24 +51,25 @@
                 <h4 class="text-center d-table-title">{{ ($userLeave->accepted_by) ? $userLeave->approvedBy->full_name : 'Not yet' }}</h4>
             </td>
 
+            @if(hasPermission('manage-employee-leave'))
+                <td class="text-end erp-tbody-td">
+                    <div class="erp-action-t">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
 
-            <td class="text-end erp-tbody-td">
-                <div class="erp-action-t">
-                    <div class="dropdown dropdown-action">
-                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                        <div class="dropdown-menu dropdown-menu-right">
+                                @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-check m-r-5"></i> Approve</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-cancel m-r-5"></i> Reject</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @endif
 
-                            @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-check m-r-5"></i> Approve</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-cancel m-r-5"></i> Reject</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                            @endif
-
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td>
+                </td>
+            @endif
         </tr>
     @endforeach
         {{--<tr class="erp-tbody-tr">

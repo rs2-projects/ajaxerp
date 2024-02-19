@@ -8,11 +8,11 @@
                         <div class="dropdown dropdown-action">
                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                             <div class="dropdown-menu dropdown-menu-right">
-
                                 <a class="dropdown-item" href="{{ route('inventory.warehouse.show',$item->id) }}" ><i class="fa-solid fa-eye m-r-5"></i> View</a>
-                                <a class="dropdown-item" href="{{ route('inventory.warehouse.edit',$item->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.warehouse.delete',$item->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                @if(hasPermission('manage-warehouse'))    
+                                    <a class="dropdown-item" href="{{ route('inventory.warehouse.edit',$item->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.warehouse.delete',$item->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @endif
                             </div>
                         </div>
                     </div>

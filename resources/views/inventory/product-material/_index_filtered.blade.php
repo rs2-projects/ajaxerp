@@ -8,7 +8,9 @@
                 <th class="erp-th text-center">Last Calculated Price </th>
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
-                <th class="erp-th text-center">Action </th>
+                @if(hasPermission( 'manage-product-material'))
+                    <th class="erp-th text-center">Action </th>
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -41,13 +43,12 @@
                         <div class="erp-action-t erp-table-status {{ ($product_material->status == $product_material::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $product_material::STATUSES[$product_material->status] }}</span></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
-
-
-                                </div>
+                                @if(hasPermission( 'manage-product-material'))
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -71,20 +72,21 @@
                             @endforeach
                         @endif
                     </td>
+                    @if(hasPermission( 'manage-product-material'))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
 
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
-                                    <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

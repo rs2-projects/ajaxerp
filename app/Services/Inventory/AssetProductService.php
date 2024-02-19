@@ -43,6 +43,14 @@ class AssetProductService
 
     public function store($request)
     {
+        $check_duplicate = AssetProduct::where('name', $request->name)
+                ->where('asset_product_category_id', $request->asset_product_category_id)
+                ->where('deleted', AssetProduct::DELETED_NO)
+                ->first();
+        if (!empty($check_duplicate)) {
+            throw new \Exception("Asset Product already exists");
+        }
+        
         $image_path = null;
         if ($request->hasFile('image')) {
             $imageUploadService = new ImageUploadService();
@@ -86,6 +94,15 @@ class AssetProductService
             throw new \Exception('Asset Product not found');
         }
 
+        $check_duplicate = AssetProduct::where('name', $request->name)
+                ->where('asset_product_category_id', $request->asset_product_category_id)
+                ->where('deleted', AssetProduct::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+        if (!empty($check_duplicate)) {
+            throw new \Exception("Asset Product already exists");
+        }
+
         $image_path = null;
         if ($request->hasFile('image')) {
             $imageUploadService = new ImageUploadService();
@@ -114,5 +131,23 @@ class AssetProductService
         $product->deleted_by = auth()->user()->id;
         $product->deleted_at = now();
         $product->save();
+    }
+
+    public function statusUpdateData($id, $status)
+    {
+        try {
+            $product = AssetProduct::where('id', $id)
+                ->where('deleted', AssetProduct::DELETED_NO)
+                ->first();
+            if (!$product) {
+                throw new \Exception('Asset Product not found');
+            }
+            $product->status = $status;
+            $product->updated_by = auth()->user()->id;
+            $product->updated_at = now();
+            $product->save();
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 }

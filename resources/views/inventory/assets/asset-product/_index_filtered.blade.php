@@ -39,10 +39,12 @@
                         <div class="erp-action-t erp-table-status {{ ($product->status == $product::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{$product::STATUSES[$product->status]}}</span></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
-                                    <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
-                                </div>
+                                @if(hasPermission('manage-asset-product'))   
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.asset-product.change-status',[$product->id,1]) }}"><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.asset-product.change-status',[$product->id,0]) }}"><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </td>

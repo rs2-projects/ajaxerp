@@ -2,15 +2,13 @@
 @section('content')
     <!-- Start::row-1 -->
    <div class="row">
-        @if(hasPermission('create-asset-product-purchase-request'))
-            <div class="erp-add-employee-wrapper mb-3">
-                <div class="erp-add-employee">
-                    <a href="{{route('procurement.user.asset-purchase-request.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Request</a>
-                    {{-- <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-excel"></i> Export To Excel</a>
-                    <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-pdf"></i> Generate PDF</a> --}}
-                </div>
+        <div class="erp-add-employee-wrapper mb-3">
+            <div class="erp-add-employee">
+                <a href="{{route('procurement.user.asset-purchase-request.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Request</a>
+                {{-- <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-excel"></i> Export To Excel</a>
+                <a href="#" class="btn add-btn erp-add-employee ms-2" ><i class="fa-regular fa-file-pdf"></i> Generate PDF</a> --}}
             </div>
-        @endif
+        </div>
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">

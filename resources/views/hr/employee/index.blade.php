@@ -2,16 +2,15 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-
-                <a href="{{ route('hr.employee.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Add Employee</a>
-                <a href="#" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#import_employee"><i class="fa-solid fa-plus"></i>Import</a>
-                <a href="#" class="btn add-btn erp-add-employee" ><i class="fa-solid fa-plus"></i> Export</a>
-
-
+        @if(hasPermission('manage-employees'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="{{ route('hr.employee.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Add Employee</a>
+                    {{-- <a href="#" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#import_employee"><i class="fa-solid fa-plus"></i>Import</a>
+                    <a href="#" class="btn add-btn erp-add-employee" ><i class="fa-solid fa-plus"></i> Export</a> --}}
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">

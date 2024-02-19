@@ -26,6 +26,13 @@ class AssetProductCategoryService
 
     public function store($request)
     {
+        $check_duplicate = AssetProductCategory::where('name', $request->name)
+                ->where('deleted', AssetProductCategory::DELETED_NO)
+                ->first();
+        if (!empty($check_duplicate)) {
+            throw new \Exception("Asset Product Category already exists");
+        }
+
         $category = new AssetProductCategory();
         $category->name = $request->name;
         $category->description = $request->description;
@@ -54,6 +61,14 @@ class AssetProductCategoryService
             ->first();
         if (!$category) {
             throw new \Exception('Asset Product Category not found');
+        }
+
+        $check_duplicate = AssetProductCategory::where('name', $request->name)
+                ->where('deleted', AssetProductCategory::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+        if (!empty($check_duplicate)) {
+            throw new \Exception("Asset Product Category already exists");
         }
         $category->name = $request->name;
         $category->description = $request->description;
