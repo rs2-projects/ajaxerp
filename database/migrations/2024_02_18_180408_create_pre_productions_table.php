@@ -21,6 +21,9 @@ return new class extends Migration
             $table->unsignedBigInteger('finished_goods_id');
             $table->unsignedInteger('estimated_production_qty')->default(0);
             $table->text('notes')->nullable();
+            $table->boolean('is_verified')->default(false)->comment('Is verified by the manager');
+            $table->unsignedSmallInteger('delivery_status')->default(0)->comment('0=Pending, 1=Delivered, 2=Partially Delivered');
+            $table->unsignedSmallInteger('received_status')->default(0)->comment('0=Pending, 1=Received, 2=Partially Received');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
