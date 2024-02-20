@@ -26,7 +26,7 @@ return new class extends Migration
             $table->unsignedDecimal('freight_cost_usd', 12, 2)->default(0);
             $table->unsignedDecimal('exchange_rate_after_import', 12, 2)->default(0);
             $table->unsignedDecimal('freight_cost', 12, 2)->default(0)->comment('(value = (freight_cost_usd / total_pieces_per_container) * exchange_rate_after_import)');
-            $table->unsignedDecimal('total_taxes_import_duties', 12, 2)->default(0);
+            $table->unsignedDecimal('total_taxes_import_duties', 12, 2)->default(0)->comment('Total Taxes Import Duties MNL');
             $table->unsignedDecimal('taxes_import_duties', 12, 2)->default(0)->comment('(value = total_taxes_import_duties / total_pieces_per_container)');
             $table->unsignedDecimal('total_transport_cost_to_wh', 12, 2)->default(0)->comment('Total Transport Cost to Warehouse');
             $table->unsignedDecimal('transport_cost_to_wh', 12, 2)->default(0)->comment('(value = total_transport_cost_to_wh / total_pieces_per_container) Transport Cost to Warehouse');
