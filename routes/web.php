@@ -23,6 +23,7 @@ use App\Http\Controllers\Payroll\GenerateSalaryController;
 use App\Http\Controllers\Procurement\ProductMaterial\ProductMaterialPurchaseController;
 use App\Http\Controllers\Procurement\ProductMaterial\PurchaseInvestigationController;
 use App\Http\Controllers\Procurement\ProductMaterial\PurchaseMakePaymentController;
+use App\Http\Controllers\Procurement\ProductMaterial\PurchaseOrderCalculatePriceController;
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
@@ -474,6 +475,10 @@ Route::group(['middleware' => 'auth'], function () {
             // make payment
             Route::get('/{id}/make-payment', [PurchaseMakePaymentController::class, 'makePayment'])->name('procurement.product-material-purchase.make-payment')->middleware('permission:product-material-purchase-order-payment');
             Route::post('/{id}/make-payment-submit', [PurchaseMakePaymentController::class, 'makePaymentSubmit'])->name('procurement.product-material-purchase.make-payment-submit')->middleware('permission:product-material-purchase-order-payment');
+            
+            // calculate price
+            Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
+            Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
         });
        // materials purchase order route end
 

@@ -357,6 +357,11 @@ class ProductMaterialService
                 throw new \Exception('Product Material not found');
             }
 
+            // $data['purchase_history'] = ProductMaterialPurchaseDetails::where('product_material_id', $id)
+            //     ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+            //     ->where('available_qty', '>', 0)
+            //     ->orderBy('id', 'desc')
+            //     ->get();
             $data['purchase_history'] = ProductMaterialPurchaseDetails::where('product_material_id', $id)
                 ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('available_qty', '>', 0)

@@ -26,9 +26,9 @@ return new class extends Migration
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
 
             //define foreign keys
-            $table->foreign('pre_production_id', 'ppp_materials_pp_id')->references('id')->on('pre_productions');
-            $table->foreign('product_material_category_id', 'ppp_materials_pmc_id')->references('id')->on('product_material_categories');
-            $table->foreign('product_material_id', 'ppp_materials_pm_id')->references('id')->on('product_materials');
+            $table->foreign('pre_production_id', 'pp_materials_pp_id')->references('id')->on('pre_productions');
+            $table->foreign('product_material_category_id', 'pp_materials_pmc_id')->references('id')->on('product_material_categories');
+            $table->foreign('product_material_id', 'pp_materials_pm_id')->references('id')->on('product_materials');
         });
     }
 

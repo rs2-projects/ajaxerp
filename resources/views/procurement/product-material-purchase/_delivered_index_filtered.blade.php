@@ -80,16 +80,18 @@
                     </td>
                     @if(hasPermission( 'manage-product-material-purchase-orders' ))
                         <td class="text-end erp-tbody-td">
-                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
+                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES || $purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
                                 <div class="erp-action-t">
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            
-                                            <a class="dropdown-item" href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
-                                            
-                                            {{--<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>--}}
-
+                                            @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
+                                                <a class="dropdown-item" href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
+                                            @else
+                                                @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calulate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Price</a>
+                                                @endif
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

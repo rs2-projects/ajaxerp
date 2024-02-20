@@ -2456,3 +2456,15 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
 .rs-erp-permission-wrapper {
     gap: 20px 2%;
 }
+
+.default-vat-set-box {
+    padding: 10px;
+    border: 1px solid #55ce6369;
+    border-radius: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px;
+    width: 400px;
+}
+.default-vat-set-box .rs-ecp-std-item-title-box h4 {
+    font-size: 14px;
+    color: #2700ff;
+}
