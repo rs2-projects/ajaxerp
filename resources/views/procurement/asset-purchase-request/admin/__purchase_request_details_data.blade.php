@@ -42,30 +42,32 @@
         </div>
     </div>
 </div>
-<div class="d-purchase-order-action-wrapper">
-    <div class="d-purchase-order-action-btn d-flex justify-content-center align-items-center">
-        <a href="javascript:void(0)" class="dpoa-btn req-info-btn">Request For Info</a>
-        <a href="javascript:void(0)" onclick="approvePurchaseRequest('{{ route('procurement.admin.asset-purchase-request.approve',$request_details->id) }}', 'reloadAjaxGetData') " class="dpoa-btn appr">Approved</a>
-        <a href="javascript:void(0)" onclick="declinePuchaseRequest('{{ route('procurement.admin.asset-purchase-request.decline',$request_details->id) }}', 'reloadAjaxGetData')" class="dpoa-btn re">Decline</a>
-    </div>
-    <div class="d-purchase-req-wrapper text-center justify-content-center flex-wrap" style="display: none;">
-        <form action="{{ route('procurement.admin.asset-purchase-request.request-details.store', $request_details->id) }}" id="requestMoreInfoStoreForm" method="post">
-            @csrf
-            <input type="hidden" name="request_id" value="{{ $request_details->id }}">
-            <div class="dpreq-item flex-100">
-                <div class="input-block erp-step-input-block ">
-                    <label class="col-form-label">Request Message <span class="text-danger">*</span></label>
-                    <textarea name="additional_info" rows="3" class="form-control"></textarea>
+@if(hasPermission('manage-asset-product-purchase-request'))
+    <div class="d-purchase-order-action-wrapper">
+        <div class="d-purchase-order-action-btn d-flex justify-content-center align-items-center">
+            <a href="javascript:void(0)" class="dpoa-btn req-info-btn">Request For Info</a>
+            <a href="javascript:void(0)" onclick="approvePurchaseRequest('{{ route('procurement.admin.asset-purchase-request.approve',$request_details->id) }}', 'reloadAjaxGetData') " class="dpoa-btn appr">Approved</a>
+            <a href="javascript:void(0)" onclick="declinePuchaseRequest('{{ route('procurement.admin.asset-purchase-request.decline',$request_details->id) }}', 'reloadAjaxGetData')" class="dpoa-btn re">Decline</a>
+        </div>
+        <div class="d-purchase-req-wrapper text-center justify-content-center flex-wrap" style="display: none;">
+            <form action="{{ route('procurement.admin.asset-purchase-request.request-details.store', $request_details->id) }}" id="requestMoreInfoStoreForm" method="post">
+                @csrf
+                <input type="hidden" name="request_id" value="{{ $request_details->id }}">
+                <div class="dpreq-item flex-100">
+                    <div class="input-block erp-step-input-block ">
+                        <label class="col-form-label">Request Message <span class="text-danger">*</span></label>
+                        <textarea name="additional_info" rows="3" class="form-control"></textarea>
+                    </div>
+                    
                 </div>
-                
-            </div>
-            <div class="dpreq-item flex-100">
-                <div class="input-block erp-step-input-block mb-0">
-                    <div class="nw-p-add-btn text-center d-inline-block">
-                        <button type="submit" class=" erp-search-btn text-center"><i class="fa-regular fa-paper-plane me-2"></i>Send</button>
+                <div class="dpreq-item flex-100">
+                    <div class="input-block erp-step-input-block mb-0">
+                        <div class="nw-p-add-btn text-center d-inline-block">
+                            <button type="submit" class=" erp-search-btn text-center"><i class="fa-regular fa-paper-plane me-2"></i>Send</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+@endif

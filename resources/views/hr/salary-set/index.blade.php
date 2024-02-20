@@ -2,12 +2,13 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="{{ route('hr.salary-set.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i>Add Salary Set</a>
+        @if(hasPermission('manage-salary-set'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="{{ route('hr.salary-set.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i>Add Salary Set</a>
+                </div>
             </div>
-        </div>
-
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">

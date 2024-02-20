@@ -23,7 +23,7 @@ class UserRolePermissionController extends BackendController
     {
         try {
             $data = $this->service->indexData($id);
-            // dd($data);
+            $this->setPageTitle("Role Management"." - ".$data['role_name']);
             return  $this->view('settings.user-role.role-permission.index')->with($data);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());

@@ -54,9 +54,11 @@
                                     <i class="fa-regular fa-clock"></i>
                                     {{ getFormattedTime2($activity->datetime) }}.
                                 </p>
-                                <a href="javascript:void(0)" onclick="editAttendance({{$activity->id}})" class="edit-icon edit-attd">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employee-attendance'))
+                                    <a href="javascript:void(0)" onclick="editAttendance({{$activity->id}})" class="edit-icon edit-attd">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                             </li>
                         @endforeach
                     </ul>

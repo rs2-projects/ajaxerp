@@ -7,9 +7,7 @@
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
             <th class="erp-th text-center">Status </th>
-            @if(hasPermission('manage-asset-product-purchase-request'))
-                <th class="text-center erp-th">Requested Info</th>
-            @endif
+            <th class="text-center erp-th">Requested Info</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -31,13 +29,11 @@
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title {{strtolower($pr::REQUEST_STATUSES[$pr->request_status])}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
                     </td>
-                    @if(hasPermission('manage-asset-product-purchase-request'))
-                        <td class="text-center erp-tbody-td">
-                            @if($pr->request_status == $pr::REQUEST_STATUS_ADDITIONAL_INFO)
-                                <a href="{{ route('procurement.user.asset-purchase-request.add-more-info',$pr->id) }}" class="text-center d-table-title add-more-status">Add More Info</a>
-                            @endif
-                        </td>
-                    @endif
+                    <td class="text-center erp-tbody-td">
+                        @if($pr->request_status == $pr::REQUEST_STATUS_ADDITIONAL_INFO)
+                            <a href="{{ route('procurement.user.asset-purchase-request.add-more-info',$pr->id) }}" class="text-center d-table-title add-more-status">Add More Info</a>
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         </tbody>

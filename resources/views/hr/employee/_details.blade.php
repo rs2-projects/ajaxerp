@@ -59,8 +59,11 @@
                     </div>
                 </div>
             </div>
-            <div class="pro-edit"><a data-bs-target="#profile_info_modal" data-bs-toggle="modal"
-                                     class="edit-icon" href="javascript:void(0)"><i class="fa-solid fa-pencil"></i></a></div>
+            @if(hasPermission('manage-employees'))
+                <div class="pro-edit">
+                    <a data-bs-target="#profile_info_modal" data-bs-toggle="modal" class="edit-icon" href="javascript:void(0)"><i class="fa-solid fa-pencil"></i></a>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -85,9 +88,11 @@
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
                                 <h4>Personal Information
+                                @if(hasPermission('manage-employees'))
                                     <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
                                         <i class="fa-solid fa-pencil"></i>
                                     </a>
+                                @endif
                                 </h4>
                             </div>
 
@@ -135,9 +140,11 @@
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
                                 <h4>Bank Information
+                                @if(hasPermission('manage-employees'))
                                     <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#bank_info_modal">
                                         <i class="fa-solid fa-pencil"></i>
                                     </a>
+                                @endif
                                 </h4>
                             </div>
                             @if(count($employee->userBankInfo) > 0)
@@ -176,9 +183,11 @@
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
                                 <h4>Eduction Information
-                                    <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#education_info_modal">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </a>
+                                    @if(hasPermission('manage-employees'))
+                                        <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#education_info_modal">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </a>
+                                    @endif
                                 </h4>
                             </div>
                             <div class="experience-box erp-experience-box">
@@ -208,9 +217,11 @@
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
                                 <h4>Emergency Contact
-                                    <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#emergency_contact_modal">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </a>
+                                    @if(hasPermission('manage-employees'))
+                                        <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#emergency_contact_modal">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </a>
+                                    @endif
                                 </h4>
                             </div>
                             <div class="experience-box erp-experience-box">
@@ -243,9 +254,11 @@
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
                                 <h4>Experience Information
-                                    <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#experience_info_modal">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </a>
+                                    @if(hasPermission('manage-employees'))
+                                        <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#experience_info_modal">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </a>
+                                    @endif
                                 </h4>
                             </div>
                             <div class="experience-box erp-experience-box">
@@ -278,9 +291,11 @@
                     <div class="erp-em-details-tab-item flex-48 bg-card">
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
-                                <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employees'))
+                                    <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                                 <div class="input-block erp-step-input-block mb-0 two ">
                                     <h4 class="col-form-label pt-0">Select Salary type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                     <select class="select select-step" >
@@ -407,9 +422,11 @@
                     <div class="erp-em-details-tab-item flex-48 bg-card">
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
-                                <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employees'))
+                                    <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                                 <div class="input-block erp-step-input-block mb-0 two ">
                                     <h4 class="col-form-label pt-0">Employee Overtime <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                     <select class="select select-step" >
@@ -456,9 +473,11 @@
                     <div class="erp-em-details-tab-item flex-32 bg-card">
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
-                                <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employees'))
+                                    <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                                 <div class="input-block erp-step-input-block mb-0 two ">
                                     <h4 class="col-form-label pt-0">Employee Overtime <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                     <select class="select select-step" >
@@ -504,9 +523,11 @@
                     <div class="erp-em-details-tab-item flex-32 bg-card">
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
-                                <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employees'))
+                                    <a href="javascript:void(0)" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                                 <div class="input-block erp-step-input-block mb-0 two ">
                                     <h4 class="col-form-label pt-0">Employee Absent Penalty <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                     <select class="select select-step" >
@@ -547,9 +568,11 @@
                     <div class="erp-em-details-tab-item flex-32 bg-card">
                         <div class="erp-profile-info-box">
                             <div class="erp-box-header mb-3">
-                                <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </a>
+                                @if(hasPermission('manage-employees'))
+                                    <a href="#" class="edit-icon" data-bs-toggle="modal"	data-bs-target="#personal_info_modal">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </a>
+                                @endif
                                 <div class="input-block erp-step-input-block mb-0 two ">
                                     <h4 class="col-form-label pt-0">Employee Late Penalty <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                     <select class="select select-step" >

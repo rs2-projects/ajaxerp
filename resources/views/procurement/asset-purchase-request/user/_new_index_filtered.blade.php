@@ -7,9 +7,7 @@
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
             <th class="erp-th text-center">Status </th>
-            @if(hasPermission('manage-asset-product-purchase-request'))
-                <th class="text-end erp-th">Action</th>
-            @endif
+            <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -32,19 +30,17 @@
 
                         <h4 class="text-center d-table-title {{strtolower($pr::REQUEST_STATUSES[$pr->request_status])}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
                     </td>
-                    @if(hasPermission('manage-asset-product-purchase-request'))
-                        <td class="text-end erp-tbody-td">
-                            <div class="erp-action-t">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item" href="{{ route('procurement.user.asset-purchase-request.edit',$pr->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.user.asset-purchase-request.delete',$pr->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                    </div>
+                    <td class="text-end erp-tbody-td">
+                        <div class="erp-action-t">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ route('procurement.user.asset-purchase-request.edit',$pr->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.user.asset-purchase-request.delete',$pr->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                 </div>
                             </div>
-                        </td>
-                    @endif
+                        </div>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

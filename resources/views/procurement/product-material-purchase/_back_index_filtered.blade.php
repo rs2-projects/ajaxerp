@@ -11,7 +11,9 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission( 'manage-product-material-purchase-orders'))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -77,25 +79,28 @@
                             @endif
 
                         @else
-                            <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @if(hasPermission( 'product-material-purchase-order-payment' ))
+                                <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @endif
                         @endif
                     </td>
 
-
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.product-material-purchase.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
-                                    @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
-                                        <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                    @endif
+                    @if(hasPermission( 'manage-product-material-purchase-orders'))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.product-material-purchase.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
+                                        @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                            <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
+                    @endif
                 </tr>
             @endforeach
         </tbody>

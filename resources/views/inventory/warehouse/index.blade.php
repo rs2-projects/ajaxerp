@@ -2,13 +2,15 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="col-md-12 mb-3">
-            <div class="erp-add-employee-wrapper  warehouse-add">
-                <div class="erp-add-employee">
-                    <a href="{{ route('inventory.warehouse.create') }}" class="btn add-btn erp-add-employee" ><i class="fa-solid fa-plus"></i> New Warehouse</a>
+        @if(hasPermission('manage-warehouse'))
+            <div class="col-md-12 mb-3">
+                <div class="erp-add-employee-wrapper  warehouse-add">
+                    <div class="erp-add-employee">
+                        <a href="{{ route('inventory.warehouse.create') }}" class="btn add-btn erp-add-employee" ><i class="fa-solid fa-plus"></i> New Warehouse</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
         <div class="col-md-12">
             <div class="warehouse-list-main-wrapper" id="ajax-data-load">
 

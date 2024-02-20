@@ -82,4 +82,14 @@ class AssetProductController extends BackendController
         }
         return $this->returnAjaxSuccess([], 'Asset Product deleted successfully');
     }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([], 'Status Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
 }

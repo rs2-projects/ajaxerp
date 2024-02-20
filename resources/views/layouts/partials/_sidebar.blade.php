@@ -116,7 +116,7 @@
                                     <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "> <span>Assets</span> <span
                                             class="menu-arrow"></span></a>
                                     <ul>
-                                        @if(hasPermission('view-asset-product-purchase-request','create-asset-product-purchase-request','manage-asset-product-purchase-request'))
+                                        @if(hasPermission('create-asset-product-purchase-request'))
                                             <li><a href="{{ route('procurement.user.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.user.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request</span></a></li>
                                         @endif
                                         @if(hasPermission('view-asset-product-purchase-request','manage-asset-product-purchase-request'))
@@ -147,6 +147,8 @@
                         </ul>
                     </li>
                 @endif
+
+                {{-- inventory --}}
                 @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material','view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
                     <li class="menu-title">
                         <span>Inventory</span>

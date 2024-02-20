@@ -6,8 +6,8 @@
             <th class="erp-th">Purchase Request # </th>
             <th class="erp-th text-center">Title </th>
             <th class="erp-th text-center">Remarks </th>
+            <th class="erp-th text-center">Status </th>
             @if(hasPermission('manage-asset-product-purchase-request'))
-                <th class="erp-th text-center">Status </th>
                 <th class="text-center erp-th">Action</th>
             @endif
         </tr>
@@ -28,10 +28,10 @@
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ $pr->description }}</h4>
                     </td>
+                    <td class="erp-tbody-td text-center">
+                        <a href="javascript:void(0);" onclick="getRequestDetails({{$pr->id}})" class="last-cal-status-btn">Check Info</a>
+                    </td>
                     @if(hasPermission('manage-asset-product-purchase-request'))
-                        <td class="erp-tbody-td text-center">
-                            <a href="javascript:void(0);" onclick="getRequestDetails({{$pr->id}})" class="last-cal-status-btn">Check Info</a>
-                        </td>
                         <td class="text-center erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
