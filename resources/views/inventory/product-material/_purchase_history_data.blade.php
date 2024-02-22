@@ -31,7 +31,7 @@
 
 
                                 <div class="cls-price-qty">
-                                    <h4>Final Price: <span>{{ getCurrencySymbol() }} {{ showAmount($history->net_total) }}</span></h4>
+                                    <h4>Final Price: <span>{{ getCurrencySymbol() }} {{ showAmount($history->final_price) }}</span></h4>
                                     <h4>QTY: <span>{{ $history->qty }}</span></h4>
                                 </div>
                             </div>

@@ -34,12 +34,12 @@ class PurchaseOrderCalculatePriceController extends BackendController
 
     public function store(StorePurchaseCalculatePriceRequest $request, $purchase_id)
     {
-        // try {
+        try {
             $this->service->storeData($request, $purchase_id);
 
             return $this->returnAjaxSuccess([], 'Calculated Price Updated Successfully');
-        // } catch (\Exception $e) {
-        //     return $this->returnAjaxError([],$e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

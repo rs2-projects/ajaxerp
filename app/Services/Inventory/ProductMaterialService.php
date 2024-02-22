@@ -7,6 +7,8 @@ use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Inventory\Warehouse;
 use App\Models\Inventory\WarehouseSection;
 use App\Models\Inventory\WarehouseSectionRack;
+use App\Models\Procurements\ProductMaterialPurchase;
+use App\Models\Procurements\ProductMaterialPurchaseCalculatedPrice;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
@@ -362,12 +364,29 @@ class ProductMaterialService
             //     ->where('available_qty', '>', 0)
             //     ->orderBy('id', 'desc')
             //     ->get();
-            $data['purchase_history'] = ProductMaterialPurchaseDetails::where('product_material_id', $id)
+        
+            $details = ProductMaterialPurchaseDetails::where('product_material_id', $id)
                 ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
-                ->where('available_qty', '>', 0)
-                ->orderBy('id', 'desc')
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
                 ->get();
 
+            $purchaseIds = $details->pluck('product_material_purchase_id')->toArray();
+
+            $purchase = ProductMaterialPurchase::where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->where('status', ProductMaterialPurchase::STATUS_ACTIVE)
+                ->where('price_calculated', 1)
+                ->whereIn('id', $purchaseIds)
+                ->get();
+            
+            $calculated = ProductMaterialPurchaseCalculatedPrice::where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
+                ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
+                ->whereIn('product_material_purchase_id', $purchase->pluck('id')->toArray())
+                ->orderBy('id', 'desc')
+                ->take(5)
+                ->get();
+            $data['purchase_history'] = $calculated;
+
+            
             return $data;
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());

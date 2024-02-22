@@ -61,6 +61,11 @@ class ProductMaterialPurchaseCalculatedPrice extends Model
         'deleted_at',
     ];
 
+    public function materialPurchase()
+    {
+        return $this->belongsTo(ProductMaterialPurchase::class, 'product_material_purchase_id', 'id');
+    }
+
     public function purchaseDetails()
     {
         return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO);
