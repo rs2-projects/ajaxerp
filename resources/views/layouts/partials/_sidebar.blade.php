@@ -188,6 +188,21 @@
                         </li>
                     @endif
                 @endif
+                <li class="menu-title"> 
+                    <span>Pre-Production & Production</span>
+                </li>
+                <li> 
+                    <a href="{{route('production.pre-production.index')}}" class="{{ ($activeMenu == 'production.pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Pre-Production</span></a>
+                </li>
+                {{-- <li> 
+                    <a href="production.html" class=""><i class="la la-archive"></i> <span>Production</span></a>
+                </li> --}}
+                <li> 
+                    <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
+                </li>
+                {{-- <li> 
+                    <a href="products.html" class=""><i class="la la-yelp"></i> <span>Products <small> (Finished Goods)</small></span></a>
+                </li> --}}
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))
                     <li class="menu-title">
                         <span>Warehouse</span>

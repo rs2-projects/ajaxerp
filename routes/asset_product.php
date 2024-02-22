@@ -8,6 +8,8 @@ use App\Http\Controllers\Procurement\Assets\AdminPurchaseRequestController;
 use App\Http\Controllers\Procurement\Assets\PuchaseOrderPaymentController;
 use App\Http\Controllers\Procurement\Assets\PurchaseOrderController;
 use App\Http\Controllers\Procurement\Supplier\SupplierController;
+use App\Http\Controllers\Production\Machine\MachineController;
+use App\Http\Controllers\Production\PreProduction\PreProductionController;
 use App\Http\Controllers\Settings\UserRoleController;
 use App\Http\Controllers\Settings\UserRolePermissionController;
 
@@ -126,4 +128,28 @@ Route::group(['prefix' => 'settings'], function () {
         Route::get('/{id}', [UserRolePermissionController::class, 'index'])->name('settings.role-permission.index');
         Route::post('{id}/create', [UserRolePermissionController::class, 'store'])->name('settings.role-permission.store');
       });
+});
+
+// production route start
+Route::group(['prefix' => 'production'], function () {
+    Route::group(['prefix' => 'machine'], function () {
+        Route::get('/', [MachineController::class, 'index'])->name('production.machine.index');
+        Route::post('/filtered', [MachineController::class, 'indexFiltered'])->name('production.machine.filtered');
+        Route::get('/create', [MachineController::class, 'create'])->name('production.machine.create');
+        Route::post('/create', [MachineController::class, 'store'])->name('production.machine.store');
+        Route::get('/{id}/edit', [MachineController::class, 'edit'])->name('production.machine.edit');
+        Route::post('/{id}/update', [MachineController::class, 'update'])->name('production.machine.update');
+        Route::get('/{id}/delete', [MachineController::class, 'delete'])->name('production.machine.delete');
+    });
+
+    Route::group(['prefix' => 'pre-production'], function () {
+        Route::get('/', [PreProductionController::class, 'index'])->name('production.pre-production.index');
+        Route::post('/filtered', [PreProductionController::class, 'indexFiltered'])->name('production.pre-production.filtered');
+        Route::get('/create', [PreProductionController::class, 'create'])->name('production.pre-production.create');
+        Route::post('/create', [PreProductionController::class, 'store'])->name('production.pre-production.store');
+        Route::get('/{id}/edit', [PreProductionController::class, 'edit'])->name('production.pre-production.edit');
+        Route::post('/{id}/update', [PreProductionController::class, 'update'])->name('production.pre-production.update');
+        Route::get('/{id}/delete', [PreProductionController::class, 'delete'])->name('production.pre-production.delete');
+        Route::get('/{id}/get-material-products', [PreProductionController::class, 'getProducts'])->name('production.pre-production.get-material-products');
+    });
 });

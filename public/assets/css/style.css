@@ -13875,3 +13875,7 @@ a.em-profile-wrap:hover {
 
 }
 /* Media QUERY end*/
+.edit--modal-data-img-src{
+  margin-left: 5px;
+  border-radius: 5px;
+}
