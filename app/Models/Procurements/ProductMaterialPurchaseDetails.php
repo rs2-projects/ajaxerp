@@ -50,6 +50,7 @@ class ProductMaterialPurchaseDetails extends Model
     ];
 
     protected $fillable = [
+        'barcode',
         'product_material_purchase_id',
         'product_material_id',
         'description',
@@ -79,6 +80,15 @@ class ProductMaterialPurchaseDetails extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public static function boot() {
+        parent::boot();
+
+        static::created(function ($purchaseDetails) {
+            $purchaseDetails->barcode = $purchaseDetails->id + 10000000;
+            $purchaseDetails->save();
+        });
+    }
 
     public function productMaterial()
     {
