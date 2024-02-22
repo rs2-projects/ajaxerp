@@ -82,7 +82,6 @@ class ProductMaterialController extends BackendController
         }catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
-
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 

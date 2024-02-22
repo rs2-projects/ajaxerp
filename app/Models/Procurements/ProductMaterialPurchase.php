@@ -140,4 +140,8 @@ class ProductMaterialPurchase extends Model
     {
         return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO);
     }
+    public function purchaseCalculated()
+    {
+        return $this->hasMany(ProductMaterialPurchaseCalculatedPrice::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO);
+    }
 }
