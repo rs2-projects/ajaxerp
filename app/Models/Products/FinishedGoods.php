@@ -11,14 +11,47 @@ class FinishedGoods extends Model
 
     protected $table = 'finished_goods';
     public $timestamps = false;
-
+    //unit constant
+    const UNIT_TYPE_BOX = 1;
+    const UNIT_TYPE_CM = 2;
+    const UNIT_TYPE_DZ = 3;
+    const UNIT_TYPE_FT = 4;
+    const UNIT_TYPE_G = 5;
+    const UNIT_TYPE_IN = 6;
+    const UNIT_TYPE_KG = 7;
+    const UNIT_TYPE_KM = 8;
+    const UNIT_TYPE_LB = 9;
+    const UNIT_TYPE_MG = 10;
+    const UNIT_TYPE_ML = 11;
+    const UNIT_TYPE_M = 12;
+    const UNIT_TYPE_PCS = 13;
+    const UNIT_TYPE_SET = 14;
+    const UNIT_TYPE_YD = 15;
+    const UNIT_TYPES = [
+        self::UNIT_TYPE_BOX => 'Box',
+        self::UNIT_TYPE_CM => 'CM',
+        self::UNIT_TYPE_DZ => 'DZ',
+        self::UNIT_TYPE_FT => 'FT',
+        self::UNIT_TYPE_G => 'G',
+        self::UNIT_TYPE_IN => 'IN',
+        self::UNIT_TYPE_KG => 'KG',
+        self::UNIT_TYPE_KM => 'KM',
+        self::UNIT_TYPE_LB => 'LB',
+        self::UNIT_TYPE_MG => 'MG',
+        self::UNIT_TYPE_ML => 'ML',
+        self::UNIT_TYPE_M => 'M',
+        self::UNIT_TYPE_PCS => 'PCS',
+        self::UNIT_TYPE_SET => 'SET',
+        self::UNIT_TYPE_YD => 'YD',
+    ];
+    //status constant
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
         self::STATUS_INACTIVE => 'Inactive',
         self::STATUS_ACTIVE => 'Active',
     ];
-
+    //delete constant
     const DELETED_NO = 0;
     const DELETED_YES = 1;
     const DELETEDS = [
@@ -61,7 +94,9 @@ class FinishedGoods extends Model
         }
         return asset('assets/img/placeholder.jpg');
     }
-    
+    public function finishedGoodWarehouseSections(){
+        return $this->hasMany(FinishedGoodsSection::class, 'finished_goods_id', 'id');
+    }
     // public function category()
     // {
     //     return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');
