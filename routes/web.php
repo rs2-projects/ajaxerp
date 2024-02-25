@@ -475,7 +475,7 @@ Route::group(['middleware' => 'auth'], function () {
             // make payment
             Route::get('/{id}/make-payment', [PurchaseMakePaymentController::class, 'makePayment'])->name('procurement.product-material-purchase.make-payment')->middleware('permission:product-material-purchase-order-payment');
             Route::post('/{id}/make-payment-submit', [PurchaseMakePaymentController::class, 'makePaymentSubmit'])->name('procurement.product-material-purchase.make-payment-submit')->middleware('permission:product-material-purchase-order-payment');
-            
+
             // calculate price
             Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
             Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
@@ -550,4 +550,5 @@ Route::group(['middleware' => 'auth'], function () {
     include 'product_materials.php';
     //asset products
     include 'asset_product.php';
+    include 'finished_goods.php';
 });
