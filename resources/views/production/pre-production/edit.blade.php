@@ -10,7 +10,7 @@
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Order Details <span class="text-red">*</span></label>
-                                <input class="form-control" name="order_details" type="text" placeholder="" required="">
+                                <input value="{{$pre_production->order_details}}" class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-25">
@@ -28,7 +28,7 @@
                         <div class="pgib-item flex-100">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Description</label>
-                                <textarea rows="2" name="description" class="form-control"></textarea>
+                                <textarea rows="2" name="description" class="form-control">{{$pre_production->description}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                                 <select class="select select-step" name="finished_goods_id">
                                     <option>Select Product</option>
                                     @foreach ($finished_products as $f_product)
-                                        <option value="{{$f_product->id}}">{{$f_product->name}}</option>
+                                        <option value="{{$f_product->id}}" {{$pre_production->finished_goods_id == $f_product->id? 'selected' : ''}}>{{$f_product->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -47,7 +47,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" name="estimated_production_qty" type="text" placeholder="" required="">
+                                <input class="form-control" value="{{$pre_production->estimated_production_qty}}" name="estimated_production_qty" type="text" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
-                                                <select class="select select-step" name="product_material_category_id[]" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step" name="product_material_category_id[]" v-model="materialSection.product_material_category_id" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option>Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -110,7 +110,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input name="quantity[]" class="form-control " type="text" placeholder="" required="">
+                                                <input v-model="materialSection.quantity" name="quantity[]" class="form-control " type="text" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -130,14 +130,14 @@
                                         <div class="pms-item flex-60">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Name <span class="text-danger">*</span></label>
-                                                <input class="form-control" name="name[]" type="text" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.name" name="name[]" type="text" placeholder="" required="">
                                             </div>
                                         </div>
                                         
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" name="output_quantity[]" type="text" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.quantity" name="output_quantity[]" type="text" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -153,7 +153,7 @@
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Instruction <span class="text-danger">*</span></label>
-                                    <textarea rows="1"  name="instruction[]" class="form-control" required></textarea>
+                                    <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control" required></textarea>
                                 </div>	
                             </div>
                         </div>
@@ -169,7 +169,7 @@
                     <div class="production-instrucion-output-selection-wrapper mt-5 ms-3">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
-                            <textarea rows="3" class="form-control" name="notes"></textarea>
+                            <textarea rows="3" class="form-control" name="notes">{{$pre_production->notes}}</textarea>
                         </div>	
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
@@ -223,18 +223,67 @@
         var vueApp = createApp({
             data() {
                 return {
-                    processes: [{
-                        materialSections: [{
-                            products: []
-                        }],
-                        estimatedOutputs: [{}]
-                    }],
+                    processes: [],
                 };
             },
             computed: {
 
             },
             methods: {
+                // getProcesses() {
+                //     //const newIndex = this.processes.length + 1;
+                //     axios
+                //         .get('{{ route('production.pre-production.get-all-processes', 24) }}')
+                //         .then(response => (
+                //             console.log(response.data.processes)
+                //             // this.processes.push({
+                //             //     index: response.data.processes.length,
+                //             //     materialSections: [{}],
+                //             //     estimatedOutputs: [{}]
+                //             // })
+                //         ))
+                // },
+
+                getProcesses() {
+                    axios
+                        .get('{{ route('production.pre-production.get-all-processes', 24) }}')
+                        .then(response => {
+                            const processes = response.data.processes;
+                            console.log(processes);
+                            processes.forEach((process) => {
+                                const materials = process.materials.map(material => {
+                                    return {
+                                        id: material.id,
+                                        pre_production_process_id: material.pre_production_process_id,
+                                        product_material_category_id: material.product_material_category_id,
+                                        product_material_id: material.product_material_id,
+                                        quantity: material.quantity
+                                    };
+                                });
+                                const estimated_output = process.estimated_output.map( output => {
+                                    return {
+                                        id: output.id,
+                                        name: output.name,
+                                        quantity: output.quantity,
+                                    };
+                                });
+                                this.processes.push({
+                                    index: processes.length,
+                                    process_id: process.id,
+                                    process_instruction:  process.instruction,
+                                    materialSections: materials,
+                                    estimatedOutputs: estimated_output
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching processes:', error);
+                        });
+                },
+
+
+
+
                 addProcessHandler(){
                     const newIndex = this.processes.length + 1;
                     this.processes.push({
@@ -311,6 +360,7 @@
 
             },
             mounted () {
+                this.getProcesses();
                 initMaterialProductMultipleSelect();
                 initAssteProductMultipleSelect();
                 initSelect2();

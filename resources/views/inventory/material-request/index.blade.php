@@ -2,11 +2,6 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="{{route('production.pre-production.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Create Pre-Production </a>
-            </div>
-        </div>
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
@@ -249,7 +244,7 @@
         });
 
         function getData(){
-            getPaginatedListData("{{ route('production.pre-production.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('inventory.material-request.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {

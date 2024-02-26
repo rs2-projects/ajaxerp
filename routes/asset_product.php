@@ -12,6 +12,7 @@ use App\Http\Controllers\Production\Machine\MachineController;
 use App\Http\Controllers\Production\PreProduction\PreProductionController;
 use App\Http\Controllers\Settings\UserRoleController;
 use App\Http\Controllers\Settings\UserRolePermissionController;
+use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start
@@ -37,6 +38,7 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
     });
+
 });
 
 
@@ -151,5 +153,13 @@ Route::group(['prefix' => 'production'], function () {
         Route::post('/{id}/update', [PreProductionController::class, 'update'])->name('production.pre-production.update');
         Route::get('/{id}/delete', [PreProductionController::class, 'delete'])->name('production.pre-production.delete');
         Route::get('/{id}/get-material-products', [PreProductionController::class, 'getProducts'])->name('production.pre-production.get-material-products');
+        Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status');
+        Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes');
     });
+});
+
+Route::group(['prefix' => 'material-request'], function () {
+    Route::get('/', [PreProductionMaterialRequestController::class, 'index'])->name('inventory.material-request.index');
+    Route::post('/filtered', [PreProductionMaterialRequestController::class, 'indexFiltered'])->name('inventory.material-request.filtered');
+    Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver');
 });

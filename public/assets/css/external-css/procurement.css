@@ -2468,3 +2468,322 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     font-size: 14px;
     color: #2700ff;
 }
+
+/* pre production material request */
+.erp-table-status.pre-partial-s .action-icon {
+    background: #667eea;
+}
+.erp-table-status.pre-deliver-s .action-icon {
+    background: #37b34a;
+}
+.erp-table-status.pre-pending-s .action-icon {
+    background: orange;
+}
+.pd-item h4 {
+    font-size: 14px;
+    margin-bottom: 0;
+    padding: 5px 10px;
+    background: #37b34a14;
+    border-radius: 5px;
+    font-weight: 600;
+    color: #007612;
+}
+.pd-item p {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+.pgib-item.pd-item {
+    border: 1px dashed #ddd;
+    padding: 4px 10px;
+    border-radius: 7px;
+}
+.pd-table-box {
+    padding: 13px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+    border-radius: 6px;
+}
+.pd-input-box input {
+    width: 200px;
+    margin: 0 auto;
+}
+.pd-recived-product-c-item p {
+    font-weight: 700;
+    font-size: 11px;
+}
+.pd-recived-product-c-item a i {
+    color: red;
+    font-size: 13px;
+}
+.pd-recived-product-wrapper{
+    position: relative;
+}
+.pd-recived-product-item {
+    justify-content: space-evenly;
+    padding: 3px 0px;
+    border-bottom: 1px dashed #dddddd94;
+}
+.pd-recived-product-item:first-child {
+    padding-top: 3px;
+}
+.pd-recived-product-item:last-child{
+    border-bottom: none;
+}
+.pd-recived-product-scrol-box{
+    border: 3px double #ddd;
+    padding: 10px;
+    height: 100px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.pre-counter {
+    position: absolute;
+    top: 0px;
+    background: #0d6efd;
+    padding: 2px 12px;
+    font-size: 8px;
+    color: #fff;
+    margin-bottom: 0;
+    left: 0;
+    border-radius: 0px 0px 15px 0px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+.pd-st-box p {
+    margin-bottom: 0;
+    display: inline-block;
+    background: #ff6a00;
+    padding: 5px 15px;
+    border-radius: 100px;
+    font-weight: 700;
+    color: #fff;
+    font-size: 12px;
+    width: 100px;
+}
+.pd-st-box.perfect p {
+    background: green;
+}
+.pd-st-box.missing p {
+    background: red;
+}
+
+.pd-deliver-date-box p {
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 8px;
+    position: relative;
+    background: #dddddd4a;
+}
+
+.pd-deliver-date-box p span{
+    font-weight: 700;
+}
+
+.pd-table-box-item {
+    margin-bottom: 24px;
+}
+.pd-table-box-item:last-child {
+    margin-bottom: 0px;
+}
+
+
+.pd-deliver-date-box p:before {
+    position: absolute;
+    content: "";
+    width: 1px;
+    height: 46px;
+    bottom: -45px;
+    background: #ddd;
+    left: -1px;
+}
+.pd-deliver-date-box p:after {
+    position: absolute;
+    content: "";
+    width: 1px;
+    height: 46px;
+    bottom: -45px;
+    background: #ddd;
+    right: -1px;
+}
+
+.pd-input-box input {
+    font-size: 13px;
+}
+
+.start-process-btn {
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #0d6efd;
+    color: #fff;
+    padding: 5px 20px;
+}
+.p-de-input-box .input-box-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 0px;
+}
+.p-de-input-box .input-box-title span {
+    padding: 2px 10px;
+    background: blue;
+    margin-right: 2px;
+    margin-left: 2px;
+    border-radius: 5px;
+    color: #ffffff;
+}
+.p-de-input-box .input-box-title-2 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 0px;
+}
+.p-de-input-box .input-box-title-2 span {
+    padding: 2px 10px;
+    background: #fe3b00;
+    margin-right: 2px;
+    margin-left: 2px;
+    border-radius: 5px;
+    color: #ffffff;
+}
+
+.pre-d-item-input-box .input-box-title {
+    background: #0950a914;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0168e9;
+    margin-bottom: 0;
+}
+
+.pre-d-item-input-box-2 .input-box-title {
+    background: #0950a914;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0168e9;
+    margin-bottom: 0;
+}
+.pre-d-item-input-box-3 .input-box-title {
+    background: #0950a903;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #0a0909;
+    margin-bottom: 0;
+}
+
+.rs-pre-completed-process {
+    margin-bottom: 0;
+    background: linear-gradient(to right, #37B34A 0%, #8BC53F 100%);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 19px;
+    border-radius: 6px;
+}
+
+.po-order-product-note-terms-box.custom-rs-note {
+    border-radius: 0;
+}
+.po-order-product-design-box-box {
+    border: 1px solid #c3c3c3;
+    border-top: none;
+    padding: 15px 10px;
+}
+
+.design-upload-revael-box .dur-btn {
+    border: none;
+    background: #00bd06;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 100px;
+    font-weight: 700;
+}
+.in-t-amount-text {
+    font-weight: 700;
+    color: #0d6efd;
+}
+.in-t-amount-text.due-text {
+    color: red;
+}
+.no-data-text {
+    font-size: 12px;
+    color: red;
+    font-weight: 800;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Firefox (uncomment to work in Firefox, although other properties will not work!)  */
+/** {
+  scrollbar-width: thin;
+  scrollbar-color: #60C53C #DFE9EB;
+}*/
+
+/* Chrome, Edge and Safari */
+.pd-recived-product-scrol-box::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+  .pd-recived-product-scrol-box::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #DFE9EB;
+  }
+  
+  .pd-recived-product-scrol-box::-webkit-scrollbar-track:hover {
+    background-color: #DFE9EB;
+  }
+  
+  .pd-recived-product-scrol-box::-webkit-scrollbar-track:active {
+    background-color: #DFE9EB;
+  }
+  
+  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #60C53C;
+  }
+  
+  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb:hover {
+    background-color: #60C53C;
+  }
+  
+  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb:active {
+    background-color: #60C53C;
+  }
