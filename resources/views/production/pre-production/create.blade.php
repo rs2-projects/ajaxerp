@@ -47,7 +47,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" name="estimated_production_qty" type="text" placeholder="" required="">
+                                <input class="form-control" name="estimated_production_qty" type="number" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input :name="'quantity['+index+'][]'" class="form-control " type="text" placeholder="" required="">
+                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -134,7 +134,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="text" placeholder="" required="">
+                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">

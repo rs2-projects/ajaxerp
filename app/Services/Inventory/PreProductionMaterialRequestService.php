@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Services\Inventory;
+
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 
@@ -100,5 +102,29 @@ class PreProductionMaterialRequestService
             ->get();
         
         return $data;
+    }
+
+    public function getMaterialData($id){
+        $data['materials'] = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+            ->where('pre_production_id', $id)
+            ->with('category', 'product')
+            ->get();
+        
+        return $data;
+    }
+
+    public function checkBarCode($material_id, $barcode){
+        $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+            ->where('product_material_id', $material_id)
+            ->where('barcode', $barcode)
+            ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+            ->first();
+
+        if ($data){
+            return $data->barcode;
+        }else{
+            throw new \Exception('Invalid Barcode');
+        }
+
     }
 }

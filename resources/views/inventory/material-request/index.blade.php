@@ -235,7 +235,11 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .erp-table-status.pre-delivered-s .action-icon {
+            background: #37b34a;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

@@ -162,4 +162,6 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::get('/', [PreProductionMaterialRequestController::class, 'index'])->name('inventory.material-request.index');
     Route::post('/filtered', [PreProductionMaterialRequestController::class, 'indexFiltered'])->name('inventory.material-request.filtered');
     Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver');
+    Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials');
+    Route::get('/{id}/deliver/{barcode}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode');
 });
