@@ -148,6 +148,26 @@
                     </li>
                 @endif
 
+                <!--Sales and Order-->
+                <li class="menu-title">
+                    <span>Sales & Orders</span>
+                </li>
+                <li class="submenu">
+                   <a href="javascript:void(0);" class="{{ $activeMenu == 'sales.customer.index'? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Customers</span> <span class="menu-arrow"></span></a>
+                   <ul>
+                         <li>
+                              <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"> <span>Customer List</span></a>
+                         </li>
+                   </ul>
+                </li>
+                <li class="submenu">
+                   <a href="javascript:void(0);" class="{{ $activeMenu == 'sales.invoice.index'? 'active' : '' }} noti-dot"><i class="la la-file-pdf-o"></i> <span> Invoices</span> <span class="menu-arrow"></span></a>
+                   <ul>
+                         <li>
+                              <a href="{{ route('sales.invoice.index') }}" class="{{ $activeMenu == 'sales.invoice.index' ? 'active' : ''}}"> <span>Invoice List</span></a>
+                         </li>
+                   </ul>
+                </li>
                 {{-- inventory --}}
                 @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material','view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
                     <li class="menu-title">

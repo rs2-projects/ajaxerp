@@ -646,7 +646,7 @@
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
                         .then(response => (this.allItems = response.data.product_materials));
-                },
+                    },
                 getTaxItems() {
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
@@ -658,7 +658,6 @@
                         .then(response => (this.suppliers = response.data));
                 },
                 addItemToCart(item) {
-
                     let exists = this.cartItems.findIndex(o => o.id === item.id);
                     if (exists >= 0) {
                         // exists.qty++;
