@@ -187,20 +187,37 @@
                             </ul>
                         </li>
                     @endif
+                    @if(hasPermission( 'view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.asset-product-category.index' || $activeMenu == 'inventory.asset-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Goods</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission( 'view-asset-product','manage-asset-product'))
+                                    <li>
+                                        <a href="{{ route('inventory.finished-good.index') }}" class="{{ ($activeMenu == 'inventory.finished-good.index') ? 'active' : '' }}"> <span>Goods List</span></a>
+                                    </li>
+                                @endif
+                                @if(hasPermission( 'view-asset-product-category','manage-asset-product-category'))
+                                    <li>
+                                        <a href="{{ route('inventory.finished-good-category.index') }}" class="{{ ($activeMenu == 'inventory.finished-good-category.index') ? 'active' : '' }}"> <span>Category</span></a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endif
                 @endif
-                <li class="menu-title"> 
+                <li class="menu-title">
                     <span>Pre-Production & Production</span>
                 </li>
-                <li> 
+                <li>
                     <a href="{{route('production.pre-production.index')}}" class="{{ ($activeMenu == 'production.pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Pre-Production</span></a>
                 </li>
-                {{-- <li> 
+                {{-- <li>
                     <a href="production.html" class=""><i class="la la-archive"></i> <span>Production</span></a>
                 </li> --}}
-                <li> 
+                <li>
                     <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
                 </li>
-                {{-- <li> 
+                {{-- <li>
                     <a href="products.html" class=""><i class="la la-yelp"></i> <span>Products <small> (Finished Goods)</small></span></a>
                 </li> --}}
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))

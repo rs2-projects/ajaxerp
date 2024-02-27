@@ -4,8 +4,72 @@ namespace App\Models\Production;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Products\ProductMaterialCategory;
+use App\Models\Products\ProductMaterial;
 class PreProductionMaterial extends Model
 {
     use HasFactory;
+
+    protected $table = 'pre_production_materials';
+    public $timestamps = false;
+
+    const DELIVERY_STATUS_PENDING = 0;
+    const DELIVERY_STATUS_DELIVERED = 1;
+    const DELIVERY_STATUS_PARTIAL = 2;
+    const DELIVERIES = [
+        self::DELIVERY_STATUS_PENDING => 'Pending',
+        self::DELIVERY_STATUS_DELIVERED => 'Delivered',
+        self::DELIVERY_STATUS_PARTIAL => 'Partial',
+    ];
+
+    const RECEIVED_STATUS_PENDING = 0;
+    const RECEIVED_STATUS_DELIVERED = 1;
+    const RECEIVED_STATUS_PARTIAL = 2;
+    const RECEIVEDS = [
+        self::RECEIVED_STATUS_PENDING => 'Pending',
+        self::RECEIVED_STATUS_DELIVERED => 'Received',
+        self::RECEIVED_STATUS_PARTIAL => 'Partial',
+    ];
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [
+        self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
+
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    const DELETEDS = [
+        self::DELETED_NO => 'No',
+        self::DELETED_YES => 'Yes',
+    ];
+
+    protected $fillable = [
+        'pre_production_id',
+        'product_material_category_id',
+        'product_material_id',
+        'quantity',
+        'delivered_qty',
+        'received_qty',
+        'delivery_status',
+        'received_status',
+        'status',
+        'created_by',
+        'created_at',
+        'updated_by',
+        'updated_at',
+        'deleted',
+        'deleted_by',
+        'deleted_at',
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(ProductMaterialCategory::class, 'product_material_category_id', 'id');
+    }
+    public function product()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'product_material_id', 'id');
+    }
 }

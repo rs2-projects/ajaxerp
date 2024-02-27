@@ -22,7 +22,9 @@ class UpdatePreProductionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'order_details' => 'required',
+            'finished_goods_id' => 'required',
+            'estimated_production_qty' => 'required'
         ];
     }
 }

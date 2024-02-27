@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Production\PreProduction;
+namespace App\Http\Requests\Inventory\FinishedGood;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePreProductionRequest extends FormRequest
+class UpdateFinishedGoodRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,7 @@ class StorePreProductionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_details' => 'required',
-            'finished_goods_id' => 'required',
-            'estimated_production_qty' => 'required'
+            //
         ];
     }
 }
