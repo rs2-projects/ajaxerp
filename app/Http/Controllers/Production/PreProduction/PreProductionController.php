@@ -63,12 +63,6 @@ class PreProductionController extends BackendController
         return  $this->view('production.pre-production.edit')->with($data);
     }
 
-    public function getProcess($id)
-    {
-        $data = $this->service->getProcessData($id);
-        return response()->json($data);
-    }
-
     public function getProducts($id){
         return $this->service->getProducts($id);
     }

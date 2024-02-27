@@ -12,6 +12,7 @@ use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
+use App\Models\Production\PreProductionProcessPreviousProcess;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -41,7 +42,7 @@ class PreProductionService
     public function createData(){
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
+            ->orderBy('name', 'asc')
             ->get();
 
         $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
@@ -69,6 +70,7 @@ class PreProductionService
     {
         DB::beginTransaction();
         try {
+
             // $check_duplicate = PreProduction::where('order_details', $request->order_details)
             //         ->where('deleted', PreProduction::DELETED_NO)
             //         ->first();
@@ -99,27 +101,51 @@ class PreProductionService
             $pre_production->estimated_production_qty = $request->estimated_production_qty;
             $pre_production->notes = $request->notes;
             $pre_production->created_by = auth()->user()->id;
-            $pre_production->created_at = now();
+            $pre_production->created_at = Carbon::now();
             $pre_production->updated_by = auth()->user()->id;
-            $pre_production->updated_at = now();
+            $pre_production->updated_at = Carbon::now();
             $pre_production->save();
             $pre_production->pre_production_no = 1000 + $pre_production->id;
             $pre_production->save();
 
-            if (isset($request->instruction) && is_array($request->instruction) && count($request->instruction) > 0) {
-                foreach ($request->instruction as $key => $instruct) {
+            $category_id = $request->product_material_category_id;
+            $material_id = $request->product_material_id;
+            $quantity = $request->quantity;
+            
+            $uniqueProductMaterials = [];
+            $processes = [];
+
+            if (isset($request->process_id) && is_array($request->process_id) && count($request->process_id) > 0) {
+                foreach ($request->process_id as $key => $process_id) {
+                    
                     $process = new PreProductionProcess();
                     $process->pre_production_id = $pre_production->id;
-                    $process->instruction = $instruct;
+                    $process->instruction = $request->instruction[$key];
                     $process->created_by = auth()->user()->id;
                     $process->created_at = Carbon::now();
                     $process->updated_by = auth()->user()->id;
                     $process->updated_at = Carbon::now();
                     $process->save();
-                    
-                    if (isset($request->machine_id) && is_array($request->machine_id) && count($request->machine_id) > 0) {
-                        foreach ($request->machine_id as $machine_id) {
-                            if (!is_null($machine_id)) {
+
+                    // previous processes
+                    $processes[$key] = $process->id;
+                    if (isset($request->previous_process[$key]) && is_array($request->previous_process[$key]) && count($request->previous_process[$key]) > 0) {
+                        foreach ($request->previous_process[$key] as $previous_process_key) {
+                            $previous_process_id = $processes[$previous_process_key];
+                            if($previous_process_id != ""){
+                                $previous_process = new PreProductionProcessPreviousProcess();
+                                $previous_process->pre_production_id = $pre_production->id;
+                                $previous_process->pre_production_process_id = $process->id;
+                                $previous_process->process_id = $previous_process_id;
+                                $previous_process->save();
+                            }
+                        }
+                    }
+
+                    // machines
+                    if (isset($request->machine_id[$key]) && is_array($request->machine_id[$key]) && count($request->machine_id[$key]) > 0) {
+                        foreach ($request->machine_id[$key] as $machine_id) {
+                            if ($machine_id !="") {
                                 $machine = new PreProductionProcessMachine();
                                 $machine->pre_production_id = $pre_production->id;
                                 $machine->pre_production_process_id = $process->id;
@@ -128,99 +154,67 @@ class PreProductionService
                             }
                         }
                     }
+                   
+                    if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
+                        
+                        foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
+                            if (
+                                ($request->product_material_category_id[$key][$categoryKey] != '') && 
+                                ($request->product_material_id[$key][$categoryKey] != '') && 
+                                ($request->quantity[$key][$categoryKey] != '')
+                                ) {
+                                $material = new PreProductionProcessMaterial();
+                                $material->pre_production_id = $pre_production->id;
+                                $material->pre_production_process_id = $process->id;
+                                $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                $material->product_material_id = $request->product_material_id[$key][$categoryKey];
+                                $material->quantity = $request->quantity[$key][$categoryKey];
+                                $material->save();
 
-                    if (isset($request->product_material_category_id) && is_array($request->product_material_category_id) && count($request->product_material_category_id) > 0) {
-                        foreach ($request->product_material_category_id as $key => $category_id) {
-                            $material = new PreProductionProcessMaterial();
-                            $material->pre_production_id = $pre_production->id;
-                            $material->pre_production_process_id = $process->id;
-                            $material->product_material_category_id = $category_id;
-                            $material->product_material_id = $request->product_material_id[$key];
-                            $material->quantity = $request->quantity[$key];
-                            $material->save();
-                        }
-
-                        $aggregatedMaterials = [];
-
-                        foreach ($request->product_material_category_id as $key => $category_id) {
-                            $material_id = $request->product_material_id[$key];
-                            $quantity = $request->quantity[$key];
-                            $compositeKey = $category_id . '-' . $material_id;
-
-                            if (!isset($aggregatedMaterials[$compositeKey])) {
-                                $aggregatedMaterials[$compositeKey] = $quantity;
-                            } else {
-                                $aggregatedMaterials[$compositeKey] += $quantity;
+                                $material_id = $request->product_material_id[$key][$categoryKey];
+                                $quantity = $request->quantity[$key][$categoryKey];
+                                $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                if(isset($uniqueProductMaterials[$material_id])) {
+                                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                } else {
+                                    $uniqueProductMaterials[$material_id] = [
+                                        'material_id' => $material_id,
+                                        'category_id' => $category_id,
+                                        'quantity' => $quantity,
+                                    ];
+                                }
                             }
-                        }
-
-                        foreach ($aggregatedMaterials as $compositeKey => $quantity) {
-                            list($category_id, $material_id) = explode('-', $compositeKey);
-
-                            $material = new PreProductionMaterial();
-                            $material->pre_production_id = $pre_production->id;
-                            $material->product_material_category_id = $category_id;
-                            $material->product_material_id = $material_id;
-                            $material->quantity = $quantity;
-                            $material->save();
                         }
                     }
 
-                    if (isset($request->name) && is_array($request->name) && count($request->name) > 0) {
-                        foreach ($request->name as $key => $name) {
-                            $output = new PreProductionProcessEstimatedOutput();
-                            $output->pre_production_id = $pre_production->id;
-                            $output->pre_production_process_id = $process->id;
-                            $output->name = $name;
-                            $output->unit = '';
-                            $output->quantity = $request->output_quantity[$key];
-                            $output->save();
+                    if (isset($request->name[$key]) && is_array($request->name[$key]) && count($request->name[$key]) > 0) {
+                        foreach ($request->name[$key] as $outputKey => $name) {
+                            if ($request->name[$key][$outputKey] != '' && $request->output_quantity[$key][$outputKey] != '') {
+                                $output = new PreProductionProcessEstimatedOutput();
+                                $output->pre_production_id = $pre_production->id;
+                                $output->pre_production_process_id = $process->id;
+                                $output->name = $request->name[$key][$outputKey];
+                                $output->unit = '';
+                                $output->quantity = $request->output_quantity[$key][$outputKey];
+                                $output->created_by = auth()->user()->id;
+                                $output->created_at = Carbon::now();
+                                $output->updated_by = auth()->user()->id;
+                                $output->updated_at = Carbon::now();
+                                $output->save();
+                            }
                         }
                     }
                 }
             }
-
-            // if (isset($request->instruction) && is_array($request->instruction) && count($request->instruction) > 0) {
-            //     foreach ($request->instruction as $key => $instruct) {
-            //         $process = new PreProductionProcess();
-            //         $process->pre_production_id = $pre_production->id;
-            //         $process->instruction = $instruct;
-            //         $process->created_by = auth()->user()->id;
-            //         $process->created_at = Carbon::now();
-            //         $process->updated_by = auth()->user()->id;
-            //         $process->updated_at = Carbon::now();
-            //         $process->save();
             
-            //         // Process Machines
-            //         if (isset($request->machine_id[$key]) && is_array($request->machine_id[$key]) && count($request->machine_id[$key]) > 0) {
-            //             foreach ($request->machine_id[$key] as $machine_id) {
-            //                 if (!is_null($machine_id)) {
-            //                     $machine = new PreProductionProcessMachine();
-            //                     $machine->pre_production_id = $pre_production->id;
-            //                     $machine->pre_production_process_id = $process->id;
-            //                     $machine->machine_id = $machine_id;
-            //                     $machine->save();
-            //                 }
-            //             }
-            //         }
-            
-            //         // Process Materials
-            //         if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-            //             foreach ($request->product_material_category_id[$key] as $index => $category_id) {
-            //                 if (!empty($category_id) && isset($request->product_material_id[$key][$index]) && isset($request->quantity[$key][$index])) {
-            //                     $material = new PreProductionProcessMaterial();
-            //                     $material->pre_production_id = $pre_production->id;
-            //                     $material->pre_production_process_id = $process->id;
-            //                     $material->product_material_category_id = $category_id;
-            //                     $material->product_material_id = $request->product_material_id[$key][$index];
-            //                     $material->quantity = $request->quantity[$key][$index];
-            //                     $material->save();
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-            
+            foreach ($uniqueProductMaterials as $materialData) {
+                $material = new PreProductionMaterial();
+                $material->pre_production_id = $pre_production->id;
+                $material->product_material_category_id = $materialData['category_id'];
+                $material->product_material_id = $materialData['material_id'];
+                $material->quantity = $materialData['quantity'];
+                $material->save();
+            }
             
             
         }catch (\Exception $e) {

@@ -173,6 +173,9 @@
                     <li class="menu-title">
                         <span>Inventory</span>
                     </li>
+                    <li> 
+                        <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
+                    </li>
                     @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material'))
                         <li class="submenu">
                             <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
