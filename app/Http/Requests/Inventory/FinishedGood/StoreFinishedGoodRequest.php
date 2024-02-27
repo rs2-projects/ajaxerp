@@ -24,8 +24,7 @@ class StoreFinishedGoodRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required',
-            'finished_goods_category_id' => 'required',
-            'color' => 'required',
+            'finished_good_category_id' => 'required',
             'warehouse_id' => 'required',
             'sections' => 'required|array',
             'racks' => 'required|array',

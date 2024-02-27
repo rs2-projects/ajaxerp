@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     use HasFactory;
+
     protected $table = 'invoices';
     public $timestamps = false;
     //Discount type const
@@ -38,6 +39,14 @@ class Invoice extends Model
         self::INVOICE_STATUS_DELIVERED => 'Delivered',
         self::INVOICE_STATUS_CANCELLED => 'Cancelled',
     ];
+    //Delete status const
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    const DELETEDS = [
+        self::DELETED_NO => 'No',
+        self::DELETED_YES => 'Yes',
+    ];
+
     protected $fillable = [
         'invoice_no',
         'customer_id',

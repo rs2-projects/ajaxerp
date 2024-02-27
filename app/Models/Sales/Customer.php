@@ -58,6 +58,11 @@ class Customer extends Model
         }
         return asset('assets/img/placeholder.jpg');
     }
+    // get full name
+    public function getFullNameAttribute()
+    {
+        return $this->contact_first_name.' '.$this->contact_last_name;
+    }
     //customer and bank relationship
     public function customerBanks()
     {

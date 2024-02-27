@@ -4,7 +4,7 @@ namespace App\Http\Requests\Sales;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorInvoiceRequest extends FormRequest
+class StoreInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,10 @@ class StorInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'customer_id' => 'required',
+            'invoice_date' => 'required',
+            'payment_date' => 'required',
+
         ];
     }
 }
