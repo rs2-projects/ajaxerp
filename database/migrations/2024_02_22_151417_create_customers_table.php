@@ -29,7 +29,6 @@ return new class extends Migration
             $table->unsignedBigInteger('state_id')->nullable();
 
             //extra
-            $table->string('account_no', 64)->nullable();
             $table->string('fax', 64)->nullable();
             $table->string('website', 128)->nullable();
             $table->string('notes', 255)->nullable();
