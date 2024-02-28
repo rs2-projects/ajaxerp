@@ -305,7 +305,6 @@
                     }
                 },
 
-
             },
             mounted () {
                 initMaterialProductMultipleSelect();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Services\Inventory\PreProductionMaterialRequestService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventory\MaterialRequest\StoreMaterialRequest;
 use Illuminate\Http\Request;
 
 class PreProductionMaterialRequestController extends BackendController
@@ -42,13 +43,27 @@ class PreProductionMaterialRequestController extends BackendController
         return $this->view('inventory.material-request.deliver')->with($data);
     }
 
+    public function deliverStore(StoreMaterialRequest $request, $id){
+        try {
+            $this->service->deliverStoreData($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Delivered successfully');
+    }
+
+    public function details($id){
+        $data = $this->service->detailsData($id);
+        return $this->view('inventory.material-request.delivery_details')->with($data);
+    }
+
     public function getMaterials($id){
         $data = $this->service->getMaterialData($id);
         return $this->returnAjaxSuccess($data);
     }
 
-    public function checkBarCode($material_id, $barcode){
-        $data = $this->service->checkBarCode($material_id, $barcode);
+    public function checkBarCode($material_id, $barcode, $count){
+        $data = $this->service->checkBarCode($material_id, $barcode, $count);
         return $data;
     }
 }

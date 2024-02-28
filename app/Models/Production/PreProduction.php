@@ -100,4 +100,9 @@ class PreProduction extends Model
     {
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_id', 'id');
     }
+
+    public function production_material()
+    {
+        return $this->hasMany(PreProductionMaterial::class, 'pre_production_id', 'id')->where('deleted', PreProductionMaterial::DELETED_NO);
+    }
 }

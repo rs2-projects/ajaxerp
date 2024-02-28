@@ -13,6 +13,7 @@ use App\Http\Controllers\Production\PreProduction\PreProductionController;
 use App\Http\Controllers\Settings\UserRoleController;
 use App\Http\Controllers\Settings\UserRolePermissionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
+use App\Http\Controllers\Production\Production\ProductionController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start
@@ -155,13 +156,21 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/get-material-products', [PreProductionController::class, 'getProducts'])->name('production.pre-production.get-material-products');
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes');
+        Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document');
+    });
+
+    Route::group(['prefix' => 'production'], function () {
+        Route::get('/', [ProductionController::class, 'index'])->name('production.production.index');
+        Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
     });
 });
 
 Route::group(['prefix' => 'material-request'], function () {
     Route::get('/', [PreProductionMaterialRequestController::class, 'index'])->name('inventory.material-request.index');
     Route::post('/filtered', [PreProductionMaterialRequestController::class, 'indexFiltered'])->name('inventory.material-request.filtered');
+    Route::get('/{id}/details', [PreProductionMaterialRequestController::class, 'details'])->name('inventory.material-request.details');
     Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver');
+    Route::post('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverStore'])->name('inventory.material-request.deliver.store');
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials');
-    Route::get('/{id}/deliver/{barcode}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode');
+    Route::get('/{id}/deliver/{barcode}/{count}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode');
 });

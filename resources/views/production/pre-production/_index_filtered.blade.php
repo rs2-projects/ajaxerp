@@ -35,8 +35,8 @@
                                     </a>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <a href="#" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
-                                    <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
+                                    <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                        <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
                                     </a>
                                 </td>
                                 
@@ -44,7 +44,7 @@
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{count($data->material)}}</h4>
+                                    <h4 class="text-center d-table-title">{{count($data->production_material)}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
@@ -66,9 +66,7 @@
                                             </svg>
                                             <span class="label-text">{{$data->is_verified ==$data::VERIFIED_YES? 'Verified': 'Verify' }}</span>
                                         </label>
-                                        </div>
-                                        
-
+                                    </div>
                                 </td>
                                 <td class="erp-tbody-td text-center pre-description-box-td">
                                     <p class="text-center d-table-title pre-description-box">{{$data->description}}</p>
@@ -79,7 +77,7 @@
                                             <div class="dropdown dropdown-action">
                                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                                    {{-- <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a> --}}
                                                     <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                                     
                                                 </div>

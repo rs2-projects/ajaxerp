@@ -11,7 +11,6 @@
                             <th class="erp-th text-center">Process <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Production Process"><i class="fa-duotone fa-exclamation"></i></span> </th>
                             <th class="erp-th text-center">Raw Materials </th>
                             <th class="erp-th text-center">Estimated QTY </th>
-                            <th class="erp-th text-center">Delivery Status</th>
                             <th class="erp-th text-center">Instruction </th>
                             <th class="erp-th text-center">Action </th>
                         </tr>
@@ -48,19 +47,6 @@
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
-                                <td class="erp-tbody-td text-center">
-                                    <div class="erp-action-t erp-table-status pre-{{ strtolower($data::DELIVERIES[$data->delivery_status]) }}-s">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="action-icon dropdown-toggle pending" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>
-                                                {{ $data::DELIVERIES[$data->delivery_status] }}</span></a>
-                                            <!-- <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Pending</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Partial</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Delivered</a>
-                                            </div> -->
-                                        </div>
-                                    </div>
-                                </td>
                                 <td class="erp-tbody-td text-center pre-description-box-td">
                                     <p class="text-center d-table-title pre-description-box">{{$data->description}}</p>
                                 </td>
@@ -69,10 +55,10 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
+                                                {{-- @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
                                                     <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
-                                                @endif
-                                                <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-deviantart m-r-5"></i> View Delivery Details</a>
+                                                @endif --}}
+                                                <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
                                                 
                                             </div>
                                         </div>
