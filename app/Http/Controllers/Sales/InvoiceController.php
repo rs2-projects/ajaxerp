@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Requests\Procurement\ProductMaterial\StoreMakePaymentRequest;
 use App\Http\Requests\Sales\StoreInvoiceRequest;
+use App\Http\Requests\Sales\UpdateInvoiceRequest;
 use App\Services\Sales\Invoice\InvoiceService;
 use Illuminate\Http\Request;
 
@@ -29,10 +31,13 @@ class InvoiceController extends BackendController
     public function indexFilteredData(Request $request)
     {
         $data = $this->service->indexFilteredData($request);
-        $view = $this->view('sales.invoice._index_filtered')
-            ->with($data)
-            ->render();
-        return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+    //getDesign
+    public function getDesign($id)
+    {
+        $data = $this->service->getDesign($id);
+        return$this->returnAjaxSuccess(['view'=>$data['view']], 'Data Fetch Successfully');
     }
 
     //Create Invoice
@@ -70,5 +75,64 @@ class InvoiceController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Invoice Created Successfully');
+    }
+    //make payment data
+    public function makePayment($id)
+    {
+        try {
+            $data = $this->service->makePaymentData($id);
+            $view = view('sales.invoice.make-payment._make_payment_data', $data)->render();
+
+            return $this->returnAjaxSuccess(['view' => $view], 'Data Fetched Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+
+    }
+    // make payment submit
+    public function makePaymentSubmit(StoreMakePaymentRequest $request, $id)
+    {
+        try {
+            $this->service->makePaymentSubmit($request, $id);
+            return $this->returnAjaxSuccess([], 'Payment Made Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+    //edit invoice
+    public function edit($id){
+        $this->setPageTitle("Edit Invoice");
+        $this->setActiveMenu('sales.invoice.index');
+
+        $data = $this->service->editData($id);
+
+        return $this->view('sales.invoice.edit')->with($data);
+    }
+    //Get edit invoice data
+    public function getEditInvoiceData($id)
+    {
+        $data = $this->service->getEditInvoiceData($id);
+        return response()->json($data);
+    }
+    //update invoice
+    public function update(UpdateInvoiceRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+
+            return $this->returnAjaxSuccess([], 'Invoice Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+    // delete invoice
+    public function delete($id)
+    {
+        try {
+            $this->service->delete($id);
+            return $this->returnAjaxSuccess([], 'Invoice Deleted Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

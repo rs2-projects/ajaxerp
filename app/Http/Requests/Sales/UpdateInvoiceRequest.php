@@ -24,10 +24,7 @@ class UpdateInvoiceRequest extends FormRequest
         return [
             'customer_id' => 'required',
             'invoice_date' => 'required',
-            'due_date' => 'required',
-            'subtotal_amount' => 'required',
-            'vat_amount' => 'required',
-            'total_amount' => 'required',
+            'payment_date' => 'required',
         ];
     }
 }

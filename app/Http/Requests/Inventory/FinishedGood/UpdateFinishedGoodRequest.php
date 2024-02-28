@@ -25,7 +25,6 @@ class UpdateFinishedGoodRequest extends FormRequest
             'name' => 'required',
             'code' => 'required',
             'finished_goods_category_id' => 'required',
-            'color' => 'required',
             'warehouse_id' => 'required',
             'sections' => 'required|array',
             'racks' => 'required|array',

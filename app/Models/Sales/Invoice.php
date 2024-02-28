@@ -85,4 +85,9 @@ class Invoice extends Model
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
+    //relation with design
+    public function designs()
+    {
+        return $this->hasMany(InvoiceDesigns::class, 'invoice_id', 'id');
+    }
 }

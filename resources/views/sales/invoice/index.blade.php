@@ -4,9 +4,7 @@
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-
                 <a href="{{ route('sales.invoice.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Create Invoice</a>
-
             </div>
         </div>
         <div class="erp-employee-list-wrapper">
@@ -23,7 +21,7 @@
                                     </div>
                                     <div class="erp-filter-item flex-15">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" class="form-control search-product-in" placeholder="Invoice ID">
+                                            <input type="text" class="form-control search-product-in" name="invoice_id"  id="invoice_id" placeholder="Invoice ID">
 
                                         </div>
                                     </div>
@@ -32,8 +30,7 @@
                                             <select class="select floating select2-box" id="status_filter">
                                                 <option>Select Invoice Status</option>
                                                 @foreach($statuses as $key=>$status)
-                                                    <option value="{{ $key }}"
-                                                        {{ $key == request()->month ? 'selected' : '' }}>
+                                                    <option value="{{ $key }}" >
                                                         {{ ucfirst($status) }}
                                                     </option>
                                                 @endforeach
@@ -41,30 +38,15 @@
 
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-15">
+                                    <div class="erp-filter-item flex-15 ">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box" id="month_filter">
-                                                <option>Select Month</option>
-                                                @foreach($months as $key=>$month)
-                                                <option {{ $key==request()->month ? 'selected' : '' }} value="{{ $key }}">
-                                                    {{ucfirst($month)}}
-                                                </option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control search-product-in datetimepicker" id="start_date_filtered" placeholder="Start Date">
 
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-15">
+                                    <div class="erp-filter-item flex-15 ">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box">
-                                                <option>Select Year</option>
-                                                <option>2023</option>
-                                                <option>2022</option>
-                                                <option>2021</option>
-                                                <option>Last Year</option>
-                                                <option>Last Two Years</option>
-
-                                            </select>
+                                            <input type="text" class="form-control search-product-in datetimepicker" id="end_date_filtered" placeholder="End Date">
 
                                         </div>
                                     </div>
@@ -90,49 +72,140 @@
                 </div>
             </div>
         </div>
-
-
     </div>
     <!--End::row-1 -->
+    <div id="receiptItemWrap" style="display: none;">
+        <div class="multiple-receipt-item flex-100">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">Upload Receipt <span class="text-danger" onclick="removeReceipt(this)"><i class="fa fa-times-circle"></i></span></label>
+                <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+            </div>
+        </div>
+    </div>
 @endsection
-
+@section('modals')
+    @include('common.modals._make_payment_modal')
+@endsection
 @section('css')
 
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
-
+    <!-- Datetimepicker JS -->
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
     <script>
         var filterData = {
+            invoice_id: '',
             status_filter: '',
-            month_filter: ''
+            start_date_filtered:'',
+            end_date_filtered:'',
         };
         $(document).ready(function() {
             getData();
+            initializeDatepicker()
+            filterData.invoice_id = $("#invoice_id").val()
+            $("#invoice_id").on('input', function () {
+                filterData.invoice_id = $(this).val();
+            });
             filterData.status_filter = $("#status_filter").val()
             $("#status_filter").on('input', function () {
                 filterData.status_filter = $(this).val();
             });
 
-            filterData.month_filter = $("#month_filter").val()
-            $("#month_filter").on('change', function () {
-                filterData.month_filter = $(this).val();
-            });
-        });
+            $('#start_date_filtered').on('dp.change', function(e){
 
+                filterData.start_date_filtered = $(this).val();
+
+            });
+
+            $('#end_date_filtered').on('dp.change', function(e){
+                filterData.end_date_filtered = $(this).val();
+            });
+
+        });
+        //show design modal
+        function showDesign(id) {
+            let url = "{{ route('sales.invoice.design', ':id') }}"
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#design_modal_body").html(response.view);
+                    $("#design_modal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+        //get filtered data
         function getData(){
+            console.log(filterData)
             getPaginatedListData("{{ route('sales.invoice.filtered') }}", "#ajax-data-load", filterData);
         }
-
+        //get paginated data
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+        //make payment
+        function makePayment(id){
+            let url = "{{route('sales.invoice.make-payment', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#make-payment-modal-data").html(response.view);
+                    $("#make-payment-modal").modal('show');
+
+                    initializeDatepicker();
+                    initPaymentMethodSelect2();
+                    initPaymentAccountSelect2();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+        //datepicker initialize
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                //format: 'DD/MM/YYYY',
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
+        }
+        //add receipt
+        function addReceipt(){
+            let receiptItemWrap = $("#receiptItemWrap").html();
+            $("#receiptItemMain").append(receiptItemWrap);
+        }
+        //remove receipt
+        function removeReceipt(element){
+            $(element).closest('.multiple-receipt-item').remove();
+        }
+        //init payment method select2
+        function initPaymentMethodSelect2() {
+            $('.select-step.payment-method').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+        //init payment account select2
+        function initPaymentAccountSelect2() {
+            $('.select-step.payment-account').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
         }
 
     </script>

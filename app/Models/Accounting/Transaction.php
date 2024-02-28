@@ -32,6 +32,7 @@ class Transaction extends Model
     const REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE = 4;
     const REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT = 5;
     const REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT = 6;
+    const REFERENCE_TYPE_INVOICE_PAYMENT = 7;
     const REFERENCE_TYPES = [
         self::REFERENCE_TYPE_INCOME => 'Income',
         self::REFERENCE_TYPE_EXPENSE => 'Expense',
@@ -40,6 +41,7 @@ class Transaction extends Model
         self::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE => 'Product Material Purchase',
         self::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT => 'Asset Product Purchase Payment',
         self::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT => 'Product Material Purchase Payment',
+        self::REFERENCE_TYPE_INVOICE_PAYMENT => 'Invoice Payment',
     ];
 
     const IS_REVIEWED_NO = 0;
