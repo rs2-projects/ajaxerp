@@ -47,7 +47,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" name="estimated_production_qty" type="text" placeholder="" required="">
+                                <input class="form-control" name="estimated_production_qty" type="number" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -57,11 +57,12 @@
                             <div class="production-process-status-wrapper">
                                 <h4>Process @{{ index + 1 }}</h4>
                             </div>
+                            <input type="hidden" name="process_id[]" :value="index">
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
-                                        <select class="machine-multiselect" name="machine_id[]" multiple="multiple" required>
+                                        <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             @foreach ($machines as $machine)
                                                 <option value="{{$machine->id}}">{{$machine->name}}</option>  
                                             @endforeach
@@ -71,8 +72,8 @@
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
-                                        <select class="process-multiselect" multiple="multiple">
-                                            <option v-for="(process, idx) in processes.slice(0, index)" :key="idx">Process @{{ idx + 1 }}</option>
+                                        <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
+                                            <option v-for="(process, idx) in processes.slice(0, index)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -84,7 +85,7 @@
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
-                                                <select class="select select-step" name="product_material_category_id[]" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option>Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -95,22 +96,18 @@
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
-                                                <select name="product_material_id[]" class="select select-step material-product" v-if="processes && processes.length > 0">
+                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
-                                                    <template v-for="process in processes">
-                                                        <template v-for="materialSection in process.materialSections">
-                                                            <option v-for="product in materialSection.products" :key="product.id" :value="product.id">
-                                                                @{{ product.name }}
-                                                            </option>
-                                                        </template>
-                                                    </template>
+                                                    <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
+                                                        @{{ product.name }}
+                                                    </option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input name="quantity[]" class="form-control " type="text" placeholder="" required="">
+                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -130,14 +127,14 @@
                                         <div class="pms-item flex-60">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Name <span class="text-danger">*</span></label>
-                                                <input class="form-control" name="name[]" type="text" placeholder="" required="">
+                                                <input class="form-control" :name="'name['+index+'][]'" type="text" placeholder="" required="">
                                             </div>
                                         </div>
                                         
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" name="output_quantity[]" type="text" placeholder="" required="">
+                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -327,6 +324,7 @@
             });
         }
         function initAssteProductMultipleSelect(){
+            $('.machine-multiselect').multipleSelect('destroy');
             $('.machine-multiselect').multipleSelect({
                 filter: true,
                 placeholder: 'Select Machine',
@@ -372,7 +370,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        window.location.href = "{{route('production.pre-production.index')}}";
+                       window.location.href = "{{route('production.pre-production.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)

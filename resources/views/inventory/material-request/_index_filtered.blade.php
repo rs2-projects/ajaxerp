@@ -49,9 +49,10 @@
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <div class="erp-action-t erp-table-status pre-partial-s">
+                                    <div class="erp-action-t erp-table-status pre-{{ strtolower($data::DELIVERIES[$data->delivery_status]) }}-s">
                                         <div class="dropdown dropdown-action">
-                                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>Partial</span></a>
+                                            <a href="#" class="action-icon dropdown-toggle pending" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>
+                                                {{ $data::DELIVERIES[$data->delivery_status] }}</span></a>
                                             <!-- <div class="dropdown-menu dropdown-menu-right">
                                                 <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Pending</a>
                                                 <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Partial</a>

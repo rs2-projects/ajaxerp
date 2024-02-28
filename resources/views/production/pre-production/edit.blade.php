@@ -47,7 +47,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" value="{{$pre_production->estimated_production_qty}}" name="estimated_production_qty" type="text" placeholder="" required="">
+                                <input class="form-control" value="{{$pre_production->estimated_production_qty}}" name="estimated_production_qty" type="number" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input v-model="materialSection.quantity" name="quantity[]" class="form-control " type="text" placeholder="" required="">
+                                                <input v-model="materialSection.quantity" name="quantity[]" class="form-control " type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -137,7 +137,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" v-model="estimatedSection.quantity" name="output_quantity[]" type="text" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.quantity" name="output_quantity[]" type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -230,23 +230,13 @@
 
             },
             methods: {
-                // getProcesses() {
-                //     //const newIndex = this.processes.length + 1;
-                //     axios
-                //         .get('{{ route('production.pre-production.get-all-processes', 24) }}')
-                //         .then(response => (
-                //             console.log(response.data.processes)
-                //             // this.processes.push({
-                //             //     index: response.data.processes.length,
-                //             //     materialSections: [{}],
-                //             //     estimatedOutputs: [{}]
-                //             // })
-                //         ))
-                // },
-
                 getProcesses() {
+                    var currentUrl = window.location.href;
+                    var id = currentUrl.split('/').slice(-2, -1)[0];
+                    let url = "{{route('production.pre-production.get-all-processes', ':id')}}";
+                    url = url.replace(':id', id);
                     axios
-                        .get('{{ route('production.pre-production.get-all-processes', 24) }}')
+                    .get(url)
                         .then(response => {
                             const processes = response.data.processes;
                             console.log(processes);
@@ -280,9 +270,6 @@
                             console.error('Error fetching processes:', error);
                         });
                 },
-
-
-
 
                 addProcessHandler(){
                     const newIndex = this.processes.length + 1;
@@ -356,8 +343,6 @@
                         preProductionFormSubmit();
                     }
                 },
-
-
             },
             mounted () {
                 this.getProcesses();

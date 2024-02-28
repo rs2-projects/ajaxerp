@@ -41,4 +41,14 @@ class PreProductionMaterialRequestController extends BackendController
         $data = $this->service->deliverData($id);
         return $this->view('inventory.material-request.deliver')->with($data);
     }
+
+    public function getMaterials($id){
+        $data = $this->service->getMaterialData($id);
+        return $this->returnAjaxSuccess($data);
+    }
+
+    public function checkBarCode($material_id, $barcode){
+        $data = $this->service->checkBarCode($material_id, $barcode);
+        return $data;
+    }
 }

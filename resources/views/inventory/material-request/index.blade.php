@@ -27,6 +27,22 @@
                                 </div>
                             </div>
                         </div>
+
+                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link active erp-nav-link" data="all" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="pending" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="partial" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Partial</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="delivered" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Delivered</button>
+                            </li>
+                        </ul>
+
                     
                         <div class="my-attendance-report-wrapper" id="ajax-data-load">
                             
@@ -219,7 +235,11 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .erp-table-status.pre-delivered-s .action-icon {
+            background: #37b34a;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -233,13 +253,20 @@
 @section('js')
     <script>
         var filterData = {
-            keyword_filtered: ''
+            keyword_filtered: '',
+            status_filtered: 'all',
         };
         $(document).ready(function() {
             getData();
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
+            });
+
+            $('.status_type li').on('click', function () {
+                filterData.status_filtered = $('.status_type .active').attr('data');
+                console.log(filterData);
+                getData();
             });
         });
 

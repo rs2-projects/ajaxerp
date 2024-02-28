@@ -72,7 +72,6 @@
                             @endforeach
                         @endif
                     </td>
-                    @if(hasPermission( 'manage-product-material'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -86,7 +85,6 @@
                                 </div>
                             </div>
                         </td>
-                    @endif
                 </tr>
             @endforeach
         </tbody>

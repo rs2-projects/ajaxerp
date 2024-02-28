@@ -22,7 +22,13 @@ class UpdateFinishedGoodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required',
+            'code' => 'required',
+            'finished_goods_category_id' => 'required',
+            'color' => 'required',
+            'warehouse_id' => 'required',
+            'sections' => 'required|array',
+            'racks' => 'required|array',
         ];
     }
 }

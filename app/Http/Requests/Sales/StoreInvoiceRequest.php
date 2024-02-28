@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Inventory\FinishedGood;
+namespace App\Http\Requests\Sales;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreFinishedGoodRequest extends FormRequest
+class StoreInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,10 @@ class StoreFinishedGoodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'code' => 'required',
-            'finished_good_category_id' => 'required',
-            'warehouse_id' => 'required',
-            'sections' => 'required|array',
-            'racks' => 'required|array',
+            'customer_id' => 'required',
+            'invoice_date' => 'required',
+            'payment_date' => 'required',
+
         ];
     }
 }

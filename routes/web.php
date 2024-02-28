@@ -550,5 +550,10 @@ Route::group(['middleware' => 'auth'], function () {
     include 'product_materials.php';
     //asset products
     include 'asset_product.php';
+    //finished goods routes
     include 'finished_goods.php';
+    //customers routes
+    include 'customers.php';
+    //invoice routes
+    include 'invoice.php';
 });

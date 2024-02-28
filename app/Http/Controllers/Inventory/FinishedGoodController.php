@@ -13,7 +13,7 @@ class FinishedGoodController extends BackendController
     private FinishedGoodService $service;
     public function __construct()
     {
-        $this->addBreadcrumbs('Inventory',route('dashboard'),'fa fa-home');
+        $this->addBreadcrumbs('Inventory',route('inventory.finished-good.index'),'fa fa-home');
         $this->addBreadcrumbs('Finished Good');
         $this->service = new FinishedGoodService();
     }
