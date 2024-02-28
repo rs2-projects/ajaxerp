@@ -34,7 +34,7 @@
                                     </a>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <a href="#" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                    <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn">
                                     <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
                                     </a>
                                 </td>

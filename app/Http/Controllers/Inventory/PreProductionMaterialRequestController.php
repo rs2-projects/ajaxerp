@@ -35,6 +35,19 @@ class PreProductionMaterialRequestController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 
+    public function getDocument($id)
+    {
+        try {
+            $data = $this->service->getDocument($id);
+            $view = $this->view('inventory.material-request.__document_modal_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
     public function deliver($id)
     {
         $this->setPageTitle("Material Request (Production)");

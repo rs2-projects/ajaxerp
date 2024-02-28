@@ -162,6 +162,7 @@ Route::group(['prefix' => 'production'], function () {
     Route::group(['prefix' => 'production'], function () {
         Route::get('/', [ProductionController::class, 'index'])->name('production.production.index');
         Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
+        Route::get('/{id}/get-document', [ProductionController::class, 'getDocument'])->name('production.production.get-design-document');
     });
 });
 
@@ -173,4 +174,5 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::post('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverStore'])->name('inventory.material-request.deliver.store');
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials');
     Route::get('/{id}/deliver/{barcode}/{count}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode');
+    Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document');
 });

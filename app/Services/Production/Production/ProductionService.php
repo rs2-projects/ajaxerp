@@ -59,4 +59,15 @@ class ProductionService
 
         return $data;
     }
+
+    public function getDocument($id)
+    {
+        $data['item'] = PreProduction::where('id', $id)
+            ->where('deleted', PreProduction::DELETED_NO)
+            ->first();
+        if (!$data['item']) {
+            throw new \Exception('Pre Production not found');
+        }
+        return $data;
+    }
 }
