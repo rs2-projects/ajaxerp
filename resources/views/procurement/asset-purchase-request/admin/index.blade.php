@@ -13,30 +13,30 @@
                 <div class="my-attendance-box-item flex-100 ">
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-end align-items-center mb-4">
-                        
+
                             <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
-                                
+
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
                                     <div class="erp-filter-item">
                                         <h6 class="me-2">Search By: </h6>
                                     </div>
-                                    <div class="erp-filter-item flex-25"> 
+                                    <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Purchase Request">
-                                        
+
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-25"> 
+                                    <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <input type="text" class="form-control search-product-in datetimepicker" id="start_date_filtered" placeholder="Start Date">
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-25"> 
+                                    <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <input type="text" class="form-control search-product-in datetimepicker" id="end_date_filtered" placeholder="End Date">
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item"> 
+                                    <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
                                             <button class=" erp-search-btn" type="button" onclick="getData()">Search</button>
                                         </div>
@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                         </div>
-                    
+
                         <div class="erp-leave-tab-wrapper">
                             <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
                                 <li class="nav-item erp-nav-item" role="presentation">
@@ -65,7 +65,7 @@
                                 <li class="nav-item erp-nav-item" role="presentation">
                                     <button class="nav-link erp-nav-link" data="declined_requests" id="revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Declined P.R</button>
                                 </li>
-                                
+
                             </ul>
 
                             <div class="tab-content" id="myTabContent">
@@ -87,7 +87,7 @@
     </div>
     <!--End::row-1 -->
 
-    
+
 @endsection
 
 @section('modals')
@@ -96,7 +96,7 @@
 @endsection
 
 @section('css')
-    <style> 
+    <style>
         .delete-btn-box.bank-info-remove {
             top: 10px;
         }
@@ -133,7 +133,7 @@
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
-            }); 
+            });
 
             $('.status_type li').on('click', function () {
                 filterData.status_filtered = $('.status_type .active').attr('data');
@@ -153,6 +153,21 @@
             $(document).on('click', '.req-info-btn', function(){
                 $(".d-purchase-req-wrapper").slideToggle();
             });
+        });
+
+        $(document).on("submit", "#makePurchaseOrderFormSubmit", function (e) {
+            e.preventDefault();
+            let checked = false;
+            $(document).find('.mpod_items').each(function(){
+                if($(this).is(':checked')){
+                   checked = true;
+                }
+            });
+            if(checked) {
+                e.currentTarget.submit();
+            } else {
+                showInfoAlert("Oops!", "Please select at-least 1 Item!");
+            }
         });
 
         function getData(){
@@ -266,7 +281,7 @@
             })
         }
 
-        
+
     </script>
 @endsection
 

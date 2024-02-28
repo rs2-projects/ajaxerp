@@ -44,7 +44,7 @@
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-start address-invoice">
                                                     <h4 class="mb-0">Address</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.address }}</p>
+                                                    <p class="mb-0">@{{ selected_supplier.full_address }}</p>
                                                 </div>
                                             </div>
                                             <div class="invoice-info-bx" v-else>
@@ -527,6 +527,19 @@
 
         $(document).ready(function () {
             initializeDatepicker();
+        });
+        $(document).ready(function () {
+            let auto_grow_elements = $(".auto-grow-input");
+            auto_grow_elements.each( function () {
+                let element = this;
+                element.style.height = "5px";
+                element.style.height = (element.scrollHeight)+"px";
+            });
+        });
+        $(document).on('input', '.auto-grow-input', function () {
+            let element = this;
+            element.style.height = "5px";
+            element.style.height = (element.scrollHeight)+"px";
         });
 
         function initTaxSelect2() {

@@ -171,7 +171,7 @@
                                 </div>
                                 <div class="erp-filter-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Select Rack <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                         <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
 
                                         </select>

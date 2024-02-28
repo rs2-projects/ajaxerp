@@ -101,7 +101,6 @@
             $("#category_filtered").on('change', function () {
                 filterData.category_filtered = $(this).val();
             });
-
             $("#productMaterialStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -123,9 +122,33 @@
                 }, 'show_input_error');
             });
 
-
-
+            $("#addProductMaterialSubmitBtn").on('click', function () {
+                validateCustomForm("#productMaterialStoreForm");
+            });
         });
+
+        function validateCustomForm(form) {
+            var tab1Fields = $(form).find(':input[required]');
+            tab1Fields.each(function() {
+                if (!$(this).val()) {
+                    let inputName = $(this).attr('name');
+                    inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    inputName = inputName.replace(" Id", '');
+                    showInfoAlert(inputName,'required');
+                }
+            });
+
+            let sections = $("#sections_id").val();
+            if(sections.length < 1) {
+                showInfoAlert('Sections','required');
+            }
+
+            let racks = $("#racks_id").val();
+            if(racks.length < 1) {
+                showInfoAlert('Racks','required');
+            }
+
+        }
 
         function getData(){
             getPaginatedListData("{{ route('inventory.product-material.filtered') }}", "#ajax-data-load", filterData);
@@ -205,14 +228,14 @@
         function initRackMultipleSelect(){
             $('#racks_id').multipleSelect({
                 filter: true,
-                placeholder: 'Select Racks',
+                placeholder: 'Select Subsections',
                 minimumCountSelected: 6,
                 filterPlaceholder: 'Search Racks',
                 selectAll: true,
                 onOpen: function () {
                     $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Racks");
+                    }).replaceWith("Select All Subsections");
                 },
             });
         }

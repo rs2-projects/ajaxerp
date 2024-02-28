@@ -18,7 +18,7 @@
                     </td>
                     <td class="erp-tbody-td text-start">
                         <h4 class="text-start d-table-title"><strong>{{ $pr->purchase_request_id }}</strong></h4>
-                        <small class="text-center d-table-title">{{ getFormattedDate($pr->created_at, 'd M, Y') }}</small> 
+                        <small class="text-center d-table-title">{{ getFormattedDate($pr->created_at, 'd M, Y') }}</small>
                     </td>
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ $pr->title }}</h4>
@@ -28,7 +28,7 @@
                     </td>
                     <td class="erp-tbody-td text-center">
 
-                        <h4 class="text-center d-table-title {{strtolower($pr::REQUEST_STATUSES[$pr->request_status])}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
+                        <h4 class="text-center d-table-title {{str_replace(' ','-',strtolower($pr::REQUEST_STATUSES[$pr->request_status]))}}-status">{{ $pr::REQUEST_STATUSES[$pr->request_status] }}</h4>
                     </td>
                     <td class="text-end erp-tbody-td">
                         <div class="erp-action-t">

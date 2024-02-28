@@ -99,9 +99,15 @@ class SupplierService
             $supplier->updated_at = Carbon::now();
             $supplier->save();
 
-          
+
             if (isset($request->bank_name) && is_array($request->bank_name) && count($request->bank_name) > 0) {
                 foreach ($request->bank_name as $key=>$bank) {
+                    if(
+                        ($bank == null) || ($bank == '') ||
+                        ($request->account_name[$key] == null) || ($request->account_name[$key] == '') ||
+                        ($request->account_no[$key] == null) || ($request->account_no[$key] == '')){
+                        continue;
+                    }
                     $supplier_bank = new SupplierBank();
                     $supplier_bank->supplier_id = $supplier->id;
                     $supplier_bank->bank_name = $bank;
@@ -136,9 +142,12 @@ class SupplierService
                     $supplier_asset->save();
                 }
             }
-  
+
             if (isset($request->contact_name) && is_array($request->contact_name) && count($request->contact_name) > 0) {
                 foreach ($request->contact_name as $key=>$name) {
+                    if(($name == null) || ($name == '')){
+                        continue;
+                    }
                     $supplier_contact = new SupplierContact();
                     $supplier_contact->supplier_id = $supplier->id;
                     $supplier_contact->name = $name;
@@ -227,16 +236,26 @@ class SupplierService
             $supplier->updated_at = Carbon::now();
             $supplier->save();
 
-          
+
+            // check if not exist then delete first
+            $bank_info_ids = $request->bank_info_id??[];
+            $delete_bank = SupplierBank::where('supplier_id', $supplier->id)
+                ->whereNotIn('id', $bank_info_ids)
+                ->delete();
+
             if (isset($request->bank_name) && is_array($request->bank_name) && count($request->bank_name) > 0) {
-                // check if not exist then delete first
-                $bank_info_ids = $request->bank_info_id??[];
-                $delete_bank = SupplierBank::where('supplier_id', $supplier->id)
-                    ->whereNotIn('id', $bank_info_ids)
-                    ->delete();
 
                 foreach ($request->bank_name as $key=>$value) {
                     if (isset($request->bank_info_id[$key]) &&  $request->bank_info_id[$key] != null){
+                        if(
+                            ($value == null) || ($value == '') ||
+                            ($request->account_name[$key] == null) || ($request->account_name[$key] == '') ||
+                            ($request->account_no[$key] == null) || ($request->account_no[$key] == '')){
+                            SupplierBank::where('supplier_id', $supplier->id)
+                                ->where('id', $request->bank_info_id[$key])
+                                ->delete();
+                            continue;
+                        }
                         // update
                         $supplier_bank = SupplierBank::where('id', $request->bank_info_id[$key])
                             ->where('supplier_id', $supplier->id)
@@ -254,6 +273,12 @@ class SupplierService
                             $supplier_bank->save();
                         }
                     }else{
+                        if(
+                            ($value == null) || ($value == '') ||
+                            ($request->account_name[$key] == null) || ($request->account_name[$key] == '') ||
+                            ($request->account_no[$key] == null) || ($request->account_no[$key] == '')){
+                            continue;
+                        }
                         // create
                         $supplier_bank = new SupplierBank();
                         $supplier_bank->supplier_id = $supplier->id;
@@ -273,12 +298,12 @@ class SupplierService
                 }
             }
 
-            if (isset($request->material_products) && is_array($request->material_products) && (count($request->material_products) > 0)) {
-                $material_ids = $request->material_products??[];
-                $delete_material = SupplierProductMaterial::where('supplier_id', $supplier->id)
-                    ->whereNotIn('id', $material_ids)
-                    ->delete();
+            $material_ids = $request->material_products??[];
+            $delete_material = SupplierProductMaterial::where('supplier_id', $supplier->id)
+                ->whereNotIn('id', $material_ids)
+                ->delete();
 
+            if (isset($request->material_products) && is_array($request->material_products) && (count($request->material_products) > 0)) {
                 foreach ($request->material_products as $key=>$material_id) {
                     if (isset($request->material_products[$key]) &&  $request->material_products[$key] != null){
                         $supplier_material = SupplierProductMaterial::where('id', $request->material_products[$key])
@@ -296,12 +321,13 @@ class SupplierService
                 }
             }
 
-            if (isset($request->asset_products) && is_array($request->asset_products) && (count($request->asset_products) > 0)) {
-                $asset_ids = $request->asset_products??[];
-                $delete_asset = SupplierAssetProduct::where('supplier_id', $supplier->id)
-                    ->whereNotIn('id', $asset_ids)
-                    ->delete();
 
+            $asset_ids = $request->asset_products??[];
+            $delete_asset = SupplierAssetProduct::where('supplier_id', $supplier->id)
+                ->whereNotIn('id', $asset_ids)
+                ->delete();
+
+            if (isset($request->asset_products) && is_array($request->asset_products) && (count($request->asset_products) > 0)) {
                 foreach ($request->asset_products as $key=>$asset_id) {
                     if (isset($request->asset_products[$key]) &&  $request->asset_products[$key] != null){
                         $supplier_asset = SupplierAssetProduct::where('id', $request->asset_products[$key])
@@ -327,6 +353,12 @@ class SupplierService
 
                 foreach ($request->contact_name as $key=>$value) {
                     if (isset($request->supplier_contact_id[$key]) &&  $request->supplier_contact_id[$key] != null){
+                        if(($value == null) || ($value == '')){
+                           SupplierContact::where('id', $request->supplier_contact_id[$key])
+                                ->where('supplier_id', $supplier->id)
+                                ->delete();
+                            continue;
+                        }
                         $supplier_contact = SupplierContact::where('id', $request->supplier_contact_id[$key])
                             ->where('supplier_id', $supplier->id)
                             ->first();
@@ -339,6 +371,9 @@ class SupplierService
                             $supplier_contact->save();
                         }
                     }else{
+                        if(($value == null) || ($value == '')){
+                            continue;
+                        }
                         $supplier_contact = new SupplierContact();
                         $supplier_contact->supplier_id = $supplier->id;
                         $supplier_contact->name = $value;

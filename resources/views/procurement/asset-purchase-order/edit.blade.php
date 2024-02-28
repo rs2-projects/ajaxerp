@@ -212,8 +212,8 @@
                                         </div>
 
                                         <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
-                                            <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
-                                            <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
+                                            <a href="javascript:void(0);" id="add-item-button-id" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
+                                            <div class="searchable-input-wrapper flex-100" id="add-item-hidden-list-wrapper" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
                                                     <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                                 </div>
@@ -436,6 +436,19 @@
         $(document).ready(function () {
             initializeDatepicker();
         });
+        $(document).ready(function () {
+            let auto_grow_elements = $(".auto-grow-input");
+            auto_grow_elements.each( function () {
+                let element = this;
+                element.style.height = "5px";
+                element.style.height = (element.scrollHeight)+"px";
+            });
+        });
+        $(document).on('input', '.auto-grow-input', function () {
+            let element = this;
+            element.style.height = "5px";
+            element.style.height = (element.scrollHeight)+"px";
+        });
 
         function initTaxSelect2() {
             $('.vat-tax-select2').select2({
@@ -645,6 +658,21 @@
                 this.getTaxItems();
                 this.getSuppliers();
                 this.getPurchaseData();
+            },
+            created() {
+                let self = this;
+                $(document).click(function(e) {
+                    if (
+                        e.target.id != 'add-item-hidden-list-wrapper' &&
+                        e.target.id != 'add-item-button-id' &&
+                        !$('#add-item-hidden-list-wrapper').find(e.target).length
+                    ) {
+                        if(self.open_select_item == true) {
+                            self.open_select_item = false;
+                        }
+                        self.item_search = '';
+                    }
+                });
             }
 
         }).mount('#VueApp');

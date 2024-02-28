@@ -36,7 +36,7 @@ class AssetProductPurchaseRequest extends Model
         self::REQUEST_STATUS_APPROVED => 'Approved',
         self::REQUEST_STATUS_DECLINED => 'Declined',
         self::REQUEST_STATUS_ADDITIONAL_INFO => 'Pending',
-        self::REQUEST_STATUS_INFO_SUBMITTED => 'Pending',
+        self::REQUEST_STATUS_INFO_SUBMITTED => 'Info Submitted',
     ];
 
     protected $fillable = [
@@ -54,7 +54,7 @@ class AssetProductPurchaseRequest extends Model
         'deleted_by',
         'deleted_at',
     ];
-    
+
     public function purchase_request_details()
     {
         return $this->hasMany(AssetProductPurchaseRequestDetails::class, 'asset_product_purchase_request_id', 'id');

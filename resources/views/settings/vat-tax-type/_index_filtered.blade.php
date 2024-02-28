@@ -3,10 +3,10 @@
         <thead class="erp-thead">
         <tr class="erp-tr">
             <th class="erp-th">SL</th>
-            <th class="erp-th">Tax Type </th>
-            <th class="erp-th">Decription </th>
-            <th class="erp-th text-center">Tax Rate(%) </th>
-            <th class="erp-th text-center">Vat Number </th>
+            <th class="erp-th">Name </th>
+            <th class="erp-th">Description </th>
+            <th class="erp-th text-center">Rate(%) </th>
+            <th class="erp-th text-center">Number </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>

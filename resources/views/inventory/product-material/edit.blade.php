@@ -171,7 +171,7 @@
                                             </div>
                                             <div class="erp-filter-item flex-100">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Select Rack <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
                                                         @foreach($racks as $rack)
                                                             <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->name }}</option>
@@ -198,7 +198,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Save</button>
+                                        <button class=" erp-search-btn text-center" id="editProductMaterialSubmitBtn" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -256,7 +256,33 @@
                 }, 'show_input_error');
             });
 
+            $("#editProductMaterialSubmitBtn").on('click', function () {
+                validateCustomForm("#productMaterialStoreForm");
+            });
+
         });
+
+        function validateCustomForm(form) {
+            var tab1Fields = $(form).find(':input[required]');
+            tab1Fields.each(function() {
+                if (!$(this).val()) {
+                    let inputName = $(this).attr('name');
+                    inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    inputName = inputName.replace(" Id", '');
+                    showInfoAlert(inputName,'required');
+                }
+            });
+
+            let sections = $("#sections_id").val();
+            if(sections.length < 1) {
+                showInfoAlert('Sections','required');
+            }
+
+            let racks = $("#racks_id").val();
+            if(racks.length < 1) {
+                showInfoAlert('Racks','required');
+
+        }
 
         function changeWarehouse(select){
             let warehouse_id = $(select).val();
@@ -302,14 +328,14 @@
         function initRackMultipleSelect(){
             $('#racks_id').multipleSelect({
                 filter: true,
-                placeholder: 'Select Racks',
+                placeholder: 'Select Subsection',
                 minimumCountSelected: 6,
                 filterPlaceholder: 'Search Racks',
                 selectAll: true,
                 onOpen: function () {
                     $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Racks");
+                    }).replaceWith("Select All Subsections");
                 },
             });
         }

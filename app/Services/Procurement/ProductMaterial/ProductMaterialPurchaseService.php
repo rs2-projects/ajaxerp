@@ -371,7 +371,7 @@ class ProductMaterialPurchaseService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -380,7 +380,11 @@ class ProductMaterialPurchaseService
                             $tax_rate = $tax->tax_rate;
                             $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        } else {
+                            $tax_id = null;
                         }
+                    } else {
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
@@ -455,6 +459,7 @@ class ProductMaterialPurchaseService
             ->first();
         $supplier->show_image_full_url = asset($supplier->show_image);
         $supplier->contact_full_name = $supplier->full_name;
+        $supplier->full_address = $supplier->getFullAddressText();
 
         $cartItems = ProductMaterialPurchaseDetails::with('productMaterial', 'tax')
             ->where('product_material_purchase_id', $id)
@@ -569,7 +574,7 @@ class ProductMaterialPurchaseService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -578,7 +583,11 @@ class ProductMaterialPurchaseService
                             $tax_rate = $tax->tax_rate;
                             $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        } else {
+                            $tax_id = null;
                         }
+                    } else {
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = ProductMaterialPurchaseDetails::where('product_material_purchase_id', $purchase->id)
@@ -713,7 +722,7 @@ class ProductMaterialPurchaseService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -722,7 +731,11 @@ class ProductMaterialPurchaseService
                             $tax_rate = $tax->tax_rate;
                             $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        } else {
+                            $tax_id = null;
                         }
+                    } else {
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
@@ -859,7 +872,7 @@ class ProductMaterialPurchaseService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -868,7 +881,11 @@ class ProductMaterialPurchaseService
                             $tax_rate = $tax->tax_rate;
                             $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        } else {
+                            $tax_id = null;
                         }
+                    } else {
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
@@ -1082,7 +1099,8 @@ class ProductMaterialPurchaseService
             $search_keyword = null;
         }
 
-        $data['suppliers'] = Supplier::where('status', Supplier::STATUS_ACTIVE)
+        $data['suppliers'] = Supplier::with('country', 'state')
+            ->where('status', Supplier::STATUS_ACTIVE)
             ->where('deleted', Supplier::DELETED_NO)
             ->when($search_keyword, function ($q) use($search_keyword){
                 $q->where(function ($j) use ($search_keyword) {
@@ -1094,6 +1112,7 @@ class ProductMaterialPurchaseService
             ->map(function ($supplier) {
                 $supplier->show_image_full_url = asset($supplier->show_image);
                 $supplier->contact_full_name = $supplier->full_name;
+                $supplier->full_address = $supplier->getFullAddressText();
                 return $supplier;
             });
 

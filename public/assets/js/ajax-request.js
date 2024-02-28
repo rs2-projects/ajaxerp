@@ -198,3 +198,15 @@ function updateStatus(button, callbacka=null){
         }
     }, 'default');
 }
+
+function validateHtmlForm(form) {
+    var tab1Fields = $(form).find(':input[required]');
+    tab1Fields.each(function() {
+        if (!$(this).val()) {
+            let inputName = $(this).attr('name');
+            inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            inputName = inputName.replace(" Id", '');
+            showInfoAlert('Error',inputName+' is required');
+        }
+    });
+}

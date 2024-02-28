@@ -207,7 +207,7 @@ class PurchaseOrderService
     }
 
     public function getSelectedPurchaseData($details_ids)
-    {   
+    {
         $cartItems = AssetProductPurchaseRequestDetails::whereIn('id', $details_ids)
             ->where('deleted', AssetProductPurchaseRequestDetails::DELETED_NO)
             ->where('status', AssetProductPurchaseRequestDetails::STATUS_ACTIVE)
@@ -289,7 +289,7 @@ class PurchaseOrderService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -298,9 +298,12 @@ class PurchaseOrderService
                             $tax_rate = $tax->tax_rate;
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
                             $amount_with_tax = $amount_without_tax + $tax_amount;
+                        } else {
+                            $tax_id = null;
                         }
                     }else{
                         $amount_with_tax = $amount_without_tax;
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = new AssetProductPurchaseOrderDetails();
@@ -330,7 +333,7 @@ class PurchaseOrderService
             }else{
                 throw new \Exception("Please select at least 1 product!");
             }
-            
+
             if($purchase->discount_type == AssetProductPurchaseOrder::DISCOUNT_TYPE_PERCENTAGE){
                 $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
             }else{
@@ -473,7 +476,7 @@ class PurchaseOrderService
                     $amount_with_tax = 0;
                     $tax_rate = 0;
                     $tax_amount = 0;
-                    if($tax_id != null){
+                    if(($tax_id != null) && ($tax_id != '') && ($tax_id != 0)) {
                         $tax = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
                             ->where('deleted', AccCoaAccount::DELETED_NO)
                             ->where('id', $tax_id)
@@ -482,9 +485,12 @@ class PurchaseOrderService
                             $tax_rate = $tax->tax_rate;
                             $amount_with_tax = $amount_without_tax + ($amount_without_tax * $tax_rate / 100);
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
+                        }else {
+                            $tax_id = null;
                         }
                     }else{
                         $amount_with_tax = $amount_without_tax;
+                        $tax_id = null;
                     }
 
                     $purchaseDetails = AssetProductPurchaseOrderDetails::where('asset_product_purchase_order_id', $purchase->id)
@@ -516,7 +522,7 @@ class PurchaseOrderService
 
                 }
             }
-            
+
             $total_discount_amount = 0;
             if($purchase->discount_type == AssetProductPurchaseOrder::DISCOUNT_TYPE_PERCENTAGE){
                 $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
@@ -875,7 +881,7 @@ class PurchaseOrderService
                         }
 
                     }
-                    
+
                     //TODO:: need to discuss
                     //$purchaseDetail->available_qty = $purchaseDetailAvailableQty;
                     $purchaseDetail->updated_by = auth()->user()->id;

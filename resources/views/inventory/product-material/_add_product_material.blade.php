@@ -158,7 +158,7 @@
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Warehouse <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Warehouse"><i class="fa-duotone fa-exclamation"></i></span></label>
                                                     <select class="select select-step" name="warehouse_id" id="warehouse_id" onchange="changeWarehouse(this)" required>
-                                                        <option name="">Select Warehouse</option>
+                                                        <option value="">Select Warehouse</option>
                                                         @foreach($warehouses as $warehouse)
                                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                                         @endforeach
@@ -175,7 +175,7 @@
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Select Rack <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
 
                                                     </select>
@@ -200,7 +200,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Save</button>
+                                        <button class=" erp-search-btn text-center" id="addProductMaterialSubmitBtn" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>

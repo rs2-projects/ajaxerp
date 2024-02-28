@@ -33,13 +33,13 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $product->category->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $product->description??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ getRealSubStr($product->description??'N/A', 60) }}</td>
 
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($product->status == $product::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{$product::STATUSES[$product->status]}}</span></a>
-                                @if(hasPermission('manage-asset-product'))   
+                                @if(hasPermission('manage-asset-product'))
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.asset-product.change-status',[$product->id,1]) }}"><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.asset-product.change-status',[$product->id,0]) }}"><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>

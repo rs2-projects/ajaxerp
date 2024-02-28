@@ -1,6 +1,6 @@
 <div>
     <form action="{{ route('procurement.asset-purchase-order.create') }}" id="makePurchaseOrderFormSubmit" method="GET">
-        
+
         <div class="my-attendance-report-wrapper">
             <div class="big-table">
                 <div class="de-table-wrapper">
@@ -36,7 +36,7 @@
                                             </td>
                                             <td class="erp-tbody-td text-center">
                                                 <label class="col-form-label">
-                                                    <input type="checkbox" value="{{$item->id}}" name="details_id[]"> 
+                                                    <input type="checkbox" class="mpod_items" value="{{$item->id}}" name="details_id[]">
                                                 </label>
                                             </td>
                                         </tr>
