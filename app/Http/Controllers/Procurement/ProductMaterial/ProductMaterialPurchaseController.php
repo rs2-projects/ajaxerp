@@ -46,7 +46,8 @@ class ProductMaterialPurchaseController extends BackendController
             $this->setPageTitle("Product Material Purchase Details");
             $this->setActiveMenu('procurement.product-material-purchase.index');
             $data = $this->service->detailsData($id);
-            return $this->view('procurement.product-material-purchase.index')->with($data);
+            //dd($data);
+            return $this->view('procurement.product-material-purchase.show')->with($data);
         } catch (\Exception $exception) {
             return redirect()->back()->with('error', $exception->getMessage());
         }
