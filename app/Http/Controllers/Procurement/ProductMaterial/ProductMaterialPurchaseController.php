@@ -31,9 +31,25 @@ class ProductMaterialPurchaseController extends BackendController
 
     public function indexFiltered(Request $request)
     {
-        $data = $this->service->indexFilteredData($request);
+        try {
+            $data = $this->service->indexFilteredData($request);
 
-        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+            return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $this->setPageTitle("Product Material Purchase Details");
+            $this->setActiveMenu('procurement.product-material-purchase.index');
+            $data = $this->service->detailsData($id);
+            return $this->view('procurement.product-material-purchase.index')->with($data);
+        } catch (\Exception $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
     }
 
     public function create()

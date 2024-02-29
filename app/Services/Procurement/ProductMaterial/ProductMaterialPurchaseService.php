@@ -60,6 +60,19 @@ class ProductMaterialPurchaseService
         }
     }
 
+    public function detailsData($id)
+    {
+        $data['purchase'] = ProductMaterialPurchase::with('supplier','purchaseDetails')
+            ->where('id', $id)
+            ->where('deleted', 0)
+            ->first();
+        if (empty($data['purchase'])) {
+            throw new \Exception("Invalid Purchase Order!");
+        }
+
+        return $data;
+    }
+
     public function getAllPurchaseOrders($request)
     {
         $keyword_filtered = $request->keyword_filtered??null;

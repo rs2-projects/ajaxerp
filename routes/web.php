@@ -454,6 +454,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'product-material-purchase'], function () {
             Route::get('/', [ProductMaterialPurchaseController::class, 'index'])->name('procurement.product-material-purchase.index')->middleware('permission:view-product-material-purchase-orders');
             Route::post('/filtered', [ProductMaterialPurchaseController::class, 'indexFiltered'])->name('procurement.product-material-purchase.filtered')->middleware('permission:view-product-material-purchase-orders');
+            Route::get('{id}/details', [ProductMaterialPurchaseController::class, 'show'])->name('procurement.product-material-purchase.details')->middleware('permission:view-product-material-purchase-orders');
             Route::get('/create', [ProductMaterialPurchaseController::class, 'create'])->name('procurement.product-material-purchase.create')->middleware('permission:manage-product-material-purchase-orders');
             Route::post('/create', [ProductMaterialPurchaseController::class, 'store'])->name('procurement.product-material-purchase.store')->middleware('permission:manage-product-material-purchase-orders');
             Route::get('/{id}/edit', [ProductMaterialPurchaseController::class, 'edit'])->name('procurement.product-material-purchase.edit')->middleware('permission:manage-product-material-purchase-orders');
