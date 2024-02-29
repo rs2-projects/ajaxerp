@@ -175,7 +175,6 @@ class ProductionService
             foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
                 if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
                     
-                    $is_received_details = true;
                     foreach($request->code[$detailsKey] as $itemKey => $itemCode){
                         $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
                             ->where('pre_production_id', $id)
@@ -184,23 +183,40 @@ class ProductionService
                             ->where('barcode', $itemCode)
                             ->first();
                         if($item){
-                            $is_received_details = false;
                             $item->received = PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES;
                             $item->save();
-                        }else{
-                            $is_received_details = true;
                         }
                     }
 
+                    $item_count= PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+                        ->where('pre_production_id', $id)
+                        ->where('pre_production_material_delivery_id', $delivery_id)
+                        ->where('pre_production_material_delivery_details_id', $detailsId)
+                        ->count();
                     $details = PreProductionMaterialDeliveryDetails::find($detailsId);
-                    if($is_received_details){
-                        $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED;
+
+                    if($item_count > 0){
+                        $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PARTIAL;
                         $details->save();
                     }else{
-                        $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PARTIAL;
+                        $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED;
                         $details->save();
                     }
                 }
+            }
+
+            $details_count = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+                ->where('status', PreProductionMaterialDeliveryDetails::STATUS_ACTIVE)
+                ->where('received_status','!=',PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED)
+                ->where('pre_production_material_delivery_id', $delivery_id)
+                ->count();
+            $delivery = PreProductionMaterialDelivery::find($delivery_id);
+            if($details_count > 0){
+                $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_PARTIAL;
+                $delivery->save();
+            }else{
+                $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED;
+                $delivery->save();
             }
         }
 
