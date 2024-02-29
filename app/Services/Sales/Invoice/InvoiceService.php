@@ -14,13 +14,19 @@ use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
 use App\Services\Common\FileUploadService;
 use App\Services\Common\ImageUploadService;
+use App\Services\Sales\InvoiceDesignService;
+use App\Services\Sales\InvoicePaymentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
 {
+    private InvoicePaymentService $invoicePaymentService;
+    private InvoiceDesignService $invoiceDesignService;
     public function __construct()
     {
+        $this->invoiceDesignService = new InvoiceDesignService();
+        $this->invoicePaymentService = new InvoicePaymentService();
         $this->paginate_limit = config('commonData.paginate_limit');
     }
 
@@ -79,6 +85,14 @@ class InvoiceService
     {
        $data['invoice_date'] = Carbon::now();
         $data['payment_date'] = Carbon::now();
+        $data['payment_methods'] = InvoicePayment::PAYMENT_METHODS;
+
+
+        $data['accounts_sub_categories'] = AccCoaSubCategory::with('accounts')
+            ->where('deleted', AccCoaSubCategory::DELETED_NO)
+            ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
+            ->where('is_account_type', AccCoaSubCategory::IS_ACCOUNT_TYPE_YES)
+            ->get();
         return $data;
     }
     //Get all customers
@@ -161,11 +175,11 @@ class InvoiceService
         DB::beginTransaction();
         try {
 
-            $checkBatchNumber = Invoice::where('invoice_no', $request->invoice_no)
+            $checkBatchNumber = Invoice::where('order_no', $request->order_no)
                 ->where('deleted', Invoice::DELETED_NO)
                 ->first();
             if (!empty($checkBatchNumber)) {
-                throw new \Exception("Invoice Number already exists");
+                throw new \Exception("Order Number already exists");
             }
 
             $invoice = new Invoice();
@@ -186,22 +200,7 @@ class InvoiceService
             $invoice->save();
 
             //upload design file
-            $image_path = null;
-            if ($request->hasFile('design') && $request->design!=null) {
-                $imageUploadService = new ImageUploadService();
-                foreach ($request->file('design') as $design){
-                    $image_path = $imageUploadService->store($design, 'inventory/invoice');
-                    $image_path = $image_path['path'];
-                    $design = new InvoiceDesigns();
-                    $design->invoice_id = $invoice->id;
-                    $design->design = $image_path??null;
-                    $design->created_by = auth()->id();
-                    $design->created_at = Carbon::now();
-                    $design->updated_by = auth()->id();
-                    $design->updated_at = Carbon::now();
-                    $design->save();
-                }
-            }
+            $this->invoiceDesignService->uploadDesign($request, $invoice->id);
 
             $total_amount = 0;
             $vat_amount = 0;
@@ -271,7 +270,87 @@ class InvoiceService
             $invoice->payable_amount = $total_amount + $vat_amount - $discount_amount;
             $invoice->due_amount = $total_amount + $vat_amount - $discount_amount;
             $invoice->save();
+            if ($request->switch){
 
+
+            //Payment
+            $account = AccCoaAccount::where('id', $request->account_id)
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
+            if (!$account) {
+                throw new \Exception("Account not found");
+            }
+
+            // payment amount validation
+            if ($request->amount <= 0) {
+                throw new \Exception("Invalid amount");
+            }
+
+            if ($request->amount > $invoice->due_amount) {
+                throw new \Exception("Payment amount can't be greater than due amount");
+            }
+
+
+            // Create Transaction
+            $transaction = new Transaction();
+            $transaction->paid_type = Transaction::PAID_TYPE_PAID;
+            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+            $transaction->transaction_date = $request->date;
+            $transaction->account_id = $account->id;
+            $transaction->category_id = $account->acc_coa_category_id;
+            $transaction->reference_type = Transaction::REFERENCE_TYPE_INVOICE_PAYMENT;
+            $transaction->reference_id = null;
+            $transaction->reference_description = $invoice->description??null;
+            $transaction->net_amount = $request->amount;
+            $transaction->total_vat_amount = 0;
+            $transaction->total_amount = $request->amount;
+            $transaction->description = "Invoice Payment ".$invoice->invoice_no;
+            $transaction->note = $request->note;
+            $transaction->created_at = Carbon::now();
+            $transaction->created_by = auth()->id();
+            $transaction->updated_at = Carbon::now();
+            $transaction->updated_by = auth()->id();
+            $transaction->save();
+
+            $invoice->paid_amount = $request->amount;
+            $invoice->due_amount = $invoice->payable_amount - $invoice->paid_amount;
+            if($invoice->payable_amount == $invoice->paid_amount) {
+                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
+            } elseif($invoice->payable_amount > $invoice->paid_amount){
+                $invoice->payment_status = Invoice::PAYMENT_STATUS_PARTIAL_PAID;
+            }
+
+            if ($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING){
+                $invoice->invoice_status = $invoice::INVOICE_STATUS_PROCESSING;
+            }
+
+            $invoice->updated_at = Carbon::now();
+            $invoice->updated_by = auth()->id();
+            $invoice->save();
+
+
+            // create invoice payment
+            $invoice_payment = $this->invoicePaymentService->store($request,$invoice->id,$transaction->id,$account->id);
+            $transaction->reference_id = $invoice_payment->id;
+            $transaction->save();
+            }
+            // receipt upload
+
+            if ($request->hasFile('receipt')) {
+                if (count($request->file('receipt')) > 0) {
+                    foreach ($request->file('receipt') as $key=>$file) {
+                        $fileUploadService = new FileUploadService();
+                        $file_path = $fileUploadService->store($request->receipt[$key], 'transaction/invoice-payment-receipt');
+                        $file_path = $file_path['path'];
+
+                        $transaction_receipt = new TransactionReceipt();
+                        $transaction_receipt->transaction_id = $transaction->id;
+                        $transaction_receipt->receipt = $file_path;
+                        $transaction_receipt->status = TransactionReceipt::STATUS_ACTIVE;
+                        $transaction_receipt->save();
+                    }
+                }
+            }
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -353,7 +432,7 @@ class InvoiceService
             $transaction->category_id = $account->acc_coa_category_id;
             $transaction->reference_type = Transaction::REFERENCE_TYPE_INVOICE_PAYMENT;
             $transaction->reference_id = null;
-            $transaction->reference_description = "Invoice Payment ".$invoice->invoice_no;
+            $transaction->reference_description = null;
             $transaction->net_amount = $request->amount;
             $transaction->total_vat_amount = 0;
             $transaction->total_amount = $request->amount;
@@ -367,7 +446,11 @@ class InvoiceService
 
             $invoice->paid_amount = $invoice->paid_amount + $request->amount;
             $invoice->due_amount = $invoice->payable_amount - $invoice->paid_amount;
-            $invoice->payment_status = Invoice::PAYMENT_STATUS_PARTIAL_PAID;
+            if($invoice->payable_amount == $invoice->paid_amount) {
+                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
+            } elseif($invoice->payable_amount > $invoice->paid_amount){
+                $invoice->payment_status = Invoice::PAYMENT_STATUS_PARTIAL_PAID;
+            }
 
             if ($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING){
                 $invoice->invoice_status = $invoice::INVOICE_STATUS_PROCESSING;
@@ -377,28 +460,8 @@ class InvoiceService
             $invoice->updated_by = auth()->id();
             $invoice->save();
 
-            if ($invoice->payable_amount == $invoice->paid_amount) {
-                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
-                $invoice->updated_at = Carbon::now();
-                $invoice->updated_by = auth()->id();
-                $invoice->save();
-            }
-
-            // create purchase payment
-            $invoice_payment = new InvoicePayment();
-            $invoice_payment->invoice_id = $invoice->id;
-            $invoice_payment->transaction_id = $transaction->id;
-            $invoice_payment->account_id = $account->id;
-            $invoice_payment->payment_method = $request->payment_method;
-            $invoice_payment->amount = $request->amount;
-            $invoice_payment->payment_date = $request->date;
-            $invoice->note = $request->note;
-            $invoice_payment->created_at = Carbon::now();
-            $invoice_payment->created_by = auth()->id();
-            $invoice_payment->updated_at = Carbon::now();
-            $invoice_payment->updated_by = auth()->id();
-            $invoice_payment->save();
-
+            // create invoice payment
+            $invoice_payment = $this->invoicePaymentService->store($request,$invoice->id,$transaction->id,$account->id);
             $transaction->reference_id = $invoice_payment->id;
             $transaction->save();
 
@@ -446,14 +509,19 @@ class InvoiceService
         $invoice = Invoice::where('id', $id)
             ->where('deleted', 0)
             ->first();
-
+        //customer data
         $customer = Customer::where('id', $invoice->customer_id)
             ->where('status', 1)
             ->where('deleted', 0)
             ->first();
         $customer->show_image_full_url = asset($customer->show_image);
         $customer->contact_full_name = $customer->full_name;
-
+        //invoice design
+        $invoiceDesign = InvoiceDesigns::where('deleted',InvoiceDesigns::DELETED_NO)
+            ->where('status',InvoiceDesigns::STATUS_ACTIVE)
+            ->where('invoice_id', $id)
+            ->get();
+        //invoice details
         $cartItems = InvoiceDetails::with('finishedGood', 'tax')
             ->where('invoice_id', $id)
             ->where('deleted', InvoiceDetails::DELETED_NO)
@@ -486,6 +554,7 @@ class InvoiceService
             });
         /*$data['invoice'] = $invoice;*/
         $data['customer'] = $customer;
+        $data['designs'] = $invoiceDesign;
         $data['cartItem'] = $cartItems;
 
         return $data;
@@ -597,6 +666,39 @@ class InvoiceService
 
                 }
             }
+            //invocie design delete
+            $design_ids = $request->design_id??[];
+            $deletedDesigns = InvoiceDesigns::where('deleted',InvoiceDesigns::DELETED_NO)
+                ->where('status',InvoiceDesigns::STATUS_ACTIVE)
+                ->where('invoice_id', $invoice->id)
+                ->whereNotIn('id', $design_ids)
+                ->get();
+            foreach ($deletedDesigns as $deletedDesign){
+                unlink($deletedDesign->design);
+                $deletedDesign->delete();
+            }
+
+                //upload design file
+                $image_path = null;
+                if ($request->hasFile('design') && $request->design!=null) {
+                    $fileUploadService = new FileUploadService();
+                    foreach ($request->file('design') as $design){
+                        $design_name = $design->getClientOriginalName();
+                        $file_path = $fileUploadService->store($design, 'inventory/invoice',$design_name);
+                        $file_name = $file_path['name'];
+                        $file_path = $file_path['path'];
+                        $design = new InvoiceDesigns();
+                        $design->invoice_id = $invoice->id;
+                        $design->design_name = $file_name;
+                        $design->design = $file_path??null;
+                        $design->created_by = auth()->id();
+                        $design->created_at = Carbon::now();
+                        $design->updated_by = auth()->id();
+                        $design->updated_at = Carbon::now();
+                        $design->save();
+                    }
+                }
+
             $total_discount_amount = 0;
             if($invoice->discount_type == Invoice::DISCOUNT_TYPE_PERCENTAGE){
                 $total_discount_amount = ($subtotal_amount * $invoice->discount_value) / 100;
@@ -633,8 +735,21 @@ class InvoiceService
         $invoice->deleted_by = auth()->id();
         $invoice->save();
     }
-
-
+    // delete design
+    public function deleteDesign($id)
+    {
+        $design = InvoiceDesigns::where('deleted',InvoiceDesigns::DELETED_NO)
+        ->where('status',InvoiceDesigns::STATUS_ACTIVE)
+        ->where('id',$id)
+        ->first();
+        if (!$design){
+            throw new \Exception('Invoice design not found');
+        }
+        $design->deleted = InvoiceDesigns::DELETED_YES;
+        $design->deleted_at = Carbon::now();
+        $design->deleted_by = auth()->id();
+        $design->save();
+    }
 
 
 }

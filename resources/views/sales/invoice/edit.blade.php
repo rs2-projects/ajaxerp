@@ -331,8 +331,19 @@
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
                                                         <label class="col-form-label pt-0">Design Upload</label>
-                                                        <div class="designWrapmain"></div>
-                                                        <input type="file" name="design[]" class="form-control" multiple>
+                                                        <div class="designWrapMain">
+                                                                <div class="multiple-design-item flex-5" v-for="(design, designIndex) in designs" :key="design.id">
+                                                                    <div class="input-block erp-step-input-block mb-0">
+                                                                        <span class="text-danger" v-on:click="designRemove(designIndex)"><i class="fa fa-times-circle"></i></span>
+                                                                        <a href="">
+                                                                            <img src="{{ asset('/')}}assets/img/product/documents.png" alt="file">
+                                                                            <h5 class="text-center">@{{ design.design_name }}</h5>
+                                                                            <input type="hidden" name="design_id[]" :value="design.id">
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                        <input type="file" name="design[]" class="form-control" id="fileInput" multiple>
                                                     </div>
                                                 </div>
                                             </div>
@@ -469,14 +480,6 @@
         <!-- /Customer Modal -->
 
     </div>
-    <!--End::row-1 -->
-    <div id="designItemWrap" >
-        <div class="multiple-design-item flex-10">
-            <div class="input-block erp-step-input-block mb-0">
-                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg" alt="" />
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('modals')
@@ -521,7 +524,6 @@
                 $("#addCustomerModal input[name=search_customer]")[0].focus();
             },300);
         }
-
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
                 //format: 'DD/MM/YYYY',
@@ -543,6 +545,7 @@
                     allItems:[],
                     item_search: '',
                     cartItems:[],
+                    designs:[],
                     system_tax_items:[],
                     customers:[],
                     customer_search: '',
@@ -611,6 +614,9 @@
                     this.open_select_item = !this.open_select_item;
                     this.item_search = '';
                     this.getSearchedItems();
+                },
+                designRemove(designIndex){
+                    this.designs.splice(designIndex,1);
                 },
                 checkValidation(e) {
                     e.preventDefault();
@@ -717,7 +723,7 @@
                         .get('{{ route('sales.invoice.get-edit-invoice-data',$invoice->id) }}')
                         .then(response => {
                             this.cartItems = response.data.cartItem;
-
+                            this.designs = response.data.designs;
                             this.selected_customer = response.data.customer;
 
                             for (let i in this.cartItems) {
@@ -728,18 +734,10 @@
                             }, 100);
                         });
                 },
-                //add receipt
-                 addDesign(){
-            let designItemWrap = $("#designItemWrap").html();
-            $(".designWrapmain").append(designItemWrap);
-        },
-        //remove receipt
-         removeReceipt(element){
-            $(element).closest('.multiple-receipt-item').remove();
-        }
             },
             mounted () {
-                this.addDesign();
+                //this.addDesign();
+
                 this.getSearchedItems();
                 this.getTaxItems();
                 this.getCustomers();

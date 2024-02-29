@@ -28,7 +28,7 @@
                                     <div class="erp-filter-item flex-15">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <select class="select floating select2-box" id="status_filter">
-                                                <option>Select Invoice Status</option>
+                                                <option value="">Select Invoice Status</option>
                                                 @foreach($statuses as $key=>$status)
                                                     <option value="{{ $key }}" >
                                                         {{ ucfirst($status) }}
@@ -85,6 +85,7 @@
 @endsection
 @section('modals')
     @include('common.modals._make_payment_modal')
+    @include('sales.invoice._design_upload_modal')
 @endsection
 @section('css')
 
@@ -132,6 +133,31 @@
             });
 
         });
+        //Upload design modal show
+        function showDesignUploadModal(id){
+            $("#design_upload_modal").find('input[name="invoice_id"]').val(id);
+            $("#design_upload_modal").modal('show');
+        }
+        //Design Upload form submit
+        $(document).on("submit", "#designUploadFormSubmit", function(e) {
+            var self = this;
+            e.preventDefault();
+            var formData = new FormData($(self)[0]);
+            $(".ie-span").text("").hide();
+            var url = $(self).attr('action');
+
+            formPost(url, formData, function (res) {
+                console.log(res)
+                if(res.status == 200){
+                    $("#design_upload_modal").modal('hide');
+                    $(self)[0].reset();
+                    showSuccessAlert('Success',res.message)
+                    getData();
+                }else{
+                    showErrorAlert('Error',res.message)
+                }
+            }, 'show_input_error');
+        });
         //show design modal
         function showDesign(id) {
             let url = "{{ route('sales.invoice.design', ':id') }}"
@@ -147,13 +173,32 @@
         }
         //get filtered data
         function getData(){
-            console.log(filterData)
+            console.log('from get data');
             getPaginatedListData("{{ route('sales.invoice.filtered') }}", "#ajax-data-load", filterData);
         }
         //get paginated data
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
+        //make payment form submit
+        $(document).on("submit", "#makePaymentFormSubmit", function(e) {
+            var self = this;
+            e.preventDefault();
+            var formData = new FormData($(self)[0]);
+            $(".ie-span").text("").hide();
+            var url = $(self).attr('action');
+
+            formPost(url, formData, function (res) {
+                if(res.status == 200){
+                    $("#make-payment-modal").modal('hide');
+                    $(self)[0].reset();
+                    showSuccessAlert('Success',res.message)
+                    getData();
+                }else{
+                    showErrorAlert('Error',res.message)
+                }
+            }, 'show_input_error');
+        });
         //make payment
         function makePayment(id){
             let url = "{{route('sales.invoice.make-payment', ':id')}}";
@@ -162,7 +207,6 @@
                 if (response.status == 200) {
                     $("#make-payment-modal-data").html(response.view);
                     $("#make-payment-modal").modal('show');
-
                     initializeDatepicker();
                     initPaymentMethodSelect2();
                     initPaymentAccountSelect2();

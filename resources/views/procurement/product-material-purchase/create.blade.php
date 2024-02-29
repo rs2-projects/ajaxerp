@@ -368,7 +368,7 @@
                                         <div class="po-order-product-payment-status d-none">
                                             <div class="po-order-product-payment-status-item">
                                                 <div class="checkbox-wrapper-35">
-                                                    <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
+                                                    <input value="private" name="switch" id="payment_status_checkbox" v-on:change="this.c = !this.togglePaymentStatus;" type="checkbox" class="switch">
                                                     <label for="payment_status_checkbox">
                                                         <span class="switch-x-text">Payment Status </span>
                                                         <span class="switch-x-toggletext">
@@ -378,7 +378,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="po-order-product-payment-status-item" id="payment_status_details" style="display: none;">
+                                            <div class="po-order-product-payment-status-item" id="payment_status_details" v-if="togglePaymentStatus">
                                                 <div class="payment-selection-wrapper d-flex flex-wrap justify-content-between">
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
@@ -523,262 +523,262 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <script>
+@endsection
+<script>
 
-        $(document).ready(function () {
-            initializeDatepicker();
-        });
-        $(document).ready(function () {
-            let auto_grow_elements = $(".auto-grow-input");
-            auto_grow_elements.each( function () {
-                let element = this;
-                element.style.height = "5px";
-                element.style.height = (element.scrollHeight)+"px";
-            });
-        });
-        $(document).on('input', '.auto-grow-input', function () {
+    $(document).ready(function () {
+        initializeDatepicker();
+    });
+    $(document).ready(function () {
+        let auto_grow_elements = $(".auto-grow-input");
+        auto_grow_elements.each( function () {
             let element = this;
             element.style.height = "5px";
             element.style.height = (element.scrollHeight)+"px";
         });
+    });
+    $(document).on('input', '.auto-grow-input', function () {
+        let element = this;
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight)+"px";
+    });
 
-        function initTaxSelect2() {
-            $('.select-step').select2({
-                minimumResultsForSearch: -1,
-                width: '100%',
-            });
-        }
+    function initTaxSelect2() {
+        $('.select-step').select2({
+            minimumResultsForSearch: -1,
+            width: '100%',
+        });
+    }
 
-        function showSuppliersModal() {
-            $("#addSupplierModal").modal('show');
-            setTimeout(function () {
-                $("#addSupplierModal input[name=search_supplier]")[0].focus();
-            },300);
-        }
+    function showSuppliersModal() {
+        $("#addSupplierModal").modal('show');
+        setTimeout(function () {
+            $("#addSupplierModal input[name=search_supplier]")[0].focus();
+        },300);
+    }
 
-        function initializeDatepicker() {
-            $('.datetimepicker').datetimepicker({
-                //format: 'DD/MM/YYYY',
-                format: 'YYYY-MM-DD',
-                icons: {
-                    up: "fa fa-angle-up",
-                    down: "fa-solid fa-angle-down",
-                    next: 'fa-solid fa-angle-right',
-                    previous: 'fa-solid fa-angle-left'
-                }
-            });
-        }
-
-        var { createApp } = Vue;
-
-        var vueApp = createApp({
-            data() {
-                return {
-                    allItems:[],
-                    item_search: '',
-                    cartItems:[],
-                    system_tax_items:[],
-                    suppliers:[],
-                    supplier_search: '',
-                    selected_supplier:null,
-                    open_select_item: false,
-                    discount_type: 0,
-                    discount_value: 0,
-                    discount_amount: 0,
-                    paying_amount: 0,
-
-                }
-            },
-            computed: {
-                cartSubTotalWithoutVatAmount() {
-                    let cst_amount = 0;
-                    if (this.cartItems.length > 0) {
-                        for (let key in this.cartItems) {
-                            let item = this.cartItems[key];
-                            cst_amount += parseFloat(item.spt_amount_wv);
-                        }
-                    } else {
-                        cst_amount = 0;
-                    }
-                    return cst_amount;
-                },
-                cartTotalVatAmount() {
-                    let vat_amount = 0;
-                    if (this.cartItems.length > 0) {
-                        for (let key in this.cartItems) {
-                            let item = this.cartItems[key];
-                            vat_amount += parseFloat(item.vat_amount);
-                        }
-                    } else {
-                        vat_amount = 0;
-                    }
-                    return vat_amount;
-                },
-                cartGrandTotalAmount() {
-                    let total_amount = 0;
-                    if (this.cartItems.length > 0) {
-                        for (let key in this.cartItems) {
-                            let item = this.cartItems[key];
-                            // total_amount += parseFloat(item.vat_amount);
-                            total_amount += parseFloat(item.spt_amount);
-                        }
-                    } else {
-                        total_amount = 0;
-                    }
-                    this.discount_amount = 0;
-                    if(this.discount_value != 0) {
-                        if(this.discount_type == 0) {
-                            //0=percentage
-                            this.discount_amount = (total_amount * this.discount_value) / 100;
-                        } else {
-                            //fixed
-                            this.discount_amount = this.discount_value;
-                        }
-                    }
-                    total_amount = total_amount - this.discount_amount;
-                    return total_amount;
-                },
-            },
-            methods: {
-                openSelectItemModal() {
-                    this.open_select_item = !this.open_select_item;
-                    this.item_search = '';
-                    this.getSearchedItems();
-                },
-                checkValidation(e) {
-                    e.preventDefault();
-                    if (($("#selected_supplier_id").val() === undefined) || ($("#selected_supplier_id").val() == null) || ($("#selected_supplier_id").val() == '')) {
-                        showInfoAlert('Opps!', 'Please select a Supplier!');
-                    } else if(this.cartItems.length <= 0) {
-                        showInfoAlert('Opps!', 'Please add at-least 1 Product!');
-                    } else {
-                        purchaseStoreFormSubmit();
-                    }
-                },
-                getSearchedItems() {
-                    axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
-                        .then(response => (this.allItems = response.data.product_materials));
-                    },
-                getTaxItems() {
-                    axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
-                        .then(response => (this.system_tax_items = response.data));
-                },
-                getSuppliers() {
-                    axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-suppliers') }}?q=' + this.supplier_search)
-                        .then(response => (this.suppliers = response.data));
-                },
-                addItemToCart(item) {
-                    let exists = this.cartItems.findIndex(o => o.id === item.id);
-                    if (exists >= 0) {
-                        // exists.qty++;
-                        this.incrementQty(exists);
-                    } else {
-                        item.qty = 1;
-                        item.price = 0;
-                        item.spt_amount = 0;
-                        item.spt_amount_wv = 0;
-                        let ab = this.cartItems.push(item);
-                        this.updateCartItemPrice(ab - 1);
-                    }
-                    setTimeout(function () {
-                        initTaxSelect2();
-                    }, 300);
-                    this.open_select_item = !this.open_select_item;
-                },
-                incrementQty(index) {
-                    this.cartItems[index].qty++;
-                    this.updateCartItemPrice(index);
-                },
-                updateQty(index) {
-                    let qty = this.cartItems[index].qty;
-                    if(qty <= 0) {
-                        this.cartItems[index].qty = 0;
-                    } else {
-
-                        this.cartItems[index].qty = parseInt(qty);
-                    }
-                    this.updateCartItemPrice(index);
-                },
-                decrementQty(index) {
-                    if(this.cartItems[index].qty <= 1) {
-                        this.cartItems[index].qty = 1;
-                    } else {
-                        this.cartItems[index].qty--;
-                    }
-                    this.updateCartItemPrice(index);
-                },
-                removeItem(index) {
-                    this.cartItems.splice(index,1);
-                },
-                updatePrice(index) {
-                    this.updateCartItemPrice(index);
-                },
-                updateCartItemPrice(index) {
-                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
-                    this.cartItems[index].spt_amount_wv = priceWithoutVat;
-                    if(this.cartItems[index].tax == null) {
-                        this.cartItems[index].vat_amount = 0;
-                    } else {
-                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
-                    }
-                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
-                },
-
-                changeDiscountType() {
-
-                },
-                changeSupplier(index) {
-                    this.selected_supplier = this.suppliers[index];
-                    $("#addSupplierModal").modal('hide');
-                },
-                changeTax(cartItemIndex, new_tax_id) {
-                    if(new_tax_id == 0) {
-                        this.cartItems[cartItemIndex].tax = null;
-                        this.updateCartItemPrice(cartItemIndex);
-                    } else {
-                        let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
-                        this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
-                        this.updateCartItemPrice(cartItemIndex);
-                    }
-                }
-            },
-            mounted () {
-                this.getSearchedItems();
-                this.getTaxItems();
-                this.getSuppliers();
+    function initializeDatepicker() {
+        $('.datetimepicker').datetimepicker({
+            //format: 'DD/MM/YYYY',
+            format: 'YYYY-MM-DD',
+            icons: {
+                up: "fa fa-angle-up",
+                down: "fa-solid fa-angle-down",
+                next: 'fa-solid fa-angle-right',
+                previous: 'fa-solid fa-angle-left'
             }
+        });
+    }
 
-        }).mount('#VueApp');
+    var { createApp } = Vue;
 
-        function taxChangeOutside(select) {
-            let new_tax_id = $(select).val();
-            let cartItemIndex = $(select).attr('data-cartItemIndex');
-            vueApp.changeTax(cartItemIndex, new_tax_id);
-        }
+    var vueApp = createApp({
+        data() {
+            return {
+                allItems:[],
+                item_search: '',
+                cartItems:[],
+                system_tax_items:[],
+                suppliers:[],
+                supplier_search: '',
+                selected_supplier:null,
+                open_select_item: false,
+                discount_type: 0,
+                discount_value: 0,
+                discount_amount: 0,
+                paying_amount: 0,
 
-        function purchaseStoreFormSubmit(){
-
-            var self = $("#purchaseStoreForm");
-            var formData = new FormData($(self)[0]);
-            $(".ie-span").text("").hide();
-            var url = $(self).attr('action');
-
-            formPost(url, formData, function (res) {
-                if(res.status == 200){
-                    showSuccessAlert('Success',res.message)
-                    setTimeout(function () {
-                        window.location.href = "{{route('procurement.product-material-purchase.index')}}";
-                    }, 1000);
-                }else{
-                    showErrorAlert('Error',res.message)
+            }
+        },
+        computed: {
+            cartSubTotalWithoutVatAmount() {
+                let cst_amount = 0;
+                if (this.cartItems.length > 0) {
+                    for (let key in this.cartItems) {
+                        let item = this.cartItems[key];
+                        cst_amount += parseFloat(item.spt_amount_wv);
+                    }
+                } else {
+                    cst_amount = 0;
                 }
-            }, 'show_input_error');
+                return cst_amount;
+            },
+            cartTotalVatAmount() {
+                let vat_amount = 0;
+                if (this.cartItems.length > 0) {
+                    for (let key in this.cartItems) {
+                        let item = this.cartItems[key];
+                        vat_amount += parseFloat(item.vat_amount);
+                    }
+                } else {
+                    vat_amount = 0;
+                }
+                return vat_amount;
+            },
+            cartGrandTotalAmount() {
+                let total_amount = 0;
+                if (this.cartItems.length > 0) {
+                    for (let key in this.cartItems) {
+                        let item = this.cartItems[key];
+                        // total_amount += parseFloat(item.vat_amount);
+                        total_amount += parseFloat(item.spt_amount);
+                    }
+                } else {
+                    total_amount = 0;
+                }
+                this.discount_amount = 0;
+                if(this.discount_value != 0) {
+                    if(this.discount_type == 0) {
+                        //0=percentage
+                        this.discount_amount = (total_amount * this.discount_value) / 100;
+                    } else {
+                        //fixed
+                        this.discount_amount = this.discount_value;
+                    }
+                }
+                total_amount = total_amount - this.discount_amount;
+                return total_amount;
+            },
+        },
+        methods: {
+            openSelectItemModal() {
+                this.open_select_item = !this.open_select_item;
+                this.item_search = '';
+                this.getSearchedItems();
+            },
+            checkValidation(e) {
+                e.preventDefault();
+                if (($("#selected_supplier_id").val() === undefined) || ($("#selected_supplier_id").val() == null) || ($("#selected_supplier_id").val() == '')) {
+                    showInfoAlert('Opps!', 'Please select a Supplier!');
+                } else if(this.cartItems.length <= 0) {
+                    showInfoAlert('Opps!', 'Please add at-least 1 Product!');
+                } else {
+                    purchaseStoreFormSubmit();
+                }
+            },
+            getSearchedItems() {
+                axios
+                    .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
+                    .then(response => (this.allItems = response.data.product_materials));
+            },
+            getTaxItems() {
+                axios
+                    .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
+                    .then(response => (this.system_tax_items = response.data));
+            },
+            getSuppliers() {
+                axios
+                    .get('{{ route('procurement.product-material-purchase.get-all-suppliers') }}?q=' + this.supplier_search)
+                    .then(response => (this.suppliers = response.data));
+            },
+            addItemToCart(item) {
+                let exists = this.cartItems.findIndex(o => o.id === item.id);
+                if (exists >= 0) {
+                    // exists.qty++;
+                    this.incrementQty(exists);
+                } else {
+                    item.qty = 1;
+                    item.price = 0;
+                    item.spt_amount = 0;
+                    item.spt_amount_wv = 0;
+                    let ab = this.cartItems.push(item);
+                    this.updateCartItemPrice(ab - 1);
+                }
+                setTimeout(function () {
+                    initTaxSelect2();
+                }, 300);
+                this.open_select_item = !this.open_select_item;
+            },
+            incrementQty(index) {
+                this.cartItems[index].qty++;
+                this.updateCartItemPrice(index);
+            },
+            updateQty(index) {
+                let qty = this.cartItems[index].qty;
+                if(qty <= 0) {
+                    this.cartItems[index].qty = 0;
+                } else {
+
+                    this.cartItems[index].qty = parseInt(qty);
+                }
+                this.updateCartItemPrice(index);
+            },
+            decrementQty(index) {
+                if(this.cartItems[index].qty <= 1) {
+                    this.cartItems[index].qty = 1;
+                } else {
+                    this.cartItems[index].qty--;
+                }
+                this.updateCartItemPrice(index);
+            },
+            removeItem(index) {
+                this.cartItems.splice(index,1);
+            },
+            updatePrice(index) {
+                this.updateCartItemPrice(index);
+            },
+            updateCartItemPrice(index) {
+                let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
+                this.cartItems[index].spt_amount_wv = priceWithoutVat;
+                if(this.cartItems[index].tax == null) {
+                    this.cartItems[index].vat_amount = 0;
+                } else {
+                    this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                }
+                this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+            },
+
+            changeDiscountType() {
+
+            },
+            changeSupplier(index) {
+                this.selected_supplier = this.suppliers[index];
+                $("#addSupplierModal").modal('hide');
+            },
+            changeTax(cartItemIndex, new_tax_id) {
+                if(new_tax_id == 0) {
+                    this.cartItems[cartItemIndex].tax = null;
+                    this.updateCartItemPrice(cartItemIndex);
+                } else {
+                    let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
+                    this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
+                    this.updateCartItemPrice(cartItemIndex);
+                }
+            }
+        },
+        mounted () {
+            this.getSearchedItems();
+            this.getTaxItems();
+            this.getSuppliers();
         }
 
-    </script>
-@endsection
+    }).mount('#VueApp');
+
+    function taxChangeOutside(select) {
+        let new_tax_id = $(select).val();
+        let cartItemIndex = $(select).attr('data-cartItemIndex');
+        vueApp.changeTax(cartItemIndex, new_tax_id);
+    }
+
+    function purchaseStoreFormSubmit(){
+
+        var self = $("#purchaseStoreForm");
+        var formData = new FormData($(self)[0]);
+        $(".ie-span").text("").hide();
+        var url = $(self).attr('action');
+
+        formPost(url, formData, function (res) {
+            if(res.status == 200){
+                showSuccessAlert('Success',res.message)
+                setTimeout(function () {
+                    window.location.href = "{{route('procurement.product-material-purchase.index')}}";
+                }, 1000);
+            }else{
+                showErrorAlert('Error',res.message)
+            }
+        }, 'show_input_error');
+    }
+
+</script>
 
 

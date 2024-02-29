@@ -129,7 +129,7 @@
     border-radius: 100px;
     line-height: 1;
 }
-.patial-status{
+.partial-status{
     display: inline-block;
     background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important;
     color: #fff !important;

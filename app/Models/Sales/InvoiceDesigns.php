@@ -10,6 +10,20 @@ class InvoiceDesigns extends Model
     use HasFactory;
     protected $table = 'invoice_designs';
     public $timestamps = false;
+    //status const
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+    const STATUSES = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_INACTIVE => 'Inactive',
+    ];
+    //Delete status const
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    const DELETEDS = [
+        self::DELETED_NO => 'No',
+        self::DELETED_YES => 'Yes',
+    ];
     protected $fillable = [
         'invoice_id',
         'design',

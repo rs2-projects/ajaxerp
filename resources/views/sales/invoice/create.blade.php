@@ -337,7 +337,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="po-order-product-payment-status d-none">
+                                        <div class="po-order-product-payment-status">
                                             <div class="po-order-product-payment-status-item">
                                                 <div class="checkbox-wrapper-35">
                                                     <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
@@ -355,42 +355,58 @@
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
                                                             <label class="col-form-label">Payment Method <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
+                                                            <select class="select select-step" name="payment_method">
                                                                 <option>Select Payment Method</option>
-                                                                <option>Bank Payment</option>
-                                                                <option>Cash</option>
-                                                                <option>Cheque</option>
+                                                                @foreach($payment_methods as $key=>$payment_method)
+                                                                    <option value="{{ $key }}">{{ $payment_method }}</option>
+                                                                @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control">
+                                                            <input type="number" step="any" class="form-control"  min="0.01"  name="amount">
                                                         </div>
                                                     </div>
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Payment Date <span class="text-danger">*</span> </label>
-                                                            <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
+                                                            <div class="cal-icon">
+                                                                <input class="form-control datetimepicker"  value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="date" type="text" >
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
                                                             <label class="col-form-label">Payment Account <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
+                                                            <select class="select select-step" name="account_id" >
                                                                 <option>Select Payment Account</option>
-                                                                <option>DBBL</option>
-                                                                <option>DBBL Agent Banking</option>
-                                                                <option>EBL Banking</option>
+                                                                @if(!empty($accounts_sub_categories))
+                                                                    @foreach($accounts_sub_categories as $accounts_sub_category)
+                                                                        @if(count($accounts_sub_category->accounts) > 0)
+                                                                            <optgroup label="{{ $accounts_sub_category->name }}">
+                                                                                @foreach($accounts_sub_category->accounts as $account)
+                                                                                    <option value="{{ $account->id }}" {{ ($account->is_default == $account::IS_DEFAULT_YES)?'selected':'' }}>{{ $account->name }}</option>
+                                                                                @endforeach
+                                                                            </optgroup>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
 
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="erp-filter-item flex-100">
+                                                        <div class="input-block erp-step-input-block mb-0">
+                                                            <label class="col-form-label">Note </label>
+                                                            <textarea class="form-control" name="note" rows="2"></textarea>
                                                         </div>
                                                     </div>
                                                     <div class="payment-selection-item flex-100">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Upload Receipt <span class="text-danger">*</span> </label>
-                                                            <input type="file" class="form-control">
+                                                            <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -504,6 +520,13 @@
 
         $(document).ready(function () {
             initializeDatepicker();
+            $("#payment_status_checkbox").on('change', function() {
+                if(this.checked) {
+                    $("#payment_status_details").slideDown();
+                } else {
+                    $("#payment_status_details").slideUp();
+                }
+            });
         });
 
         function initTaxSelect2() {

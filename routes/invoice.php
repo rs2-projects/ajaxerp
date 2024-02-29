@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Sales\InvoiceController;
+use App\Http\Controllers\Sales\InvoiceDesignController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('invoice')->group(function(){
@@ -24,4 +25,8 @@ Route::prefix('invoice')->group(function(){
     Route::post('/{id}/update',[InvoiceController::class,'update'])->name('sales.invoice.update');
     //Delete invoice
     Route::get('/{id}/delete',[InvoiceController::class,'delete'])->name('sales.invoice.delete');
+    //Upload invoice design
+    Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload');
+    //Design delete
+    Route::get('/{id}/delete-design',[InvoiceController::class,'deleteDesign'])->name('sales.invoice.design.delete');
 });

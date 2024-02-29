@@ -100,3 +100,19 @@
     font-weight: 700;
     line-height: 24px;
 }
+/*invoice design edit in invoice edit page*/
+.designWrapMain{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.designWrapMain .multiple-design-item{
+    position: relative;
+}
+.designWrapMain .multiple-design-item span{
+    position: absolute;
+    top: -7px;
+    left: 40px;
+    cursor: pointer;
+}
+
