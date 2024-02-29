@@ -50,7 +50,7 @@ class PreProductionMaterialRequestController extends BackendController
 
     public function deliver($id)
     {
-        $this->setPageTitle("Material Request (Production)");
+        $this->setPageTitle("Deliver Material Request (Production)");
         $this->setActiveMenu('inventory.material-request.deliver');
         $data = $this->service->deliverData($id);
         return $this->view('inventory.material-request.deliver')->with($data);
@@ -66,6 +66,9 @@ class PreProductionMaterialRequestController extends BackendController
     }
 
     public function details($id){
+        $this->setPageTitle("Material Request (Production) Details");
+        $this->setActiveMenu('inventory.material-request.deliver');
+
         $data = $this->service->detailsData($id);
         return $this->view('inventory.material-request.delivery_details')->with($data);
     }

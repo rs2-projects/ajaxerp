@@ -234,9 +234,9 @@
                 <li>
                     <a href="{{route('production.pre-production.index')}}" class="{{ ($activeMenu == 'production.pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Pre-Production</span></a>
                 </li>
-                {{-- <li>
-                    <a href="production.html" class=""><i class="la la-archive"></i> <span>Production</span></a>
-                </li> --}}
+                <li> 
+                    <a href="{{route('production.production.index')}}" class="{{ ($activeMenu == 'production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
+                </li>
                 <li>
                     <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
                 </li>

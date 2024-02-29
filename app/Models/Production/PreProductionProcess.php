@@ -39,12 +39,25 @@ class PreProductionProcess extends Model
         'deleted_at',
     ];
 
+    public function processMachines()
+    {
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_process_id', 'id');
+    }
+
     public function materials()
     {
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_process_id');
     }
+
     public function estimated_output()
     {
-        return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id');
+        return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id', 'id')
+            ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+            ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE);
+    }
+
+    public function previousProcess()
+    {
+        return $this->hasMany(PreProductionProcessPreviousProcess::class, 'pre_production_process_id');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Production\Production;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Production\Production\StoreProductionReceiveRequest;
 use App\Services\Production\Production\ProductionService;
 use Illuminate\Http\Request;
 
@@ -46,6 +47,39 @@ class ProductionController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
+    }
+
+    public function details($id){
+        $this->setPageTitle("Production Details");
+        $this->setActiveMenu('production.production.index');
+        $data = $this->service->detailsData($id);
+        return $this->view('production.production._details')->with($data);
+    }
+
+    public function receive($id){
+        $this->setPageTitle("Receive Product");
+        $this->setActiveMenu('production.production.index');
+        $data = $this->service->receiveData($id);
+        return $this->view('production.production._receive')->with($data);
+    }
+
+    public function receiveStore(StoreProductionReceiveRequest $request, $id){
+        try {
+            $this->service->receiveStoreData($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Delivered successfully');
+    }
+
+    public function getDeliveries($id){
+        $data = $this->service->getDeliveryData($id);
+        return $this->returnAjaxSuccess($data);
+    }
+
+    public function checkBarCode(Request $request, $id){
+        $data = $this->service->checkBarCode($request, $id);
+        return $data;
     }
 
 }

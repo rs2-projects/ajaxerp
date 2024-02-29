@@ -163,6 +163,11 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/', [ProductionController::class, 'index'])->name('production.production.index');
         Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
         Route::get('/{id}/get-document', [ProductionController::class, 'getDocument'])->name('production.production.get-design-document');
+        Route::get('/{id}/details', [ProductionController::class, 'details'])->name('production.production.details');
+        Route::get('/{id}/receive', [ProductionController::class, 'receive'])->name('production.production.receive');
+        Route::post('/{id}/receive', [ProductionController::class, 'receiveStore'])->name('production.production.receive.store');
+        Route::get('/{id}/get-deliveries', [ProductionController::class, 'getDeliveries'])->name('production.production.get-delivery-details');
+        Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production.production.check-barcode');
     });
 });
 

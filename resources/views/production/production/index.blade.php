@@ -187,6 +187,9 @@
         .erp-table-status.pre-delivered-s .action-icon {
             background: #37b34a;
         }
+        .pd-table-box-item {
+            margin-top: 24px;
+        }
     </style>
 @endsection
 

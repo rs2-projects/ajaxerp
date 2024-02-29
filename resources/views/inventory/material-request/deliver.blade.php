@@ -219,22 +219,20 @@
     }).mount('#VueApp');
 
 	function deliverStoreForm(){
-		console.log("submitted");
-
 		var self = $("#deliverStoreForm");
-            var formData = new FormData($(self)[0]);
-			var url = $(self).attr('action');
+		var formData = new FormData($(self)[0]);
+		var url = $(self).attr('action');
 
-            formPost(url, formData, function (res) {
-                if(res.status == 200){
-                    showSuccessAlert('Success',res.message)
-                    setTimeout(function () {
-                       window.location.href = "{{route('inventory.material-request.index')}}";
-                    }, 1000);
-                }else{
-                    showErrorAlert('Error',res.message)
-                }
-            }, 'show_input_error');
+		formPost(url, formData, function (res) {
+			if(res.status == 200){
+				showSuccessAlert('Success',res.message)
+				setTimeout(function () {
+					window.location.href = "{{route('inventory.material-request.index')}}";
+				}, 1000);
+			}else{
+				showErrorAlert('Error',res.message)
+			}
+		}, 'show_input_error');
 	}
 </script>
 
