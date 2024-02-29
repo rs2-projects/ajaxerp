@@ -55,10 +55,8 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                {{-- @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
-                                                    <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
-                                                @endif --}}
-                                                <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
+                                                <a class="dropdown-item" href="{{ route('production.production.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
+                                                <a class="dropdown-item" href="{{ route('production.production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
                                                 
                                             </div>
                                         </div>

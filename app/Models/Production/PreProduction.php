@@ -93,16 +93,30 @@ class PreProduction extends Model
 
     public function process()
     {
-        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')->where('deleted', PreProductionProcess::DELETED_NO);
+        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE);
     }
 
+    // process materials
     public function material()
     {
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_id', 'id');
     }
 
+    // production materials
     public function production_material()
     {
-        return $this->hasMany(PreProductionMaterial::class, 'pre_production_id', 'id')->where('deleted', PreProductionMaterial::DELETED_NO);
+        return $this->hasMany(PreProductionMaterial::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterial::DELETED_NO)
+            ->where('status', PreProductionMaterial::STATUS_ACTIVE);
+    }
+
+    public function pendingPreProductionMaterialDeliveries()
+    {
+        return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
 }
