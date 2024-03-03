@@ -253,3 +253,4 @@
 </table>
 
 {{ $userLeaves->links('vendor.pagination.common_ajax_pagination') }}
+

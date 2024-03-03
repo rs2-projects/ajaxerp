@@ -144,19 +144,19 @@
                                                     <div class="erp-filter-item flex-48">
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Bank Name </label>
-                                                            <input name="bank_name[]" type="text" class="form-control" placeholder="" required>
+                                                            <input name="bank_name[]" type="text" class="form-control" placeholder="" >
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48">
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Account No </label>
-                                                            <input name="account_no[]" type="text" class="form-control " placeholder="" required>
+                                                            <input name="account_no[]" type="text" class="form-control " placeholder="" >
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48">
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Account Name </label>
-                                                            <input name="account_name[]" type="text" class="form-control " placeholder="" required>
+                                                            <input name="account_name[]" type="text" class="form-control " placeholder="" >
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-48">
@@ -225,7 +225,7 @@
                                                     <div class="erp-filter-item flex-32">
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Name</label>
-                                                            <input required name="contact_name[]" type="text" class="form-control " placeholder="">
+                                                            <input name="contact_name[]" type="text" class="form-control " placeholder="">
                                                         </div>
                                                     </div>
                                                     <div class="erp-filter-item flex-32">

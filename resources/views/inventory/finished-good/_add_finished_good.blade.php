@@ -2,7 +2,7 @@
 <div id="addProductMaterial" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
-            <form action="{{ route('inventory.finished-good.store') }}" id="productMaterialStoreForm" enctype="multipart/form-data" method="post">
+            <form action="{{ route('inventory.finished-good.store') }}" id="finishedGoodsStoreForm" enctype="multipart/form-data" method="post">
                 @csrf
                 <div class="modal-header erp-modal-header">
                     <h5 class="modal-title">Add New Finished Good</h5>
@@ -158,7 +158,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Save</button>
+                                        <button class=" erp-search-btn text-center" id="addFinishedGoodsBtn" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>

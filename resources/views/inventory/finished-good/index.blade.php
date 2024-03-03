@@ -102,7 +102,7 @@
                 filterData.category_filtered = $(this).val();
             });
 
-            $("#productMaterialStoreForm").on('submit', function (e) {
+            $("#finishedGoodsStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(self)[0]);
@@ -121,12 +121,35 @@
                         showErrorAlert('Error',res.message)
                     }
                 }, 'show_input_error');
+
+            });
+            $("#addFinishedGoodsBtn").on('click', function () {
+                validateCustomForm("#finishedGoodsStoreForm");
+            });
+        });
+        //form validation
+        function validateCustomForm(form)   {
+            var tab1Fields = $(form).find(':input[required]');
+            tab1Fields.each(function() {
+                if (!$(this).val()) {
+                    let inputName = $(this).attr('name');
+                    inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    inputName = inputName.replace(" Id", '');
+                    showInfoAlert(inputName,'required');
+                }
             });
 
+            let sections = $("#sections_id").val();
+            if(sections.length < 1) {
+                showInfoAlert('Sections','required');
+            }
 
+            let racks = $("#racks_id").val();
+            if(racks.length < 1) {
+                showInfoAlert('Racks','required');
+            }
 
-        });
-
+        }
         function getData(){
             getPaginatedListData("{{ route('inventory.finished-good.filtered') }}", "#ajax-data-load", filterData);
         }

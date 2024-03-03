@@ -22,7 +22,7 @@ class StoreInvoiceDesignRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'design'=>'required'
+            'design'=>'required|file|mimes:jpeg,png,jpg,gif,svg,pdf,xlsx,docx|max:2048'
         ];
     }
 }

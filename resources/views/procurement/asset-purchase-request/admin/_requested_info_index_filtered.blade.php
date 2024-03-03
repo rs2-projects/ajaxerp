@@ -13,14 +13,14 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($requested_info as $pr)
+            @forelse($requested_info as $pr)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $requested_info->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
                         <h4 class="text-start d-table-title"><strong>{{ $pr->purchase_request_id }}</strong></h4>
-                        <small class="text-center d-table-title">{{ getFormattedDate($pr->created_at, 'd M, Y') }}</small> 
+                        <small class="text-center d-table-title">{{ getFormattedDate($pr->created_at, 'd M, Y') }}</small>
                     </td>
                     <td class="erp-tbody-td text-center">
                         <h4 class="text-center d-table-title">{{ $pr->title }}</h4>
@@ -44,7 +44,13 @@
                         </td>
                     @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="9">
+                        Data not found..!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

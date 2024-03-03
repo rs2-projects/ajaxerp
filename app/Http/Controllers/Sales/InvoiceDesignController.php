@@ -19,7 +19,7 @@ class InvoiceDesignController extends BackendController
         try {
             $this->service->uploadDesign($request);
         }catch(\Exception $e){
-            return $this->returnAjaxError($e->getMessage());
+            return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Design Uploaded Successfully');
     }

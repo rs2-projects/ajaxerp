@@ -294,7 +294,7 @@ class InvoiceService
             // Create Transaction
             $transaction = new Transaction();
             $transaction->paid_type = Transaction::PAID_TYPE_PAID;
-            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_DEPOSIT;
             $transaction->transaction_date = $request->date;
             $transaction->account_id = $account->id;
             $transaction->category_id = $account->acc_coa_category_id;
@@ -426,7 +426,7 @@ class InvoiceService
             // Create Transaction
             $transaction = new Transaction();
             $transaction->paid_type = Transaction::PAID_TYPE_PAID;
-            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_DEPOSIT;
             $transaction->transaction_date = $request->date;
             $transaction->account_id = $account->id;
             $transaction->category_id = $account->acc_coa_category_id;
@@ -562,7 +562,6 @@ class InvoiceService
     //Update Invoice
     public function update($request, $id)
     {
-        //dd($request->all());
         DB::beginTransaction();
         try {
 

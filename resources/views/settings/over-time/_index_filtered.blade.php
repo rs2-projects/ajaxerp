@@ -13,7 +13,7 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($over_time_types as $key=> $item)
+        @forelse($over_time_types as $key=> $item)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
                     <h4 class="d-table-title">{{$over_time_types->firstItem() + $loop->iteration -1}}</h4>
@@ -51,7 +51,13 @@
                     </div>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="7">
+                    No data found...!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

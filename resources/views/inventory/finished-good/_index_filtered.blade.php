@@ -8,13 +8,11 @@
                 <th class="erp-th text-center">Last Calculated Price </th>
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
-                @if(hasPermission( 'manage-product-material'))
                     <th class="erp-th text-center">Action </th>
-                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($finished_goods as $finished_good)
+            @forelse($finished_goods as $finished_good)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $finished_goods->firstItem() + $loop->iteration - 1 }}</h4>
@@ -43,12 +41,10 @@
                         <div class="erp-action-t erp-table-status {{ ($finished_good->status == $finished_good::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $finished_good::STATUSES[$finished_good->status] }}</span></a>
-                                @if(hasPermission( 'manage-product-material'))
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
                                     </div>
-                                @endif
                             </div>
                         </div>
 
@@ -86,7 +82,13 @@
                             </div>
                         </td>
                 </tr>
-            @endforeach
+                @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="7">
+                        No data found...!
+                    </td>
+                </tr>
+                @endforelse
         </tbody>
     </table>
 </div>

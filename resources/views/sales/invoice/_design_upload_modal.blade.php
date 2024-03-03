@@ -18,7 +18,7 @@
                                     <div class="multiple-receipt-item flex-100">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Upload Design <span class="text-danger"> </span></label>
-                                            <input type="file" class="form-control" name="design[]" placeholder="Upload Design">
+                                            <input type="file" class="form-control" name="design[]" placeholder="Upload Design" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                                             <input type="hidden" class="form-control" name="invoice_id" placeholder="Upload Design">
                                         </div>
                                     </div>

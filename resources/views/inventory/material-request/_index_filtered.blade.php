@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
-                        @foreach($pre_productions as $data)
+                        @forelse($pre_productions as $data)
                             <tr class="erp-tbody-tr">
                                 <td class="erp-tbody-td">
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
@@ -38,7 +38,7 @@
                                     <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
                                     </a>
                                 </td>
-                                
+
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
@@ -73,13 +73,19 @@
                                                     <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
                                                 @endif
                                                 <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-deviantart m-r-5"></i> View Delivery Details</a>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="erp-tbody-tr">
+                                <td class="erp-tbody-td text-center text-primary" colspan="9">
+                                    Data not found..!
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

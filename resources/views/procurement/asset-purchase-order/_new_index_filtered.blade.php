@@ -19,7 +19,7 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($purchase_orders as $purchase_order)
+            @forelse($purchase_orders as $purchase_order)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
@@ -72,7 +72,7 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.asset-purchase-order.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
-                                        @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID)    
+                                        @if($purchase_order->payment_status != $purchase_order::PAYMENT_STATUS_PAID)
                                             <a class="dropdown-item" href="{{ route('procurement.asset-purchase-order.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                         @endif
                                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
@@ -85,7 +85,13 @@
                         </td>
                     @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="10">
+                        Data not found..!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

@@ -11,7 +11,7 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($vats as $vat)
+        @forelse($vats as $vat)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
                     <h4 class="d-table-title">{{ $vats->firstItem() + $loop->iteration -1 }}</h4>
@@ -43,7 +43,13 @@
                     </div>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="6">
+                    No data found...!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

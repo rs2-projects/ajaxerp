@@ -332,7 +332,7 @@
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
                                                         <label class="col-form-label pt-0">Design Upload</label>
-                                                        <input type="file" name="design[]" class="form-control" multiple>
+                                                        <input type="file" name="design[]" class="form-control" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
                                                     </div>
                                                 </div>
                                             </div>
@@ -355,7 +355,7 @@
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
                                                             <label class="col-form-label">Payment Method <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" name="payment_method">
+                                                            <select class="select select-step" name="payment_method" id="payment_method">
                                                                 <option>Select Payment Method</option>
                                                                 @foreach($payment_methods as $key=>$payment_method)
                                                                     <option value="{{ $key }}">{{ $payment_method }}</option>
@@ -366,7 +366,7 @@
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
-                                                            <input type="number" step="any" class="form-control"  min="0.01"  name="amount">
+                                                            <input type="number" step="any" class="form-control"  min="0.01" id="amount"  name="amount">
                                                         </div>
                                                     </div>
                                                     <div class="payment-selection-item">
@@ -380,7 +380,7 @@
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
                                                             <label class="col-form-label">Payment Account <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" name="account_id" >
+                                                            <select class="select select-step" name="account_id"  id="account_id">
                                                                 <option>Select Payment Account</option>
                                                                 @if(!empty($accounts_sub_categories))
                                                                     @foreach($accounts_sub_categories as $accounts_sub_category)
@@ -523,11 +523,26 @@
             $("#payment_status_checkbox").on('change', function() {
                 if(this.checked) {
                     $("#payment_status_details").slideDown();
+                    $("#amount").prop('required', true);
+                    $("#account_id").prop('required', true);
+                    $("#payment_method").prop('required', true);
+                    initPaymentMethodSelect2()
                 } else {
                     $("#payment_status_details").slideUp();
+                    $("#amount").prop('required', false);
+                    $("#account_id").prop('required', false);
+                    $("#payment_method").prop('required', false);
+                    initPaymentMethodSelect2()
                 }
             });
         });
+
+        function initPaymentMethodSelect2() {
+            $("#payment_method").select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
 
         function initTaxSelect2() {
             $('.select-step').select2({

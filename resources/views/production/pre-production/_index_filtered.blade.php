@@ -18,7 +18,7 @@
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
-                        @foreach($pre_productions as $data)
+                        @forelse($pre_productions as $data)
                             <tr class="erp-tbody-tr">
                                 <td class="erp-tbody-td">
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
@@ -39,7 +39,7 @@
                                         <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
                                     </a>
                                 </td>
-                                
+
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
@@ -52,7 +52,7 @@
                                 <td class="erp-tbody-td text-center">
                                     <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_in_status">Check Info</a>
                                 </td>
-                                
+
                                 <td class="erp-tbody-td text-center">
                                     <div class="checkbox-wrapper">
                                         <input {{$data->is_verified ==$data::VERIFIED_YES? 'checked disabled': '' }}  id="terms-checkbox-{{$data->id}}" name="checkbox" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('production.pre-production.change-status',[$data->id,1]) }}" type="checkbox">
@@ -79,14 +79,20 @@
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                                     <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="erp-tbody-tr">
+                                <td class="erp-tbody-td text-center text-primary" colspan="10">
+                                    No data found...!
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

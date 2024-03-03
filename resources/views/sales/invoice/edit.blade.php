@@ -75,19 +75,19 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Store Order No. </label>
-                                                    <div ><input class="form-control " required name="order_no" value="{{ $invoice->order_no }}" type="text"></div>
+                                                    <div ><input class="form-control " @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif required name="order_no" value="{{ $invoice->order_no }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Invoice Date</label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $invoice->invoice_date }}" name="invoice_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker"  @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif value="{{ $invoice->invoice_date }}" name="invoice_date" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Payment Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $invoice->payment_date }}" name="payment_date" type="text"></div>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif value="{{ $invoice->payment_date }}" name="payment_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -117,7 +117,7 @@
                                         <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
-                                                    <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
+                                                    <input type="hidden" name="product_id[]" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif v-bind:value="cartItem.id">
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
@@ -132,7 +132,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <textarea class="form-control auto-grow-input" name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
+                                                                <textarea class="form-control auto-grow-input" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -141,7 +141,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="number" name="qty[]" min="1" v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
+                                                                <input type="number" name="qty[]" min="1" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -150,7 +150,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="number" min="0" v-model="cartItem.price" name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
+                                                                <input type="number" min="0" v-model="cartItem.price" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -173,7 +173,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select select-step vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <select class="select select-step vat-tax-select2" @if($invoice->paid_amount!=$invoice->payable_amount) disabled @endif name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ stItem.tax_rate }}%
@@ -197,8 +197,10 @@
                                         </div>
 
                                         <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
+                                            @if($invoice->paid_amount==0)
                                             <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
-                                            <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
+                                            @endif
+                                                <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
                                                     <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                                 </div>
@@ -545,6 +547,7 @@
                     allItems:[],
                     item_search: '',
                     cartItems:[],
+                    invoice:null,
                     designs:[],
                     system_tax_items:[],
                     customers:[],
@@ -722,6 +725,7 @@
                     axios
                         .get('{{ route('sales.invoice.get-edit-invoice-data',$invoice->id) }}')
                         .then(response => {
+                            this.invoice = response.data.invoice;
                             this.cartItems = response.data.cartItem;
                             this.designs = response.data.designs;
                             this.selected_customer = response.data.customer;
@@ -742,6 +746,7 @@
                 this.getTaxItems();
                 this.getCustomers();
                 this.getInvoiceData();
+
             }
 
         }).mount('#VueApp');

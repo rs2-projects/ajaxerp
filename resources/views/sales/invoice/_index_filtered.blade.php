@@ -14,7 +14,7 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($invoices as $invoice)
+        @forelse($invoices as $invoice)
         <tr class="erp-tbody-tr">
             <td class="erp-tbody-td">
                 <h4 class="d-table-title">{{ $loop->iteration }}</h4>
@@ -79,7 +79,13 @@
                 </div>
             </td>
         </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="9">
+                    Data not found..!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>
