@@ -32,6 +32,8 @@ class InvoiceDetails extends Model
         'tax_amount',
         'net_total',
         'dispatched',
+        'dispatched_qty',
+        'status',
         'deleted',
         'deleted_at',
         'deleted_by',

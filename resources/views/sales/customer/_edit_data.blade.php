@@ -146,19 +146,19 @@
                                                 <div class="erp-filter-item flex-48">
                                                     <div class="input-block mb-0 erp-step-input-block ">
                                                         <label class="col-form-label">Bank Name </label>
-                                                        <input value="{{$customer_bank->bank_name}}" name="bank_name[]" type="text" class="form-control" placeholder="" required>
+                                                        <input value="{{$customer_bank->bank_name}}" name="bank_name[]" type="text" class="form-control" placeholder="" >
                                                     </div>
                                                 </div>
                                                 <div class="erp-filter-item flex-48">
                                                     <div class="input-block mb-0 erp-step-input-block ">
                                                         <label class="col-form-label">Account No </label>
-                                                        <input value="{{$customer_bank->account_no}}" name="account_no[]" type="text" class="form-control " placeholder="" required>
+                                                        <input value="{{$customer_bank->account_no}}" name="account_no[]" type="text" class="form-control " placeholder="" >
                                                     </div>
                                                 </div>
                                                 <div class="erp-filter-item flex-48">
                                                     <div class="input-block mb-0 erp-step-input-block ">
                                                         <label class="col-form-label">Account Name </label>
-                                                        <input value="{{$customer_bank->account_name}}" name="account_name[]" type="text" class="form-control " placeholder="" required>
+                                                        <input value="{{$customer_bank->account_name}}" name="account_name[]" type="text" class="form-control " placeholder="" >
                                                     </div>
                                                 </div>
                                                 <div class="erp-filter-item flex-48">
@@ -284,7 +284,7 @@
                                                 <div class="erp-filter-item flex-32">
                                                     <div class="input-block mb-0 erp-step-input-block ">
                                                         <label class="col-form-label">Name</label>
-                                                        <input value="{{$customer_contact->name}}" name="contact_name[]" type="text" class="form-control " placeholder="" required>
+                                                        <input value="{{$customer_contact->name}}" name="contact_name[]" type="text" class="form-control " placeholder="" >
                                                     </div>
                                                 </div>
                                                 <div class="erp-filter-item flex-32">

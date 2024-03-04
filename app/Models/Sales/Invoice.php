@@ -90,4 +90,8 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceDesigns::class, 'invoice_id', 'id');
     }
+    //relation with invoice details
+    public function details(){
+        return $this->hasMany(InvoiceDetails::class, 'invoice_id', 'id');
+    }
 }

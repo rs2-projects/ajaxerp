@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Sales\InvoiceController;
+use App\Http\Controllers\Sales\InvoiceDeliveredController;
 use App\Http\Controllers\Sales\InvoiceDesignController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,4 +30,11 @@ Route::prefix('invoice')->group(function(){
     Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload');
     //Design delete
     Route::get('/{id}/delete-design',[InvoiceController::class,'deleteDesign'])->name('sales.invoice.design.delete');
+    //Invoice delivered
+    Route::get('/{id}/deliver', [InvoiceDeliveredController::class, 'deliver'])->name('sales.invoice.deliver');
+    Route::post('/{id}/deliver', [InvoiceDeliveredController::class, 'deliverStore'])->name('sales.invoice.deliver.store');
+    Route::get('/{id}/finished-goods', [InvoiceDeliveredController::class, 'getFinishedGoods'])->name('sales.invoice.deliver.get-all-finished-goods');
+    Route::get('/{id}/deliver/{barcode}/{count}', [InvoiceDeliveredController::class, 'checkBarCode'])->name('sales.invoice.deliver.check-barcode');
+
 });
+

@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row" id="VueApp">	
+    <div class="row" id="VueApp">
 		<div class="erp-employee-list-wrapper">
 			<div class="new-production-wrapper bg-card attd-table">
 				<form action="{{route('inventory.material-request.deliver.store', $pre_production->id)}}" id="deliverStoreForm" method="post" @submit="checkValidation">
@@ -113,7 +113,7 @@
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')

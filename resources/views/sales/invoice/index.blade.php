@@ -147,7 +147,7 @@
             var url = $(self).attr('action');
 
             formPost(url, formData, function (res) {
-                console.log(res)
+
                 if(res.status == 200){
                     $("#design_upload_modal").modal('hide');
                     $(self)[0].reset();
@@ -173,7 +173,7 @@
         }
         //get filtered data
         function getData(){
-            console.log('from get data');
+
             getPaginatedListData("{{ route('sales.invoice.filtered') }}", "#ajax-data-load", filterData);
         }
         //get paginated data

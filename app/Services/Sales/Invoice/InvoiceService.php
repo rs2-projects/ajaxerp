@@ -13,12 +13,10 @@ use App\Models\Sales\InvoiceDesigns;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
 use App\Services\Common\FileUploadService;
-use App\Services\Common\ImageUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\ImageFile;
 
 class InvoiceService
 {
