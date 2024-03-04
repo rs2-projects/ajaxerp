@@ -23,8 +23,6 @@ class UpdateInvoiceRequest extends FormRequest
     {
         return [
             'customer_id' => 'required',
-            'invoice_date' => 'required',
-            'payment_date' => 'required',
         ];
     }
 }

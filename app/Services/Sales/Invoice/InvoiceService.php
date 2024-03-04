@@ -18,6 +18,7 @@ use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\ImageFile;
 
 class InvoiceService
 {
@@ -258,7 +259,7 @@ class InvoiceService
             }
             $discount_amount = 0;
             if($invoice->discount_type == Invoice::DISCOUNT_TYPE_PERCENTAGE){
-                $discount_amount = ($total_amount * $invoice->discount_value) / 100;
+                $discount_amount = (($total_amount+$vat_amount) * $invoice->discount_value) / 100;
             }else{
                 $discount_amount = $invoice->discount_value;
             }
@@ -552,7 +553,7 @@ class InvoiceService
                     'tax' => $itemTax,
                 ];
             });
-        /*$data['invoice'] = $invoice;*/
+        $data['invoice'] = $invoice;
         $data['customer'] = $customer;
         $data['designs'] = $invoiceDesign;
         $data['cartItem'] = $cartItems;
@@ -562,6 +563,7 @@ class InvoiceService
     //Update Invoice
     public function update($request, $id)
     {
+        //dd($request->all());
         DB::beginTransaction();
         try {
 
@@ -577,21 +579,43 @@ class InvoiceService
                 ->where('id', '=', $id)
                 ->where('deleted', Invoice::DELETED_NO)
                 ->first();
+            if ($invoice->status == Invoice::PAYMENT_STATUS_PARTIAL_PAID) {
+                $total_amount = $invoice->total_amount;
+                $discount_type = $request->discount_type;
+                $discount_value = $request->discount_value;
+                $total_discount_amount = 0;
+                if($discount_type == Invoice::DISCOUNT_TYPE_PERCENTAGE){
+                    $total_discount_amount = ($total_amount * $request->discount_value) / 100;
+                    $payable_amount = ($total_amount - $total_discount_amount);
+                }else{
+                    $total_discount_amount = $request->discount_value;
+                    $payable_amount = ($total_amount - $total_discount_amount);
+                }
+                $due_amount = ($payable_amount - $invoice->paid_amount);
+                $invoice->discount_type = $discount_type;
+                $invoice->discount_value = $discount_value;
+                $invoice->discount_amount = $total_discount_amount;
+                $invoice->payable_amount = $payable_amount;
+                $invoice->due_amount = $due_amount;
+                $invoice->notes = $request->notes;
+                $invoice->invoice_footer = $request->invoice_footer;
+                $invoice->updated_at = Carbon::now();
+                $invoice->updated_by = auth()->id();
+                $invoice->save();
+            }else{
+                $invoice->customer_id = $request->customer_id;
+                $invoice->order_no = $request->order_no;
+                $invoice->invoice_date = $request->invoice_date;
+                $invoice->payment_date = $request->payment_date;
+                $invoice->discount_type = $request->discount_type;
+                $invoice->discount_value = $request->discount_value;
+                $invoice->notes = $request->notes;
+                $invoice->invoice_footer = $request->invoice_footer;
+                $invoice->updated_at = Carbon::now();
+                $invoice->updated_by = auth()->id();
+                $invoice->save();
 
-            if (!empty($checkOrderNumber)) {
-                throw new \Exception("Order Number already exists");
-            }
-            $invoice->customer_id = $request->customer_id;
-            $invoice->order_no = $request->order_no;
-            $invoice->invoice_date = $request->invoice_date;
-            $invoice->payment_date = $request->payment_date;
-            $invoice->discount_type = $request->discount_type;
-            $invoice->discount_value = $request->discount_value;
-            $invoice->notes = $request->notes;
-            $invoice->invoice_footer = $request->invoice_footer;
-            $invoice->updated_at = Carbon::now();
-            $invoice->updated_by = auth()->id();
-            $invoice->save();
+
 
             // check if not exist then delete first
 
@@ -700,19 +724,22 @@ class InvoiceService
 
             $total_discount_amount = 0;
             if($invoice->discount_type == Invoice::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $invoice->discount_value) / 100;
+                $total_discount_amount = (($subtotal_amount+$total_vat_amount) * $request->discount_value) / 100;
             }else{
-                $total_discount_amount = $invoice->discount_value;
+                $total_discount_amount = $request->discount_value;
             }
 
             $invoice->subtotal_amount = $subtotal_amount;
             $invoice->vat_amount = $total_vat_amount;
             $invoice->total_amount = $subtotal_amount+$total_vat_amount;
             $invoice->discount_amount = $total_discount_amount;
-            $invoice->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
-            $invoice->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $invoice->payable_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
+            $invoice->due_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
+            if ($invoice->due_amount==0){
+                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
+            }
             $invoice->save();
-
+            }
 
         }catch (\Exception $e) {
             DB::rollBack();
