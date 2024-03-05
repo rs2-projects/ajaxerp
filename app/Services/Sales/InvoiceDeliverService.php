@@ -31,8 +31,8 @@ class InvoiceDeliverService
 
     public function checkBarCode($finished_good_id, $barcode, $count)
     {   $data = PreProduction::where('deleted', PreProduction::DELETED_NO)
-        ->where('finished_good_id', $finished_good_id)
-        ->where('barcode', $barcode)
+        ->where('finished_goods_id', $finished_good_id)
+        ->where('pre_production_no', $barcode)
         ->where('available_qty', '>', $count)
         ->where('status', PreProduction::STATUS_ACTIVE)
         ->first();

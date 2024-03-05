@@ -48,7 +48,6 @@
                                         <table class="table mb-0 erp-table">
                                             <thead class="erp-thead">
                                             <tr class="erp-tr">
-                                                <th class="erp-th">Category</th>
                                                 <th class="erp-th text-center">Item Name</th>
                                                 <th class="erp-th text-center">Qty</th>
                                                 <th class="text-center erp-th">QR Code</th>
@@ -62,7 +61,7 @@
                                                         @{{finished_good.finished_good.name}}</h4>
                                                 </td>
                                                 <td class="erp-tbody-td text-center">
-                                                    <h4 class="text-center d-table-title">@{{finished_good.finished_good.quantity}}</h4>
+                                                    <h4 class="text-center d-table-title">@{{finished_good.quantity}}</h4>
                                                 </td>
                                                 <td class="erp-tbody-td text-center">
                                                     <div class="pd-input-box">
@@ -77,12 +76,12 @@
                                                 <td class="erp-tbody-td text-center">
                                                     <div class="pd-recived-product-wrapper">
                                                         <input type="hidden" :name="'barcode_count['+index+']'"
-                                                               :value="material.barcodeCounts"/>
-                                                        <div class="pre-counter">@{{ material.barcodeCounts }}</div>
+                                                               :value="finished_good.barcodeCounts"/>
+                                                        <div class="pre-counter">@{{ finished_good.barcodeCounts }}</div>
                                                         <div class="pd-recived-product-scrol-box">
                                                             <div
                                                                 class="pd-recived-product-item d-flex align-items-center gap-2"
-                                                                v-for="(barCode, barCodeIndex) in material.scannedBarcodes"
+                                                                v-for="(barCode, barCodeIndex) in finished_good.scannedBarcodes"
                                                                 :key="barCodeIndex"
                                                             >
                                                                 <div class="pd-recived-product-c-item">
@@ -91,7 +90,7 @@
                                                                     <input type="hidden"
                                                                            :name="'product_material_purchase_details_id['+index+'][]'"
                                                                            :value="barCode.id"/>
-                                                                    <p class="mb-0">@{{ barCode.barcode }}</p>
+                                                                    <p class="mb-0">@{{ barCode.pre_production_no }}</p>
                                                                 </div>
                                                                 <div class="pd-recived-product-c-item">
                                                                     <a href="#"
@@ -149,6 +148,7 @@
             },
             methods: {
                 handleBarcodeScan(event, index, finished_good_id) {
+                    console.log(index, finished_good_id);
                     if (event.key === 'Enter') {
                         const barcodeValue = event.target.value;
                         let codeCount = 0;
@@ -186,6 +186,10 @@
                             showErrorAlert('Error', 'No item available for delivery')
                         }
                     }
+                },
+                removeBarcode(finished_good_index, barcodeIndex) {
+                    this.finished_goods[finished_good_index].scannedBarcodes.splice(barcodeIndex, 1);
+                    this.finished_goods[finished_good_index].barcodeCounts--;
                 },
                 getFinishedGoods() {
                     var currentUrl = window.location.href;
