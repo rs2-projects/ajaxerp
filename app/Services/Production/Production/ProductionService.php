@@ -3,6 +3,7 @@
 namespace App\Services\Production\Production;
 
 use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
 use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
@@ -45,6 +46,7 @@ class ProductionService
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
 
+        $data['view'] = view('production.production._index_filtered', $data)->render();
         return $data;
     }
 
@@ -60,7 +62,8 @@ class ProductionService
             })
             ->has('pendingPreProductionMaterialDeliveries')
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-
+        
+        $data['view'] = view('production.production._pending_for_receive_filtered', $data)->render();
         return $data;
     }
 
@@ -185,6 +188,25 @@ class ProductionService
                         if($item){
                             $item->received = PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES;
                             $item->save();
+
+                            $material = PreProductionMaterial::find($item->pre_production_material_id);
+                            $material->received_qty = $material->received_qty + 1;
+                            $material->save();
+
+                            $item_details = PreProductionMaterialDeliveryDetails::find($item->pre_production_material_delivery_details_id);
+                            $item_details->received_qty = $item_details->received_qty + 1;
+                            $item_details->save();
+
+                            if($material->received_qty == 0){
+                                $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PENDING;
+                                $material->save();
+                            }else if($material->received_qty != $material->quantity){
+                                $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
+                                $material->save();
+                            }else{
+                                $material->received_status = PreProductionMaterial::RECEIVED_STATUS_DELIVERED;
+                                $material->save();
+                            }
                         }
                     }
 
@@ -211,6 +233,7 @@ class ProductionService
                 ->where('pre_production_material_delivery_id', $delivery_id)
                 ->count();
             $delivery = PreProductionMaterialDelivery::find($delivery_id);
+
             if($details_count > 0){
                 $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_PARTIAL;
                 $delivery->save();
@@ -220,5 +243,18 @@ class ProductionService
             }
         }
 
+        $delivery_count= PreProductionMaterialDelivery::where('received_status', '!=' , PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
+            ->where('pre_production_id', $id)
+            ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->count();
+
+        if($delivery_count > 0){
+            $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
+            $pre_production->save();
+        }else{
+            $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
+            $pre_production->save();
+        }
     }
 }

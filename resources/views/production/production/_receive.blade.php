@@ -257,8 +257,9 @@
                     },
 
                     clearScaneedCodes(deliveryIndex) {
-                        this.deliveries[deliveryIndex].delivery_details.map(detail => {
-                            return { ...detail, scannedBarcodes: [], barcodeCounts: 0 };
+                        this.deliveries[deliveryIndex].delivery_details.forEach(detail => {
+                            detail.scannedBarcodes = [];
+                            detail.barcodeCounts = 0;
                         });
                     }
                 },

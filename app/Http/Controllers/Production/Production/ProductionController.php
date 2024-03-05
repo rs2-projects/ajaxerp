@@ -30,10 +30,11 @@ class ProductionController extends BackendController
     public function indexFiltered(Request $request)
     {
         $data = $this->service->indexFilteredData($request);
-        $view = $this->view('production.production._index_filtered')
-            ->with($data)
-            ->render();
-        return $this->returnAjaxSuccess(['view' => $view]);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+        // $view = $this->view('production.production._index_filtered')
+        //     ->with($data)
+        //     ->render();
+        // return $this->returnAjaxSuccess(['view' => $view]);
     }
 
     public function getDocument($id)

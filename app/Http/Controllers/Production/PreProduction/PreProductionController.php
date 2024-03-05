@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Services\Production\PreProduction\PreProductionService;
 use App\Http\Requests\Production\PreProduction\StorePreProductionRequest;
+use App\Http\Requests\Production\PreProduction\UpdatePreProductionRequest;
 use Illuminate\Http\Request;
 
 class PreProductionController extends BackendController
@@ -74,6 +75,16 @@ class PreProductionController extends BackendController
         $this->setActiveMenu('production.pre-production.index');
         $data = $this->service->editData($id);
         return  $this->view('production.pre-production.edit')->with($data);
+    }
+
+    public function update(UpdatePreProductionRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Pre Production updated successfully');
     }
 
     public function getProducts($id){

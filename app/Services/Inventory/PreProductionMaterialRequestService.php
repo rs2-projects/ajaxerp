@@ -158,9 +158,7 @@ class PreProductionMaterialRequestService
 
 
         if (isset($request->pre_production_material_id) && is_array($request->pre_production_material_id) && count($request->pre_production_material_id) > 0) {
-            
-            $is_delivered = true;
-
+          
             foreach ($request->pre_production_material_id as $key => $pre_production_material_id) {
                 if($pre_production_material_id != '' && $request->product_material_id !='' && $request->total_quantity != '' && $request->barcode_count[$key] > 0){
                     
@@ -183,12 +181,17 @@ class PreProductionMaterialRequestService
                 }
 
                 $material = PreProductionMaterial::find($pre_production_material_id);
-
                 $remaining_qtn = $request->total_quantity[$key] - $material->delivered_qty;
-                if ($remaining_qtn !== 0) {
-                    $is_delivered = false;
+
+                if($material->delivered_qty == 0){
+                    $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_PENDING;
+                    $material->save();
+                }else if($remaining_qtn != 0){
+                    $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_PARTIAL;
+                    $material->save();
                 }else{
-                    $is_delivered = true;
+                    $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_DELIVERED;
+                    $material->save();
                 }
 
                 if (isset($request->product_material_purchase_details_id[$key]) && is_array($request->product_material_purchase_details_id[$key]) && count($request->product_material_purchase_details_id[$key]) > 0) {
@@ -215,11 +218,17 @@ class PreProductionMaterialRequestService
                 }
             }
 
-            if ($is_delivered) {
-                $pre_production->delivery_status = 1;
+            $material_count = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+                ->where('status', PreProductionMaterial::STATUS_ACTIVE)
+                ->where('pre_production_id', $id)
+                ->where('delivery_status' , '!=', PreProductionMaterial::DELIVERY_STATUS_DELIVERED)
+                ->count();
+
+            if($material_count > 0){
+                $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_PARTIAL;
                 $pre_production->save();
             }else{
-                $pre_production->delivery_status = 2;
+                $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_DELIVERED;
                 $pre_production->save();
             }
         }
