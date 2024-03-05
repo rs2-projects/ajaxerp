@@ -7,6 +7,12 @@ use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
 use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDetails;
+use App\Models\Sales\InvoiceDispatch;
+use App\Models\Sales\InvoiceDispatchDetails;
+use App\Models\Sales\InvoiceDispatchDetailsProduction;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceDeliverService
 {
@@ -22,7 +28,7 @@ class InvoiceDeliverService
 
     public function getFinishedGoodsData($id)
     {
-        $data['finished_goods'] = InvoiceDetails::where('deleted', InvoiceDetails::DELETED_NO)
+        $data['invoices'] = InvoiceDetails::where('deleted', InvoiceDetails::DELETED_NO)
             ->where('invoice_id', $id)
             ->with('finishedGood')
             ->get();
@@ -38,5 +44,104 @@ class InvoiceDeliverService
         ->first();
         return $data;
 
+    }
+
+    public function deliverStoreData($request, $id)
+    {
+//        $invoice = Invoice::where('deleted', PreProduction::DELETED_NO)
+//            ->where('deleted', Invoice::DELETED_NO)
+//            ->where('id', $id)
+//            ->first();
+//        if(!$invoice){
+//            throw new \Exception('Invoice not found');
+//        }
+//        return $request->all();
+
+        DB::beginTransaction();
+        try {
+            $dispatch = new InvoiceDispatch();
+            $dispatch->invoice_id = $id;
+            $dispatch->dispatched_by = auth()->id();
+            $dispatch->dispatched_at = Carbon::now();
+            $dispatch->note = $request->note;
+            $dispatch->created_by = auth()->id();
+            $dispatch->created_at = Carbon::now();
+            $dispatch->updated_by = auth()->id();
+            $dispatch->updated_at = Carbon::now();
+            $dispatch->save();
+
+            $invoiceDispatchDetails = [];
+            if (isset($request->invoice_details_id)) {
+
+                foreach ($request->invoice_details_id as $key => $id) {
+                    if($request->invoice_details_id != '' && $request->finished_good_id !='' && $request->barcode_count[$key] > 0){
+
+                        $dispatch_detail = new InvoiceDispatchDetails();
+                        $dispatch_detail->invoice_dispatch_id = $dispatch->id;
+                        $dispatch_detail->invoice_detail_id = $id;
+                        $dispatch_detail->finished_good_id = $request->finished_good_id[$key];
+                        $dispatch_detail->quantity = $request->barcode_count[$key];
+                        $dispatch_detail->created_by = auth()->id();
+                        $dispatch_detail->created_at = Carbon::now();
+                        $dispatch_detail->updated_by = auth()->id();
+                        $dispatch_detail->updated_at = Carbon::now();
+                        $dispatch_detail->save();
+
+                        $invoice_details = InvoiceDetails::where('deleted',Invoice::DELETED_NO)
+                            ->where('id', $id)
+                            ->first();
+                        $invoice_details->dispatched_qty = $request->barcode_count[$key];
+                        if ($invoice_details->dispatched_qty!=0 && $invoice_details->quantity>$invoice_details->dispatched_qty){
+                            $invoice_details->dispatched = 2;
+                        }elseif ($invoice_details->quantity==$invoice_details->dispatched_qty){
+                            $invoice_details->dispatched = 1;
+                        }
+                        $invoice_details->dispatched_qty= $request->barcode_count[$key];
+                        $invoice_details->save();
+
+                        $invoiceDispatchDetails[$key] = [
+                            'invoice_dispatch_details_id' => $dispatch_detail->id,
+                            'finished_good_id' => $request->finished_good_id[$key],
+                            'invoice_detail_id' => $id
+                        ];
+
+                    }
+
+                }
+
+            }
+                if (isset($request->pre_production_id) && is_array($request->pre_production_id)) {
+                    foreach ($request->pre_production_id as $pre_production_ids) {
+                        $invoiceDispatchDetail = $invoiceDispatchDetails[$key];
+                        if(!is_array($pre_production_ids)) {
+                            continue;
+                        }
+                        $countPreProductionIds = array_count_values($pre_production_ids);
+
+                        foreach ($countPreProductionIds as $preProductionId => $qty ) {
+                            $dispatch_details_production = new InvoiceDispatchDetailsProduction();
+                            $dispatch_details_production->invoice_dispatch_id = $dispatch->id;
+                            $dispatch_details_production->invoice_dispatch_detail_id = $invoiceDispatchDetail['invoice_dispatch_details_id'];
+                            $dispatch_details_production->invoice_detail_id = $invoiceDispatchDetail['invoice_detail_id'];
+                            $dispatch_details_production->finished_good_id =  $invoiceDispatchDetail['finished_good_id'];
+                            $dispatch_details_production->pre_production_id = $preProductionId;
+                            $preProduction = PreProduction::where('deleted',PreProduction::DELETED_NO)->where('id', $preProductionId)->first();
+                            $preProduction->available_qty = $preProduction->available_qty - $qty;
+                            $preProduction->save();
+                            $dispatch_details_production->quantity = $qty;
+                            $dispatch_detail->created_by = auth()->id();
+                            $dispatch_detail->created_at = Carbon::now();
+                            $dispatch_detail->updated_by = auth()->id();
+                            $dispatch_detail->updated_at = Carbon::now();
+                            $dispatch_details_production->save();
+                        }
+                    }
+                }
+//
+        }catch(\Exception $e){
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
     }
 }

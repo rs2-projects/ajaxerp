@@ -53,7 +53,7 @@
                         No data found...!
                     </td>
                 </tr>
-            @endforelse@endforeach
+            @endforelse
         </tbody>
     </table>
 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Requests\Sales\StoreInvoiceDeliverRequest;
 use App\Services\Sales\InvoiceDeliverService;
 
 class InvoiceDeliveredController extends BackendController
@@ -32,5 +33,14 @@ class InvoiceDeliveredController extends BackendController
     {
         $data = $this->service->checkBarCode($finished_good_id, $barcode, $count);
         return $data;
+    }
+
+    public function deliverStore(StoreInvoiceDeliverRequest $request, $id){
+        try {
+             $this->service->deliverStoreData($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Delivered successfully');
     }
 }

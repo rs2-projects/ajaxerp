@@ -5,7 +5,7 @@
     <div class="row" id="VueApp">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
-                <form action="{{route('inventory.material-request.deliver.store', $invoice->id)}}" id="deliverStoreForm"
+                <form action="{{route('sales.invoice.deliver.store', $invoice->id)}}" id="deliverStoreForm"
                       method="post" @submit="checkValidation">
                     @csrf
                     <div class="product-general-info-box d-flex flex-wrap pd-box">
@@ -55,13 +55,16 @@
                                             </tr>
                                             </thead>
                                             <tbody class="erp-tbody">
-                                            <tr class="erp-tbody-tr" v-for="(finished_good, index) in finished_goods">
+                                            <tr class="erp-tbody-tr" v-for="(invoice, index) in invoices">
+                                                <input type="hidden" name="invoice_details_id[]" :value="invoice.id">
+                                                <input type="hidden" name="finished_good_id[]" :value="invoice.finished_good_id">
+                                                <input type= "hidden" name="total_quantity[]" :value="invoice.quantity">
                                                 <td class="erp-tbody-td text-center">
                                                     <h4 class="text-center d-table-title">
-                                                        @{{finished_good.finished_good.name}}</h4>
+                                                        @{{invoice.finished_good.name}}</h4>
                                                 </td>
                                                 <td class="erp-tbody-td text-center">
-                                                    <h4 class="text-center d-table-title">@{{finished_good.quantity}}</h4>
+                                                    <h4 class="text-center d-table-title">@{{invoice.quantity}}</h4>
                                                 </td>
                                                 <td class="erp-tbody-td text-center">
                                                     <div class="pd-input-box">
@@ -69,26 +72,26 @@
                                                             class="form-control text-center bar-code-input"
                                                             type="text"
                                                             placeholder="Scan QR / Bar Code"
-                                                            @keydown.enter.prevent="handleBarcodeScan($event, index, finished_good.finished_good.id)"
+                                                            @keydown.enter.prevent="handleBarcodeScan($event, index, invoice.finished_good.id)"
                                                         />
                                                     </div>
                                                 </td>
                                                 <td class="erp-tbody-td text-center">
                                                     <div class="pd-recived-product-wrapper">
                                                         <input type="hidden" :name="'barcode_count['+index+']'"
-                                                               :value="finished_good.barcodeCounts"/>
-                                                        <div class="pre-counter">@{{ finished_good.barcodeCounts }}</div>
+                                                               :value="invoice.barcodeCounts"/>
+                                                        <div class="pre-counter">@{{ invoice.barcodeCounts }}</div>
                                                         <div class="pd-recived-product-scrol-box">
                                                             <div
                                                                 class="pd-recived-product-item d-flex align-items-center gap-2"
-                                                                v-for="(barCode, barCodeIndex) in finished_good.scannedBarcodes"
+                                                                v-for="(barCode, barCodeIndex) in invoice.scannedBarcodes"
                                                                 :key="barCodeIndex"
                                                             >
                                                                 <div class="pd-recived-product-c-item">
                                                                     <input type="hidden" :name="'barcode['+index+'][]'"
-                                                                           :value="barCode.barcode"/>
+                                                                           :value="barCode.pre_production_no"/>
                                                                     <input type="hidden"
-                                                                           :name="'product_material_purchase_details_id['+index+'][]'"
+                                                                           :name="'pre_production_id['+index+'][]'"
                                                                            :value="barCode.id"/>
                                                                     <p class="mb-0">@{{ barCode.pre_production_no }}</p>
                                                                 </div>
@@ -143,7 +146,7 @@
         var vueApp = createApp({
             data() {
                 return {
-                    finished_goods: [],
+                    invoices: [],
                 };
             },
             methods: {
@@ -152,8 +155,8 @@
                     if (event.key === 'Enter') {
                         const barcodeValue = event.target.value;
                         let codeCount = 0;
-                        this.finished_goods[index].scannedBarcodes.map((code, index) => {
-                            if(code.barcode == barcodeValue){
+                        this.invoices[index].scannedBarcodes.map((code, index) => {
+                            if(code.pre_production_no == barcodeValue){
                                 codeCount ++;
                             }
                         });
@@ -162,9 +165,8 @@
                         url = url.replace(':finished_good_id', finished_good_id);
                         url = url.replace(':barcodeValue', barcodeValue);
                         url = url.replace(':codeCount', codeCount);
-
-                        let available_qtn = this.finished_goods[index].quantity - this.finished_goods[index].dispatched_qty;
-                        let scaneed_qtn = this.finished_goods[index].barcodeCounts;
+                        let available_qtn = this.invoices[index].quantity - this.invoices[index].dispatched_qty;
+                        let scaneed_qtn = this.invoices[index].barcodeCounts;
 
                         if(available_qtn > scaneed_qtn){
                             axios.get(url)
@@ -172,8 +174,8 @@
                                     console.log(response.data);
                                     event.target.value = '';
                                     if(response.data){
-                                        this.finished_goods[index].scannedBarcodes.push(response.data);
-                                        this.finished_goods[index].barcodeCounts++;
+                                        this.invoices[index].scannedBarcodes.push(response.data);
+                                        this.invoices[index].barcodeCounts++;
                                     }else{
                                         showErrorAlert('Error', 'Invalid Barcode')
                                     }
@@ -188,10 +190,10 @@
                     }
                 },
                 removeBarcode(finished_good_index, barcodeIndex) {
-                    this.finished_goods[finished_good_index].scannedBarcodes.splice(barcodeIndex, 1);
-                    this.finished_goods[finished_good_index].barcodeCounts--;
+                    this.invoices[finished_good_index].scannedBarcodes.splice(barcodeIndex, 1);
+                    this.invoices[finished_good_index].barcodeCounts--;
                 },
-                getFinishedGoods() {
+                getInvoices() {
                     var currentUrl = window.location.href;
                     var id = currentUrl.split('/')[4];
                     let url = "{{ route('sales.invoice.deliver.get-all-finished-goods', ':id') }}";
@@ -199,15 +201,15 @@
 
                     axios.get(url)
                         .then(response => {
-                            this.finished_goods = response.data.finished_goods.map(finished_good => {
+                            console.log(response.data);
+                            this.invoices = response.data.invoices.map(invoice => {
                                 return {
                                     scannedBarcodes: [],
                                     barcodeCounts: 0,
                                     barcodes: [],
-                                    ...finished_good
+                                    ...invoice
                                 };
                             });
-                            console.log(this.finished_goods);
                         })
                         .catch(error => {
                             console.error('Error fetching finished goods:', error);
@@ -215,17 +217,32 @@
                 },
                 checkValidation(e) {
                     e.preventDefault();
-                    if (this.finished_goods.every(finished_good => finished_good.barcodeCounts === 0)) {
+                    if (this.invoices.every(invoice => invoice.barcodeCounts === 0)) {
                         showErrorAlert('Opps!', 'Please add delivery items!');
                     }else {
-                        deliverStoreForm();
+                        this.deliverStoreForm();
                     }
                 },
+                deliverStoreForm(){
+                    var self = $("#deliverStoreForm");
+                    var formData = new FormData($(self)[0]);
+                    var url = $(self).attr('action');
 
+                    formPost(url, formData, function (res) {
+                        if(res.status == 200){
+                            showSuccessAlert('Success',res.message)
+                            setTimeout(function () {
+                                window.location.href = "{{route('sales.invoice.index')}}";
+                            }, 1000);
+                        }else{
+                            showErrorAlert('Error',res.message)
+                        }
+                    }, 'show_input_error');
+                }
 
             },
             mounted() {
-                this.getFinishedGoods();
+                this.getInvoices();
             }
         }).mount('#VueApp');
 
