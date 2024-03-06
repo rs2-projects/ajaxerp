@@ -13,6 +13,7 @@ use App\Http\Controllers\Production\PreProduction\PreProductionController;
 use App\Http\Controllers\Settings\UserRoleController;
 use App\Http\Controllers\Settings\UserRolePermissionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
+use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Production\Production\ProductionController;
 
 Route::group(['prefix' => 'inventory'], function () {
@@ -39,7 +40,6 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
     });
-
 });
 
 

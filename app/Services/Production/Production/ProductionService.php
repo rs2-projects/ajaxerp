@@ -37,6 +37,9 @@ class ProductionService
             case 'completed':
                 return $this->getDeliveredPreProductions($request);
                 break;
+            case 'dispatched':
+                return $this->getDispatchedPreProductions($request);
+                break;
         }
     }
 
@@ -102,6 +105,22 @@ class ProductionService
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
 
         $data['view'] = view('production.production._completed_filtered', $data)->render();
+        return $data;
+    }
+
+    public function getDispatchedPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('dispatched_status', PreProduction::DISPATCH_STATUS_DISPATCHED)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+        $data['view'] = view('production.production._dispatched_filtered', $data)->render();
         return $data;
     }
 
@@ -377,8 +396,8 @@ class ProductionService
     }
 
     public function dispatchStoreData($request, $id){
-        // DB::beginTransaction();
-        // try {
+        DB::beginTransaction();
+        try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
                 ->where('id', $id)
@@ -435,10 +454,10 @@ class ProductionService
             $finished_goods->quantity = $request->dispatched_qty;
             $finished_goods->save();
 
-        // }catch (\Exception $e) {
-        //     DB::rollBack();
-        //     throw new \Exception($e->getMessage());
-        // }
-        // DB::commit();
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
     }
 }

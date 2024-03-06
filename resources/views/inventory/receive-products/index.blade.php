@@ -30,19 +30,13 @@
 
                         <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link active erp-nav-link" data="pre_production" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">Pre-Production</button>
+                                <button class="nav-link active erp-nav-link" data="pending" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">Pending</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="pending_for_receive" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending For Receive</button>
+                                <button class="nav-link erp-nav-link" data="partial" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Partial</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="on_process" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">On-Process</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="completed" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Completed</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="dispatched" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Dispatched</button>
+                                <button class="nav-link erp-nav-link" data="received" id="deliver-purchase-tab" data-bs-toggle="tab" data-bs-target="#deliver-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Received</button>
                             </li>
                         </ul>
 
@@ -58,23 +52,6 @@
 
     </div>
     <!--End::row-1 -->
-
-    <!-- Design of Document modal -->
-    <div id="designOfDocumentModal" class="modal custom-modal fade" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header erp-modal-header">
-                    <h5 class="modal-title">Design of Documents</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body erp-modal-body" id="desgin_of_document_modal_content">
-                    
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
 
@@ -105,7 +82,7 @@
     <script>
         var filterData = {
             keyword_filtered: '',
-            status_filtered: 'pre_production',
+            status_filtered: 'pending',
         };
         $(document).ready(function() {
             getData();
@@ -121,24 +98,11 @@
         });
 
         function getData(){
-            getPaginatedListData("{{ route('production.production.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('inventory.receive-product.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
-        }
-
-        function getDocunent(id){
-            let url = "{{route('production.pre-production.get-design-document', ':id')}}";
-            url = url.replace(':id', id);
-            ajaxGet(url, {}, function (response) {
-                if (response.status == 200) {
-                    $("#desgin_of_document_modal_content").html(response.view);
-                    $("#designOfDocumentModal").modal('show');
-                } else {
-                    toastr.error(response.message);
-                }
-            }, 'default');
         }
     </script>
 @endsection

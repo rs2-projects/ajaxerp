@@ -202,8 +202,11 @@
                     @endif
                     @if(hasPermission( 'view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.asset-product-category.index' || $activeMenu == 'inventory.asset-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Goods</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.finished-good-category.index' || $activeMenu == 'inventory.finished-good.index' || $activeMenu == 'inventory.receive-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Goods</span> <span class="menu-arrow"></span></a>
                             <ul>
+                                <li>
+                                    <a href="{{ route('inventory.receive-product.index') }}" class="{{ ($activeMenu == 'inventory.receive-product.index') ? 'active' : '' }}"> <span>Receive Products</span></a>
+                                </li>
                                 @if(hasPermission( 'view-asset-product','manage-asset-product'))
                                     <li>
                                         <a href="{{ route('inventory.finished-good.index') }}" class="{{ ($activeMenu == 'inventory.finished-good.index') ? 'active' : '' }}"> <span>Goods List</span></a>

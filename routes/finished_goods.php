@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Inventory\FinishedGoodCategoryController;
 use App\Http\Controllers\Inventory\FinishedGoodController;
+use App\Http\Controllers\Inventory\ReceiveProductController;
 use Illuminate\Support\Facades\Route;
  //Finished Good Route Start
  Route::prefix('inventory')->group(function () {
@@ -29,5 +30,12 @@ use Illuminate\Support\Facades\Route;
          Route::get('/get-sections-by-warehouse', [FinishedGoodController::class, 'getSectionsByWarehouse'])->name('inventory.finished-good.get-sections-by-warehouse');
          Route::get('/get-racks-by-sections', [FinishedGoodController::class, 'getRacksBySections'])->name('inventory.finished-good.get-racks-by-sections');
      });
+
+     // receive products
+    Route::group(['prefix' => 'receive-products'], function () {
+        Route::get('/', [ReceiveProductController::class, 'index'])->name('inventory.receive-product.index');
+        Route::post('/filtered', [ReceiveProductController::class, 'indexFiltered'])->name('inventory.receive-product.filtered');
+        Route::get('/', [ReceiveProductController::class, 'receive'])->name('inventory.receive-product.receive');
+    });
  });
 //Finished Good Route End

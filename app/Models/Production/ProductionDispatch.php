@@ -2,6 +2,7 @@
 
 namespace App\Models\Production;
 
+use App\Models\Products\FinishedGoods;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -46,4 +47,9 @@ class ProductionDispatch extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function finishedGoods()
+    {
+        return $this->belongsTo(FinishedGoods::class, 'finished_goods_id', 'id');
+    }
 }
