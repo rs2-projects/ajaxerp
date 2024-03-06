@@ -255,6 +255,25 @@ class PreProductionService
         return $data;
     }
 
+    public function getProcessData($id){
+        $data['processes'] = PreProductionProcess::with('materials', 'estimated_output')
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->where('pre_production_id', $id)
+            ->get();
+
+        $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+            ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
+            ->where('status', Machine::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+        return $data;
+    }
+
     public function update($request, $id)
     {
         DB::beginTransaction();
@@ -548,20 +567,6 @@ class PreProductionService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
-    }
-
-    public function getProcessData($id){
-        $data['processes'] = PreProductionProcess::with('materials', 'estimated_output')
-            ->where('deleted', PreProductionProcess::DELETED_NO)
-            ->where('status', PreProductionProcess::STATUS_ACTIVE)
-            ->where('pre_production_id', $id)
-            ->get();
-
-        $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
-            ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
-            ->get();
-        return $data;
     }
     
     public function delete($id)

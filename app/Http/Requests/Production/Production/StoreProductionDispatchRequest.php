@@ -4,7 +4,7 @@ namespace App\Http\Requests\Production\Production;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductionReceiveRequest extends FormRequest
+class StoreProductionDispatchRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class StoreProductionReceiveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
+            'pre_production_no' => 'required',
+            'dispatched_qty' => 'required',
         ];
     }
 }

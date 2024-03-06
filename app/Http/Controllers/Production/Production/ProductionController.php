@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Production\Production;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Production\Production\StoreProductionDispatchRequest;
 use App\Http\Requests\Production\Production\StoreProductionReceiveRequest;
 use App\Services\Production\Production\ProductionService;
 use Illuminate\Http\Request;
@@ -57,6 +58,15 @@ class ProductionController extends BackendController
         return $this->view('production.production._details')->with($data);
     }
 
+    public function changeProcessStatus($id,$processId, $status){
+        try {
+            $this->service->statusUpdateData($id, $processId, $status);
+            return redirect()->back()->with(['success' => 'Status Updated Successfully']);
+        }catch (\Exception $e) {
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+        }
+    }
+
     public function receive($id){
         $this->setPageTitle("Receive Product");
         $this->setActiveMenu('production.production.index');
@@ -81,6 +91,22 @@ class ProductionController extends BackendController
     public function checkBarCode(Request $request, $id){
         $data = $this->service->checkBarCode($request, $id);
         return $data;
+    }
+
+    public function dispatch($id){
+        $this->setPageTitle("Production Dispatch");
+        $this->setActiveMenu('production.production.index');
+        $data = $this->service->dispatchData($id);
+        return $this->view('production.production._dispatch')->with($data);
+    }
+
+    public function dispatchStore(StoreProductionDispatchRequest $request, $id){
+        try {
+            $this->service->dispatchStoreData($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Dispatched successfully');
     }
 
 }

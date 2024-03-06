@@ -5,6 +5,8 @@ namespace App\Models\Production;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Products\FinishedGoods;
+use App\Models\Products\FinishedGoodsCategory;
+
 class PreProduction extends Model
 {
     use HasFactory;
@@ -17,6 +19,15 @@ class PreProduction extends Model
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
+    ];
+
+    const PROCESS_STATUS_PENDING = 0;
+    const PROCESS_STATUS_PROCESSING = 1;
+    const PROCESS_STATUS_COMPLETED = 2;
+    const PROCESSES = [
+        self::PROCESS_STATUS_PENDING => 'Pending',
+        self::PROCESS_STATUS_PROCESSING => 'Processing',
+        self::PROCESS_STATUS_COMPLETED => 'Completed',
     ];
 
     const DELIVERY_STATUS_PENDING = 0;
@@ -35,6 +46,15 @@ class PreProduction extends Model
         self::RECEIVED_STATUS_PENDING => 'Pending',
         self::RECEIVED_STATUS_DELIVERED => 'Received',
         self::RECEIVED_STATUS_PARTIAL => 'Partial',
+    ];
+
+    const DISPATCH_STATUS_PENDING = 0;
+    const DISPATCH_STATUS_DISPATCHED = 1;
+    const DISPATCH_STATUS_PARTIAL = 2;
+    const DISPATCHS = [
+        self::DISPATCH_STATUS_PENDING => 'Not Dispatched',
+        self::DISPATCH_STATUS_DISPATCHED => 'Dispatched',
+        self::DISPATCH_STATUS_PARTIAL => 'Partially Dispatched',
     ];
 
     const STATUS_INACTIVE = 0;
@@ -61,6 +81,7 @@ class PreProduction extends Model
         'estimated_production_qty',
         'notes',
         'is_verified',
+        'process_status',
         'delivery_status',
         'received_status',
         'dispatched_qty',

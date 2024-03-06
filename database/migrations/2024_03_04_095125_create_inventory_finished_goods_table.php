@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('finished_goods_category_id');
             $table->unsignedBigInteger('finished_goods_id')->index();
             $table->unsignedTinyInteger('type')->default(0)->comment('0=in,1=out');
-            $table->unsignedTinyInteger('reference_type')->default(0)->comment('0=receive from warehouse,1=sale etc');
+            $table->unsignedTinyInteger('reference_type')->default(0)->comment('0=receive from production house,1=sale etc');
             $table->unsignedBigInteger('reference_id')->nullable()->comment('id from respective table [0=production_dispatches] etc');
             $table->unsignedInteger('quantity')->default(0);
         });

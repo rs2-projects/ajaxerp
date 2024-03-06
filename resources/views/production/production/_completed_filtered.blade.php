@@ -55,7 +55,9 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="{{ route('production.production.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
+                                                @if($data->dispatched_status != $data::DISPATCH_STATUS_DISPATCHED)  
+                                                    <a class="dropdown-item" href="{{ route('production.production.dispatch-data', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Dispatch</a>
+                                                @endif
                                                 <a class="dropdown-item" href="{{ route('production.production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
 
                                             </div>

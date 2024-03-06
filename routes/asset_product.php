@@ -164,10 +164,13 @@ Route::group(['prefix' => 'production'], function () {
         Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
         Route::get('/{id}/get-document', [ProductionController::class, 'getDocument'])->name('production.production.get-design-document');
         Route::get('/{id}/details', [ProductionController::class, 'details'])->name('production.production.details');
+        Route::get('/{id}/change/{processId}/process-status/{status}', [ProductionController::class, 'changeProcessStatus'])->name('production.production.update-process-status');
         Route::get('/{id}/receive', [ProductionController::class, 'receive'])->name('production.production.receive');
         Route::post('/{id}/receive', [ProductionController::class, 'receiveStore'])->name('production.production.receive.store');
         Route::get('/{id}/get-deliveries', [ProductionController::class, 'getDeliveries'])->name('production.production.get-delivery-details');
         Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production.production.check-barcode');
+        Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data');
+        Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store');
     });
 });
 

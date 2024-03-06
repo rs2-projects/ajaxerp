@@ -37,7 +37,14 @@
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Process {{ $processKey + 1 }}</h4>
-                                <p class="rs-pre-completed-process">Completed Process</p>
+                                
+                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING)
+                                    <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a>
+                                @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
+                                    <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}" class="start-process-btn">Complete Process</a>
+                                @else
+                                    <p class="rs-pre-completed-process">Completed Process</p>
+                                @endif
                             </div>
                             <div class="production-machine-selection-wrapper d-flex flex-wrap p-de-box-wrapper">
                                 <div class="pms-item flex-48">

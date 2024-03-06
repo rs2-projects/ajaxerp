@@ -63,9 +63,10 @@
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
-                                            @foreach ($machines as $machine)
+                                            {{-- @foreach ($machines as $machine)
                                                 <option value="{{$machine->id}}">{{$machine->name}}</option>  
-                                            @endforeach
+                                            @endforeach --}}
+                                            <option v-for="machine in machines"  :value="machine.id" :key="machine.id">@{{machine.name}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -86,7 +87,7 @@
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
-                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step" v-model="materialSection.product_material_category_id" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option>Select Category</option>
                                                     {{-- @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -152,8 +153,8 @@
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Instruction <span class="text-danger">*</span></label>
-                                    <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control" required></textarea>
+                                    <label class="col-form-label">Instruction</label>
+                                    <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control"></textarea>
                                 </div>	
                             </div>
                         </div>
@@ -225,6 +226,7 @@
                 return {
                     processes: [],
                     categories: [],
+                    machines: []
                 };
             },
             computed: {
@@ -241,12 +243,15 @@
                         .then(response => {
                             const processes = response.data.processes;
                             const categories = response.data.categories;
-                            console.log(response.data.categories);
-                            //this.categories.push(response.data.categories);
-                            console.log(this.categories);
+                            const machines = response.data.machines;
                             categories.forEach((category) => {
                                 this.categories.push({
                                     ...category
+                                });
+                            });
+                            machines.forEach((machine) => {
+                                this.machines.push({
+                                    ...machine
                                 });
                             });
                             processes.forEach((process) => {
