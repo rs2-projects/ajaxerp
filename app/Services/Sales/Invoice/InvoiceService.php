@@ -33,7 +33,7 @@ class InvoiceService
     public function indexData()
     {
         $data['months'] = config('commonData.month_names');
-        $data['statuses'] = Invoice::INVOICE_STATUSES;
+        //$data['statuses'] = Invoice::INVOICE_STATUSES;
         return $data;
     }
     //filtered data

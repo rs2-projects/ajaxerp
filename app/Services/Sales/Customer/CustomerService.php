@@ -53,6 +53,8 @@ class CustomerService
     //store customer data
     public function store($request)
     {
+
+
         DB::beginTransaction();
         try {
 
@@ -61,7 +63,7 @@ class CustomerService
                 ->where('deleted', Customer::DELETED_NO)
                 ->first();
             if (!empty($duplicate_check)) {
-                throw new \Exception("Supplier already exists");
+                throw new \Exception("Customer already exists");
             }
 
             $image_path = null;
@@ -96,6 +98,11 @@ class CustomerService
             //store data into customer_bank table
             if (isset($request->bank_name) && is_array($request->bank_name) && count($request->bank_name) > 0) {
                 foreach ($request->bank_name as $key=>$bank) {
+                    if(($bank == null) || ($bank == '') ||
+                        ($request->account_name[$key] == null) || ($request->account_name[$key] == '') ||
+                        ($request->account_no[$key] == null) || ($request->account_no[$key] == '')){
+                        continue;
+                    }
                     $customer_bank = new CustomerBank();
                     $customer_bank->customer_id = $customer->id;
                     $customer_bank->bank_name = $bank;
@@ -115,6 +122,10 @@ class CustomerService
             //store data into customer_contact table
             if (isset($request->contact_name) && is_array($request->contact_name) && count($request->contact_name) > 0) {
                 foreach ($request->contact_name as $key=>$name) {
+                    if(
+                        ($name == null) || ($name == '')){
+                        continue;
+                    }
                     $customer_contact = new CustomerContact();
                     $customer_contact->customer_id = $customer->id;
                     $customer_contact->name = $name;

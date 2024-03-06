@@ -29,11 +29,14 @@
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <select class="select floating select2-box" id="status_filter">
                                                 <option value="">Select Invoice Status</option>
-                                                @foreach($statuses as $key=>$status)
+                                                <option value="{{ App\Models\Sales\Invoice::INVOICE_STATUS_PENDING }}">{{ App\Models\Sales\Invoice::INVOICE_STATUSES[App\Models\Sales\Invoice::INVOICE_STATUS_PENDING] }}</option>
+                                                <option value="{{ App\Models\Sales\Invoice::INVOICE_STATUS_PROCESSING }}">{{ App\Models\Sales\Invoice::INVOICE_STATUSES[App\Models\Sales\Invoice::INVOICE_STATUS_PROCESSING] }}</option>
+                                                <option value="{{ App\Models\Sales\Invoice::INVOICE_STATUS_DELIVERED }}">{{ App\Models\Sales\Invoice::INVOICE_STATUSES[App\Models\Sales\Invoice::INVOICE_STATUS_DELIVERED] }}</option>
+                                                {{--@foreach($statuses as $key=>$status)
                                                     <option value="{{ $key }}" >
                                                         {{ ucfirst($status) }}
                                                     </option>
-                                                @endforeach
+                                                @endforeach--}}
                                             </select>
 
                                         </div>

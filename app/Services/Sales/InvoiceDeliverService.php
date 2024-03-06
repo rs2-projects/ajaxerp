@@ -3,8 +3,10 @@
 namespace App\Services\Sales;
 
 
+use App\Models\Inventory\InventoryFinishedGoods;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
+use App\Models\Products\FinishedGoodsCategory;
 use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoiceDispatch;
@@ -48,14 +50,13 @@ class InvoiceDeliverService
 
     public function deliverStoreData($request, $id)
     {
-//        $invoice = Invoice::where('deleted', PreProduction::DELETED_NO)
-//            ->where('deleted', Invoice::DELETED_NO)
-//            ->where('id', $id)
-//            ->first();
-//        if(!$invoice){
-//            throw new \Exception('Invoice not found');
-//        }
-//        return $request->all();
+        $invoice = Invoice::where('deleted', PreProduction::DELETED_NO)
+            ->where('deleted', Invoice::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+        if(!$invoice){
+            throw new \Exception('Invoice not found');
+        }
 
         DB::beginTransaction();
         try {
@@ -72,7 +73,6 @@ class InvoiceDeliverService
 
             $invoiceDispatchDetails = [];
             if (isset($request->invoice_details_id)) {
-
                 foreach ($request->invoice_details_id as $key => $id) {
                     if($request->invoice_details_id != '' && $request->finished_good_id !='' && $request->barcode_count[$key] > 0){
 
@@ -86,7 +86,19 @@ class InvoiceDeliverService
                         $dispatch_detail->updated_by = auth()->id();
                         $dispatch_detail->updated_at = Carbon::now();
                         $dispatch_detail->save();
-
+                        //update inventory
+                        $finished_goods_category  =  FinishedGoodsCategory::where('deleted',FinishedGoodsCategory::DELETED_NO)
+                            ->where('status',FinishedGoodsCategory::STATUS_ACTIVE)
+                            ->first();
+                        $inventory_finished_good = new InventoryFinishedGoods();
+                        $inventory_finished_good->finished_goods_category_id = $finished_goods_category->id;
+                        $inventory_finished_good->finished_goods_id = $request->finished_good_id[$key];
+                        $inventory_finished_good->type = 1;
+                        $inventory_finished_good->reference_type = 1;
+                        $inventory_finished_good->reference_id = $dispatch_detail->id;
+                        $inventory_finished_good->quantity = $request->barcode_count[$key];
+                        $inventory_finished_good->save();
+                        //update invoice details
                         $invoice_details = InvoiceDetails::where('deleted',Invoice::DELETED_NO)
                             ->where('id', $id)
                             ->first();
@@ -111,7 +123,7 @@ class InvoiceDeliverService
 
             }
                 if (isset($request->pre_production_id) && is_array($request->pre_production_id)) {
-                    foreach ($request->pre_production_id as $pre_production_ids) {
+                    foreach ($request->pre_production_id as $key => $pre_production_ids) {
                         $invoiceDispatchDetail = $invoiceDispatchDetails[$key];
                         if(!is_array($pre_production_ids)) {
                             continue;
@@ -137,7 +149,7 @@ class InvoiceDeliverService
                         }
                     }
                 }
-//
+
         }catch(\Exception $e){
             DB::rollBack();
             throw new \Exception($e->getMessage());

@@ -6,7 +6,6 @@
             <th class="erp-th">Invouce No. </th>
             <th class="erp-th text-center">Customer </th>
             <th class="erp-th text-center">Design </th>
-            <th class="erp-th text-center">Status </th>
             <th class="erp-th text-center">Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
@@ -37,13 +36,6 @@
                 <a href="#" class="document-view-status-btn" onclick="showDesign({{ $invoice->id }})">
                     <img src="{{ asset('/') }}assets/img/product/documents.png" alt="" class="document-img-box"><small>View</small>
                 </a>
-            </td>
-
-            <td class="erp-tbody-td text-center">
-                <div class="design-upload-revael-box">
-                    <button class="dur-btn">Submit To Production</button>
-                </div>
-
             </td>
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().$invoice->payable_amount }}</h4>
