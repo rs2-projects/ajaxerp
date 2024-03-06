@@ -34,4 +34,5 @@ class InventoryFinishedGoods extends Model
         'reference_id',
         'quantity',
     ];
+
 }

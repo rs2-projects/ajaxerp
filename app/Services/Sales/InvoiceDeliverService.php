@@ -2,9 +2,7 @@
 
 namespace App\Services\Sales;
 
-
 use App\Models\Inventory\InventoryFinishedGoods;
-use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
 use App\Models\Products\FinishedGoodsCategory;
 use App\Models\Sales\Invoice;
@@ -13,7 +11,6 @@ use App\Models\Sales\InvoiceDispatch;
 use App\Models\Sales\InvoiceDispatchDetails;
 use App\Models\Sales\InvoiceDispatchDetailsProduction;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceDeliverService
@@ -45,7 +42,6 @@ class InvoiceDeliverService
         ->where('status', PreProduction::STATUS_ACTIVE)
         ->first();
         return $data;
-
     }
 
     public function deliverStoreData($request, $id)
@@ -93,8 +89,8 @@ class InvoiceDeliverService
                         $inventory_finished_good = new InventoryFinishedGoods();
                         $inventory_finished_good->finished_goods_category_id = $finished_goods_category->id;
                         $inventory_finished_good->finished_goods_id = $request->finished_good_id[$key];
-                        $inventory_finished_good->type = 1;
-                        $inventory_finished_good->reference_type = 1;
+                        $inventory_finished_good->type = InventoryFinishedGoods::TYPE_OUT;
+                        $inventory_finished_good->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_SALE;
                         $inventory_finished_good->reference_id = $dispatch_detail->id;
                         $inventory_finished_good->quantity = $request->barcode_count[$key];
                         $inventory_finished_good->save();
@@ -104,9 +100,9 @@ class InvoiceDeliverService
                             ->first();
                         $invoice_details->dispatched_qty = $request->barcode_count[$key];
                         if ($invoice_details->dispatched_qty!=0 && $invoice_details->quantity>$invoice_details->dispatched_qty){
-                            $invoice_details->dispatched = 2;
+                            $invoice_details->dispatched = InvoiceDetails::DISPATCHED_PARTIALLY;
                         }elseif ($invoice_details->quantity==$invoice_details->dispatched_qty){
-                            $invoice_details->dispatched = 1;
+                            $invoice_details->dispatched = InvoiceDetails::DISPATCHED_YES;
                         }
                         $invoice_details->dispatched_qty= $request->barcode_count[$key];
                         $invoice_details->save();
@@ -141,10 +137,10 @@ class InvoiceDeliverService
                             $preProduction->available_qty = $preProduction->available_qty - $qty;
                             $preProduction->save();
                             $dispatch_details_production->quantity = $qty;
-                            $dispatch_detail->created_by = auth()->id();
-                            $dispatch_detail->created_at = Carbon::now();
-                            $dispatch_detail->updated_by = auth()->id();
-                            $dispatch_detail->updated_at = Carbon::now();
+                            $dispatch_details_production->created_by = auth()->id();
+                            $dispatch_details_production->created_at = Carbon::now();
+                            $dispatch_details_production->updated_by = auth()->id();
+                            $dispatch_details_production->updated_at = Carbon::now();
                             $dispatch_details_production->save();
                         }
                     }
