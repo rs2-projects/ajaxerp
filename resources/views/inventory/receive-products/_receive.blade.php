@@ -65,7 +65,7 @@
                                                             <div class="input-block erp-step-input-block mb-0">
                                                                 <label class="col-form-label">Receive QTY</label>
                                                                 <input
-																	name="dispatched_qty"
+																	name="received_qty"
                                                                     class="form-control text-left bar-code-input"
                                                                     type="number"
                                                                     min="0"

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventory\FinishedGood\StoreProductReceiveRequest;
 use App\Services\Inventory\ReceiveProductService;
 use Illuminate\Http\Request;
 

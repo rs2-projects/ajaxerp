@@ -10,7 +10,7 @@
                             <th class="erp-th">Dispatch Code </th>
                             <th class="erp-th text-center">Dispatched QTY </th>
                             <th class="erp-th text-center">Received QTY </th>
-                            <th class="erp-th text-center">Dispatched At </th>
+                            <th class="erp-th text-center">Received At </th>
                             <th class="erp-th text-center">Action </th>
                         </tr>
                     </thead>
@@ -41,7 +41,7 @@
                                     <h4 class="text-center d-table-title">{{$data->received_qty}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{ getFormattedDate($data->dispatched_at, 'd M, Y') }}</h4>
+                                    <h4 class="text-center d-table-title">{{ getFormattedDate($data->received_at, 'd M, Y') }}</h4>
                                 </td>
                                 <td class="text-end erp-tbody-td">
                                     <div class="erp-action-t">
