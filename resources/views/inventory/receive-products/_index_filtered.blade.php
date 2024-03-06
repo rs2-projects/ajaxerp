@@ -45,7 +45,6 @@
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 <a class="dropdown-item" href="{{ route('inventory.receive-product.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
-
                                             </div>
                                         </div>
                                     </div>

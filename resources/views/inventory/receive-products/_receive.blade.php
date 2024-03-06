@@ -4,19 +4,19 @@
     <div class="row" id="VueApp">
 		<div class="erp-employee-list-wrapper">
 			<div class="new-production-wrapper bg-card attd-table">
-				<form action="{{route('production.production.dispatch.store', $pre_production->id)}}" id="dispatchStoreForm" method="post">
+				<form action="{{route('inventory.receive-product.receive.store', $dispatch->id)}}" id="productReceiveStoreForm" method="post">
 					@csrf
 					<div class="product-general-info-box d-flex flex-wrap pd-box">
 						<div class="pgib-item flex-32 pd-item">
 							<div class="input-block erp-step-input-block mb-0">
 								<label class="col-form-label">Order Details</label>
-								<h4>{{$pre_production->order_details}}</h4>
+								<h4>{{$dispatch->pre_production->order_details}}</h4>
 							</div>
 						</div>
 						<div class="pgib-item flex-100 pd-item">
 							<div class="input-block erp-step-input-block mb-0">
 								<label class="col-form-label">Description</label>
-								<p>{{$pre_production->description ?? 'N/A'}}</p>
+								<p>{{$dispatch->pre_production->description ?? 'N/A'}}</p>
 							</div>
 						</div>
 					</div>
@@ -32,15 +32,15 @@
                                                         <div class="pgib-item pd-item">
                                                             <div class="input-block erp-step-input-block mb-0">
                                                                 <label class="col-form-label">Finished Product</label>
-                                                                <h4>{{$pre_production->finishedGoods->name}}</h4>
+                                                                <h4>{{$dispatch->pre_production->finishedGoods->name}}</h4>
                                                             </div>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="pgib-item pd-item">
                                                             <div class="input-block erp-step-input-block mb-0">
-                                                                <label class="col-form-label">Estimated Output QTY </label>
-                                                                <h4>{{$pre_production->estimated_production_qty}}</h4>
+                                                                <label class="col-form-label">Dispatch QTY </label>
+                                                                <h4>{{$dispatch->dispatched_qty}}</h4>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -63,13 +63,13 @@
                                                     <td>
                                                         <div class="pgib-item pd-item">
                                                             <div class="input-block erp-step-input-block mb-0">
-                                                                <label class="col-form-label">Delivery QTY</label>
+                                                                <label class="col-form-label">Receive QTY</label>
                                                                 <input
 																	name="dispatched_qty"
                                                                     class="form-control text-left bar-code-input"
                                                                     type="number"
                                                                     min="0"
-                                                                    max="{{$pre_production->estimated_production_qty - $pre_production->dispatched_qty}}"
+                                                                    max="{{$dispatch->dispatched_qty - $dispatch->received_qty}}"
                                                                     required
                                                                     />
                                                             </div>
@@ -84,7 +84,7 @@
 						</div>
 					</div>
 					<div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-						<button class=" erp-search-btn text-center" type="submit">Dispatch</button>
+						<button class=" erp-search-btn text-center" type="submit">Receive</button>
 					</div>
 				</form>
 			</div>
@@ -107,8 +107,7 @@
 @endsection
 
 @section('js_plugins')
-	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 @endsection
 
 @section('js')
@@ -119,8 +118,7 @@
         });
 	});
 
-	$("#dispatchStoreForm").submit(function(e) {
-		console.log("submitted");
+	$("#productReceiveStoreForm").submit(function(e) {
 		e.preventDefault();
 		var formData = new FormData($(this)[0]);
 		var url = $(this).attr('action');
@@ -128,7 +126,7 @@
 			if(res.status == 200){
 				showSuccessAlert('Success',res.message)
 				setTimeout(function () {
-					window.location.href = "{{route('production.production.index')}}";
+					window.location.href = "{{route('inventory.receive-product.index')}}";
 				}, 1000);
 			}else{
 				showErrorAlert('Error',res.message)

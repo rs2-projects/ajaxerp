@@ -35,7 +35,8 @@ use Illuminate\Support\Facades\Route;
     Route::group(['prefix' => 'receive-products'], function () {
         Route::get('/', [ReceiveProductController::class, 'index'])->name('inventory.receive-product.index');
         Route::post('/filtered', [ReceiveProductController::class, 'indexFiltered'])->name('inventory.receive-product.filtered');
-        Route::get('/', [ReceiveProductController::class, 'receive'])->name('inventory.receive-product.receive');
+        Route::get('/{id}/receive', [ReceiveProductController::class, 'receive'])->name('inventory.receive-product.receive');
+        Route::post('/{id}/dispatch', [ReceiveProductController::class, 'receiveStore'])->name('inventory.receive-product.receive.store');
     });
  });
 //Finished Good Route End

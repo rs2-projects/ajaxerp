@@ -27,11 +27,27 @@ class ReceiveProductController extends BackendController
 
     public function indexFiltered(Request $request)
     {   
-        // try {
+        try {
             $data = $this->service->indexFilteredData($request);
             return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
-        // }catch (\Exception $e) {
-        //     return $this->returnAjaxError([],$e->getMessage());
-        // }
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function receive($id){
+        $this->setPageTitle("Receive Products");
+        $this->setActiveMenu('inventory.receive-products.index');
+        $data = $this->service->receiveData($id);
+        return $this->view('inventory.receive-products._receive')->with($data);
+    }
+
+    public function receiveStore(StoreProductReceiveRequest $request, $id){
+        try {
+            $this->service->receiveStoreData($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Dispatched successfully');
     }
 }

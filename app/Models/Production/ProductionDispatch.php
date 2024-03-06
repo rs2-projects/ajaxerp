@@ -52,4 +52,9 @@ class ProductionDispatch extends Model
     {
         return $this->belongsTo(FinishedGoods::class, 'finished_goods_id', 'id');
     }
+
+    public function pre_production()
+    {
+        return $this->belongsTo(PreProduction::class, 'pre_production_id', 'id');
+    }
 }
