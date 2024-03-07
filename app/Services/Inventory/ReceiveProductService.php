@@ -2,7 +2,9 @@
 
 namespace App\Services\Inventory;
 
+use App\Models\Inventory\InventoryFinishedGoods;
 use App\Models\Production\ProductionDispatch;
+use App\Models\Products\FinishedGoodsCategory;
 use Illuminate\Support\Facades\DB;
 
 class ReceiveProductService
@@ -111,6 +113,18 @@ class ReceiveProductService
             $dispatch->received_by = auth()->user()->id;
             $dispatch->received_at = now();
             $dispatch->save();
+
+            $finished_goods_category = FinishedGoodsCategory::find($dispatch->finished_goods_id);
+            $finished_good_cateagory_id = $finished_goods_category->id ??0;
+
+            $finished_goods = new InventoryFinishedGoods();
+            $finished_goods->finished_goods_category_id = $finished_good_cateagory_id;
+            $finished_goods->finished_goods_id = $dispatch->finished_goods_id;
+            $finished_goods->type = InventoryFinishedGoods::TYPE_IN;
+            $finished_goods->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_PRODUCTION;
+            $finished_goods->reference_id = $dispatch->id;
+            $finished_goods->quantity = $request->received_qty;
+            $finished_goods->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
