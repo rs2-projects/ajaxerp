@@ -2,7 +2,6 @@
 
 namespace App\Services\Production\Production;
 
-use App\Models\Inventory\InventoryFinishedGoods;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
@@ -10,7 +9,6 @@ use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\ProductionDispatch;
-use App\Models\Products\FinishedGoodsCategory;
 use Illuminate\Support\Facades\DB;
 
 class ProductionService
@@ -413,9 +411,6 @@ class ProductionService
             if($request->dispatched_qty > ($pre_production->estimated_production_qty - $pre_production->dispatched_qty) || $request->dispatched_qty == 0){
                 throw new \Exception('Invalid Quantity!');
             }
-
-            $finished_goods_category = FinishedGoodsCategory::find($pre_production->finished_goods_id);
-            $finished_good_cateagory_id = $finished_goods_category->id ??0;
             
             $pre_production->dispatched_qty += $request->dispatched_qty;
             $pre_production->updated_by = auth()->user()->id;
@@ -444,15 +439,6 @@ class ProductionService
             $dispatch->save();
             $dispatch->dispatch_no = 1000 + $dispatch->id;
             $dispatch->save();
-
-            $finished_goods = new InventoryFinishedGoods();
-            $finished_goods->finished_goods_category_id = $finished_good_cateagory_id;
-            $finished_goods->finished_goods_id = $pre_production->finished_goods_id;
-            $finished_goods->type = InventoryFinishedGoods::TYPE_IN;
-            $finished_goods->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_PRODUCTION;
-            $finished_goods->reference_id = $dispatch->id;
-            $finished_goods->quantity = $request->dispatched_qty;
-            $finished_goods->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
