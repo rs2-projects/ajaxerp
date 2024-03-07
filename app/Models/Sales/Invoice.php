@@ -11,6 +11,14 @@ class Invoice extends Model
 
     protected $table = 'invoices';
     public $timestamps = false;
+
+    //status const
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [
+        self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
     //Discount type const
     const DISCOUNT_TYPE_PERCENTAGE = 0;
     const DISCOUNT_TYPE_FIXED_AMOUNT = 1;
@@ -30,13 +38,13 @@ class Invoice extends Model
     ];
     //Invoice status const
     const INVOICE_STATUS_PENDING = 0;
-    const INVOICE_STATUS_PROCESSING = 1;
-    const INVOICE_STATUS_DELIVERED = 2;
+    const INVOICE_STATUS_DELIVERED = 1;
+    const INVOICE_STATUS_PROCESSING = 2;
     const INVOICE_STATUS_CANCELLED = 3;
     const INVOICE_STATUSES = [
         self::INVOICE_STATUS_PENDING => 'Pending',
-        self::INVOICE_STATUS_PROCESSING => 'On Process',
         self::INVOICE_STATUS_DELIVERED => 'Delivered',
+        self::INVOICE_STATUS_PROCESSING => 'Partially Delivered',
         self::INVOICE_STATUS_CANCELLED => 'Cancelled',
     ];
     //Delete status const

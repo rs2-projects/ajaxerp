@@ -115,7 +115,7 @@
                     </li>
                             @if(hasPermission('view-asset-product-purchase-request','create-asset-product-purchase-request','manage-asset-product-purchase-request','view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment'))
                                 <li class="submenu">
-                                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "> <span>Assets</span> <span
+                                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "><i class="la la-stack-exchange"></i> <span>Assets</span> <span
                                             class="menu-arrow"></span></a>
                                     <ul>
                                         @if(hasPermission('create-asset-product-purchase-request'))
@@ -125,14 +125,14 @@
                                             <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.admin.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request Manage</span></a></li>
                                         @endif
                                         @if(hasPermission( 'view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment' ))
-                                            <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <span>Purchase Order(P.O)</span></a></li>
+                                            <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <i class="la la-truck"></i><span>Purchase Order(P.O)</span></a></li>
                                         @endif
                                     </ul>
                                 </li>
                             @endif
                             @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
                                 <li class="submenu">
-                                    <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Production Materials</span> <span
+                                    <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <i class="la la-user-md"></i><span>Production Materials</span> <span
                                             class="menu-arrow"></span></a>
                                     <ul>
                                         @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
@@ -143,7 +143,7 @@
                             @endif
                             @if(hasPermission( 'view-suppliers','manage-suppliers'))
                                 <li>
-                                    <a href="{{ route('procurement.supplier.index') }}" class="{{ ($activeMenu == 'procurement.supplier.index') ? 'active' : '' }}"> <span>Suppliers</span></a>
+                                    <a href="{{ route('procurement.supplier.index') }}" class="{{ ($activeMenu == 'procurement.supplier.index') ? 'active' : '' }}">  <i class="la la-truck"></i><span>Suppliers</span></a>
                                 </li>
                             @endif
                 @endif
