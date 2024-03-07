@@ -234,7 +234,7 @@
 
 @section('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             initSectionMultipleSelect();
             initRackMultipleSelect();
@@ -247,11 +247,11 @@
                 var url = $(self).attr('action');
 
                 formPost(url, formData, function (res) {
-                    if(res.status == 200){
-                        showSuccessAlert('Success',res.message)
+                    if (res.status == 200) {
+                        showSuccessAlert('Success', res.message)
                         window.location.href = "{{ route('inventory.product-material.index') }}";
-                    }else{
-                        showErrorAlert('Error',res.message)
+                    } else {
+                        showErrorAlert('Error', res.message)
                     }
                 }, 'show_input_error');
             });
@@ -264,30 +264,31 @@
 
         function validateCustomForm(form) {
             var tab1Fields = $(form).find(':input[required]');
-            tab1Fields.each(function() {
+            tab1Fields.each(function () {
                 if (!$(this).val()) {
                     let inputName = $(this).attr('name');
                     inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
                     inputName = inputName.replace(" Id", '');
-                    showInfoAlert(inputName,'required');
+                    showInfoAlert(inputName, 'required');
                 }
             });
 
             let sections = $("#sections_id").val();
-            if(sections.length < 1) {
-                showInfoAlert('Sections','required');
+            if (sections.length < 1) {
+                showInfoAlert('Sections', 'required');
             }
 
             let racks = $("#racks_id").val();
-            if(racks.length < 1) {
-                showInfoAlert('Racks','required');
+            if (racks.length < 1) {
+                showInfoAlert('Racks', 'required');
 
+            }
         }
 
-        function changeWarehouse(select){
+        function changeWarehouse(select) {
             let warehouse_id = $(select).val();
             let url = "{{ route('inventory.product-material.get-sections-by-warehouse') }}";
-            ajaxGet(url, {warehouse_id:warehouse_id}, function (response) {
+            ajaxGet(url, {warehouse_id: warehouse_id}, function (response) {
                 if (response.status == 200) {
                     $("#sections_id").html(response.view);
                     initSectionMultipleSelect();
@@ -297,11 +298,12 @@
             });
 
         }
-        function changeSections(select){
+
+        function changeSections(select) {
 
             let section_ids = $(select).val();
             let url = "{{ route('inventory.product-material.get-racks-by-sections') }}";
-            ajaxGet(url, {section_ids:section_ids}, function (response) {
+            ajaxGet(url, {section_ids: section_ids}, function (response) {
                 if (response.status == 200) {
                     $("#racks_id").html(response.view);
                     initRackMultipleSelect();
@@ -311,7 +313,7 @@
             });
         }
 
-        function initSectionMultipleSelect(){
+        function initSectionMultipleSelect() {
             $('#sections_id').multipleSelect({
                 filter: true,
                 placeholder: 'Select Sections',
@@ -319,13 +321,14 @@
                 filterPlaceholder: 'Search Sections',
                 selectAll: true,
                 onOpen: function () {
-                    $(".section-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                    $(".section-multiselect .ms-drop ul>li:first-child label").contents().filter(function () {
                         return this.nodeType === 3;
                     }).replaceWith("Select All Sections");
                 },
             });
         }
-        function initRackMultipleSelect(){
+
+        function initRackMultipleSelect() {
             $('#racks_id').multipleSelect({
                 filter: true,
                 placeholder: 'Select Subsection',
@@ -333,7 +336,7 @@
                 filterPlaceholder: 'Search Racks',
                 selectAll: true,
                 onOpen: function () {
-                    $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                    $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function () {
                         return this.nodeType === 3;
                     }).replaceWith("Select All Subsections");
                 },
