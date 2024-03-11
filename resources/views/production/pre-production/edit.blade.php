@@ -63,18 +63,15 @@
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
-                                            {{-- @foreach ($machines as $machine)
-                                                <option value="{{$machine->id}}">{{$machine->name}}</option>  
-                                            @endforeach --}}
-                                            <option v-for="machine in machines"  :value="machine.id" :key="machine.id">@{{machine.name}}</option>
+                                            <option v-for="machine in machines"  :value="machine.id" :key="machine.id" :selected="process.process_machine_ids?.includes(machine.id)">@{{machine.name}}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
-                                        <select class="process-multiselect" multiple="multiple">
-                                            <option v-for="(process, idx) in processes.slice(0, index)" :key="idx">Process @{{ idx + 1 }}</option>
+                                        <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
+                                            <option v-for="(innerProcess, idx) in processes.slice(0, index)" :selected="processSelectedIndexes(process).includes(idx)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -87,12 +84,9 @@
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
-                                                <select class="select select-step" v-model="materialSection.product_material_category_id" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option>Select Category</option>
-                                                    {{-- @foreach ($categories as $category)
-                                                        <option value="{{$category->id}}">{{$category->name}}</option>
-                                                    @endforeach --}}
-                                                    <option v-for="category in categories"  :value="category.id" :key="category.id">@{{category.name}}</option>
+                                                    <option v-for="category in categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -101,7 +95,8 @@
                                                 <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
                                                 <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
-                                                    <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
+                                                    <option v-for="product in processes[index].materialSections[materialIndex].products"
+                                                        :selected="product.id == materialSection.product_material_id" :key="product.id" :value="product.id">
                                                         @{{ product.name }}
                                                     </option>
                                                 </select>
@@ -226,14 +221,15 @@
                 return {
                     processes: [],
                     categories: [],
-                    machines: []
+                    machines: [],
+                    process_indexes: [],
                 };
             },
             computed: {
 
             },
             methods: {
-                getProcesses() {
+                getProcesses(initialLoad = false) {
                     var currentUrl = window.location.href;
                     var id = currentUrl.split('/').slice(-2, -1)[0];
                     let url = "{{route('production.pre-production.get-all-processes', ':id')}}";
@@ -244,6 +240,8 @@
                             const processes = response.data.processes;
                             const categories = response.data.categories;
                             const machines = response.data.machines;
+                            this.process_indexes = response.data.process_indexes;
+
                             categories.forEach((category) => {
                                 this.categories.push({
                                     ...category
@@ -271,14 +269,36 @@
                                         quantity: output.quantity,
                                     };
                                 });
+                                
+                                const process_machine_ids = process.process_machines.map(machine => machine.machine_id);
+
+                                const previous_process_ids = process.previous_process.map(pp => pp.process_id);
+
                                 this.processes.push({
                                     index: processes.length,
                                     process_id: process.id,
                                     process_instruction:  process.instruction,
                                     materialSections: materials,
-                                    estimatedOutputs: estimated_output
+                                    estimatedOutputs: estimated_output,
+                                    process_machine_ids: process_machine_ids,
+                                    previous_process_ids: previous_process_ids
                                 });
                             });
+
+                            if(initialLoad === true) {
+                                this.processes.forEach((process, processIndex) => {
+                                    process.materialSections.forEach((materialSection, materialIndex) => {
+                                        const categoryId = materialSection.product_material_category_id;
+                                        if (categoryId) {
+                                            this.getMaterialProducts(categoryId, processIndex, materialIndex);
+                                        }
+                                    });
+                                });
+
+                                initMaterialProductMultipleSelect();
+                                initAssteProductMultipleSelect(); 
+                                initSelect2(); 
+                            }
                         })
                         .catch(error => {
                             console.error('Error fetching processes:', error);
@@ -357,13 +377,31 @@
                         preProductionFormSubmit();
                     }
                 },
+                processSelectedIndexes(process) {
+                    let process_ids = this.process_indexes;
+                    let previous_process_ids = process.previous_process_ids;
+                    let indexes = [];
+
+                    previous_process_ids.forEach(id => {
+                        if (id in process_ids) {
+                            indexes.push(process_ids[id]);
+                        }
+                    });
+                    return indexes;
+                }
             },
             mounted () {
-                this.getProcesses();
-                initMaterialProductMultipleSelect();
-                initAssteProductMultipleSelect();
-                initSelect2();
+                this.getProcesses(true);
+                this.$nextTick(() => {
+                    setTimeout(function() {
+                        initMaterialProductMultipleSelect();
+                        initAssteProductMultipleSelect(); 
+                        initSelect2(); 
+                    }, 100);
+                    
+                });
             }
+
 
         }).mount('#VueApp');
 
@@ -422,7 +460,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        //window.location.href = "{{route('production.pre-production.index')}}";
+                        window.location.href = "{{route('production.pre-production.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)

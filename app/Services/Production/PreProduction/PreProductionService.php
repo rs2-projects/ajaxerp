@@ -256,7 +256,7 @@ class PreProductionService
     }
 
     public function getProcessData($id){
-        $data['processes'] = PreProductionProcess::with('materials', 'estimated_output')
+        $data['processes'] = PreProductionProcess::with('materials', 'estimated_output', 'processMachines', 'previousProcess')
             ->where('deleted', PreProductionProcess::DELETED_NO)
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
@@ -271,6 +271,13 @@ class PreProductionService
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
+
+        $process_ids = PreProductionProcess::where('pre_production_id', $id)
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->pluck('id')->toArray();
+        $data['process_indexes'] = array_flip($process_ids);
+        
         return $data;
     }
 
@@ -311,6 +318,7 @@ class PreProductionService
             $pre_production->save();
 
             $uniqueProductMaterials = [];
+            $processes = [];
 
             if (isset($request->pre_production_process_id) && is_array($request->pre_production_process_id) && count($request->pre_production_process_id) > 0) {
                 
@@ -332,6 +340,24 @@ class PreProductionService
                             $process->updated_by = auth()->user()->id;
                             $process->updated_at = Carbon::now();
                             $process->save();
+
+                            // previous processes
+                            PreProductionProcessPreviousProcess::where('pre_production_id', $pre_production->id)
+                                    ->where('pre_production_process_id', $process_id)->delete();
+                                    
+                            $processes[$key] = $process->id;
+                            if (isset($request->previous_process[$key]) && is_array($request->previous_process[$key]) && count($request->previous_process[$key]) > 0) {
+                                foreach ($request->previous_process[$key] as $previous_process_key) {
+                                    $previous_process_id = $processes[$previous_process_key];
+                                    if($previous_process_id != ""){
+                                        $previous_process = new PreProductionProcessPreviousProcess();
+                                        $previous_process->pre_production_id = $pre_production->id;
+                                        $previous_process->pre_production_process_id = $process->id;
+                                        $previous_process->process_id = $previous_process_id;
+                                        $previous_process->save();
+                                    }
+                                }
+                            }
 
                             //update machines
                             if (isset($request->machine_id[$key]) && is_array($request->machine_id[$key]) && count($request->machine_id[$key]) > 0) {
@@ -470,6 +496,21 @@ class PreProductionService
                         $process->updated_by = auth()->user()->id;
                         $process->updated_at = Carbon::now();
                         $process->save();
+
+                        // previous processes
+                        $processes[$key] = $process->id;
+                        if (isset($request->previous_process[$key]) && is_array($request->previous_process[$key]) && count($request->previous_process[$key]) > 0) {
+                            foreach ($request->previous_process[$key] as $previous_process_key) {
+                                $previous_process_id = $processes[$previous_process_key];
+                                if($previous_process_id != ""){
+                                    $previous_process = new PreProductionProcessPreviousProcess();
+                                    $previous_process->pre_production_id = $pre_production->id;
+                                    $previous_process->pre_production_process_id = $process->id;
+                                    $previous_process->process_id = $previous_process_id;
+                                    $previous_process->save();
+                                }
+                            }
+                        }
 
                         //create process machines
                         if (isset($request->machine_id[$key]) && is_array($request->machine_id[$key]) && count($request->machine_id[$key]) > 0) {
