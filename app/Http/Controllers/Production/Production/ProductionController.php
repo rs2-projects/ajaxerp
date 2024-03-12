@@ -57,9 +57,11 @@ class ProductionController extends BackendController
     public function changeProcessStatus($id,$processId, $status){
         try {
             $this->service->statusUpdateData($id, $processId, $status);
-            return redirect()->back()->with(['success' => 'Status Updated Successfully']);
+            // return redirect()->back()->with(['success' => 'Status Updated Successfully']);
+            return $this->returnAjaxSuccess([], 'Status Updated Successfully');
         }catch (\Exception $e) {
-            return redirect()->back()->with(['failed' => $e->getMessage()]);
+            // return redirect()->back()->with(['failed' => $e->getMessage()]);
+            return $this->returnAjaxError([], $e->getMessage());
         }
     }
 
@@ -76,7 +78,7 @@ class ProductionController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
-        return $this->returnAjaxSuccess([], 'Delivered successfully');
+        return $this->returnAjaxSuccess([], 'Received successfully');
     }
 
     public function getDeliveries($id){

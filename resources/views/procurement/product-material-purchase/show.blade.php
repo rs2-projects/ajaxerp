@@ -168,7 +168,7 @@
                                                 <div class="po-vat-tax-item">
                                                     <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3 view-purchase-i-two">
                                                         <label class="col-form-label">Vat </label>
-                                                        <h4>{{ $item->tax->name }} {{ $item->tax->tax_rate }}%</h4>
+                                                        <h4>{{ $item->tax?->name }} {{ $item->tax?->tax_rate }}%</h4>
                                                     </div>
                                                 </div>
                                                 <div class="po-vat-tax-item">

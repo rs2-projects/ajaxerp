@@ -45,7 +45,7 @@
                                 {{-- <input type="hidden" id="pre_production_material_delivery_id" name="pre_production_id" value="{{$pre_production->id}}">  --}}
                                 <div class="pd-table-box-item">
                                     <div class="pd-deliver-date-box">
-                                        <p>Delivery: <span>@{{ deliverData.delivery_date }}</span></p>
+                                        <p>Delivery: <span>@{{ formatDate(deliverData.delivery_date) }}</span></p>
                                     </div>
                                     <div class="my-attendance-report-wrapper">
                                         <div class="big-table">
@@ -58,6 +58,7 @@
                                                                 <th class="erp-th text-center">Item Name </th>
                                                                 <th class="erp-th text-center">Qty </th>
                                                                 <th class="erp-th text-center">Delivery Qty</th>
+                                                                <th class="erp-th text-center">Received Qty</th>
                                                                 <th class="text-center erp-th">Pending Receive</th>
                                                                 <th class="text-center erp-th">QR Code</th>
                                                                 <th class="text-center erp-th">Items Received</th>
@@ -79,6 +80,9 @@
                                                                     <h4 class="text-center d-table-title">@{{detailsData.quantity}}</h4>
                                                                 </td>
                                                                 <td class="erp-tbody-td text-center">
+                                                                    <h4 class="text-center d-table-title">@{{detailsData.received_qty}}</h4>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
                                                                     <div class="pd-recived-product-wrapper">
                                                                         <div class="pre-counter">
                                                                             <span>@{{detailsData.quantity}}</span>
@@ -93,7 +97,11 @@
                                                                     </div>
                                                                 </td>
                                                                 <td class="erp-tbody-td text-center">
-                                                                    <div class="pd-input-box">
+                                                                    {{-- if quantity-received_qtn > 0 show this --}}
+                                                                    <div v-if="detailsData.received_qty === detailsData.quantity">
+                                                                        <h4 class="text-center d-table-title approved-status">Received</h4>
+                                                                    </div>
+                                                                    <div class="pd-input-box" v-else>
                                                                         <input
                                                                             class="form-control text-center bar-code-input"
                                                                             type="text"
@@ -101,6 +109,7 @@
                                                                             @keydown.enter.prevent="handleBarcodeScan($event, deliverData.id, detailsData.id, deliverIndex, detailsIndex, detailsData.material.product.id)"
                                                                             />
                                                                     </div>
+                                                                    {{-- otherwise show fully received text --}}
                                                                 </td>
 
                                                                 <td class="erp-tbody-td text-center">
@@ -261,6 +270,16 @@
                             detail.scannedBarcodes = [];
                             detail.barcodeCounts = 0;
                         });
+                    },
+                    formatDate(dateString) {
+                        const options = { year: 'numeric', month: 'short', day: '2-digit' };
+                        return new Date(dateString).toLocaleDateString('en-US', options);
+                    },
+                    updateReceivedQty(deliveryIndex) {
+                        const delivery = this.deliveries[deliveryIndex];
+                        delivery.delivery_details.forEach(detail => {
+                            detail.received_qty += detail.barcodeCounts;
+                        });
                     }
                 },
                 mounted() {
@@ -276,6 +295,8 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message);
+                        console.log(vueApp.deliveries[deliveryIndex]);
+                        vueApp.updateReceivedQty(deliveryIndex);
                         vueApp.clearScaneedCodes(deliveryIndex);
                     }else{
                         showErrorAlert('Error',res.message)

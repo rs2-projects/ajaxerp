@@ -39,9 +39,11 @@
                                 <h4>Process {{ $processKey + 1 }}</h4>
                                 
                                 @if($processData->process_status == $processData::PROCESS_STATUS_PENDING)
-                                    <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a>
+                                <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                    {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a> --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}" class="start-process-btn">Complete Process</a>
+                                    {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}" class="start-process-btn">Complete Process</a> --}}
+                                    <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="start-process-btn">Complete Process</a>
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif
@@ -162,7 +164,35 @@
 
 @section('js')
     <script>
-        
+        function changeStatus(uri) {
+           console.log(uri);
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to update process status?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(
+                        uri,
+                        {},
+                        function (response) {
+                          if (response.status == 200){
+                            toastr.success(response.message);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                          }else{
+                            toastr.error(response.message);
+                          }
+                        }
+                    );
+                } else if (result.isDenied) {
+
+                }
+            })
+        }
     </script>
 @endsection
 

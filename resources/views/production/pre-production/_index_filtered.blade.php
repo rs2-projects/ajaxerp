@@ -11,7 +11,7 @@
                             <th class="erp-th text-center">Process <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Production Process"><i class="fa-duotone fa-exclamation"></i></span> </th>
                             <th class="erp-th text-center">Raw Materials </th>
                             <th class="erp-th text-center">Estimated QTY </th>
-                            <th class="erp-th text-center">Inventory</th>
+                            {{-- <th class="erp-th text-center">Inventory</th> --}}
                             <th class="erp-th text-center">Verification </th>
                             <th class="erp-th text-center">Instruction </th>
                             <th class="erp-th text-center">Action </th>
@@ -35,9 +35,12 @@
                                     </a>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
-                                        <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
-                                    </a>
+                                    @if($data->design_of_documents)
+                                        <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                            <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
+                                        </a>
+                                    @else N/A
+                                    @endif
                                 </td>
 
                                 <td class="erp-tbody-td text-center">
@@ -49,9 +52,9 @@
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
-                                <td class="erp-tbody-td text-center">
+                                {{-- <td class="erp-tbody-td text-center">
                                     <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_in_status">Check Info</a>
-                                </td>
+                                </td> --}}
 
                                 <td class="erp-tbody-td text-center">
                                     <div class="checkbox-wrapper">

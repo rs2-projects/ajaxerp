@@ -43,6 +43,7 @@
 													<th class="erp-th">Category </th>
 													<th class="erp-th text-center">Item Name </th>
 													<th class="erp-th text-center">Qty </th>
+													<th class="erp-th text-center">Delivered Qty </th>
 													<th class="text-center erp-th">QR Code</th>
 													<th class="text-center erp-th">Item Delivered</th>
 												</tr>
@@ -62,7 +63,13 @@
 														<h4 class="text-center d-table-title">@{{material.quantity}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<div class="pd-input-box">
+														<h4 class="text-center d-table-title">@{{material.delivered_qty}}</h4>
+													</td>
+													<td class="erp-tbody-td text-center">
+														<div v-if="material.quantity === material.delivered_qty">
+															<h4 class="text-center d-table-title approved-status">Delivered</h4>
+														</div>
+														<div class="pd-input-box" v-else>
 															<input
 																class="form-control text-center bar-code-input"
 																type="text"
@@ -166,12 +173,12 @@
 								this.materials[index].scannedBarcodes.push(response.data);
 								this.materials[index].barcodeCounts++;
 							}else{
-								showErrorAlert('Error', 'Invalid Barcode')
+								showErrorAlert('Error', "Invalid Barcode")
 							}
 						})
 						.catch(error => {
 							event.target.value = '';
-							showErrorAlert('Error', 'Invalid Barcode')
+							showErrorAlert('Error', error.response.data.message)
 						});
 					}else{
 						showErrorAlert('Error', 'No item available for delivery')

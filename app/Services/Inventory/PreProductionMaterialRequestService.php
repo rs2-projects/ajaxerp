@@ -8,6 +8,7 @@ use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
 use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
+use App\Models\Products\ProductMaterial;
 use Carbon\Carbon;
 
 class PreProductionMaterialRequestService
@@ -213,6 +214,13 @@ class PreProductionMaterialRequestService
                                 $purchase_details->available_qty = $purchase_details->available_qty - 1;
                                 $purchase_details->save();
                             }
+
+                            $material = ProductMaterial::find($items->product_material_id);
+                            if($material){
+                                $material->total_used_qty = $material->total_used_qty + 1;
+                                $material->available_qty = $material->available_qty - 1;
+                                $material->save();
+                            }
                         }
                     }
                 }
@@ -244,12 +252,30 @@ class PreProductionMaterialRequestService
     }
 
     public function checkBarCode($material_id, $barcode, $count){
-        $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+        // $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+        //     ->where('product_material_id', $material_id)
+        //     ->where('barcode', $barcode)
+        //     ->where('available_qty', '>', $count)
+        //     ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+        //     ->first();
+        $is_valid_code = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
             ->where('product_material_id', $material_id)
             ->where('barcode', $barcode)
-            ->where('available_qty', '>', $count)
             ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-            ->first();  
-        return $data;
+            ->first();
+        if(!$is_valid_code){
+            throw new \Exception('Invalid Barcode');
+        }else{
+            $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('product_material_id', $material_id)
+                ->where('barcode', $barcode)
+                ->where('available_qty', '>', $count)
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                ->first();
+            if(!$data){
+                throw new \Exception('Barcode already used!');
+            }
+            return $data;
+        }
     }
 }
