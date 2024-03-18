@@ -190,8 +190,7 @@
 				this.materials[materialIndex].barcodeCounts--;
             },
             getMaterials() {
-                var currentUrl = window.location.href;
-                var id = currentUrl.split('/')[4];
+                let id = {{ $pre_production->id }};
                 let url = "{{ route('inventory.material-request.get-all-materials', ':id') }}";
                 url = url.replace(':id', id);
 
