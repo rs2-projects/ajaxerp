@@ -50,6 +50,7 @@
                                                                 <th class="erp-th">Category </th>
                                                                 <th class="erp-th text-center">Item Name </th>
                                                                 <th class="erp-th text-center">Qty </th>
+                                                                <th class="erp-th text-center">Delivered Qty </th>
                                                                 <th class="text-center erp-th">Item Delivered</th>
                                                                 <th class="text-center erp-th">Status</th>
                                                             </tr>
@@ -65,6 +66,9 @@
                                                                     </td>
                                                                     <td class="erp-tbody-td text-center">
                                                                         <h4 class="text-center d-table-title">{{$details->material->quantity}}</h4>
+                                                                    </td>
+                                                                    <td class="erp-tbody-td text-center">
+                                                                        <h4 class="text-center d-table-title">{{$details->quantity}}</h4>
                                                                     </td>
                                                                     <td class="erp-tbody-td text-center">
                                                                         <div class="pd-recived-product-wrapper">

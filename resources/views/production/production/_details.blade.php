@@ -43,7 +43,7 @@
                                     {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a> --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                     {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}" class="start-process-btn">Complete Process</a> --}}
-                                    <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="start-process-btn">Complete Process</a>
+                                    <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif
@@ -150,6 +150,15 @@
     <style>
         .erp-table-status.pre-delivered-s .action-icon {
             background: #37b34a;
+        }
+        .complete-process-btn{
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #16b0ae;
+            color: #fff;
+            padding: 5px 20px;
         }
     </style>
 @endsection

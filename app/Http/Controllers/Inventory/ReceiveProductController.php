@@ -22,7 +22,7 @@ class ReceiveProductController extends BackendController
     public function index()
     {
         $this->setPageTitle("Receive Products");
-        $this->setActiveMenu('inventory.receive-products.index');
+        $this->setActiveMenu('inventory.receive-product.index');
         return  $this->view('inventory.receive-products.index');
     }
 
@@ -38,7 +38,7 @@ class ReceiveProductController extends BackendController
 
     public function receive($id){
         $this->setPageTitle("Receive Products");
-        $this->setActiveMenu('inventory.receive-products.index');
+        $this->setActiveMenu('inventory.receive-product.index');
         $data = $this->service->receiveData($id);
         return $this->view('inventory.receive-products._receive')->with($data);
     }

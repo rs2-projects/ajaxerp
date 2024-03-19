@@ -66,4 +66,10 @@ class PreProductionMaterialDeliveryDetails extends Model
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id');
     }
+
+    public function pending_items()
+    {
+        return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
+            ->where('received', 0);
+    }
 }

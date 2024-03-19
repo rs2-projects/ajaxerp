@@ -85,10 +85,10 @@
                                                                 <td class="erp-tbody-td text-center">
                                                                     <div class="pd-recived-product-wrapper">
                                                                         <div class="pre-counter">
-                                                                            <span>@{{detailsData.quantity}}</span>
+                                                                            <span>@{{detailsData.pending_items.length}}</span>
                                                                         </div>
                                                                         <div class="pd-recived-product-scrol-box">
-                                                                            <div v-for="(item, itemIndex) in detailsData.items" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2">
+                                                                            <div v-for="(item, itemIndex) in detailsData.pending_items" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2">
                                                                                 <div class="pd-recived-product-c-item">
                                                                                     <p class="mb-0">@{{item.barcode}}</p>
                                                                                 </div>
@@ -141,7 +141,7 @@
                                     </div>
                                 </div>
                                 <div class="production-instrucion-output-selection-wrapper my-2 p-2 text-center">
-                                    <button class=" erp-search-btn text-center" type="submit">Receive</button>
+                                    <button v-if="deliverData.received_status != 1" class=" erp-search-btn text-center" type="submit">Receive</button>
                                 </div>
                             </form>
                         </div>
@@ -275,12 +275,31 @@
                         const options = { year: 'numeric', month: 'short', day: '2-digit' };
                         return new Date(dateString).toLocaleDateString('en-US', options);
                     },
-                    updateReceivedQty(deliveryIndex) {
-                        const delivery = this.deliveries[deliveryIndex];
-                        delivery.delivery_details.forEach(detail => {
-                            detail.received_qty += detail.barcodeCounts;
+                    
+                    // updateReceivedQty(deliveryIndex) {
+                    //     const delivery = this.deliveries[deliveryIndex];
+                    //     delivery.delivery_details.forEach(detail => {
+                    //         detail.received_qty += detail.barcodeCounts;
+                    //     });
+                    //     // this.deliveries[deliverIndex].delivery_details[detailsIndex].pending_items.splice(0, 1);
+                    // }
+
+                    updateDeliveries(res){
+                        console.log(res);
+                        this.deliveries = res?.map(delivery => {
+                            return {
+                                ...delivery,
+                                delivery_details: delivery.delivery_details?.map(detail => {
+                                    return {
+                                        ...detail,
+                                        scannedBarcodes: [],
+                                        barcodeCounts: 0,
+                                    };
+                                })
+                            };
                         });
                     }
+
                 },
                 mounted() {
                     this.getMaterials();
@@ -295,9 +314,10 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message);
-                        console.log(vueApp.deliveries[deliveryIndex]);
-                        vueApp.updateReceivedQty(deliveryIndex);
+                        // console.log(res.deliveries);
+                        // vueApp.updateReceivedQty(deliveryIndex);
                         vueApp.clearScaneedCodes(deliveryIndex);
+                        vueApp.updateDeliveries(res.deliveries);
                     }else{
                         showErrorAlert('Error',res.message)
                     }

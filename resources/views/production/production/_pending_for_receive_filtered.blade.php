@@ -11,7 +11,7 @@
                             <th class="erp-th text-center">Process <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Production Process"><i class="fa-duotone fa-exclamation"></i></span> </th>
                             <th class="erp-th text-center">Raw Materials </th>
                             <th class="erp-th text-center">Estimated QTY </th>
-                            <th class="erp-th text-center">Received QTY </th>
+                            {{-- <th class="erp-th text-center">Received QTY </th> --}}
                             <th class="erp-th text-center">Instruction </th>
                             <th class="erp-th text-center">Action </th>
                         </tr>
@@ -23,7 +23,7 @@
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-start">
-                                    <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                    <a href="{{ route('production.production.details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                         <div class="em-pro-img-box">
                                             <img src="{{ $data->finishedGoods->show_image }}" alt="">
                                         </div>
@@ -51,9 +51,9 @@
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
-                                <td class="erp-tbody-td text-center">
+                                {{-- <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->received_qty}}</h4>
-                                </td>
+                                </td> --}}
                                 <td class="erp-tbody-td text-center pre-description-box-td">
                                     <p class="text-center d-table-title pre-description-box">{{$data->description}}</p>
                                 </td>

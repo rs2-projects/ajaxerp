@@ -146,6 +146,7 @@ class InvoiceDeliverService
                         $dispatch_details_production->pre_production_id = $preProductionId;
                         $preProduction = PreProduction::where('deleted', PreProduction::DELETED_NO)->where('id', $preProductionId)->first();
                         $preProduction->available_qty = $preProduction->available_qty - $qty;
+                        $preProduction->sale_qty += $qty;
                         $preProduction->save();
                         $dispatch_details_production->quantity = $qty;
                         $dispatch_details_production->created_by = auth()->id();

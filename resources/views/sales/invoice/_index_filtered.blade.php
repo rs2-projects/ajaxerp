@@ -9,6 +9,7 @@
             <th class="erp-th text-center">Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
+            <th class="erp-th text-center">Delivery Status </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
@@ -55,13 +56,18 @@
                 @endif
             </td>
 
+            <td class="erp-tbody-td text-center">
+                <h4 class="text-center d-table-title {{strtolower($invoice::INVOICE_STATUSES[$invoice->invoice_status])}}-status">{{ $invoice::INVOICE_STATUSES[$invoice->invoice_status] }}</h4>
+            </td>
 
             <td class="text-end erp-tbody-td">
                 <div class="erp-action-t">
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="{{ route('sales.invoice.deliver',$invoice->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                            @if($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING || $invoice->invoice_status == $invoice::INVOICE_STATUS_PROCESSING)
+                                <a class="dropdown-item" href="{{ route('sales.invoice.deliver',$invoice->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                            @endif
                             <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
                             <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>

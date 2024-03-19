@@ -135,6 +135,21 @@ Route::group(['prefix' => 'settings'], function () {
 
 // production route start
 Route::group(['prefix' => 'production'], function () {
+
+    // Route::group(['prefix' => 'production'], function () {
+        Route::get('/', [ProductionController::class, 'index'])->name('production.production.index');
+        Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
+        Route::get('/{id}/get-document', [ProductionController::class, 'getDocument'])->name('production.production.get-design-document');
+        Route::get('/{id}/details', [ProductionController::class, 'details'])->name('production.production.details');
+        Route::get('/{id}/change/{processId}/process-status/{status}', [ProductionController::class, 'changeProcessStatus'])->name('production.production.update-process-status');
+        Route::get('/{id}/receive', [ProductionController::class, 'receive'])->name('production.production.receive');
+        Route::post('/{id}/receive', [ProductionController::class, 'receiveStore'])->name('production.production.receive.store');
+        Route::get('/{id}/get-deliveries', [ProductionController::class, 'getDeliveries'])->name('production.production.get-delivery-details');
+        Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production.production.check-barcode');
+        Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data');
+        Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store');
+    // });
+
     Route::group(['prefix' => 'machine'], function () {
         Route::get('/', [MachineController::class, 'index'])->name('production.machine.index');
         Route::post('/filtered', [MachineController::class, 'indexFiltered'])->name('production.machine.filtered');
@@ -157,20 +172,6 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document');
-    });
-
-    Route::group(['prefix' => 'production'], function () {
-        Route::get('/', [ProductionController::class, 'index'])->name('production.production.index');
-        Route::post('/filtered', [ProductionController::class, 'indexFiltered'])->name('production.production.filtered');
-        Route::get('/{id}/get-document', [ProductionController::class, 'getDocument'])->name('production.production.get-design-document');
-        Route::get('/{id}/details', [ProductionController::class, 'details'])->name('production.production.details');
-        Route::get('/{id}/change/{processId}/process-status/{status}', [ProductionController::class, 'changeProcessStatus'])->name('production.production.update-process-status');
-        Route::get('/{id}/receive', [ProductionController::class, 'receive'])->name('production.production.receive');
-        Route::post('/{id}/receive', [ProductionController::class, 'receiveStore'])->name('production.production.receive.store');
-        Route::get('/{id}/get-deliveries', [ProductionController::class, 'getDeliveries'])->name('production.production.get-delivery-details');
-        Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production.production.check-barcode');
-        Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data');
-        Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store');
     });
 });
 

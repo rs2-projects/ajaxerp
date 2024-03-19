@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Models\Inventory\InventoryFinishedGoods;
+use App\Models\Production\PreProduction;
 use App\Models\Production\ProductionDispatch;
 use App\Models\Products\FinishedGoodsCategory;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +126,15 @@ class ReceiveProductService
             $finished_goods->reference_id = $dispatch->id;
             $finished_goods->quantity = $request->received_qty;
             $finished_goods->save();
+
+            $pre_production = PreProduction::where('id', $dispatch->pre_production_id)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->where('status', PreProduction::STATUS_ACTIVE)
+                ->first();
+            
+            $pre_production->received_qty += $request->received_qty;
+            $pre_production->available_qty += $request->received_qty;
+            $pre_production->save();
 
         }catch (\Exception $e) {
             DB::rollBack();

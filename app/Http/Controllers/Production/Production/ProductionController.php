@@ -75,10 +75,11 @@ class ProductionController extends BackendController
     public function receiveStore(StoreProductionReceiveRequest $request, $id){
         try {
             $this->service->receiveStoreData($request, $id);
+            $data = $this->service->getDeliveryData($id);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
-        return $this->returnAjaxSuccess([], 'Received successfully');
+        return $this->returnAjaxSuccess($data, 'Received successfully');
     }
 
     public function getDeliveries($id){

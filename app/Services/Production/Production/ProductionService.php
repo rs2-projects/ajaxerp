@@ -222,28 +222,6 @@ class ProductionService
         return $data;
     }
 
-    public function getDeliveryData($id){
-        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
-            ->where('id', $id)
-            ->first();
-        if(!$pre_production){
-            throw new \Exception('Pre Production not found');
-        }
-        $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
-            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
-            ->where('pre_production_id', $id)
-            ->with(
-                'delivery_details', 
-                'delivery_details.material',
-                'delivery_details.material.category',
-                'delivery_details.material.product',
-                'delivery_details.items',
-            )
-            ->get();
-        //$data['pre_production'] = $pre_production;
-        return $data;
-    }
-
     public function checkBarCode($request, $id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
@@ -374,11 +352,47 @@ class ProductionService
                 $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
                 $pre_production->save();
             }
+        
+            // $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            //     ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            //     ->where('pre_production_id', $id)
+            //     ->with(
+            //         'delivery_details', 
+            //         'delivery_details.material',
+            //         'delivery_details.material.category',
+            //         'delivery_details.material.product',
+            //         'delivery_details.pending_items',
+            //     )
+            //     ->get();
+            // return $data;
+
         }catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function getDeliveryData($id){
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+        if(!$pre_production){
+            throw new \Exception('Pre Production not found');
+        }
+        $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('pre_production_id', $id)
+            ->with(
+                'delivery_details', 
+                'delivery_details.material',
+                'delivery_details.material.category',
+                'delivery_details.material.product',
+                'delivery_details.pending_items',
+            )
+            ->get();
+        //$data['pre_production'] = $pre_production;
+        return $data;
     }
 
     // dispatch

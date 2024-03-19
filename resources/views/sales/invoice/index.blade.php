@@ -91,7 +91,24 @@
     @include('sales.invoice._design_upload_modal')
 @endsection
 @section('css')
-
+    <style>
+        .delivered-status{
+            display: inline-block;
+            background: linear-gradient(to right, #55ce63 0, #37b34a 100%) !important;
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
+        .cancelled-status{
+            display: inline-block;
+            background: #ff0000;
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

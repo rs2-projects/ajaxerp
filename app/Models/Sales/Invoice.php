@@ -44,7 +44,7 @@ class Invoice extends Model
     const INVOICE_STATUSES = [
         self::INVOICE_STATUS_PENDING => 'Pending',
         self::INVOICE_STATUS_DELIVERED => 'Delivered',
-        self::INVOICE_STATUS_PROCESSING => 'Partially Delivered',
+        self::INVOICE_STATUS_PROCESSING => 'Partial',
         self::INVOICE_STATUS_CANCELLED => 'Cancelled',
     ];
     //Delete status const
