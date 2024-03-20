@@ -368,7 +368,7 @@
                                         <div class="po-order-product-payment-status d-none">
                                             <div class="po-order-product-payment-status-item">
                                                 <div class="checkbox-wrapper-35">
-                                                    <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
+                                                    <input value="private" name="switch" id="payment_status_checkbox" v-on:change="this.c = !this.togglePaymentStatus;" type="checkbox" class="switch">
                                                     <label for="payment_status_checkbox">
                                                         <span class="switch-x-text">Payment Status </span>
                                                         <span class="switch-x-toggletext">
@@ -378,7 +378,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="po-order-product-payment-status-item" id="payment_status_details" style="display: none;">
+                                            <div class="po-order-product-payment-status-item" id="payment_status_details" v-if="togglePaymentStatus">
                                                 <div class="payment-selection-wrapper d-flex flex-wrap justify-content-between">
                                                     <div class="payment-selection-item">
                                                         <div class="input-block erp-step-input-block  mb-0 two">
@@ -659,7 +659,7 @@
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
                         .then(response => (this.allItems = response.data.product_materials));
-                    },
+                },
                 getTaxItems() {
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
@@ -779,6 +779,5 @@
         }
 
     </script>
+
 @endsection
-
-

@@ -6,14 +6,16 @@
 </div>
 <div class="modal-do-document-wrapper mt-3">
     <div class="modal-do-document d-flex flex-wrap">
-        @foreach($designs as $design)
+        @forelse($designs as $design)
         <div class="modal-do-document-item">
             <a href="{{ $design->show_image }}" target="_blank" class="modal-do-document-item-img">
-                <img src="{{ $design->show_image }}" alt="">
-                <h5>View</h5>
+                <img src="{{ asset('/')}}assets/img/product/documents.png" alt="file">
+                <h5>{{ $design->design_name }}</h5>
             </a>
         </div>
-        @endforeach
+        @empty
+               <p class="text-primary">No data found..!</p>
+        @endforelse
     </div>
 
 </div>

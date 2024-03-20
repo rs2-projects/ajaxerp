@@ -57,7 +57,7 @@
     <!--End::row-1 -->
 
     <!-- Design of Document modal -->
-    <div id="check_status" class="modal custom-modal fade" role="dialog">
+    <div id="designOfDocumentModal" class="modal custom-modal fade" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header erp-modal-header">
@@ -66,60 +66,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body erp-modal-body">
-                    <div class="erp-modal-body-content">
-                        <div class="selected-loot-product d-flex align-items-center">
-                            <div class="slp-img-box me-2">
-                                <img src="assets/img/product/product.png" alt="">
-                            </div>
-                            <div class="slp-details-box">
-                                <h5>Phone 14 Pro Max</h5>
-                                <p class="em-id">Code: <span> #45454</span></p>
-                            </div>
-                        </div>
-                        <div class="modal-do-document-wrapper mt-3">
-                            <div class="modal-do-document d-flex flex-wrap">
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                                <div class="modal-do-document-item">
-                                    <a href="#" class="modal-do-document-item-img">
-                                        <img src="assets/img/product/documents.png" alt="">
-                                        <h5>View</h5>
-                                    </a>
-                                </div>
-                            </div>
-                        
-                        </div>
-                    </div>
-                
+                <div class="modal-body erp-modal-body" id="desgin_of_document_modal_content">
+                    
                 </div>
             </div>
         </div>
@@ -276,6 +224,19 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function getDocunent(id){
+            let url = "{{route('production.pre-production.get-design-document', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#desgin_of_document_modal_content").html(response.view);
+                    $("#designOfDocumentModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
     </script>
 @endsection

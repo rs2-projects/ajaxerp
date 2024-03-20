@@ -98,8 +98,8 @@ class FinishedGoods extends Model
     public function finishedGoodWarehouseSections(){
         return $this->hasMany(FinishedGoodsSection::class, 'finished_goods_id', 'id');
     }
-    // public function category()
-    // {
-    //     return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');
-    // }
+
+    public function finishedGoodsCategory(){
+        return $this->belongsTo(FinishedGoodsCategory::class, 'finished_goods_category_id', 'id');
+    }
 }

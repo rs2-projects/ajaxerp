@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($userResignations as $item)
+            @forelse($userResignations as $item)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">1</h4>
@@ -56,7 +56,13 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="8">
+                        No data found...!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

@@ -14,7 +14,7 @@
 </div>
 
 <div class="table-body-wrapper">
-    @foreach($settingsSalarySets as $key=>$item)
+    @forelse($settingsSalarySets as $key=>$item)
         <div class="table-body-item-wrapper d-flex flex-wrap">
             <div class="table-body-item dep-list">
                 <h4>{{ $settingsSalarySets->firstItem() + $loop->iteration - 1 }}</h4>
@@ -43,6 +43,12 @@
                 @endif
             </div>
         </div>
-    @endforeach
+    @empty
+        <div class="table-body-item-wrapper">
+            <div class="table-body-item text-center d-block text-primary">
+                No Data Found..!
+            </div>
+        </div>
+    @endforelse
 </div>
 {{ $settingsSalarySets->links('vendor.pagination.common_ajax_pagination') }}

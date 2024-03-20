@@ -20,6 +20,17 @@ class InvoiceDetails extends Model
         self::DELETED_NO => 'No',
         self::DELETED_YES => 'Yes',
     ];
+    //Dispatched Status
+    const DISPATCHED_NO = 0;
+    const DISPATCHED_YES = 1;
+    const DISPATCHED_PARTIALLY = 2;
+
+    Const DISPATCHED_STATUSES = [
+        self::DISPATCHED_NO => 'No',
+        self::DISPATCHED_YES => 'Dispatched',
+        self::DISPATCHED_PARTIALLY => 'Partially',
+    ];
+
     protected $fillable = [
         'invoice_id',
         'finished_good_id',
@@ -32,6 +43,8 @@ class InvoiceDetails extends Model
         'tax_amount',
         'net_total',
         'dispatched',
+        'dispatched_qty',
+        'status',
         'deleted',
         'deleted_at',
         'deleted_by',

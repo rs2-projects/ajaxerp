@@ -17,13 +17,15 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($purchase_orders as $purchase_order)
+            @forelse($purchase_orders as $purchase_order)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title">
+                            <a href="{{ route('procurement.product-material-purchase.details', $purchase_order->id) }}"><strong>{{ $purchase_order->purchase_id }}</strong></a>
+                        </h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                         @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_REVISED_OR_BACKED)
                             @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES && $purchase_order->is_backed == $purchase_order::IS_BACKED_YES)
@@ -163,7 +165,13 @@
                         </td>
                     @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="10">
+                        Data not found..!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

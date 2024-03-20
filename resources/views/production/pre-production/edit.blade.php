@@ -4,7 +4,7 @@
     <div class="row" id="VueApp">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
-                <form action="{{route('production.pre-production.store')}}" id="preProductionStoreForm" method="POST" @submit="checkValidation">
+                <form action="{{route('production.pre-production.update', $pre_production->id)}}" id="preProductionStoreForm" method="POST" @submit="checkValidation">
                     @csrf
                     <div class="product-general-info-box d-flex flex-wrap">
                         <div class="pgib-item flex-35">
@@ -54,6 +54,7 @@
 
                     <div>
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
+                            <input type="hidden" name="pre_production_process_id[]" :value="process.process_id">
                             <div class="production-process-status-wrapper">
                                 <h4>Process @{{ index + 1 }}</h4>
                             </div>
@@ -61,18 +62,16 @@
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
-                                        <select class="machine-multiselect" name="machine_id[]" multiple="multiple" required>
-                                            @foreach ($machines as $machine)
-                                                <option value="{{$machine->id}}">{{$machine->name}}</option>  
-                                            @endforeach
+                                        <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
+                                            <option v-for="machine in machines"  :value="machine.id" :key="machine.id" :selected="process.process_machine_ids?.includes(machine.id)">@{{machine.name}}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
-                                        <select class="process-multiselect" multiple="multiple">
-                                            <option v-for="(process, idx) in processes.slice(0, index)" :key="idx">Process @{{ idx + 1 }}</option>
+                                        <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
+                                            <option v-for="(innerProcess, idx) in processes.slice(0, index)" :selected="processSelectedIndexes(process).includes(idx)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -81,36 +80,32 @@
                                 <h4 class="process-child-title">Material</h4>
                                 <div class="pms-item-main-wrapper">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
+                                        <input type="hidden" :name="'process_material_id['+index+'][]'" :value="materialSection.id"/>
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
-                                                <select class="select select-step" name="product_material_category_id[]" v-model="materialSection.product_material_category_id" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option>Select Category</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{$category->id}}">{{$category->name}}</option>
-                                                    @endforeach
+                                                    <option v-for="category in categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
-                                                <select name="product_material_id[]" class="select select-step material-product" v-if="processes && processes.length > 0">
+                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
-                                                    <template v-for="process in processes">
-                                                        <template v-for="materialSection in process.materialSections">
-                                                            <option v-for="product in materialSection.products" :key="product.id" :value="product.id">
-                                                                @{{ product.name }}
-                                                            </option>
-                                                        </template>
-                                                    </template>
+                                                    <option v-for="product in processes[index].materialSections[materialIndex].products"
+                                                        :selected="product.id == materialSection.product_material_id" :key="product.id" :value="product.id">
+                                                        @{{ product.name }}
+                                                    </option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input v-model="materialSection.quantity" name="quantity[]" class="form-control " type="number" placeholder="" required="">
+                                                <input v-model="materialSection.quantity" :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -127,17 +122,18 @@
                                 <h4 class="process-child-title">Estimated Output</h4>
                                 <div class="pms-item-main-wrapper">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(estimatedSection, estimatedIndex) in process.estimatedOutputs" :key="estimatedIndex">
+                                        <input type="hidden" :name="'process_output_id['+index+'][]'" :value="estimatedSection.id"/>
                                         <div class="pms-item flex-60">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Name <span class="text-danger">*</span></label>
-                                                <input class="form-control" v-model="estimatedSection.name" name="name[]" type="text" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.name" :name="'name['+index+'][]'" type="text" placeholder="" required="">
                                             </div>
                                         </div>
                                         
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" v-model="estimatedSection.quantity" name="output_quantity[]" type="number" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.quantity" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -152,8 +148,8 @@
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Instruction <span class="text-danger">*</span></label>
-                                    <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control" required></textarea>
+                                    <label class="col-form-label">Instruction</label>
+                                    <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control"></textarea>
                                 </div>	
                             </div>
                         </div>
@@ -224,13 +220,16 @@
             data() {
                 return {
                     processes: [],
+                    categories: [],
+                    machines: [],
+                    process_indexes: [],
                 };
             },
             computed: {
 
             },
             methods: {
-                getProcesses() {
+                getProcesses(initialLoad = false) {
                     var currentUrl = window.location.href;
                     var id = currentUrl.split('/').slice(-2, -1)[0];
                     let url = "{{route('production.pre-production.get-all-processes', ':id')}}";
@@ -239,7 +238,20 @@
                     .get(url)
                         .then(response => {
                             const processes = response.data.processes;
-                            console.log(processes);
+                            const categories = response.data.categories;
+                            const machines = response.data.machines;
+                            this.process_indexes = response.data.process_indexes;
+
+                            categories.forEach((category) => {
+                                this.categories.push({
+                                    ...category
+                                });
+                            });
+                            machines.forEach((machine) => {
+                                this.machines.push({
+                                    ...machine
+                                });
+                            });
                             processes.forEach((process) => {
                                 const materials = process.materials.map(material => {
                                     return {
@@ -257,14 +269,36 @@
                                         quantity: output.quantity,
                                     };
                                 });
+                                
+                                const process_machine_ids = process.process_machines.map(machine => machine.machine_id);
+
+                                const previous_process_ids = process.previous_process.map(pp => pp.process_id);
+
                                 this.processes.push({
                                     index: processes.length,
                                     process_id: process.id,
                                     process_instruction:  process.instruction,
                                     materialSections: materials,
-                                    estimatedOutputs: estimated_output
+                                    estimatedOutputs: estimated_output,
+                                    process_machine_ids: process_machine_ids,
+                                    previous_process_ids: previous_process_ids
                                 });
                             });
+
+                            if(initialLoad === true) {
+                                this.processes.forEach((process, processIndex) => {
+                                    process.materialSections.forEach((materialSection, materialIndex) => {
+                                        const categoryId = materialSection.product_material_category_id;
+                                        if (categoryId) {
+                                            this.getMaterialProducts(categoryId, processIndex, materialIndex);
+                                        }
+                                    });
+                                });
+
+                                initMaterialProductMultipleSelect();
+                                initAssteProductMultipleSelect(); 
+                                initSelect2(); 
+                            }
                         })
                         .catch(error => {
                             console.error('Error fetching processes:', error);
@@ -343,13 +377,31 @@
                         preProductionFormSubmit();
                     }
                 },
+                processSelectedIndexes(process) {
+                    let process_ids = this.process_indexes;
+                    let previous_process_ids = process.previous_process_ids;
+                    let indexes = [];
+
+                    previous_process_ids.forEach(id => {
+                        if (id in process_ids) {
+                            indexes.push(process_ids[id]);
+                        }
+                    });
+                    return indexes;
+                }
             },
             mounted () {
-                this.getProcesses();
-                initMaterialProductMultipleSelect();
-                initAssteProductMultipleSelect();
-                initSelect2();
+                this.getProcesses(true);
+                this.$nextTick(() => {
+                    setTimeout(function() {
+                        initMaterialProductMultipleSelect();
+                        initAssteProductMultipleSelect(); 
+                        initSelect2(); 
+                    }, 100);
+                    
+                });
             }
+
 
         }).mount('#VueApp');
 
@@ -362,6 +414,7 @@
             });
         }
         function initAssteProductMultipleSelect(){
+            $('.machine-multiselect').multipleSelect('destroy');
             $('.machine-multiselect').multipleSelect({
                 filter: true,
                 placeholder: 'Select Machine',
@@ -414,6 +467,11 @@
                 }
             }, 'show_input_error');
         }
+        $(document).ready(function () {
+            initMaterialProductMultipleSelect();
+            initAssteProductMultipleSelect();
+            initSelect2();
+        });
     </script>
 @endsection
 

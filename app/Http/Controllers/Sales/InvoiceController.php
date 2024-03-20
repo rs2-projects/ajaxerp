@@ -125,6 +125,16 @@ class InvoiceController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
+    //delete invoce design
+    public function deleteDesign($id)
+    {
+        try {
+            $this->service->deleteDesign($id);
+            return $this->returnAjaxSuccess([], 'Invoice design Deleted Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
     // delete invoice
     public function delete($id)
     {

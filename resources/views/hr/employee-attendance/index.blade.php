@@ -100,8 +100,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="erp-tbody">
-                                        @if(!empty($getEmployees))
-                                            @foreach($getEmployees as  $employee)
+                                            @forelse($getEmployees as  $employee)
                                                 <tr class="erp-tbody-tr">
 
                                                     <td class="erp-tbody-td table-employee-name">
@@ -130,8 +129,13 @@
                                                     @endif
 
                                                 </tr>
-                                            @endforeach
-                                        @endif
+                                            @empty
+                                                <tr class="erp-tbody-tr">
+                                                    <td class="erp-tbody-td text-center text-primary" colspan="4">
+                                                        Data not found..!
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

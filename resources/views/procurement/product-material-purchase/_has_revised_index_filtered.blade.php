@@ -17,7 +17,7 @@
         </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($purchase_orders as $purchase_order)
+            @forelse($purchase_orders as $purchase_order)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
@@ -90,7 +90,13 @@
                         </td>
                     @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="10">
+                        Data not found..!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

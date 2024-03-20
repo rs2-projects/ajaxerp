@@ -1,7 +1,7 @@
 
     <div class="big-table pt-4">
         <div class="de-table-wrapper">
-            <div class="table-responsive">
+            <div class="table-responsives">
                 <table class="table mb-0 erp-table">
                     <thead class="erp-thead">
                         <tr class="erp-tr">
@@ -17,7 +17,7 @@
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
-                        @foreach($pre_productions as $data)
+                        @forelse($pre_productions as $data)
                             <tr class="erp-tbody-tr">
                                 <td class="erp-tbody-td">
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
@@ -34,11 +34,14 @@
                                     </a>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <a href="#" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
-                                    <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
-                                    </a>
+                                    @if($data->design_of_documents)
+                                        <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                            <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
+                                        </a>
+                                    @else N/A
+                                    @endif
                                 </td>
-                                
+
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
@@ -53,11 +56,6 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle pending" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>
                                                 {{ $data::DELIVERIES[$data->delivery_status] }}</span></a>
-                                            <!-- <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Pending</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Partial</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Delivered</a>
-                                            </div> -->
                                         </div>
                                     </div>
                                 </td>
@@ -69,17 +67,25 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
-                                                    <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                                @if(hasPermission('deliver-requested-materials'))
+                                                    @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
+                                                        <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                                    @endif
                                                 @endif
                                                 <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-deviantart m-r-5"></i> View Delivery Details</a>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="erp-tbody-tr">
+                                <td class="erp-tbody-td text-center text-primary" colspan="9">
+                                    Data not found..!
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

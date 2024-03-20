@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($roles as $role)
+            @forelse($roles as $role)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $roles->firstItem() + $loop->iteration - 1 }}</h4>
@@ -23,7 +23,7 @@
 
                     <td class="erp-tbody-td text-center">
                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                            <input type="checkbox" id="p-{{ $roles->firstItem() + $loop->iteration - 1 }}" class="check" 
+                            <input type="checkbox" id="p-{{ $roles->firstItem() + $loop->iteration - 1 }}" class="check"
                                 {{ $role->is_default == $role::IS_DEFAULT_YES ? 'checked' : '' }}
                                 data-role-id="{{ $role->id }}" onchange="statusUpdate(this)"
                                 {{ $role->is_default == $role::IS_DEFAULT_YES ? 'disabled' : '' }}>
@@ -38,7 +38,7 @@
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="{{ route('settings.role-permission.index',$role->id) }}" ><i class="la la-lock m-r-5"></i> Set Permission</a>
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$role->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    @if($role->is_default == $role::IS_DEFAULT_NO)  
+                                    @if($role->is_default == $role::IS_DEFAULT_NO)
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('settings.role-management.delete',$role->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                     @endif
                                 </div>
@@ -46,7 +46,13 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="6">
+                        No data found...!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

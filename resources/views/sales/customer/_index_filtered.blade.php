@@ -10,13 +10,13 @@
                 <th class="erp-th text-center">Total Bill</th>
                 <th class="erp-th text-center">Due</th>
                 <th class="erp-th text-center">Lead Time</th>
-
+                @if(hasPermission('manage-customers'))
                     <th class="erp-th text-center">Action </th>
-
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($customers as $customer)
+            @forelse($customers as $customer)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $customers->firstItem() + $loop->iteration - 1 }}</h4>
@@ -36,7 +36,7 @@
                     <td class="erp-tbody-td text-center">0</td>
                     <td class="erp-tbody-td text-center">{{getCurrencySymbol()}} 0</td>
                     <td class="erp-tbody-td text-center">{{$customer->lead_time_status}}</td>
-
+                    @if(hasPermission('manage-customers'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -50,8 +50,15 @@
                                 </div>
                             </div>
                         </td>
+                    @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-primary text-center  " colspan="7">
+                        No data found..!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

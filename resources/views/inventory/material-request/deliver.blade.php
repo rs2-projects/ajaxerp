@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row" id="VueApp">	
+    <div class="row" id="VueApp">
 		<div class="erp-employee-list-wrapper">
 			<div class="new-production-wrapper bg-card attd-table">
 				<form action="{{route('inventory.material-request.deliver.store', $pre_production->id)}}" id="deliverStoreForm" method="post" @submit="checkValidation">
@@ -43,6 +43,7 @@
 													<th class="erp-th">Category </th>
 													<th class="erp-th text-center">Item Name </th>
 													<th class="erp-th text-center">Qty </th>
+													<th class="erp-th text-center">Delivered Qty </th>
 													<th class="text-center erp-th">QR Code</th>
 													<th class="text-center erp-th">Item Delivered</th>
 												</tr>
@@ -62,7 +63,13 @@
 														<h4 class="text-center d-table-title">@{{material.quantity}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<div class="pd-input-box">
+														<h4 class="text-center d-table-title">@{{material.delivered_qty}}</h4>
+													</td>
+													<td class="erp-tbody-td text-center">
+														<div v-if="material.quantity === material.delivered_qty">
+															<h4 class="text-center d-table-title approved-status">Delivered</h4>
+														</div>
+														<div class="pd-input-box" v-else>
 															<input
 																class="form-control text-center bar-code-input"
 																type="text"
@@ -113,7 +120,7 @@
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')
@@ -166,12 +173,12 @@
 								this.materials[index].scannedBarcodes.push(response.data);
 								this.materials[index].barcodeCounts++;
 							}else{
-								showErrorAlert('Error', 'Invalid Barcode')
+								showErrorAlert('Error', "Invalid Barcode")
 							}
 						})
 						.catch(error => {
 							event.target.value = '';
-							showErrorAlert('Error', 'Invalid Barcode')
+							showErrorAlert('Error', error.response.data.message)
 						});
 					}else{
 						showErrorAlert('Error', 'No item available for delivery')
@@ -183,8 +190,7 @@
 				this.materials[materialIndex].barcodeCounts--;
             },
             getMaterials() {
-                var currentUrl = window.location.href;
-                var id = currentUrl.split('/')[4];
+                let id = {{ $pre_production->id }};
                 let url = "{{ route('inventory.material-request.get-all-materials', ':id') }}";
                 url = url.replace(':id', id);
 
@@ -219,22 +225,20 @@
     }).mount('#VueApp');
 
 	function deliverStoreForm(){
-		console.log("submitted");
-
 		var self = $("#deliverStoreForm");
-            var formData = new FormData($(self)[0]);
-			var url = $(self).attr('action');
+		var formData = new FormData($(self)[0]);
+		var url = $(self).attr('action');
 
-            formPost(url, formData, function (res) {
-                if(res.status == 200){
-                    showSuccessAlert('Success',res.message)
-                    setTimeout(function () {
-                       window.location.href = "{{route('inventory.material-request.index')}}";
-                    }, 1000);
-                }else{
-                    showErrorAlert('Error',res.message)
-                }
-            }, 'show_input_error');
+		formPost(url, formData, function (res) {
+			if(res.status == 200){
+				showSuccessAlert('Success',res.message)
+				setTimeout(function () {
+					window.location.href = "{{route('inventory.material-request.index')}}";
+				}, 1000);
+			}else{
+				showErrorAlert('Error',res.message)
+			}
+		}, 'show_input_error');
 	}
 </script>
 

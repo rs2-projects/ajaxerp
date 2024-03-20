@@ -13,7 +13,7 @@
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($bonusTypesSalary as $key=> $item)
+            @forelse($bonusTypesSalary as $key=> $item)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $bonusTypesSalary->firstItem() + $loop->iteration - 1}}</h4>
@@ -64,7 +64,13 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="8">
+                        No data found...!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

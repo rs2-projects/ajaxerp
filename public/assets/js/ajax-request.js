@@ -131,6 +131,7 @@ function getPaginatedListData(form_route, placement_area, extra_data={}, scrollT
     /*{
         _token : _token
     };*/
+    console.log('from get data to getPaginatedListData');
     req_data._token = _token;
 
     $.ajax({

@@ -9,13 +9,13 @@
                 <th class="erp-th text-center">Model</th>
                 <th class="erp-th text-center">Color</th>
                 <th class="erp-th text-center">Description</th>
-                {{-- @if(hasPermission('manage-asset-product')) --}}
+                @if(hasPermission('manage-machines'))
                     <th class="erp-th text-center">Action </th>
-                {{-- @endif --}}
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($machines as $machine)
+            @forelse($machines as $machine)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $machines->firstItem() + $loop->iteration - 1 }}</h4>
@@ -33,7 +33,7 @@
                     <td class="erp-tbody-td text-center">{{ $machine->model??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->color??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->description??'N/A' }}</td>
-                    {{-- @if(hasPermission('manage-asset-product')) --}}
+                    @if(hasPermission('manage-machines'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -45,9 +45,15 @@
                                 </div>
                             </div>
                         </td>
-                    {{-- @endif --}}
+                    @endif
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="6">
+                        No data found...!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

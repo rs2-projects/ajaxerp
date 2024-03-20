@@ -5,6 +5,8 @@ namespace App\Models\Production;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Products\FinishedGoods;
+use App\Models\Products\FinishedGoodsCategory;
+
 class PreProduction extends Model
 {
     use HasFactory;
@@ -17,6 +19,15 @@ class PreProduction extends Model
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
+    ];
+
+    const PROCESS_STATUS_PENDING = 0;
+    const PROCESS_STATUS_PROCESSING = 1;
+    const PROCESS_STATUS_COMPLETED = 2;
+    const PROCESSES = [
+        self::PROCESS_STATUS_PENDING => 'Pending',
+        self::PROCESS_STATUS_PROCESSING => 'Processing',
+        self::PROCESS_STATUS_COMPLETED => 'Completed',
     ];
 
     const DELIVERY_STATUS_PENDING = 0;
@@ -37,6 +48,15 @@ class PreProduction extends Model
         self::RECEIVED_STATUS_PARTIAL => 'Partial',
     ];
 
+    const DISPATCH_STATUS_PENDING = 0;
+    const DISPATCH_STATUS_DISPATCHED = 1;
+    const DISPATCH_STATUS_PARTIAL = 2;
+    const DISPATCHS = [
+        self::DISPATCH_STATUS_PENDING => 'Not Dispatched',
+        self::DISPATCH_STATUS_DISPATCHED => 'Dispatched',
+        self::DISPATCH_STATUS_PARTIAL => 'Partially Dispatched',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -52,31 +72,24 @@ class PreProduction extends Model
     ];
 
     protected $fillable = [
-        'product_material_purchase_id',
-        'product_material_purchase_detail_id',
-        'product_material_id',
-        'qty',
-        'price',
-        'exchange_rate',
-        'price_fob',
-        'cbm',
-        'total_pieces_per_container',
-        'freight_cost_usd',
-        'exchange_rate_after_import',
-        'freight_cost',
-        'total_taxes_import_duties',
-        'taxes_import_duties',
-        'total_transport_cost_to_wh',
-        'transport_cost_to_wh',
-        'total_unloading_cost',
-        'unloading_cost',
-        'handling_cost',
-        'price_excluding_vat',
-        'vat_percent',
-        'vat',
-        'final_price',
-        'total_final_price',
-        'status',
+        'pre_production_no',
+        'order_details',
+        'image',
+        'design_of_documents',
+        'description',
+        'finished_goods_id',
+        'estimated_production_qty',
+        'notes',
+        'is_verified',
+        'process_status',
+        'delivery_status',
+        'received_status',
+        'dispatched_qty',
+        'dispatched_status',
+        'damage_qty',
+        'received_qty',
+        'sale_qty',
+        'available_qty',
         'created_by',
         'created_at',
         'updated_by',
@@ -93,16 +106,30 @@ class PreProduction extends Model
 
     public function process()
     {
-        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')->where('deleted', PreProductionProcess::DELETED_NO);
+        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE);
     }
 
+    // process materials
     public function material()
     {
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_id', 'id');
     }
 
+    // production materials
     public function production_material()
     {
-        return $this->hasMany(PreProductionMaterial::class, 'pre_production_id', 'id')->where('deleted', PreProductionMaterial::DELETED_NO);
+        return $this->hasMany(PreProductionMaterial::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterial::DELETED_NO)
+            ->where('status', PreProductionMaterial::STATUS_ACTIVE);
+    }
+
+    public function pendingPreProductionMaterialDeliveries()
+    {
+        return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
 }

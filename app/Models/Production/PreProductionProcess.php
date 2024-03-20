@@ -12,6 +12,15 @@ class PreProductionProcess extends Model
     protected $table = 'pre_production_processes';
     public $timestamps = false;
 
+    const PROCESS_STATUS_PENDING = 0;
+    const PROCESS_STATUS_PROCESSING = 1;
+    const PROCESS_STATUS_COMPLETED = 2;
+    const PROCESSES = [
+        self::PROCESS_STATUS_PENDING => 'Pending',
+        self::PROCESS_STATUS_PROCESSING => 'Processing',
+        self::PROCESS_STATUS_COMPLETED => 'Completed',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -29,6 +38,7 @@ class PreProductionProcess extends Model
     protected $fillable = [
         'pre_production_id',
         'instruction',
+        'process_status',
         'status',
         'created_by',
         'created_at',
@@ -39,12 +49,25 @@ class PreProductionProcess extends Model
         'deleted_at',
     ];
 
+    public function processMachines()
+    {
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_process_id', 'id');
+    }
+
     public function materials()
     {
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_process_id');
     }
+
     public function estimated_output()
     {
-        return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id');
+        return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id', 'id')
+            ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+            ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE);
+    }
+
+    public function previousProcess()
+    {
+        return $this->hasMany(PreProductionProcessPreviousProcess::class, 'pre_production_process_id');
     }
 }

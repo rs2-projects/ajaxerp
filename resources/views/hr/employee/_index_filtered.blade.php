@@ -25,7 +25,7 @@
     </div>
 </div>
 <div class="table-body-wrapper">
-    @foreach($employees as $item)
+    @forelse($employees as $item)
         <div class="table-body-item-wrapper d-flex flex-wrap">
             <div class="table-body-item em-list">
                 <h4>{{ $employees->firstItem() + $loop->iteration -1 }}</h4>
@@ -78,7 +78,13 @@
             </div>
 
         </div>
-    @endforeach
+    @empty
+        <div class="table-body-item-wrapper">
+            <div class="table-body-item text-center d-block text-primary">
+                No Data Found..!
+            </div>
+        </div>
+    @endforelse
 </div>
 
 {{ $employees->links('vendor.pagination.common_ajax_pagination')}}

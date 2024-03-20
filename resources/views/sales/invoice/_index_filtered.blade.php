@@ -6,15 +6,15 @@
             <th class="erp-th">Invouce No. </th>
             <th class="erp-th text-center">Customer </th>
             <th class="erp-th text-center">Design </th>
-            <th class="erp-th text-center">Status </th>
             <th class="erp-th text-center">Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
+            <th class="erp-th text-center">Delivery Status </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($invoices as $invoice)
+        @forelse($invoices as $invoice)
         <tr class="erp-tbody-tr">
             <td class="erp-tbody-td">
                 <h4 class="d-table-title">{{ $loop->iteration }}</h4>
@@ -38,13 +38,6 @@
                     <img src="{{ asset('/') }}assets/img/product/documents.png" alt="" class="document-img-box"><small>View</small>
                 </a>
             </td>
-
-            <td class="erp-tbody-td text-center">
-                <div class="design-upload-revael-box">
-                    <button class="dur-btn">Submit To Production</button>
-                </div>
-
-            </td>
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().$invoice->payable_amount }}</h4>
                 <h4 class="text-center d-table-title"><span class="in-t-amount-text due-text">Due - </span>{{ getCurrencySymbol().$invoice->due_amount }}</h4>
@@ -57,29 +50,46 @@
             </td>
             <td class="erp-tbody-td text-center">
                 @if($invoice->due_amount>0)
-                <a href="#" class="make-payment-btn" onclick="makePayment({{ $invoice->id }})">Make Payment</a>
+                    @if(hasPermission('make-payment'))
+                        <a href="#" class="make-payment-btn" onclick="makePayment({{ $invoice->id }})">Make Payment</a>
+                    @endif
                 @else
                     <h4 class="text-center d-table-title {{strtolower($invoice::PAYMENT_STATUSES[$invoice->payment_status])}}-status">{{ $invoice::PAYMENT_STATUSES[$invoice->payment_status] }}</h4>
                 @endif
             </td>
 
-
-            <td class="text-end erp-tbody-td">
-                <div class="erp-action-t">
-                    <div class="dropdown dropdown-action">
-                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                        <div class="dropdown-menu dropdown-menu-right">
-
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#design-upload"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
-{{--                            <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>--}}
-{{--                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>--}}
-
+            <td class="erp-tbody-td text-center">
+                <h4 class="text-center d-table-title {{strtolower($invoice::INVOICE_STATUSES[$invoice->invoice_status])}}-status">{{ $invoice::INVOICE_STATUSES[$invoice->invoice_status] }}</h4>
+            </td>
+            @if(hasPermission('deliver-items','manage-invoices'))
+                <td class="text-end erp-tbody-td">
+                    <div class="erp-action-t">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                @if(hasPermission('deliver-items'))
+                                    @if($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING || $invoice->invoice_status == $invoice::INVOICE_STATUS_PROCESSING)
+                                        <a class="dropdown-item" href="{{ route('sales.invoice.deliver',$invoice->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                    @endif
+                                @endif
+                                @if(hasPermission('manage-invoices'))
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
+                                    <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td>
+                </td>
+            @endif
         </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="9">
+                    Data not found..!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

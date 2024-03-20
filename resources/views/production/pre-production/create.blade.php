@@ -149,8 +149,8 @@
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Instruction <span class="text-danger">*</span></label>
-                                    <textarea rows="1"  name="instruction[]" class="form-control" required></textarea>
+                                    <label class="col-form-label">Instruction</label>
+                                    <textarea rows="1"  name="instruction[]" class="form-control"></textarea>
                                 </div>	
                             </div>
                         </div>

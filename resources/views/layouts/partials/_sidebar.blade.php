@@ -26,6 +26,9 @@
                 @if(hasPermission(
                     'view-departments','manage-departments','view-designations','manage-designations','view-employees','manage-employees','view-employee-termination','manage-employee-termination','view-employee-resignation','manage-employee-resignation','view-employee-leave','manage-employee-leave','view-employee-attendance','manage-employee-attendance','view-contractors','manage-contractors','view-salary-set','manage-salary-set'
                 ))
+                    <li class="menu-title">
+                        <span>HR & Payroll</span>
+                    </li>
                 <li class="submenu">
                     <a href="javascript:void(0);" class="{{ ($activeMenu == 'hr.employee' || $activeMenu == 'hr.employee.create' || $activeMenu == 'hr.employee.edit' || $activeMenu == 'hr.employee.details'
                         || $activeMenu == 'hr.department' || $activeMenu == 'hr.designation'
@@ -107,75 +110,71 @@
                 @endif
                 {{-- procurement --}}
                 @if(hasPermission( 'view-suppliers','manage-suppliers','view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment','view-asset-product-purchase-request','create-asset-product-purchase-request','manage-asset-product-purchase-request','view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment' ))
-                    <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.product-material-purchase.index' || $activeMenu == 'procurement.supplier.index') ? 'active' : '' }} noti-dot"><i class="la la-object-group"></i> <span>
-                                Procurement</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            @if(hasPermission('view-asset-product-purchase-request','create-asset-product-purchase-request','manage-asset-product-purchase-request','view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment'))
-                                <li class="submenu">
-                                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "> <span>Assets</span> <span
-                                            class="menu-arrow"></span></a>
-                                    <ul>
-                                        @if(hasPermission('create-asset-product-purchase-request'))
-                                            <li><a href="{{ route('procurement.user.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.user.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request</span></a></li>
-                                        @endif
-                                        @if(hasPermission('view-asset-product-purchase-request','manage-asset-product-purchase-request'))
-                                            <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.admin.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request Manage</span></a></li>
-                                        @endif
-                                        @if(hasPermission( 'view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment' ))
-                                            <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <span>Purchase Order(P.O)</span></a></li>
-                                        @endif
-                                    </ul>
-                                </li>
-                            @endif
-                            @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
-                                <li class="submenu">
-                                    <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Production Materials</span> <span
-                                            class="menu-arrow"></span></a>
-                                    <ul>
-                                        @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
-                                            <li><a href="{{ route('procurement.product-material-purchase.index') }}" class="{{ ($activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Purchase Order (P.O)</span></a></li>
-                                        @endif
-                                    </ul>
-                                </li>
-                            @endif
-                            @if(hasPermission( 'view-suppliers','manage-suppliers'))
-                                <li>
-                                    <a href="{{ route('procurement.supplier.index') }}" class="{{ ($activeMenu == 'procurement.supplier.index') ? 'active' : '' }}"> <span>Suppliers</span></a>
-                                </li>
-                            @endif
-                        </ul>
+                    <li class="menu-title">
+                        <span>Procurement</span>
                     </li>
+                    @if(hasPermission('view-asset-product-purchase-request','create-asset-product-purchase-request','manage-asset-product-purchase-request','view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment'))
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'procurement.user.asset-purchase-request.index' || $activeMenu == 'procurement.admin.asset-purchase-request.index' || $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }} "><i class="la la-stack-exchange"></i> <span>Assets</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission('create-asset-product-purchase-request'))
+                                    <li><a href="{{ route('procurement.user.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.user.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request</span></a></li>
+                                @endif
+                                @if(hasPermission('view-asset-product-purchase-request','manage-asset-product-purchase-request'))
+                                    <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.admin.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request Manage</span></a></li>
+                                @endif
+                                @if(hasPermission( 'view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment' ))
+                                    <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <i class="la la-truck"></i><span>Purchase Order(P.O)</span></a></li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ( $activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <i class="la la-user-md"></i><span>Production Materials</span> <span
+                                    class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission( 'view-product-material-purchase-orders','manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
+                                    <li><a href="{{ route('procurement.product-material-purchase.index') }}" class="{{ ($activeMenu == 'procurement.product-material-purchase.index') ? 'active' : '' }}"> <span>Purchase Order (P.O)</span></a></li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-suppliers','manage-suppliers'))
+                        <li>
+                            <a href="{{ route('procurement.supplier.index') }}" class="{{ ($activeMenu == 'procurement.supplier.index') ? 'active' : '' }}">  <i class="la la-truck"></i><span>Suppliers</span></a>
+                        </li>
+                    @endif
                 @endif
 
                 <!--Sales and Order-->
-                <li class="menu-title">
-                    <span>Sales & Orders</span>
-                </li>
-                <li class="submenu">
-                   <a href="javascript:void(0);" class="{{ $activeMenu == 'sales.customer.index'? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Customers</span> <span class="menu-arrow"></span></a>
-                   <ul>
-                         <li>
-                              <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"> <span>Customer List</span></a>
-                         </li>
-                   </ul>
-                </li>
-                <li class="submenu">
-                   <a href="javascript:void(0);" class="{{ $activeMenu == 'sales.invoice.index'? 'active' : '' }} noti-dot"><i class="la la-file-pdf-o"></i> <span> Invoices</span> <span class="menu-arrow"></span></a>
-                   <ul>
-                         <li>
-                              <a href="{{ route('sales.invoice.index') }}" class="{{ $activeMenu == 'sales.invoice.index' ? 'active' : ''}}"> <span>Invoice List</span></a>
-                         </li>
-                   </ul>
-                </li>
+                @if(hasPermission( 'view-customers','manage-customers','view-invoices','manage-invoices','make-payment','deliver-items'))
+                    <li class="menu-title">
+                        <span>Sales & Orders</span>
+                    </li>
+                    @if(hasPermission( 'view-customers','manage-customers' ))
+                        <li>
+                            <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-invoices','manage-invoices','make-payment','deliver-items'))
+                        <li>
+                            <a href="{{ route('sales.invoice.index') }}" class="{{ $activeMenu == 'sales.invoice.index' ? 'active' : ''}}"><i class="la la-file-pdf-o"></i> <span>Invoices</span></a>
+                        </li>
+                    @endif
+                @endif
+
                 {{-- inventory --}}
-                @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material','view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
+                @if(hasPermission( 'view-material-requests','deliver-requested-materials','view-product-material-category','manage-product-material-category','view-product-material','manage-product-material','view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product','view-finished-goods-category','manage-finished-goods-category','view-finished-goods','manage-finished-goods','view-received-products','receive-products'))
                     <li class="menu-title">
                         <span>Inventory</span>
                     </li>
-                    <li> 
-                        <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
-                    </li>
+                    @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
+                        <li>
+                            <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
+                        </li>
+                    @endif
                     @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material'))
                         <li class="submenu">
                             <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
@@ -210,16 +209,21 @@
                             </ul>
                         </li>
                     @endif
-                    @if(hasPermission( 'view-asset-product-category','manage-asset-product-category','view-asset-product','manage-asset-product'))
+                    @if(hasPermission( 'view-finished-goods-category','manage-finished-goods-category','view-finished-goods','manage-finished-goods','view-received-products','receive-products'))
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.asset-product-category.index' || $activeMenu == 'inventory.asset-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Goods</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.finished-good-category.index' || $activeMenu == 'inventory.finished-good.index' || $activeMenu == 'inventory.receive-product.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Goods</span> <span class="menu-arrow"></span></a>
                             <ul>
-                                @if(hasPermission( 'view-asset-product','manage-asset-product'))
+                                @if(hasPermission('view-received-products','receive-products'))
+                                    <li>
+                                        <a href="{{ route('inventory.receive-product.index') }}" class="{{ ($activeMenu == 'inventory.receive-product.index') ? 'active' : '' }}"> <span>Receive Products</span></a>
+                                    </li>
+                                @endif
+                                @if(hasPermission( 'view-finished-goods','manage-finished-goods'))
                                     <li>
                                         <a href="{{ route('inventory.finished-good.index') }}" class="{{ ($activeMenu == 'inventory.finished-good.index') ? 'active' : '' }}"> <span>Goods List</span></a>
                                     </li>
                                 @endif
-                                @if(hasPermission( 'view-asset-product-category','manage-asset-product-category'))
+                                @if(hasPermission( 'view-finished-goods-category','manage-finished-goods-category'))
                                     <li>
                                         <a href="{{ route('inventory.finished-good-category.index') }}" class="{{ ($activeMenu == 'inventory.finished-good-category.index') ? 'active' : '' }}"> <span>Category</span></a>
                                     </li>
@@ -228,21 +232,29 @@
                         </li>
                     @endif
                 @endif
-                <li class="menu-title">
-                    <span>Pre-Production & Production</span>
-                </li>
-                <li>
-                    <a href="{{route('production.pre-production.index')}}" class="{{ ($activeMenu == 'production.pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Pre-Production</span></a>
-                </li>
-                {{-- <li>
-                    <a href="production.html" class=""><i class="la la-archive"></i> <span>Production</span></a>
-                </li> --}}
-                <li>
-                    <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
-                </li>
-                {{-- <li>
-                    <a href="products.html" class=""><i class="la la-yelp"></i> <span>Products <small> (Finished Goods)</small></span></a>
-                </li> --}}
+
+                {{-- production & pre production --}}
+                @if(hasPermission('view-machines','manage-machines','view-pre-productions', 'manage-pre-productions','view-production','manage-processes','receive-production-materials','dispatch-production-materials'))
+                    <li class="menu-title">
+                        <span>Pre-Production & Production</span>
+                    </li>
+                    @if(hasPermission('view-pre-productions', 'manage-pre-productions'))
+                        <li>
+                            <a href="{{route('production.pre-production.index')}}" class="{{ ($activeMenu == 'production.pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Pre-Production</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission('view-production','manage-processes','receive-production-materials','dispatch-production-materials'))
+                        <li>
+                            <a href="{{route('production.production.index')}}" class="{{ ($activeMenu == 'production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission('view-machines','manage-machines'))
+                        <li>
+                            <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
+                        </li>
+                    @endif
+                @endif
+
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))
                     <li class="menu-title">
                         <span>Warehouse</span>
@@ -269,9 +281,11 @@
                     <span>Administration</span>
                 </li>
 
-                <li>
-                    <a href="{{ route('settings.office-time') }}"><i class="la la-cog"></i> <span>Settings</span></a>
-                </li>
+                @if(hasPermission( 'manage-administration-settings', 'manage-payroll-settings', 'manage-tax-settings', 'manage-role-permission-settings'))
+                    <li>
+                        <a href="{{ route('settings.office-time') }}"><i class="la la-cog"></i> <span>Settings</span></a>
+                    </li>
+                @endif
 
             </ul>
         </div>

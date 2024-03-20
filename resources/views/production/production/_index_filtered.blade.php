@@ -16,13 +16,13 @@
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
-                        @foreach($pre_productions as $data)
+                        @forelse($pre_productions as $data)
                             <tr class="erp-tbody-tr">
                                 <td class="erp-tbody-td">
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-start">
-                                    <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                    <a href="{{ route('production.production.details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                         <div class="em-pro-img-box">
                                             <img src="{{ $data->finishedGoods->show_image }}" alt="">
                                         </div>
@@ -33,11 +33,14 @@
                                     </a>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <a href="#" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
-                                    <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
-                                    </a>
+                                    @if($data->design_of_documents)
+                                        <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                            <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
+                                        </a>
+                                    @else N/A
+                                    @endif
                                 </td>
-                                
+
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
@@ -55,17 +58,21 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                {{-- @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
-                                                    <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
-                                                @endif --}}
-                                                <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
-                                                
+                                                {{-- <a class="dropdown-item" href="{{ route('production.production.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a> --}}
+                                                <a class="dropdown-item" href="{{ route('production.production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
+
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr class="erp-tbody-tr">
+                                <td class="erp-tbody-td text-center text-primary" colspan="8">
+                                    No data found...!
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

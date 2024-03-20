@@ -480,6 +480,79 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Finished Goods Category</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-finished-goods-category" data-required-remove="manage-finished-goods-category" class="check" name="permissions[]" value="view-finished-goods-category"
+                                            {{ in_array('view-finished-goods-category', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-finished-goods-category" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Finished Goods Category</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-finished-goods-category" data-required-add="view-finished-goods-category" class="check" name="permissions[]" value="manage-finished-goods-category"
+                                            {{ in_array('manage-finished-goods-category', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-finished-goods-category" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Finished Goods</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-finished-goods" data-required-remove="manage-finished-goods" class="check" name="permissions[]" value="view-finished-goods"
+                                            {{ in_array('view-finished-goods', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-finished-goods" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Finished Goods</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-finished-goods" data-required-add="view-finished-goods" class="check" name="permissions[]" value="manage-finished-goods"
+                                            {{ in_array('manage-finished-goods', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-finished-goods" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Received Products</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-received-products" data-required-remove="receive-products" class="check" name="permissions[]" value="view-received-products"
+                                            {{ in_array('view-received-products', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-received-products" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Receive Products</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="receive-products" data-required-add="view-received-products" class="check" name="permissions[]" value="receive-products"
+                                            {{ in_array('receive-products', $permissions) ? 'checked' : ''}}>
+                                            <label for="receive-products" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                             </div>
                             <div class="rs-erp-permission-item">
@@ -620,6 +693,215 @@
                                 </div>
                                 
                             </div>
+                            
+                            {{-- sales & order --}}
+                            <div class="rs-erp-permission-item">
+                                <div class="rs-erp-permission-item-title-box">
+                                    <h4>Sales & Order</h4>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Customers</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-customers" data-required-remove="manage-customers" class="check" name="permissions[]" value="view-customers"
+                                            {{ in_array('view-customers', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-customers" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Customers</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-customers" data-required-add="view-customers" class="check" name="permissions[]" value="manage-customers"
+                                            {{ in_array('manage-customers', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-customers" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Invoices</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-invoices" data-required-remove="manage-invoices,make-payment,deliver-items" class="check" name="permissions[]" value="view-invoices"
+                                            {{ in_array('view-invoices', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-invoices" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Invoices</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-invoices" data-required-add="view-invoices" class="check" name="permissions[]" value="manage-invoices"
+                                            {{ in_array('manage-invoices', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-invoices" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Make Payment</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="make-payment" data-required-add="view-invoices" class="check" name="permissions[]" value="make-payment"
+                                            {{ in_array('make-payment', $permissions) ? 'checked' : ''}}>
+                                            <label for="make-payment" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Deliver Items</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="deliver-items" data-required-add="view-invoices" class="check" name="permissions[]" value="deliver-items"
+                                            {{ in_array('deliver-items', $permissions) ? 'checked' : ''}}>
+                                            <label for="deliver-items" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+                            {{-- pre production & production --}}
+                            <div class="rs-erp-permission-item">
+                                <div class="rs-erp-permission-item-title-box">
+                                    <h4>Production & Pre Production</h4>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Machines</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-machines" data-required-remove="manage-machines" class="check" name="permissions[]" value="view-machines"
+                                            {{ in_array('view-machines', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-machines" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Machines</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-machines" data-required-add="view-machines" class="check" name="permissions[]" value="manage-machines"
+                                            {{ in_array('manage-machines', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-machines" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-pre-productions" data-required-remove="manage-pre-productions" class="check" name="permissions[]" value="view-pre-productions"
+                                            {{ in_array('view-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-pre-productions" data-required-add="view-pre-productions" class="check" name="permissions[]" value="manage-pre-productions"
+                                            {{ in_array('manage-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Material Requests</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-material-requests" data-required-remove="deliver-requested-materials" class="check" name="permissions[]" value="view-material-requests"
+                                            {{ in_array('view-material-requests', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-material-requests" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Deliver Requested Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="deliver-requested-materials" data-required-add="view-material-requests" class="check" name="permissions[]" value="deliver-requested-materials"
+                                            {{ in_array('deliver-requested-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="deliver-requested-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Production</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-production" data-required-remove="manage-processes,receive-production-materials,dispatch-production-materials" class="check" name="permissions[]" value="view-production"
+                                            {{ in_array('view-production', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-production" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Processes</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-processes" data-required-add="view-production" class="check" name="permissions[]" value="manage-processes"
+                                            {{ in_array('manage-processes', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-processes" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Receive Production Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="receive-production-materials" data-required-add="view-production" class="check" name="permissions[]" value="receive-production-materials"
+                                            {{ in_array('receive-production-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="receive-production-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Dispatch Production Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="dispatch-production-materials" data-required-add="view-production" class="check" name="permissions[]" value="dispatch-production-materials"
+                                            {{ in_array('dispatch-production-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="dispatch-production-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="erp-filter-box d-flex align-items-center justify-content-center flex-100 pt-4">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-center flex-100">
                                     <div class="erp-filter-item">
