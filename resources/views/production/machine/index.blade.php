@@ -2,14 +2,14 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        {{-- @if(hasPermission('manage-asset-product-category')) --}}
+        @if(hasPermission('manage-machines'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addMachineModal"><i class="fa-solid fa-plus"></i> New Machine</a>
 
                 </div>
             </div>
-        {{-- @endif --}}
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">

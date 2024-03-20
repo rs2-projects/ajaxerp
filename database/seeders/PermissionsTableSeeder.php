@@ -127,6 +127,34 @@ class PermissionsTableSeeder extends Seeder
                 ],
             ],
 
+            //Sales & Order
+            'sales' => [
+                [
+                    'slug' => 'view-customers',
+                    'title' => 'View Customers'
+                ],
+                [
+                    'slug' => 'manage-customers',
+                    'title' => 'Manage Customers'
+                ],
+                [
+                    'slug' => 'view-invoices',
+                    'title' => 'View Invoices'
+                ],
+                [
+                    'slug' => 'manage-invoices',
+                    'title' => 'Manage Invoices'
+                ],
+                [
+                    'slug' => 'make-payment',
+                    'title' => 'Make Payment'
+                ],
+                [
+                    'slug' => 'deliver-items',
+                    'title' => 'Deliver Items'
+                ],
+            ],
+
             //Inventory
             'inventory' => [
                 [
@@ -169,6 +197,30 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'manage-warehouse',
                     'title' => 'Manage Warehouse'
                 ],
+                [
+                    'slug' => 'view-finished-goods-category',
+                    'title' => 'View Finished Goods Category'
+                ],
+                [
+                    'slug' => 'manage-finished-goods-category',
+                    'title' => 'Manage Finished Goods Category'
+                ],
+                [
+                    'slug' => 'view-finished-goods',
+                    'title' => 'View Finished Goods'
+                ],
+                [
+                    'slug' => 'manage-finished-goods',
+                    'title' => 'Manage Finished Goods'
+                ],
+                [
+                    'slug' => 'view-received-products',
+                    'title' => 'View Received Products'
+                ],
+                [
+                    'slug' => 'receive-products',
+                    'title' => 'Receive Products'
+                ]
             ],
 
             //Accounting
@@ -229,7 +281,51 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'asset-product-purchase-order-payment',
                     'title' => 'Asset Product Purchase Order Payment'
                 ],
-            ]
+            ], 
+
+            //Production
+            'production' => [
+                [
+                    'slug' => 'view-machines',
+                    'title' => 'View Machines'
+                ],
+                [
+                    'slug' => 'manage-machines',
+                    'title' => 'Manage Machines'
+                ],
+                [
+                    'slug' => 'view-pre-productions',
+                    'title' => 'View Pre Productions'
+                ],
+                [
+                    'slug' => 'manage-pre-productions',
+                    'title' => 'Manage Pre Productions'
+                ],
+                [
+                    'slug' => 'view-material-requests',
+                    'title' => 'View Material Requests'
+                ],
+                [
+                    'slug' => 'deliver-requested-materials',
+                    'title' => 'Deliver Requested Materials'
+                ],
+                [
+                    'slug' => 'view-production',
+                    'title' => 'View Production'
+                ],
+                [
+                    'slug' => 'manage-processes',
+                    'title' => 'Manage Processes'
+                ],
+                [
+                    'slug' => 'receive-production-materials',
+                    'title' => 'Receive Production Materials'
+                ],
+                [
+                    'slug' => 'dispatch-production-materials',
+                    'title' => 'Dispatch Production Materials'
+                ],
+            ],
         ];
 
         foreach ($allPermissions as $group => $permissions) {

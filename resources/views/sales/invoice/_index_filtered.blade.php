@@ -50,7 +50,9 @@
             </td>
             <td class="erp-tbody-td text-center">
                 @if($invoice->due_amount>0)
-                <a href="#" class="make-payment-btn" onclick="makePayment({{ $invoice->id }})">Make Payment</a>
+                    @if(hasPermission('make-payment'))
+                        <a href="#" class="make-payment-btn" onclick="makePayment({{ $invoice->id }})">Make Payment</a>
+                    @endif
                 @else
                     <h4 class="text-center d-table-title {{strtolower($invoice::PAYMENT_STATUSES[$invoice->payment_status])}}-status">{{ $invoice::PAYMENT_STATUSES[$invoice->payment_status] }}</h4>
                 @endif
@@ -59,23 +61,27 @@
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title {{strtolower($invoice::INVOICE_STATUSES[$invoice->invoice_status])}}-status">{{ $invoice::INVOICE_STATUSES[$invoice->invoice_status] }}</h4>
             </td>
-
-            <td class="text-end erp-tbody-td">
-                <div class="erp-action-t">
-                    <div class="dropdown dropdown-action">
-                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            @if($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING || $invoice->invoice_status == $invoice::INVOICE_STATUS_PROCESSING)
-                                <a class="dropdown-item" href="{{ route('sales.invoice.deliver',$invoice->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
-                            @endif
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
-                            <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+            @if(hasPermission('deliver-items','manage-invoices'))
+                <td class="text-end erp-tbody-td">
+                    <div class="erp-action-t">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                @if(hasPermission('deliver-items'))
+                                    @if($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING || $invoice->invoice_status == $invoice::INVOICE_STATUS_PROCESSING)
+                                        <a class="dropdown-item" href="{{ route('sales.invoice.deliver',$invoice->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                    @endif
+                                @endif
+                                @if(hasPermission('manage-invoices'))
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
+                                    <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td>
+                </td>
+            @endif
         </tr>
         @empty
             <tr class="erp-tbody-tr">

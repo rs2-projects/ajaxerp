@@ -56,11 +56,6 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle pending" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>
                                                 {{ $data::DELIVERIES[$data->delivery_status] }}</span></a>
-                                            <!-- <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Pending</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Partial</a>
-                                                <a class="dropdown-item" href="#" ><i class="fa-regular fa-circle-dot m-r-5"></i> Delivered</a>
-                                            </div> -->
                                         </div>
                                     </div>
                                 </td>
@@ -72,8 +67,10 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
-                                                    <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                                @if(hasPermission('deliver-requested-materials'))
+                                                    @if($data->delivery_status != $data::DELIVERY_STATUS_DELIVERED)
+                                                        <a class="dropdown-item" href="{{ route('inventory.material-request.deliver', $data->id) }}"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                                    @endif
                                                 @endif
                                                 <a class="dropdown-item" href="{{ route('inventory.material-request.details', $data->id) }}" ><i class="la la-deviantart m-r-5"></i> View Delivery Details</a>
 

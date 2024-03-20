@@ -11,7 +11,9 @@
                             <th class="erp-th text-center">Dispatched QTY </th>
                             <th class="erp-th text-center">Received QTY </th>
                             <th class="erp-th text-center">Received At </th>
-                            <th class="erp-th text-center">Action </th>
+                            @if(hasPermission('receive-products'))
+                                <th class="erp-th text-center">Action </th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
@@ -43,16 +45,18 @@
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{ getFormattedDate($data->received_at, 'd M, Y') }}</h4>
                                 </td>
-                                <td class="text-end erp-tbody-td">
-                                    <div class="erp-action-t">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="{{ route('inventory.receive-product.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
+                                @if(hasPermission('receive-products'))
+                                    <td class="text-end erp-tbody-td">
+                                        <div class="erp-action-t">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="{{ route('inventory.receive-product.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
+                                    </td>
+                                @endif
                             </tr>
                         @empty
                             <tr class="erp-tbody-tr">

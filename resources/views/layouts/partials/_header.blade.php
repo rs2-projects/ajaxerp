@@ -32,7 +32,7 @@
     <ul class="nav user-menu">
 
         <!-- Search -->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <div class="top-nav-search">
                 <a href="javascript:void(0);" class="responsive-search">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -42,7 +42,7 @@
                     <button class="btn position-absolute search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </div>
-        </li>
+        </li> --}}
         <!-- /Search -->
         <!-- Dark Switcher Start -->
         <li class="nav-item">
@@ -67,7 +67,7 @@
         </li>
         <!-- Dark Switcher End -->
         <!-- Notifications -->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                 <i class="fa-regular fa-bell"></i> <span class="badge rounded-pill">3</span>
             </a>
@@ -149,11 +149,11 @@
                     <a href="activities.html">View all Notifications</a>
                 </div>
             </div>
-        </li>
+        </li> --}}
         <!-- /Notifications -->
 
         <!-- Message Notifications -->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                 <i class="fa-regular fa-comment"></i> <span class="badge rounded-pill">8</span>
             </a>
@@ -255,7 +255,7 @@
                     <a href="chat.html">View all Messages</a>
                 </div>
             </div>
-        </li>
+        </li> --}}
         <!-- /Message Notifications -->
 
         <li class="nav-item dropdown has-arrow main-drop">
@@ -265,8 +265,10 @@
                 <span class="ms-2"> {{ auth()->user()->full_name }} </span>
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="profile.html">My Profile</a>
-                <a class="dropdown-item" href="settings.html">Settings</a>
+                <a class="dropdown-item" href="#">My Profile</a>
+                @if(hasPermission( 'manage-administration-settings', 'manage-payroll-settings', 'manage-tax-settings', 'manage-role-permission-settings'))
+                    <a class="dropdown-item" href="{{ route('settings.office-time') }}">Settings</a>
+                @endif
                 <a class="dropdown-item" href="{{route('logout')}}">Logout</a>
             </div>
         </li>

@@ -8,7 +8,9 @@
                 <th class="erp-th text-center">Last Calculated Price </th>
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
+                @if(hasPermission( 'manage-finished-goods'))
                     <th class="erp-th text-center">Action </th>
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -41,13 +43,15 @@
                         <div class="erp-action-t erp-table-status {{ ($finished_good->status == $finished_good::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $finished_good::STATUSES[$finished_good->status] }}</span></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
-                                    </div>
+                                    
+                                    @if(hasPermission( 'manage-finished-goods'))
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
+                                        </div>
+                                    @endif
                             </div>
                         </div>
-
                     </td>
                     <td class="erp-tbody-td text-start warahouse-section">
                         @if(count($finished_good->finishedGoodWarehouseSections) > 0)
@@ -68,6 +72,7 @@
                             @endforeach
                         @endif
                     </td>
+                    @if(hasPermission( 'manage-finished-goods'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -81,6 +86,7 @@
                                 </div>
                             </div>
                         </td>
+                    @endif
                 </tr>
                 @empty
                 <tr class="erp-tbody-tr">

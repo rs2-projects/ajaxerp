@@ -9,9 +9,9 @@
                 <th class="erp-th text-center">Model</th>
                 <th class="erp-th text-center">Color</th>
                 <th class="erp-th text-center">Description</th>
-                {{-- @if(hasPermission('manage-asset-product')) --}}
+                @if(hasPermission('manage-machines'))
                     <th class="erp-th text-center">Action </th>
-                {{-- @endif --}}
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -33,7 +33,7 @@
                     <td class="erp-tbody-td text-center">{{ $machine->model??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->color??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->description??'N/A' }}</td>
-                    {{-- @if(hasPermission('manage-asset-product')) --}}
+                    @if(hasPermission('manage-machines'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
                         </td>
-                    {{-- @endif --}}
+                    @endif
                 </tr>
             @empty
                 <tr class="erp-tbody-tr">

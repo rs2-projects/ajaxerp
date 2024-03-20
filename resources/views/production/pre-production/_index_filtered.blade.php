@@ -12,9 +12,13 @@
                             <th class="erp-th text-center">Raw Materials </th>
                             <th class="erp-th text-center">Estimated QTY </th>
                             {{-- <th class="erp-th text-center">Inventory</th> --}}
-                            <th class="erp-th text-center">Verification </th>
+                            @if(hasPermission('manage-pre-productions'))
+                                <th class="erp-th text-center">Verification </th>
+                            @endif
                             <th class="erp-th text-center">Instruction </th>
-                            <th class="erp-th text-center">Action </th>
+                            @if(hasPermission('manage-pre-productions'))
+                                <th class="erp-th text-center">Action </th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="erp-tbody">
@@ -55,39 +59,42 @@
                                 {{-- <td class="erp-tbody-td text-center">
                                     <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_in_status">Check Info</a>
                                 </td> --}}
-
-                                <td class="erp-tbody-td text-center">
-                                    <div class="checkbox-wrapper">
-                                        <input {{$data->is_verified ==$data::VERIFIED_YES? 'checked disabled': '' }}  id="terms-checkbox-{{$data->id}}" name="checkbox" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('production.pre-production.change-status',[$data->id,1]) }}" type="checkbox">
-                                        <label class="terms-label" for="terms-checkbox-{{$data->id}}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
-                                            <mask fill="white" id="path-1-inside-1_476_5-37">
-                                                <rect height="200" width="200"></rect>
-                                            </mask>
-                                            <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
-                                            <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
-                                            </svg>
-                                            <span class="label-text">{{$data->is_verified ==$data::VERIFIED_YES? 'Verified': 'Verify' }}</span>
-                                        </label>
-                                    </div>
-                                </td>
+                                @if(hasPermission('manage-pre-productions'))
+                                    <td class="erp-tbody-td text-center">
+                                        <div class="checkbox-wrapper">
+                                            <input {{$data->is_verified ==$data::VERIFIED_YES? 'checked disabled': '' }}  id="terms-checkbox-{{$data->id}}" name="checkbox" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('production.pre-production.change-status',[$data->id,1]) }}" type="checkbox">
+                                            <label class="terms-label" for="terms-checkbox-{{$data->id}}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
+                                                <mask fill="white" id="path-1-inside-1_476_5-37">
+                                                    <rect height="200" width="200"></rect>
+                                                </mask>
+                                                <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
+                                                <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
+                                                </svg>
+                                                <span class="label-text">{{$data->is_verified ==$data::VERIFIED_YES? 'Verified': 'Verify' }}</span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                @endif
                                 <td class="erp-tbody-td text-center pre-description-box-td">
                                     <p class="text-center d-table-title pre-description-box">{{$data->description}}</p>
                                 </td>
-                                <td class="text-end erp-tbody-td">
-                                    @if($data->is_verified ==$data::VERIFIED_NO)
-                                        <div class="erp-action-t">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @if(hasPermission('manage-pre-productions'))
+                                    <td class="text-end erp-tbody-td">
+                                        @if($data->is_verified ==$data::VERIFIED_NO)
+                                            <div class="erp-action-t">
+                                                <div class="dropdown dropdown-action">
+                                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endif
-                                </td>
+                                        @endif
+                                    </td>
+                                @endif
                             </tr>
                         @empty
                             <tr class="erp-tbody-tr">

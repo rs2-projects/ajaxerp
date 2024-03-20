@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        @if(hasPermission( 'manage-product-material'))
+        @if(hasPermission( 'manage-finished-goods'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addProductMaterial"><i class="fa-solid fa-plus"></i> New Product</a>

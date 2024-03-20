@@ -10,9 +10,9 @@
                 <th class="erp-th text-center">Total Bill</th>
                 <th class="erp-th text-center">Due</th>
                 <th class="erp-th text-center">Lead Time</th>
-
+                @if(hasPermission('manage-customers'))
                     <th class="erp-th text-center">Action </th>
-
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -36,7 +36,7 @@
                     <td class="erp-tbody-td text-center">0</td>
                     <td class="erp-tbody-td text-center">{{getCurrencySymbol()}} 0</td>
                     <td class="erp-tbody-td text-center">{{$customer->lead_time_status}}</td>
-
+                    @if(hasPermission('manage-customers'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -50,6 +50,7 @@
                                 </div>
                             </div>
                         </td>
+                    @endif
                 </tr>
             @empty
                 <tr class="erp-tbody-tr">
