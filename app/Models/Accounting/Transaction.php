@@ -103,4 +103,14 @@ class Transaction extends Model
         });
     }
 
+    public function account()
+    {
+        return $this->belongsTo(AccCoaAccount::class, 'account_id', 'id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(AccCoaAccount::class, 'category_id', 'id');
+    }
+
 }

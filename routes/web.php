@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\ChartOfAccountController;
+use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -506,6 +507,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [ChartOfAccountController::class, 'statusUpdate'])->name('accounting.chart-of-accounts.change-status')->middleware('permission:manage-chart-of-accounts');
         });
         // chart of accounts route end
+
+        Route::prefix('transaction')->group(function () {
+            Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index');
+            Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered');
+            Route::post('expense', [TransactionController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
+        });
     });
     // Accounting route end
 
