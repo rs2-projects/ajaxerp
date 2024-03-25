@@ -70,11 +70,14 @@
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
-
+    <!-- Datetimepicker JS -->
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
@@ -85,6 +88,7 @@
         $(document).ready(function() {
             getData();
             initSelect2();
+            initializeDatepicker();
 
             $('#account-select').on('change', function () {
                 filterData.account_id = $(this).val();
@@ -139,7 +143,18 @@
         function openExpenseModal() {
             $('#cofa_expense').modal('show');
             reInitSelect2();
+        }
 
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
         }
 
     </script>

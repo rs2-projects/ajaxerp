@@ -63,4 +63,9 @@ class TransactionService
             ->paginate($this->paginate_limit);
         return $data;
     }
+
+    public function storeExpense($request)
+    {
+
+    }
 }

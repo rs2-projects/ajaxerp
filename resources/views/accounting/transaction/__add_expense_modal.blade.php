@@ -74,7 +74,7 @@
                                                 <option value="">Select Tax Value</option>
                                                 @if(!empty($vat_taxes))
                                                     @foreach($vat_taxes as $vat_tax)
-                                                        <option value="{{ $vat_tax->id }}" >{{ $vat_tax->name }}</option>
+                                                        <option value="{{ $vat_tax->id }}" >{{ $vat_tax->name }} ( {{ $vat_tax->tax_rate }}% )</option>
                                                     @endforeach
                                                 @endif
                                                 <span class="vat_tax_error ie-span"></span>

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Requests\Accounting\Transaction\StoreExpenseRequest;
 use App\Services\Accounting\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends BackendController
 {
@@ -37,8 +39,16 @@ class TransactionController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 
-    public function storeExpense(Request $request)
+    public function storeExpense(StoreExpenseRequest $request)
     {
-
+        DB::beginTransaction();
+        try {
+            $this->service->storeExpense($request);
+        }catch (\Exception $e){
+            DB::rollBack();
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        DB::commit();
+        return $this->returnAjaxSuccess([], 'Expense created successfully!');
     }
 }

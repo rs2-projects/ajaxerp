@@ -21,7 +21,7 @@
                             <h4 class="d-table-title">{{ $loop->iteration }}</h4>
                         </td>
                         <td class="erp-tbody-td text-center">
-                            <h4 class="text-center d-table-title">{{ getFormattedDateTime($transaction->transaction_date) }}</h4>
+                            <h4 class="text-center d-table-title">{{ getFormattedDate($transaction->transaction_date) }}</h4>
                             @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_INCOME)
                                 <h4 class="text-center d-table-title cofa-status-income">Income</h4>
                             @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
