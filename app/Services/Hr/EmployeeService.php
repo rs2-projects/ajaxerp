@@ -5,6 +5,7 @@ namespace App\Services\Hr;
 use App\Models\Contractor;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Permission\Role;
 use App\Models\User;
 use App\Models\UserBankInfo;
 use App\Models\UserEducationInfo;
@@ -54,6 +55,11 @@ class EmployeeService
         $data['contractors'] = Contractor::where('deleted', Contractor::DELETED_NO)
             ->where('status', Contractor::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
+            ->get();
+
+        $data['roles'] = Role::where('deleted', Role::DELETED_NO)
+            ->where('status', Role::STATUS_ACTIVE)
+            ->orderBy('title', 'asc')
             ->get();
 
         return $data;
@@ -108,6 +114,7 @@ class EmployeeService
             $user->phone = $request->phone??null;
             $user->joining_date = $request->joining_date;
             $user->designation_id = $request->designation_id;
+            $user->role_id = $request->role_id;
             $user->department_id = $request->department_id;
             $user->is_contracted = $request->is_contracted??User::CONTRACTED_NO;
             $user->contractor_id = $request->contractor_id??null;
@@ -218,6 +225,11 @@ class EmployeeService
             ->where('status', Contractor::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
+        
+        $data['roles'] = Role::where('deleted', Role::DELETED_NO)
+            ->where('status', Role::STATUS_ACTIVE)
+            ->orderBy('title', 'asc')
+            ->get();
 
         return $data;
     }
@@ -280,6 +292,7 @@ class EmployeeService
             $user->joining_date = $request->joining_date;
             $user->designation_id = $request->designation_id;
             $user->department_id = $request->department_id;
+            $user->role_id = $request->role_id;
             $user->is_contracted = $request->is_contracted??User::CONTRACTED_NO;
             $user->contractor_id = $contractorId??null;
             $user->nid_no = $request->nid_no ?? null;
@@ -459,7 +472,7 @@ class EmployeeService
         $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
             ->orderBy('name', 'asc')
             ->get();
-        $data['employee'] = User::with('designation', 'department', 'userEmergencyContacts', 'userBankInfo', 'userEducationInfo','userExperienceInfo')
+        $data['employee'] = User::with('designation', 'department', 'user_role', 'userEmergencyContacts', 'userBankInfo', 'userEducationInfo','userExperienceInfo')
             ->where('id', $id)
             ->where('deleted', User::DELETED_NO)
             ->first();
@@ -898,5 +911,33 @@ class EmployeeService
             throw new \Exception($exception->getMessage());
         }
         DB::commit();
+    }
+
+    public function changeRoleData($id){
+        $data['item'] = User::where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+        
+        $data['roles'] = Role::where('deleted', Role::DELETED_NO)
+            ->where('status', Role::STATUS_ACTIVE)
+            ->orderBy('title', 'asc')
+            ->get();
+
+        return $data;
+    }
+
+    public function updateRole($request, $id){
+        $user = User::where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+
+        if (!$user) {
+            throw new \Exception('User not found');
+        }
+
+        $user->role_id = $request->role_id;
+        $user->updated_by = auth()->user()->id;
+        $user->updated_at = now();
+        $user->save();
     }
 }

@@ -268,6 +268,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('education-info/{id}/update', [EmployeeController::class, 'educationInfoUpdate'])->name('hr.employee.education-info.update')->middleware('permission:manage-employees');
             Route::post('experience-info/{id}/update', [EmployeeController::class, 'experienceInfoUpdate'])->name('hr.employee.experience-info.update')->middleware('permission:manage-employees');
             Route::post('emergency-contact-info/{id}/update', [EmployeeController::class, 'emergencyContactInfoUpdate'])->name('hr.employee.emergency-contact-info.update')->middleware('permission:manage-employees');
+            Route::get('/{id}/edit-role', [EmployeeController::class, 'changeRole'])->name('hr.employee.edit-role')->middleware('permission:manage-employees');
+            Route::post('/{id}/update-role', [EmployeeController::class, 'updateRole'])->name('hr.employee.update-role')->middleware('permission:manage-employees');
         });
         // Employee route end
 

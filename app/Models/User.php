@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Permission\Role;
 use App\Traits\HasPermission;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -209,6 +211,11 @@ class User extends Authenticatable
     public function designation()
     {
         return $this->belongsTo(Designation::class, 'designation_id');
+    }
+
+    public function user_role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function userEmergencyContacts(){

@@ -148,6 +148,7 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production.production.check-barcode')->middleware('permission:receive-production-materials');
         Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data')->middleware('permission:dispatch-production-materials');
         Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store')->middleware('permission:dispatch-production-materials');
+        Route::get('/{id}/print-barcode/{type}', [ProductionController::class, 'printBarcode'])->name('production.production.print-barcode');
     // });
 
     Route::group(['prefix' => 'machine'], function () {
