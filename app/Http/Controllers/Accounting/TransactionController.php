@@ -46,9 +46,15 @@ class TransactionController extends BackendController
             $this->service->storeExpense($request);
         }catch (\Exception $e){
             DB::rollBack();
-            return $this->returnAjaxError([],$e->getMessage());
+            return $this->returnAjaxException($e);
         }
         DB::commit();
         return $this->returnAjaxSuccess([], 'Expense created successfully!');
+    }
+
+    public function editExpense($id)
+    {
+        $data = $this->service->editExpenseData($id);
+        return $this->view('accounting.transaction.index')->with($data);
     }
 }

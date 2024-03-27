@@ -40,7 +40,7 @@ class ExpenseRepository
         //find and check category
         $category = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
             ->where('deleted', AccCoaAccount::DELETED_NO)
-            ->where('id', $account_id)
+            ->where('id', $category_id)
             ->first();
         if (empty($category)) {
             throw new \Exception("Invalid Category!");
