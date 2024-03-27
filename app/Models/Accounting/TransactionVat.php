@@ -23,6 +23,7 @@ class TransactionVat extends Model
         'tax_id',
         'main_amount',
         'vat_percent',
+        'vat_amount',
         'status',
         'created_at',
         'created_by',

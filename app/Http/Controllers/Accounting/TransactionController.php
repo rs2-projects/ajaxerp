@@ -21,15 +21,15 @@ class TransactionController extends BackendController
         $this->service = new TransactionService();
     }
 
-    public function index()
+    public function index(): \Illuminate\Contracts\View\View
     {
         $this->setPageTitle("Transactions");
         $this->setActiveMenu('accounting.transaction.index');
         $data = $this->service->indexData();
-        return  $this->view('accounting.transaction.index')->with($data);
+        return $this->view('accounting.transaction.index')->with($data);
     }
 
-    public function indexFiltered(Request $request)
+    public function indexFiltered(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $this->service->indexFilteredData($request);
         $view = $this->view('accounting.transaction._index_filtered')
@@ -39,7 +39,7 @@ class TransactionController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 
-    public function storeExpense(StoreExpenseRequest $request)
+    public function storeExpense(StoreExpenseRequest $request): \Illuminate\Http\JsonResponse
     {
         DB::beginTransaction();
         try {

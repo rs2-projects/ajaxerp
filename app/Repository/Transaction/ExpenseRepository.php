@@ -7,10 +7,12 @@ use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionReceipt;
 use App\Models\Accounting\TransactionVat;
 use App\Services\Common\ImageUploadService;
+use App\Traits\Accounting\AccountBalanceTrait;
 use Carbon\Carbon;
 
 class ExpenseRepository
 {
+    use AccountBalanceTrait;
     private ImageUploadService $imageService;
 
     public function __construct()
@@ -64,7 +66,6 @@ class ExpenseRepository
             $total_vat_amount = ($amount * $vat_percent) / (100 + $vat_percent);
         }
 
-//        $receipts_files = receipts
         $transaction = new Transaction();
         $transaction->paid_type = Transaction::PAID_TYPE_PAID;
         $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
@@ -84,18 +85,24 @@ class ExpenseRepository
         $transaction->updated_by = auth()->id();
         $transaction->save();
 
+        $this->deductAccountBalance($account, $total_amount);
+        $this->addAccountBalance($category, $net_amount);
+
         if ($vatAccount != null) {
             $vatTrx = new TransactionVat();
             $vatTrx->transaction_id = $transaction->id;
             $vatTrx->tax_id = $vatAccount->id;
-            $vatTrx->main_amount = $total_amount;
+            $vatTrx->main_amount = $net_amount;
             $vatTrx->vat_percent = $vat_percent;
+            $vatTrx->vat_amount = $total_vat_amount;
             $vatTrx->status = TransactionVat::STATUS_ACTIVE;
             $vatTrx->created_at = Carbon::now();
             $vatTrx->created_by = auth()->id();
             $vatTrx->updated_at = Carbon::now();
             $vatTrx->updated_by = auth()->id();
             $vatTrx->save();
+
+            $this->addAccountBalance($vatAccount, $total_vat_amount);
         }
 
         if (isset($data['receipts']) && is_array($data['receipts']) && (count($data['receipts']) > 0)) {
