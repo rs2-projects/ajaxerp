@@ -4,19 +4,28 @@ namespace App\Repository\Transaction;
 
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\Transaction;
+use App\Models\Accounting\TransactionReceipt;
 use App\Models\Accounting\TransactionVat;
+use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 
 class ExpenseRepository
 {
-    public function storeRepository($request)
+    private ImageUploadService $imageService;
+
+    public function __construct()
     {
-        $date = $request->date;
-        $account_id = $request->account;
-        $category_id = $request->category;
-        $amount = $request->amount;
-        $vat_tax_id = $request->vat_tax;
-        $description = $request->description;
+        $this->imageService = new ImageUploadService();
+    }
+
+    public function storeRepository($data)
+    {
+        $date = $data['date'];
+        $account_id = $data['account'];
+        $category_id = $data['category'];
+        $amount = $data['amount'];
+        $vat_tax_id = $data['vat_tax'];
+        $description = $data['description'];
 
         //find and check account
         $account = AccCoaAccount::where('status', AccCoaAccount::STATUS_ACTIVE)
@@ -62,6 +71,7 @@ class ExpenseRepository
         $transaction->transaction_date = $date;
         $transaction->account_id = $account_id;
         $transaction->category_id = $category_id;
+        $transaction->reference_type = Transaction::REFERENCE_TYPE_EXPENSE;
         $transaction->total_cost_price = 0;
         $transaction->net_amount = $net_amount;
         $transaction->total_vat_amount = $total_vat_amount;
@@ -88,11 +98,19 @@ class ExpenseRepository
             $vatTrx->save();
         }
 
-        if (isset($request->receipts) && is_array($request->receipts) && (count($request->receipts) > 0)) {
-            foreach ($request->receipts as $receiptIndex => $image) {
+        if (isset($data['receipts']) && is_array($data['receipts']) && (count($data['receipts']) > 0)) {
+            foreach ($data['receipts'] as $receiptIndex => $image) {
+                if ($image != '') {
+                    $uploadedImage = $this->imageService->store($image, 'receipts');
 
+                    $receipt = new TransactionReceipt();
+                    $receipt->transaction_id = $transaction->id;
+                    $receipt->receipt = $uploadedImage['path'];
+                    $receipt->status = TransactionReceipt::STATUS_ACTIVE;
+                    $receipt->save();
+
+                }
             }
         }
-
     }
 }

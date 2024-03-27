@@ -275,6 +275,9 @@
                                 <a href="{{ route('accounting.chart-of-accounts.index') }}" class="{{ ($activeMenu == 'accounting.chart-of-accounts.index') ? 'active' : '' }}"><i class="la la-git"></i> <span>Chart Of Account</span></a>
                             </li>
                         @endif
+                    <li>
+                        <a href="{{ route('accounting.transaction.index') }}" class="{{ ($activeMenu == 'accounting.transaction.index') ? 'active' : '' }}"><i class="la la-houzz"></i> <span>Transaction</span></a>
+                    </li>
                 @endif
 
                 <li class="menu-title">

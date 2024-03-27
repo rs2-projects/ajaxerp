@@ -7,6 +7,7 @@ use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaCategory;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
+use App\Repository\Transaction\ExpenseRepository;
 use App\Traits\VatTaxTrait;
 use Carbon\Carbon;
 
@@ -66,6 +67,7 @@ class TransactionService
 
     public function storeExpense($request)
     {
-
+        $expenseRepo = new ExpenseRepository();
+        $expenseRepo->storeRepository($request);
     }
 }

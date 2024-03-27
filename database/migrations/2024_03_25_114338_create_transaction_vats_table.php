@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transaction_vats', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('transaction_id')->index();
             $table->unsignedBigInteger('tax_id');
             $table->decimal('main_amount', 12,2);
             $table->decimal('vat_percent', 12,2)->default(0);
@@ -23,7 +23,7 @@ return new class extends Migration
 
             //define foreign keys
             $table->foreign('transaction_id')->references('id')->on('transactions');
-            $table->foreign('tax_id')->references('tax_id')->on('acc_coa_accounts');
+            $table->foreign('tax_id')->references('id')->on('acc_coa_accounts');
         });
     }
 

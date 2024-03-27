@@ -26,6 +26,8 @@
                                 <h4 class="text-center d-table-title cofa-status-income">Income</h4>
                             @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
                                 <h4 class="text-center d-table-title cofa-status-expense">Expense</h4>
+                            @else
+                                <h4 class="text-center d-table-title cofa-status-transfer">{{ \App\Models\Accounting\Transaction::REFERENCE_TYPES[$transaction->reference_type] ?? '' }}</h4>
                             @endif
                         </td>
                         <td class="erp-tbody-td text-center">
