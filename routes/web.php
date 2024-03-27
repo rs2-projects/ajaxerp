@@ -483,6 +483,10 @@ Route::group(['middleware' => 'auth'], function () {
             // calculate price
             Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
             Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+            
+            // print barcode
+            Route::get('/{id}/print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode');
+            // Route::post('/{id}/update-role', [ProductMaterialPurchaseController::class, 'updateRole'])->name('hr.employee.update-role');
         });
        // materials purchase order route end
 

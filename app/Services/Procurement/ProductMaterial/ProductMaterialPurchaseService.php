@@ -1131,4 +1131,15 @@ class ProductMaterialPurchaseService
 
         return $data;
     }
+
+    public function printBarcodeData($id, $type){
+        $data['material'] = ProductMaterialPurchase::where('id', $id)
+            ->where('status', ProductMaterialPurchase::STATUS_ACTIVE)
+            ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            ->with('purchaseDetails', 'purchaseDetails.productMaterial')
+            ->first();
+        
+        $data['type'] = $type;
+        return $data;
+    }
 }

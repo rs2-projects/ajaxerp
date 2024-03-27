@@ -185,4 +185,17 @@ class ProductMaterialPurchaseController extends BackendController
 
         return response()->json($data['suppliers']);
     }
+
+    public function printBarcodeData($id, $type)
+    {
+        try {
+            $data = $this->service->printBarcodeData($id, $type);
+            $view = $this->view('procurement.product-material-purchase.print-barcode._print_barcode_modal_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
 }

@@ -112,6 +112,7 @@
 
 @section('modals')
     @include('common.modals._make_payment_modal')
+    @include('procurement.product-material-purchase.print-barcode._print_barcode_modal')
 @endsection
 
 @section('css')
@@ -240,6 +241,22 @@
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
+        }
+
+        function printBarcodeData(id, type){
+            console.log(id, type)
+            let url = "{{ route('procurement.product-material-purchase.print-barcode', ['id' => ':id', 'type' => ':type']) }}";
+            url = url.replace(':id', id);
+            url = url.replace(':type', type);
+            console.log(url)
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#print_barcode_modal_body").html(response.view);
+                    $("#printBarcodeModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
     </script>
