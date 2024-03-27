@@ -514,6 +514,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index');
             Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered');
             Route::post('expense', [TransactionController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
+            Route::get('expense/{id}/edit', [TransactionController::class, 'editExpense'])->name('accounting.transaction.expense.edit');
+            Route::post('expense/{id}/update', [TransactionController::class, 'updateExpense'])->name('accounting.transaction.expense.update');
         });
     });
     // Accounting route end
