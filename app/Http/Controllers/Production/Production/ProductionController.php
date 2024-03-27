@@ -6,8 +6,13 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Production\Production\StoreProductionDispatchRequest;
 use App\Http\Requests\Production\Production\StoreProductionReceiveRequest;
+use App\Models\Production\PreProduction;
 use App\Services\Production\Production\ProductionService;
+// use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use PDF;
+// use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductionController extends BackendController
 {
@@ -106,6 +111,40 @@ class ProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Dispatched successfully');
+    }
+
+    public function printBarcode($id, $type){
+        try {
+
+            $production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+                ->where('status', PreProduction::STATUS_ACTIVE)
+                ->where('id', $id)
+                ->first();
+            if (empty($production)) {
+                return redirect()->back()->with(['failed' => 'Invalid Production!']);
+            }
+
+            $code_generator = new BarcodeGeneratorPNG();
+            if($type == 'printer'){
+                return view('production.production.print-barcode-printer', compact(
+                    'code_generator',
+                    'production'
+                ));
+            }
+
+            $pdf = PDF::loadView('production.production.print-barcode-pdf', compact(
+                'code_generator',
+                'production'
+            ));
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            // $footer_text = CommonHelper::getInvoiceFooterText('');
+            $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            return $pdf->inline();
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->with(['failed' => $exception->getMessage()]);
+        }
     }
 
 }

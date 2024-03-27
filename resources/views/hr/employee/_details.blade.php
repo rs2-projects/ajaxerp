@@ -11,8 +11,8 @@
                     <div class="col-md-5">
                         <div class="profile-info-left">
                             <h3 class="user-name m-t-0 mb-0">{{ $employee->full_name??'N/A' }}</h3>
-                            <h6 class="text-muted">{{ $employee->department->name??'N/A' }}</h6>
-                            <small class="text-muted">{{ $employee->designation->name?? 'N/A' }}</small>
+                            <h6 class="text-muted">{{ $employee->user_role->title??'N/A' }}</h6>
+                            <small class="text-muted">{{ $employee->department->name??'N/A' }} / {{ $employee->designation->name?? 'N/A' }}</small>
                             <div class="staff-id">Employee ID : {{ $employee->employee_id??'N/A' }}</div>
                             <div class="small doj text-muted">Date of Join : {{ getFormattedDate($employee->joining_date,'d M, Y') }}</div>
                             <div class="staff-msg"><a class="btn btn-custom"

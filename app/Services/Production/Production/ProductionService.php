@@ -9,7 +9,9 @@ use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\ProductionDispatch;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\DB;
+use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductionService
 {
@@ -460,4 +462,37 @@ class ProductionService
         }
         DB::commit();
     }
+
+    // public function printBarcodeData($id, $type){
+    //     try {
+
+    //         $production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+    //             ->where('status', PreProduction::STATUS_ACTIVE)
+    //             ->where('id', $id)
+    //             ->first();
+    //         if (empty($production)) {
+    //             return redirect()->back()->with(['failed' => 'Invalid Production!']);
+    //         }
+
+    //         $code_generator = new BarcodeGeneratorPNG();
+    //         if($type == 'printer'){
+    //             return view('print-barcode-printer', compact(
+    //                 'code_generator',
+    //                 'production'
+    //             ));
+    //         }
+    //         $pdf = PDF::loadView('print-barcode-pdf', compact(
+    //             'code_generator',
+    //             'production'
+    //         ));
+    //         $pdf->setPaper('a4');
+    //         $pdf->setOrientation('portrait');
+    //         // $footer_text = CommonHelper::getInvoiceFooterText('');
+    //         $pdf->setOption('footer-html', "hello");
+    //         return $pdf->inline();
+
+    //     } catch (\Exception $exception) {
+    //         return redirect()->back()->with(['failed' => $exception->getMessage()]);
+    //     }
+    // }
 }

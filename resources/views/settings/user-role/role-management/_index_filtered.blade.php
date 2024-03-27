@@ -7,7 +7,6 @@
                 <th class="erp-th">Role </th>
                 <th class="erp-th text-center">Description</th>
                 <th class="erp-th text-center">Is Default</th>
-                <th class="erp-th text-center">Status</th>
                 <th class="erp-th text-center">Action </th>
             </tr>
         </thead>
@@ -19,7 +18,7 @@
                     </td>
                     <td class="erp-tbody-td text-center">{{ $role->title??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $role->description??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $role->is_default == $role::IS_DEFAULT_YES ? 'Yes': 'No' }}</td>
+                    {{-- <td class="erp-tbody-td text-center">{{ $role->is_default == $role::IS_DEFAULT_YES ? 'Yes': 'No' }}</td> --}}
 
                     <td class="erp-tbody-td text-center">
                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
