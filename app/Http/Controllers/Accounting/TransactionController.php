@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\BaseControllers\BackendController;
-use App\Http\Requests\Accounting\Transaction\StoreExpenseRequest;
 use App\Services\Accounting\TransactionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TransactionController extends BackendController
 {
@@ -39,40 +37,14 @@ class TransactionController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 
-    public function storeExpense(StoreExpenseRequest $request): \Illuminate\Http\JsonResponse
+    public function reviewTransaction(Request $request, $id)
     {
-        DB::beginTransaction();
         try {
-            $this->service->storeExpense($request);
+            $this->service->reviewTransaction($id, $request);
         }catch (\Exception $e){
-            DB::rollBack();
             return $this->returnAjaxException($e);
         }
-        DB::commit();
-        return $this->returnAjaxSuccess([], 'Expense created successfully!');
+        return $this->returnAjaxSuccess([], 'Transaction reviewed successfully!');
     }
 
-    public function editExpense($id)
-    {
-        try {
-            $data = $this->service->editExpenseData($id);
-            $view = $this->view('accounting.transaction.__edit_expense_modal_data')->with($data)->render();
-            return $this->returnAjaxSuccess(['view' => $view]);
-        }catch (\Exception $e){
-            return $this->returnAjaxException($e);
-        }
-    }
-
-    public function updateExpense(StoreExpenseRequest $request, $id): \Illuminate\Http\JsonResponse
-    {
-        DB::beginTransaction();
-        try {
-            $this->service->updateExpense($id, $request);
-        }catch (\Exception $e){
-            DB::rollBack();
-            return $this->returnAjaxException($e);
-        }
-        DB::commit();
-        return $this->returnAjaxSuccess([], 'Expense created successfully!');
-    }
 }

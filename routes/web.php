@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Accounting\ChartOfAccountController;
 use App\Http\Controllers\Accounting\TransactionController;
+use App\Http\Controllers\Accounting\TransactionExpenseController;
 use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -483,7 +484,7 @@ Route::group(['middleware' => 'auth'], function () {
             // calculate price
             Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
             Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
-            
+
             // print barcode
             Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data');
             Route::post('/print-barcode', [ProductMaterialPurchaseController::class, 'printBarcode'])->name('procurement.product-material-purchase.print-barcode');
@@ -517,9 +518,12 @@ Route::group(['middleware' => 'auth'], function () {
         Route::prefix('transaction')->group(function () {
             Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index');
             Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered');
-            Route::post('expense', [TransactionController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
-            Route::get('expense/{id}/edit', [TransactionController::class, 'editExpense'])->name('accounting.transaction.expense.edit');
-            Route::post('expense/{id}/update', [TransactionController::class, 'updateExpense'])->name('accounting.transaction.expense.update');
+            Route::get('{id}/review', [TransactionController::class, 'reviewTransaction'])->name('accounting.transaction.review');
+
+            Route::post('expense', [TransactionExpenseController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
+            Route::get('expense/{id}/edit', [TransactionExpenseController::class, 'editExpense'])->name('accounting.transaction.expense.edit');
+            Route::post('expense/{id}/update', [TransactionExpenseController::class, 'updateExpense'])->name('accounting.transaction.expense.update');
+            Route::get('expense/{id}/delete', [TransactionExpenseController::class, 'deleteExpense'])->name('accounting.transaction.expense.delete');
         });
     });
     // Accounting route end

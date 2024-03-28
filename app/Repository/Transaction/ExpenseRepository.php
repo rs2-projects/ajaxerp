@@ -242,4 +242,40 @@ class ExpenseRepository
             }
         }
     }
+
+    public function deleteExpense($id)
+    {
+        $transaction = Transaction::where('id', $id)
+            ->where('transaction_type', Transaction::TRANSACTION_TYPE_WITHDRAW)
+            ->where('reference_type', Transaction::REFERENCE_TYPE_EXPENSE)
+            ->where('status', 1)
+            ->where('deleted', 0)
+            ->first();
+        if (empty($transaction)) {
+            throw new \Exception("Invalid Expense!", 404);
+        }
+
+        $previous_transaction_vat = TransactionVat::where('transaction_id', $transaction->id)
+            ->first();
+        if (!empty($previous_transaction_vat)) {
+            $this->addAccountBalanceById($previous_transaction_vat->tax_id, $previous_transaction_vat->vat_amount);
+        }
+        //adjust previous transaction balance
+        $this->addAccountBalanceById($transaction->account_id, $transaction->total_amount);
+        $this->deductAccountBalanceById($transaction->category_id, $transaction->net_amount);
+
+        TransactionVat::where('transaction_id', $transaction->id)->update([
+            'status' => 0,
+            'deleted' => 1,
+            'deleted_at' => Carbon::now(),
+            'deleted_by' => auth()->id()
+        ]);
+
+        $transaction->status = 0;
+        $transaction->deleted = 1;
+        $transaction->deleted_at = Carbon::now();
+        $transaction->deleted_by = auth()->id();
+        $transaction->save();
+
+    }
 }

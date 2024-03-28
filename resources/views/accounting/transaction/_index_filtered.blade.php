@@ -70,7 +70,7 @@
 
                         <td class="erp-tbody-td text-center">
                             <div class="checkbox-wrapper">
-                                <input id="terms-checkbox-{{ $loop->iteration }}" name="checkbox" type="checkbox" value="1" {{ ($transaction->is_reviewed == \App\Models\Accounting\Transaction::IS_REVIEWED_YES)?'checked':'' }}>
+                                <input id="terms-checkbox-{{ $loop->iteration }}" onchange="reviewTransaction(this, {{ $transaction->id }})" name="checkbox" type="checkbox" value="1" {{ ($transaction->is_reviewed == \App\Models\Accounting\Transaction::IS_REVIEWED_YES)?'checked':'' }}>
                                 <label class="terms-label" for="terms-checkbox-{{ $loop->iteration }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
                                         <mask fill="white" id="path-1-inside-1_476_5-37">
@@ -91,12 +91,12 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{$transaction->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteExpense({{ $transaction->id }})"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @else
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
-                                        <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
                                     </div>
                                 </div>
                             </div>

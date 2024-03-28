@@ -190,6 +190,45 @@
             }, 'default');
         }
 
+        function deleteExpense(id) {
+            let url = "{{route('accounting.transaction.expense.delete', ':id')}}";
+            url = url.replace(':id', id);
+            deleteAjax(
+                url,
+                'reloadAjaxGetData'
+            );
+        }
+
+        function reviewTransaction(checkbox, id) {
+            let url = "{{route('accounting.transaction.review', ':id')}}";
+            url = url.replace(':id', id);
+
+            let review = 0;
+            if($(checkbox).is(":checked")) {
+                review = 1;
+            }
+            let data = {
+                review: review
+            }
+            ajaxGet(url, data, function (response) {
+                if (response.status == 200) {
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                    $(checkbox).attr('checked', false);
+                }
+            }, function (err) {
+                if (xhr.status == 422) {
+                    $.each(xhr.responseJSON.errors, function (key, value) {
+                        $("." + key + "_error").text(value).show();
+                        toastr.error(value);
+                    });
+                } else {
+                    toastr.error(xhr.message);
+                }
+                $(checkbox).removeAttr('checked');
+            });
+        }
     </script>
 @endsection
 
