@@ -52,7 +52,7 @@
 @endsection
 
 @section('modals')
-
+    @include('hr.employee._change_role')
 @endsection
 
 @section('css')
@@ -98,6 +98,23 @@
                     }
                 }, 'show_input_error');
             });
+
+            $(document).on("submit", "#changeRoleUpdateForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#editRoleModal").modal('hide');
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
         });
 
         function getData(){
@@ -106,6 +123,27 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function editRole(id){
+            let url = "{{route('hr.employee.edit-role', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#edit_role_modal_body").html(response.view);
+                    $("#editRoleModal").modal('show');
+                    initializeSelect()
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function initializeSelect() {
+            $('.select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
         }
 
     </script>

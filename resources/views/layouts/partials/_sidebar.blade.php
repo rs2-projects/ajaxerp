@@ -125,7 +125,7 @@
                                     <li><a href="{{ route('procurement.admin.asset-purchase-request.index') }}" class="{{ ( $activeMenu == 'procurement.admin.asset-purchase-request.index') ? 'active' : '' }}"><span>Purchase Request Manage</span></a></li>
                                 @endif
                                 @if(hasPermission( 'view-asset-product-purchase-orders','manage-asset-product-purchase-orders','asset-product-purchase-order-payment' ))
-                                    <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <i class="la la-truck"></i><span>Purchase Order(P.O)</span></a></li>
+                                    <li><a href="{{ route('procurement.asset-purchase-order.index') }}" class="{{ ( $activeMenu == 'procurement.asset-purchase-order.index') ? 'active' : '' }}"> <span>Purchase Order(P.O)</span></a></li>
                                 @endif
                             </ul>
                         </li>
@@ -275,6 +275,9 @@
                                 <a href="{{ route('accounting.chart-of-accounts.index') }}" class="{{ ($activeMenu == 'accounting.chart-of-accounts.index') ? 'active' : '' }}"><i class="la la-git"></i> <span>Chart Of Account</span></a>
                             </li>
                         @endif
+                    <li>
+                        <a href="{{ route('accounting.transaction.index') }}" class="{{ ($activeMenu == 'accounting.transaction.index') ? 'active' : '' }}"><i class="la la-houzz"></i> <span>Transaction</span></a>
+                    </li>
                 @endif
 
                 <li class="menu-title">

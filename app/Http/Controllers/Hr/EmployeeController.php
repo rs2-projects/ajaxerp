@@ -16,10 +16,12 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends BackendController
 {
+    private EmployeeService $service;
     public function __construct()
     {
         $this->addBreadcrumbs('HR', route('dashboard'), 'fa fa-home');
         $this->addBreadcrumbs('Employee', route('hr.employee'));
+        $this->service = new EmployeeService();
     }
 
     public function index(Request $request, EmployeeService $employeeService)
@@ -96,7 +98,7 @@ class EmployeeController extends BackendController
         }catch (\Exception $exception) {
             return redirect()->route('hr.employee')->with('error', $exception->getMessage());
         }
-
+        // return $data;
         return $this->view('hr.employee.details')->with($data);
     }
 
@@ -190,5 +192,53 @@ class EmployeeController extends BackendController
         }
 
         return $this->returnAjaxSuccess([], "Delete Success");
+    }
+
+    // public function editRole()
+    // {
+    //     try {
+    //         $this->addBreadcrumbs('Edit');
+    //         $this->setPageTitle("Edit Employee");
+    //         $this->setActiveMenu('hr.employee.edit');
+    //         $data = $employeeService->getEditData($id);
+    //     }catch (\Exception $exception) {
+    //         return redirect()->route('hr.employee')->with('error', $exception->getMessage());
+    //     }
+
+    //     return $this->view('hr.employee.edit')->with($data);
+    // }
+
+    // public function updateRole()
+    // {
+    //     try {
+    //         $employeeService->updateEmployee($request, $id);
+    //     }catch (\Exception $exception) {
+    //         return $this->returnAjaxException($exception);
+    //     }
+
+    //     return $this->returnAjaxSuccess([], "Update Success");
+    // }
+
+    public function changeRole($id)
+    {
+        try {
+            $data = $this->service->changeRoleData($id);
+            $view = $this->view('hr.employee._change_role_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        try {
+            $this->service->updateRole($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'User Role updated successfully');
     }
 }

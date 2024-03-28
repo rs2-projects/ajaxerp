@@ -289,38 +289,38 @@
 .pd-recived-product-scrol-box::-webkit-scrollbar {
     height: 4px;
     width: 4px;
-  }
-  .pd-recived-product-scrol-box::-webkit-scrollbar-track {
+}
+.pd-recived-product-scrol-box::-webkit-scrollbar-track {
     border-radius: 5px;
     background-color: #DFE9EB;
-  }
-  
-  .pd-recived-product-scrol-box::-webkit-scrollbar-track:hover {
+}
+
+.pd-recived-product-scrol-box::-webkit-scrollbar-track:hover {
     background-color: #DFE9EB;
-  }
-  
-  .pd-recived-product-scrol-box::-webkit-scrollbar-track:active {
+}
+
+.pd-recived-product-scrol-box::-webkit-scrollbar-track:active {
     background-color: #DFE9EB;
-  }
-  
-  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb {
+}
+
+.pd-recived-product-scrol-box::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: #60C53C;
-  }
-  
-  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb:hover {
+}
+
+.pd-recived-product-scrol-box::-webkit-scrollbar-thumb:hover {
     background-color: #60C53C;
-  }
-  
-  .pd-recived-product-scrol-box::-webkit-scrollbar-thumb:active {
+}
+
+.pd-recived-product-scrol-box::-webkit-scrollbar-thumb:active {
     background-color: #60C53C;
-  }
+}
 
 
 
-  /* View Purchase Order start */
+/* View Purchase Order start */
 
-  .view-purchase-input h4 {
+.view-purchase-input h4 {
     margin-bottom: 0;
     font-size: 13px;
     font-weight: 700;
@@ -369,3 +369,59 @@
     border: 1px dashed #f1f1f1;
 }
 /* View Purchase Order End */
+
+.cofa-status-expense {
+    background: red;
+    color: #fff !important;
+    padding: 2px 10px;
+    display: inline-block;
+    font-size: 10px;
+    border-radius: 4px;
+}
+.cofa-status-transfer {
+    background: blue;
+    color: #fff !important;
+    padding: 2px 10px;
+    display: inline-block;
+    font-size: 10px;
+    border-radius: 4px;
+}
+
+
+/* Add Expense Calculation start */
+.subtotal_info_wrapper {
+    padding: 15px 10px 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    border: 1px dashed #ddd;
+    border-radius: 9px;
+    margin-top: 10px;
+    background: #dddddd26;
+}
+.subtotal_info_wrapper .subtotal_wrapper {
+    display: flex;
+    justify-content: space-between;
+    color: #303030;
+    font-size: 14px;
+    border-right: 3px solid #ddd;
+    padding-right: 10px;
+    margin-bottom: 0px;
+}
+.subtotal_info_wrapper .subtotal_price {
+    font-weight: 600;
+}
+.subtotal_info_wrapper .subtotal_wrapper:last-child {
+    padding-right: 0;
+    border-right: 0;
+}
+.subtotal_info_wrapper .subtotal_wrapper .subtotal_title {
+    margin-right: 8px;
+}
+span.pp-icon {
+    font-weight: 500;
+    padding-right: 3px;
+    font-size: 15px;
+}
+/* Add Expense Calculation End */

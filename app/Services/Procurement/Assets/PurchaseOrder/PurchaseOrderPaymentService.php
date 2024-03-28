@@ -123,7 +123,7 @@ class PurchaseOrderPaymentService
             $purchase_payment->payment_method = $request->payment_method;
             $purchase_payment->amount = $request->amount;
             $purchase_payment->payment_date = $request->date;
-            $purchase->note = $request->note;
+            $purchase_payment->note = $request->note;
             $purchase_payment->created_at = Carbon::now();
             $purchase_payment->created_by = auth()->user()->id;
             $purchase_payment->updated_at = Carbon::now();

@@ -14,7 +14,9 @@ class UserRoleService
     public function indexFilteredData()
     {
         $data['roles'] = Role::where('deleted', Role::DELETED_NO)
-            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+            ->where('status', Role::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->paginate($this->paginate_limit);
         return $data;
     }
 

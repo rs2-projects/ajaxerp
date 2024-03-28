@@ -6,8 +6,11 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Procurement\ProductMaterial\StorePurchaseReqeust;
 use App\Http\Requests\Procurement\ProductMaterial\UpdatePurchaseReqeust;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Services\Procurement\ProductMaterial\ProductMaterialPurchaseService;
 use Illuminate\Http\Request;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use PDF;
 
 class ProductMaterialPurchaseController extends BackendController
 {
@@ -184,5 +187,67 @@ class ProductMaterialPurchaseController extends BackendController
         $data = $this->service->getAllSuppliers($request);
 
         return response()->json($data['suppliers']);
+    }
+
+    public function printBarcodeData($id, $type)
+    {
+        try {
+            $data = $this->service->printBarcodeData($id, $type);
+            $view = $this->view('procurement.product-material-purchase.print-barcode._print_barcode_modal_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function printBarcode(Request $request){
+        try {
+            $purchaseDetailsIdsWithQty = [];
+            foreach ($request->purchase_details_id as $index => $purchaseDetailId) {
+                if (isset($request->qty[$index])) {
+                    $purchaseDetailsIdsWithQty[$purchaseDetailId] = $request->qty[$index];
+                }
+            }
+            $purchae_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                ->whereIn('id', array_keys($purchaseDetailsIdsWithQty))
+                ->get()
+                ->map(function ($item) use ($purchaseDetailsIdsWithQty) {
+                    return (object) [
+                        'id' => $item['id'],
+                        'barcode' => $item['barcode'],
+                        'color' => $item['color'],
+                        'qty' => $purchaseDetailsIdsWithQty[$item['id']],
+                        'unit_price' => $item['unit_price'],
+                        'name' => $item->productMaterial->name,
+                    ];
+                });
+
+                if (empty($purchae_details)) {
+                    return redirect()->back()->with(['failed' => 'Invalid Products!']);
+                }
+
+            $code_generator = new BarcodeGeneratorPNG();
+            if($request->type == 'printer'){
+                return view('procurement.product-material-purchase.print-barcode.print-barcode-printer', compact(
+                    'code_generator',
+                    'purchae_details',
+                ));
+            }
+
+            $pdf = PDF::loadView('procurement.product-material-purchase.print-barcode.print-barcode-pdf', compact(
+                'code_generator',
+                'purchae_details'
+            ));
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            return $pdf->inline();
+
+        } catch (\Exception $exception) {
+            return redirect()->back()->with(['failed' => $exception->getMessage()]);
+        }
     }
 }

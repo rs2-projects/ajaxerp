@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Accounting\ChartOfAccountController;
+use App\Http\Controllers\Accounting\TransactionController;
+use App\Http\Controllers\Accounting\TransactionExpenseController;
 use App\Http\Controllers\Ajax\AjaxController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -267,6 +269,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('education-info/{id}/update', [EmployeeController::class, 'educationInfoUpdate'])->name('hr.employee.education-info.update')->middleware('permission:manage-employees');
             Route::post('experience-info/{id}/update', [EmployeeController::class, 'experienceInfoUpdate'])->name('hr.employee.experience-info.update')->middleware('permission:manage-employees');
             Route::post('emergency-contact-info/{id}/update', [EmployeeController::class, 'emergencyContactInfoUpdate'])->name('hr.employee.emergency-contact-info.update')->middleware('permission:manage-employees');
+            Route::get('/{id}/edit-role', [EmployeeController::class, 'changeRole'])->name('hr.employee.edit-role')->middleware('permission:manage-employees');
+            Route::post('/{id}/update-role', [EmployeeController::class, 'updateRole'])->name('hr.employee.update-role')->middleware('permission:manage-employees');
         });
         // Employee route end
 
@@ -480,6 +484,10 @@ Route::group(['middleware' => 'auth'], function () {
             // calculate price
             Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
             Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+
+            // print barcode
+            Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data');
+            Route::post('/print-barcode', [ProductMaterialPurchaseController::class, 'printBarcode'])->name('procurement.product-material-purchase.print-barcode');
         });
        // materials purchase order route end
 
@@ -506,6 +514,17 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [ChartOfAccountController::class, 'statusUpdate'])->name('accounting.chart-of-accounts.change-status')->middleware('permission:manage-chart-of-accounts');
         });
         // chart of accounts route end
+
+        Route::prefix('transaction')->group(function () {
+            Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index');
+            Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered');
+            Route::get('{id}/review', [TransactionController::class, 'reviewTransaction'])->name('accounting.transaction.review');
+
+            Route::post('expense', [TransactionExpenseController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
+            Route::get('expense/{id}/edit', [TransactionExpenseController::class, 'editExpense'])->name('accounting.transaction.expense.edit');
+            Route::post('expense/{id}/update', [TransactionExpenseController::class, 'updateExpense'])->name('accounting.transaction.expense.update');
+            Route::get('expense/{id}/delete', [TransactionExpenseController::class, 'deleteExpense'])->name('accounting.transaction.expense.delete');
+        });
     });
     // Accounting route end
 

@@ -69,4 +69,9 @@ class AccCoaSubCategory extends Model
     {
         return $this->hasMany(AccCoaAccount::class, 'acc_coa_sub_category_id', 'id');
     }
+
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(AccCoaCategory::class, 'acc_coa_category_id', 'id');
+    }
 }
