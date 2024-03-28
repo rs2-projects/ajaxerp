@@ -8,11 +8,9 @@ use App\Http\Requests\Production\Production\StoreProductionDispatchRequest;
 use App\Http\Requests\Production\Production\StoreProductionReceiveRequest;
 use App\Models\Production\PreProduction;
 use App\Services\Production\Production\ProductionService;
-// use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use PDF;
-// use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductionController extends BackendController
 {

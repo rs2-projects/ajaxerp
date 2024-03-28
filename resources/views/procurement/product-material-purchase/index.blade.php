@@ -180,6 +180,18 @@
                 }, 'show_input_error');
             });
 
+            // $(document).on("submit", "#printBarcodeModalForm", function(e) {
+            //     var self = this;
+            //     e.preventDefault();
+            //     var formData = new FormData($(self)[0]);
+            //     var url = $(self).attr('action');
+
+            //     if ($(".purchase_details_checkbox:checked").length === 0) {
+            //         showErrorAlert('Error', 'Please select at least one product.');
+            //         return;
+            //     }
+            // });
+
         });
 
 
@@ -245,10 +257,9 @@
 
         function printBarcodeData(id, type){
             console.log(id, type)
-            let url = "{{ route('procurement.product-material-purchase.print-barcode', ['id' => ':id', 'type' => ':type']) }}";
+            let url = "{{ route('procurement.product-material-purchase.print-barcode-data', ['id' => ':id', 'type' => ':type']) }}";
             url = url.replace(':id', id);
             url = url.replace(':type', type);
-            console.log(url)
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     $("#print_barcode_modal_body").html(response.view);

@@ -13,7 +13,7 @@
             @if(hasPermission( 'manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
                 <th class="erp-th text-center">Record Payment </th>
             @endif
-            {{--<th class="text-end erp-th">Action</th>--}}
+            <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -76,19 +76,17 @@
                             @endif
                         @endif
                     </td>
-
-
-                    {{--<td class="text-end erp-tbody-td">
+                    <td class="text-end erp-tbody-td">
                         <div class="erp-action-t">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                    <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
                                 </div>
                             </div>
                         </div>
-                    </td>--}}
+                    </td>
                 </tr>
             @empty
                 <tr class="erp-tbody-tr">
