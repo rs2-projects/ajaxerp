@@ -70,7 +70,7 @@ class TransactionService
     public function storeExpense($request)
     {
         $expenseRepo = new ExpenseRepository();
-        $expenseRepo->storeRepository($request);
+        $expenseRepo->storeExpense($request);
     }
 
     public function editExpenseData($id)
@@ -110,5 +110,11 @@ class TransactionService
         $data['vat_taxes'] = $this->getVatTaxList();
         return $data;
 
+    }
+
+    public function updateExpense($id, $request)
+    {
+        $expenseRepo = new ExpenseRepository();
+        $expenseRepo->updateExpense($id, $request);
     }
 }

@@ -111,6 +111,25 @@
                         showErrorAlert('Error',res.message)
                     }
                 }, 'show_input_error');
+            });
+
+            $(document).on('submit', "#expenseUpdateForm", function (e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        showSuccessAlert('Success',res.message);
+                        $(self)[0].reset();
+                        $('#cofa_expense_edit').modal('hide');
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
             })
         });
 
@@ -155,6 +174,20 @@
                     previous: 'fa-solid fa-angle-left'
                 }
             });
+        }
+
+        function editExpense(id) {
+            let url = "{{route('accounting.transaction.expense.edit', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#cofa_expense_edit .modal-body").html(response.view);
+                    $("#cofa_expense_edit").modal('show');
+                    initSelect2();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
     </script>

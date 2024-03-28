@@ -35,18 +35,22 @@
                                 <h4 class="text-center d-table-title">
                                     {{ $transaction->reference_description }}
                                 </h4>
-                            @elseif($transaction->reference_type == 'return_invoice_payment')
+                            @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_RETURN_INVOICE_PAYMENT)
                                 <h4 class="text-center d-table-title">
                                     {{ $transaction->reference_description }}
                                 </h4>
-                            @elseif($transaction->reference_type == 'purchase_payment')
+                            @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT)
                                 <h4 class="text-center d-table-title">
                                     {{ $transaction->reference_description }}
                                 </h4>
-                            @elseif($transaction->reference_type == 'transfer')
-                                <p>
+                            @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT)
+                                <h4 class="text-center d-table-title">
                                     {{ $transaction->reference_description }}
-                                </p>
+                                </h4>
+                            @elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_TRANSFER)
+                                <h4 class="text-center d-table-title">
+                                    {{ $transaction->reference_description }}
+                                </h4>
                             @else
                                 <p title="{{ $transaction->description }}">{{ getRealSubStr($transaction->description, 30) }}</p>
                             @endif
@@ -86,9 +90,12 @@
                                 <div class="dropdown dropdown-action">
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{$transaction->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        @else
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        @endif
+                                        <a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
                                     </div>
                                 </div>
