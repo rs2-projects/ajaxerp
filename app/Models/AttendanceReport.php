@@ -90,6 +90,9 @@ class AttendanceReport extends Model
         self::DELETED_YES => 'Yes'
     ];
 
+    const SALARY_GENERATED_YES = 1;
+    const SALARY_GENERATED_NO = 0;
+
     protected $fillable = [
         'employee_id',
         'settings_salary_set_id',
@@ -112,6 +115,7 @@ class AttendanceReport extends Model
         'late_time',
         'early_leaving_time',
         'inputted_by_type',
+        'salary_generated',
         'status',
         'created_at',
         'created_by',
