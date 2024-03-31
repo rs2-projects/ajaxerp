@@ -30,18 +30,18 @@
                         @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_REVISED_OR_BACKED)
                             @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES && $purchase_order->is_backed == $purchase_order::IS_BACKED_YES)
                                 <div class="back-order-status">
-                                    <span>Has Backed</span>
+                                    <span>Has Been Backed</span>
                                 </div>
                                 <div class="revised-status">
-                                    <span>Has Revised</span>
+                                    <span>Has Been Revised</span>
                                 </div>
                             @elseif($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
                                 <div class="revised-status">
-                                    <span>Has Revised</span>
+                                    <span>Has Been Revised</span>
                                 </div>
                             @elseif($purchase_order->is_backed == $purchase_order::IS_BACKED_YES)
                                 <div class="back-order-status">
-                                    <span>Has Backed</span>
+                                    <span>Has Been Backed</span>
                                 </div>
                             @endif
                         @elseif($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW)

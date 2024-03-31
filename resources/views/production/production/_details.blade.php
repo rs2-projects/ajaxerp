@@ -37,8 +37,7 @@
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Process {{ $processKey + 1 }}</h4>
-                                
-                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING)
+                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
                                     @if(hasPermission('manage-processes'))
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
                                         {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a> --}}

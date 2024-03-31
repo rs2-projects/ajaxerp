@@ -70,6 +70,7 @@ class PreProductionMaterialRequestController extends BackendController
         $this->setActiveMenu('inventory.material-request.deliver');
 
         $data = $this->service->detailsData($id);
+        // return $data;
         return $this->view('inventory.material-request.delivery_details')->with($data);
     }
 

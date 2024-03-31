@@ -71,13 +71,19 @@
                                         <input value="{{$item->contact_last_name}}" name="contact_last_name" type="text" class="form-control " >
                                     </div>
                                 </div>
-                                <div class="erp-filter-item flex-100 mt-3">
+                                {{-- <div class="erp-filter-item flex-100 mt-3">
                                     <h4 class="offcanvas-title-erp">Lead Time</h4>
-                                </div>
-                                <div class="erp-filter-item flex-100">
+                                </div> --}}
+                                <div class="erp-filter-item flex-48">
                                     <div class="input-block mb-0 erp-step-input-block ">
-                                        <label class="col-form-label">Lead Time Status </label>
+                                        <label class="col-form-label">Lead Time </label>
                                         <input value="{{$item->lead_time_status}}" name="lead_time_status" type="text" class="form-control " >
+                                    </div>
+                                </div>
+                                <div class="erp-filter-item fasclex-48">
+                                    <div class="input-block mb-0 erp-step-input-block ">
+                                        <label class="col-form-label">VAT Number </label>
+                                        <input value="{{$item->vat_number}}" name="vat_number" type="text" class="form-control " >
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +172,7 @@
                                                 </div>
                                                 <div class="erp-filter-item flex-48">
                                                     <div class="input-block mb-0 erp-step-input-block ">
-                                                        <label class="col-form-label">Branch Name </label>
+                                                        <label class="col-form-label">Branch Name & Address </label>
                                                         <input value="{{$supplier_bank->branch}}" name="branch[]" type="text" class="form-control " placeholder="" >
                                                     </div>
                                                 </div>
@@ -188,11 +194,23 @@
                                                         <input value="{{$supplier_bank->notes}}" name="notes[]" type="text" class="form-control " placeholder="">
                                                     </div>
                                                 </div>
+                                                <div class="erp-filter-item flex-48">
+                                                    <div class="input-block erp-step-input-block mb-0 two">
+                                                        <label class="col-form-label">Country</label>
+                                                        <select class="select select-step select2 country_id" name="bank_country_id[]">
+                                                            <option value="">Select Country</option>
+                                                            @foreach($countries as $country)
+                                                                <option {{$supplier_bank->country_id == $country->id? 'selected' : ''}} value="{{$country->id}}">{{$country->name}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             @php $iteration++ @endphp
                                         @endforeach
                                     @else
                                         <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between">
+                                            {{-- <input type="hidden" name="bank_info_id[]" value=""> --}}
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Bank Name </label>
@@ -233,6 +251,17 @@
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Note</label>
                                                     <input name="notes[]" type="text" class="form-control " placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="erp-filter-item flex-48">
+                                                <div class="input-block erp-step-input-block mb-0 two">
+                                                    <label class="col-form-label">Country</label>
+                                                    <select class="select select-step select2 country_id"  name="bank_country_id[]">
+                                                        <option value="">Select Country</option>
+                                                        @foreach($countries as $country)
+                                                            <option value="{{$country->id}}">{{$country->name}}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

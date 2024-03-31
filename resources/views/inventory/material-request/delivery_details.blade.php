@@ -34,75 +34,77 @@
                 </div>
                 <div class="pd-table-box">
                     <div class="pd-table-box-item-wrapper">
-                        @if($deliveries)
-                            @foreach ($deliveries as $data )
-                                <div class="pd-table-box-item">
-                                    <div class="pd-deliver-date-box">
-                                        <p>Delivery: <span>{{ getFormattedDate($data->delivery_date, 'd M, Y') }}</span></p>
-                                    </div>
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                            <tr class="erp-tr">
-                                                                <th class="erp-th">Category </th>
-                                                                <th class="erp-th text-center">Item Name </th>
-                                                                <th class="erp-th text-center">Qty </th>
-                                                                <th class="erp-th text-center">Delivered Qty </th>
-                                                                <th class="text-center erp-th">Item Delivered</th>
-                                                                <th class="text-center erp-th">Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                            @foreach ($data->delivery_details as $details)
-                                                                <tr class="erp-tbody-tr">
-                                                                    <td class="erp-tbody-td text-start">
-                                                                        <h4 class="text-start d-table-title">{{$details->material->category->name}}</h4>
-                                                                    </td>
-                                                                    <td class="erp-tbody-td text-center">
-                                                                        <h4 class="text-center d-table-title">{{$details->material->product->name}}</h4>
-                                                                    </td>
-                                                                    <td class="erp-tbody-td text-center">
-                                                                        <h4 class="text-center d-table-title">{{$details->material->quantity}}</h4>
-                                                                    </td>
-                                                                    <td class="erp-tbody-td text-center">
-                                                                        <h4 class="text-center d-table-title">{{$details->quantity}}</h4>
-                                                                    </td>
-                                                                    <td class="erp-tbody-td text-center">
-                                                                        <div class="pd-recived-product-wrapper">
-                                                                            <div class="pre-counter">
-                                                                                <span>{{$details->quantity}}</span>
-                                                                            </div>
-                                                                            <div class="pd-recived-product-scrol-box">
-                                                                                @foreach ($details->items as $item)
-                                                                                    <div class="pd-recived-product-item d-flex  align-items-center gap-2">
-                                                                                        <div class="pd-recived-product-c-item">
-                                                                                            <p class="mb-0">{{$item->barcode}}</p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                @endforeach
-                                                                            </div>
+                        @forelse ($deliveries as $data )
+                            <div class="pd-table-box-item">
+                                <div class="pd-deliver-date-box">
+                                    <p>Delivery: <span>{{ getFormattedDate($data->delivery_date, 'd M, Y') }}</span></p>
+                                </div>
+                                <div class="my-attendance-report-wrapper">
+                                    <div class="big-table">
+                                        <div class="de-table-wrapper">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0 erp-table">
+                                                    <thead class="erp-thead">
+                                                        <tr class="erp-tr">
+                                                            <th class="erp-th">Category </th>
+                                                            <th class="erp-th text-center">Item Name </th>
+                                                            <th class="erp-th text-center">Qty </th>
+                                                            <th class="erp-th text-center">Delivered Qty </th>
+                                                            <th class="text-center erp-th">Item Delivered</th>
+                                                            <th class="text-center erp-th">Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="erp-tbody">
+                                                        @foreach ($data->delivery_details as $details)
+                                                            <tr class="erp-tbody-tr">
+                                                                <td class="erp-tbody-td text-start">
+                                                                    <h4 class="text-start d-table-title">{{$details->material->category->name}}</h4>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <h4 class="text-center d-table-title">{{$details->material->product->name}}</h4>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <h4 class="text-center d-table-title">{{$details->material->quantity}}</h4>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <h4 class="text-center d-table-title">{{$details->quantity}}</h4>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <div class="pd-recived-product-wrapper">
+                                                                        <div class="pre-counter">
+                                                                            <span>{{$details->quantity}}</span>
                                                                         </div>
-                                                                    </td>
-                                                                    <td class="erp-tbody-td text-center">
-                                                                        <div class="pd-st-box {{strtolower($details::RECEIVEDS[$details->received_status])}}"><p>{{ $details::RECEIVEDS[$details->received_status] }}</p></div>
-                                                                    </td>
-                                                                    
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                                        <div class="pd-recived-product-scrol-box">
+                                                                            @foreach ($details->items as $item)
+                                                                                <div class="pd-recived-product-item d-flex  align-items-center gap-2">
+                                                                                    <div class="pd-recived-product-c-item">
+                                                                                        <p class="mb-0">{{$item->barcode}}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="erp-tbody-td text-center">
+                                                                    <div class="pd-st-box {{strtolower($details::RECEIVEDS[$details->received_status])}}"><p>{{ $details::RECEIVEDS[$details->received_status] }}</p></div>
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @else
-                            No Data Found
-                        @endif
+                            </div>
+                        @empty
+                            <tr class="erp-tbody-tr">
+                                <td class="erp-tbody-td text-center text-primary" colspan="6">
+                                    No data found
+                                </td>
+                            </tr>
+                        @endforelse
                     </div>
                 </div>
             </div>

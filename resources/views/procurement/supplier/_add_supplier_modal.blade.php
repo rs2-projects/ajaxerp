@@ -78,13 +78,19 @@
                                                         <input name="contact_last_name" type="text" class="form-control " >
                                                 </div>
                                             </div>
-                                            <div class="erp-filter-item flex-100 mt-3">
+                                            {{-- <div class="erp-filter-item flex-100 mt-3">
                                                 <h4 class="offcanvas-title-erp">Lead Time</h4>
-                                            </div>
-                                            <div class="erp-filter-item flex-100">
+                                            </div> --}}
+                                            <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
-                                                    <label class="col-form-label">Lead Time Status </label>
+                                                    <label class="col-form-label">Lead Time </label>
                                                         <input name="lead_time_status" type="text" class="form-control " >
+                                                </div>
+                                            </div>
+                                            <div class="erp-filter-item flex-48">
+                                                <div class="input-block mb-0 erp-step-input-block ">
+                                                    <label class="col-form-label">VAT Number </label>
+                                                        <input name="vat_number" type="text" class="form-control " >
                                                 </div>
                                             </div>
                                         </div>
@@ -164,7 +170,7 @@
                                                     </div>
                                                     <div class="erp-filter-item flex-48">
                                                         <div class="input-block mb-0 erp-step-input-block ">
-                                                            <label class="col-form-label">Branch Name </label>
+                                                            <label class="col-form-label">Branch Name & Address </label>
                                                             <input name="branch[]" type="text" class="form-control " placeholder="" >
                                                         </div>
                                                     </div>
@@ -184,6 +190,17 @@
                                                         <div class="input-block mb-0 erp-step-input-block ">
                                                             <label class="col-form-label">Note</label>
                                                             <input name="notes[]" type="text" class="form-control " placeholder="">
+                                                        </div>
+                                                    </div>
+                                                    <div class="erp-filter-item flex-48">
+                                                        <div class="input-block erp-step-input-block mb-0 two">
+                                                            <label class="col-form-label">Country</label>
+                                                            <select class="select select2 country_id"  name="bank_country_id[]">
+                                                                <option value="">Select Country</option>
+                                                                @foreach($countries as $country)
+                                                                    <option value="{{$country->id}}">{{$country->name}}</option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>

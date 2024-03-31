@@ -1,7 +1,7 @@
 
     <div class="big-table pt-4">
         <div class="de-table-wrapper">
-            <div class="table-responsive">
+            <div class="table-responsives">
                 <table class="table mb-0 erp-table">
                     <thead class="erp-thead">
                         <tr class="erp-tr">
