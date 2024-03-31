@@ -24,14 +24,13 @@ class EmployeeController extends BackendController
         $this->service = new EmployeeService();
     }
 
-    public function index(Request $request, EmployeeService $employeeService)
+    public function index(EmployeeService $employeeService)
     {
         $this->setPageTitle("Employee");
         $this->setActiveMenu('hr.employee');
+        $data = $employeeService->indexData();
 
-        /*$data = $employeeService->indexData($request);*/
-
-        return  $this->view('hr.employee.index');
+        return  $this->view('hr.employee.index')->with($data);
     }
 
     public function indexFiltered(Request $request, EmployeeService $employeeService)

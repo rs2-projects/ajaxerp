@@ -25,6 +25,18 @@ class AjaxService
 
     }
 
+    public function getDesignationByMultipleDepartments($request)
+    {
+        $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
+            ->where('status', Designation::STATUS_ACTIVE)
+            ->whereIn('department_id', $request->department_id)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return $data;
+
+    }
+
     public function getEmployees($request)
     {
         $keyword = $request->keyword ?? null;

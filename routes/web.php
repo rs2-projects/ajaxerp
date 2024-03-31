@@ -354,6 +354,7 @@ Route::group(['middleware' => 'auth'], function () {
         // common ajax route start
         Route::group(['prefix' => 'ajax'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
+            Route::get('get-designation-by-multiple-departments', [AjaxController::class, 'getDesignationByMultipleDepartments'])->name('ajax.get-designation-by-multiple-departments');
             Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
             Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
             Route::get('get-leave-type-by-user',[AjaxController::class, 'getLeaveTypeByUser'])->name('ajax.get-leave-type-by-user');
@@ -486,8 +487,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
 
             // print barcode
-            Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data');
-            Route::post('/print-barcode', [ProductMaterialPurchaseController::class, 'printBarcode'])->name('procurement.product-material-purchase.print-barcode');
+            Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data')->middleware('permission:product-material-purchase-print-barcode');
+            Route::post('/print-barcode', [ProductMaterialPurchaseController::class, 'printBarcode'])->name('procurement.product-material-purchase.print-barcode')->middleware('permission:product-material-purchase-print-barcode');
         });
        // materials purchase order route end
 
@@ -516,14 +517,14 @@ Route::group(['middleware' => 'auth'], function () {
         // chart of accounts route end
 
         Route::prefix('transaction')->group(function () {
-            Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index');
-            Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered');
-            Route::get('{id}/review', [TransactionController::class, 'reviewTransaction'])->name('accounting.transaction.review');
+            Route::get('/', [TransactionController::class, 'index'])->name('accounting.transaction.index')->middleware('permission:view-transactions');
+            Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered')->middleware('permission:view-transactions');
+            Route::get('{id}/review', [TransactionController::class, 'reviewTransaction'])->name('accounting.transaction.review')->middleware('permission:verify-transactions');
 
-            Route::post('expense', [TransactionExpenseController::class, 'storeExpense'])->name('accounting.transaction.expense.store');
-            Route::get('expense/{id}/edit', [TransactionExpenseController::class, 'editExpense'])->name('accounting.transaction.expense.edit');
-            Route::post('expense/{id}/update', [TransactionExpenseController::class, 'updateExpense'])->name('accounting.transaction.expense.update');
-            Route::get('expense/{id}/delete', [TransactionExpenseController::class, 'deleteExpense'])->name('accounting.transaction.expense.delete');
+            Route::post('expense', [TransactionExpenseController::class, 'storeExpense'])->name('accounting.transaction.expense.store')->middleware('permission:add-expenses');
+            Route::get('expense/{id}/edit', [TransactionExpenseController::class, 'editExpense'])->name('accounting.transaction.expense.edit')->middleware('permission:manage-transactions');
+            Route::post('expense/{id}/update', [TransactionExpenseController::class, 'updateExpense'])->name('accounting.transaction.expense.update')->middleware('permission:manage-transactions');
+            Route::get('expense/{id}/delete', [TransactionExpenseController::class, 'deleteExpense'])->name('accounting.transaction.expense.delete')->middleware('permission:manage-transactions');
         });
     });
     // Accounting route end
