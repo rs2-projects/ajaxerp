@@ -17,7 +17,7 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block erp-step-input-block mb-0 two">
-                    <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                    <label class="col-form-label">Salary Type </label>
                     <select class="select2 select-step" name="salary_type" required>
                         <option value="0" {{($item->salary_type == 0) ? 'selected' : ''}}>Basic Salary</option>
                         <option value="1" {{($item->salary_type == 1) ? 'selected' : ''}}>Gross Salary</option>
@@ -27,14 +27,14 @@
             </div>
             <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Rate (%) </label>
+                    <label class="col-form-label">Rate (%) <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Percentage of Daily Rate of Basic / Gross Salary"><i class="fa-duotone fa-exclamation"></i></span></label>
                     <input type="number" step="any" class="form-control " value="{{$item->rate}}" name="rate" required>
                 </div>
             </div>
 
             <div class="erp-filter-item flex-48">
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Special Rate (%) </label>
+                    <label class="col-form-label">Special Rate (%) <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Percentage of Daily Rate of Basic / Gross Salary"><i class="fa-duotone fa-exclamation"></i></span></label>
                     <input type="number" step="any" class="form-control " value="{{$item->special_rate}}" name="special_rate" required>
                 </div>
             </div>

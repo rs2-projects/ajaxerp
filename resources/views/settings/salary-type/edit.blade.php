@@ -38,36 +38,45 @@
                                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between ">
                                             <div id="salaryTypeDetailWrapMain" class="d-flex flex-wrap flex-100">
                                                 @if(count($item->salaryTypeDetails) > 0)
+                                                    @php $iteration = 0 @endphp
                                                     @foreach($item->salaryTypeDetails as $key => $detail)
-                                                        <input type="hidden" name="detail_id[]" value="{{ $detail->id }}">
-                                                        <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mb-3">
-                                                            <div class="erp-filter-item flex-30">
-                                                                <div class="input-block erp-step-input-block mb-0 two">
-                                                                    <label class="col-form-label">Type <span class="text-danger">*</span> </label>
-                                                                    <select class="select select-step detail_type" name="detail_type[]" required>
-                                                                        <option value="">Select Type</option>
-                                                                        <option value="0" {{ ($detail->type == \App\Models\SettingsSalaryTypeDetails::TYPE_EARNING) ? 'selected' : '' }}>Earning/Allowance</option>
-                                                                        <option value="1" {{ ($detail->type == \App\Models\SettingsSalaryTypeDetails::TYPE_DEDUCTION) ? 'selected' : '' }}>Deduction</option>
-                                                                    </select>
-                                                                    <span class="type_error ie-span"></span>
+                                                        <div class="d-flex flex-wrap flex-100 salary-type-details-parent position-relative">
+                                                            @if($iteration > 0)
+                                                                <div class="delete-btn-box bank-info-remove" onclick="removeTypeDetails(this)">
+                                                                    <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
                                                                 </div>
-                                                            </div>
+                                                            @endif
+                                                            <input type="hidden" name="detail_id[]" value="{{ $detail->id }}">
+                                                            <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mb-3">
+                                                                <div class="erp-filter-item flex-30">
+                                                                    <div class="input-block erp-step-input-block mb-0 two">
+                                                                        <label class="col-form-label">Type <span class="text-danger">*</span> </label>
+                                                                        <select class="select select-step detail_type" name="detail_type[]" required>
+                                                                            <option value="">Select Type</option>
+                                                                            <option value="0" {{ ($detail->type == \App\Models\SettingsSalaryTypeDetails::TYPE_EARNING) ? 'selected' : '' }}>Earning/Allowance</option>
+                                                                            <option value="1" {{ ($detail->type == \App\Models\SettingsSalaryTypeDetails::TYPE_DEDUCTION) ? 'selected' : '' }}>Deduction</option>
+                                                                        </select>
+                                                                        <span class="type_error ie-span"></span>
+                                                                    </div>
+                                                                </div>
 
-                                                            <div class="erp-filter-item flex-30">
-                                                                <div class="input-block mb-0 erp-step-input-block ">
-                                                                    <label class="col-form-label">Title </label>
-                                                                    <input type="text" value="{{ $detail->title }}" class="form-control detail_title" required name="detail_title[]"  placeholder="Title">
-                                                                    <span class="detail_title_error ie-span"></span>
+                                                                <div class="erp-filter-item flex-30">
+                                                                    <div class="input-block mb-0 erp-step-input-block ">
+                                                                        <label class="col-form-label">Title </label>
+                                                                        <input type="text" value="{{ $detail->title }}" class="form-control detail_title" required name="detail_title[]"  placeholder="Title">
+                                                                        <span class="detail_title_error ie-span"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="erp-filter-item flex-30">
+                                                                    <div class="input-block mb-0 erp-step-input-block ">
+                                                                        <label class="col-form-label">Value (%)</label>
+                                                                        <input type="number" step="any" min="0" value="{{ $detail->value }}" name="detail_value[]" required  class="form-control detail_value" >
+                                                                        <span class="detail_value_error ie-span"></span>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="erp-filter-item flex-30">
-                                                                <div class="input-block mb-0 erp-step-input-block ">
-                                                                    <label class="col-form-label">Value (%)</label>
-                                                                    <input type="number" step="any" min="0" value="{{ $detail->value }}" name="detail_value[]" required  class="form-control detail_value" >
-                                                                    <span class="detail_value_error ie-span"></span>
-                                                                </div>
-                                                            </div>
-                                                        </div
+                                                        </div>
+                                                        @php $iteration++ @endphp
                                                     @endforeach
                                                 @endif
                                             </div>
@@ -99,7 +108,10 @@
     <!--End::row-1 -->
 
     <div id="salaryTypeDetailWrap" style="display: none">
-        <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mt-3">
+        <div class="salary-type-details-parent position-relative erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mt-3">
+            <div class="delete-btn-box bank-info-remove" onclick="removeTypeDetails(this)">
+                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
+            </div>
             <div class="erp-filter-item flex-30">
                 <div class="input-block erp-step-input-block mb-0 two">
                     <label class="col-form-label">Type <span class="text-danger">*</span> </label>
@@ -137,7 +149,11 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .delete-btn-box.bank-info-remove {
+            top: 10px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -183,6 +199,10 @@
                 minimumResultsForSearch: -1,
                 width: '100%'
             });
+        }
+
+        function removeTypeDetails(element){
+            $(element).closest('.salary-type-details-parent').remove();
         }
 
     </script>

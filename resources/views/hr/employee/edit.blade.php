@@ -177,7 +177,7 @@
 
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
-                                                    <label class="col-form-label">Religion: <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Religion: </label>
                                                     <select class="select no-search-select-step" name="religion">
                                                         <option value="">Select Religion</option>
                                                         <option value="islam" {{ ($employee->religion == 'islam') ? 'selected' : '' }}>Islam</option>

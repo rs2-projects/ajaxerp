@@ -73,7 +73,7 @@
                 <div class="nav nav-tabs erp-nav-tabs" id="nav-tab" role="tablist">
 
                     <button class="nav-link erp-nav-link active" id="erp-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
-                    <button class="nav-link erp-nav-link" id="erp-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-bank" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Bank & Statutory <small>(Admin Only)</small>  </button>
+                    {{-- <button class="nav-link erp-nav-link" id="erp-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-bank" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Bank & Statutory <small>(Admin Only)</small>  </button> --}}
                 </div>
             </div>
         </div>
