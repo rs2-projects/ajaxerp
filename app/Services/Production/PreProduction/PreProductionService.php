@@ -27,8 +27,42 @@ class PreProductionService
 
     public function indexFilteredData($request)
     {
-        $keyword_filtered = $request->keyword_filtered;
+        $status = $request->status_filtered;
+
+        switch ($status){
+            case 'all':
+                return $this->getAllPreProductions($request);
+                break;
+            case 'pending':
+                return $this->getPendingPreProductions($request);
+                break;
+            case 'verified':
+                return $this->getVerfiedPreProductions($request);
+                break;
+        }
+    }
+
+    public function getAllPreProductions($request)
+    {
+        $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+        
+        $data['view'] = view('production.pre-production._index_filtered', $data)->render();
+        return $data;
+    }
+
+    public function getPendingPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('is_verified', PreProduction::VERIFIED_NO)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -36,6 +70,23 @@ class PreProductionService
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
 
+        $data['view'] = view('production.pre-production._index_filtered', $data)->render();
+        return $data;
+    }
+
+    public function getVerfiedPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+        $data['view'] = view('production.pre-production._index_filtered', $data)->render();
         return $data;
     }
 

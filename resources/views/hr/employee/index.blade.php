@@ -49,6 +49,62 @@
 
     </div>
     <!--End::row-1 -->
+
+    <div class="offcanvas offcanvas-end bg-card employeeOffcanvas" tabindex="-1" id="filter-by" aria-labelledby="offcanvasRightLabel" data-bs-backdrop="static">
+        <div class="offcanvas-header">
+          <h5 id="offcanvasRightLabel" class="mb-0">Filter By</h5>
+          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="erp-offcanvas-wrapper">
+                <div class="erp-tab-view-wrapper">
+                    <div class="erp-off-canvas-search-wrapper">
+                        <div class="erp-tab-pane-title-box">
+                            <h4>Search By</h4>
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry </p>
+                        </div>
+                        <div class="erp-tab-pane-content-box mt-2 erp-right-offcanvas ">
+                            <div class="erp-filter-item flex-100">
+                                <div class=" form-focus select-focus custom-form-focus">
+                                    <label class="col-form-label">Select Department:</label>
+                                    {{-- <select class="select floating select2-box" multiple> 
+                                        <option>Web Development</option>
+                                        <option>IT Management</option>
+                                        <option>Marketing</option>
+                                    </select> --}}
+                                    <select class="select select-step select2 floating select2-box" name="department_id[]" multiple onchange="getDesignation(this)" id="department_id">
+                                        <option value="">Select Department</option>
+                                        @foreach($departments as $key=>$department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        @endforeach
+                                    </select>                                
+                                </div>
+                            </div>
+                            <div class="erp-filter-item flex-100">
+                                <div class=" form-focus select-focus custom-form-focus">
+                                    <label class="col-form-label">Select Designation:</label>
+                                    {{-- <select class="select floating select2-box" multiple> 
+                                        <option>Web Designer</option>
+                                        <option>Web Developer</option>
+                                        <option>Android Developer</option>
+                                    </select> --}}
+                                    <select onchange="designationFilter(this)" class="select select-step select2 floating select2-box" name="designation_id[]" id="designation_id" multiple>
+                                        <option value=""></option>
+                                    </select>
+                                
+                                </div>
+                            </div>
+                            <div class="erp-filter-item flex-100 mt-3">
+                                <div class="erp-offcanvas-search-box">
+                                    <button class="erp-off-search-btn" onclick="getFilteredData()"><span class="me-2"><i class="fa-solid fa-magnifying-glass"></i></span>Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -70,7 +126,9 @@
 @section('js')
     <script>
         var filterData = {
-            keyword_filtered: ''
+            keyword_filtered: '',
+            department_id: [],
+            designation_id: [],
         };
         $(document).ready(function() {
             getData();
@@ -117,8 +175,38 @@
             });
         });
 
+        function getDesignation(select) {
+            var department_id = $(select).val();
+            filterData.department_id = department_id;
+            let url = "{{ route('ajax.get-designation-by-multiple-departments') }}";
+            if(department_id.length > 0){
+                ajaxGet(url, {department_id:department_id}, function (response) {
+                    if (response.status == 200) {
+                        $("#designation_id").html(response.view);
+                    } else {
+                        $("#designation_id").html('');
+                        toastr.error(response.message);
+                    }
+                });
+            }else{
+                // $("#designation_id").html('<option value="">Select Department First</option>');
+                $("#designation_id").html('');
+                return;
+            }
+        }
+
+        function designationFilter(select) {
+            filterData.designation_id = $(select).val();
+        }
+
         function getData(){
             getPaginatedListData("{{ route('hr.employee.filtered') }}", "#ajax-data-load", filterData);
+        }
+
+        function getFilteredData(){
+            console.log(1)
+            $('.offcanvas').offcanvas('hide');
+            getData();
         }
 
         function getPaginatedData(button) {

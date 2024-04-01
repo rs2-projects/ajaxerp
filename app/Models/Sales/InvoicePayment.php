@@ -19,8 +19,8 @@ class InvoicePayment extends Model
     const PAYMENT_METHOD_OTHERS = 6;
 
     const PAYMENT_METHODS = [
-        self::PAYMENT_METHOD_BANK_PAYMENT => 'Bank Payment',
         self::PAYMENT_METHOD_CASH => 'Cash',
+        self::PAYMENT_METHOD_BANK_PAYMENT => 'Bank Payment',
         self::PAYMENT_METHOD_CHEQUE => 'Cheque',
         self::PAYMENT_METHOD_CREDIT_CARD => 'Credit Card',
         self::PAYMENT_METHOD_PAYPAL => 'Paypal',

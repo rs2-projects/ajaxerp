@@ -35,9 +35,8 @@
 
                     <div class="erp-filter-item flex-48">
                         <div class="input-block erp-step-input-block mb-0 two">
-                            <label class="col-form-label">Mode Of Payment <span class="text-danger">*</span></label>
-                            <select class="select select-step payment-method" name="payment_method" required>
-                                <option value="">Select Payment Method</option>
+                            <label class="col-form-label">Mode Of Payment </label>
+                            <select class="select select-step payment-method" name="payment_method">
                                 @foreach($payment_methods as $key=>$payment_method)
                                     <option value="{{ $key }}">{{ $payment_method }}</option>
                                 @endforeach

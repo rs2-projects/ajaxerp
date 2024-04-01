@@ -23,7 +23,7 @@ class SupplierController extends BackendController
 
     public function index()
     {
-        $this->setPageTitle("Suupliers");
+        $this->setPageTitle("Suppliers");
         $this->setActiveMenu('procurement.supplier.index');
         $data = $this->service->indexData();
 

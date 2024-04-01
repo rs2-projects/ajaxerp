@@ -133,6 +133,54 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Transactions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-transactions" data-required-remove="manage-transactions,add-expenses,verify-transactions" class="check" name="permissions[]" value="view-transactions"
+                                            {{ in_array('view-transactions', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-transactions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Transactions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-transactions" data-required-add="view-transactions" class="check" name="permissions[]" value="manage-transactions"
+                                            {{ in_array('manage-transactions', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-transactions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Add Expenses</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="add-expenses" data-required-add="view-transactions" class="check" name="permissions[]" value="add-expenses"
+                                            {{ in_array('add-expenses', $permissions) ? 'checked' : ''}}>
+                                            <label for="add-expenses" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Verify Transactions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="verify-transactions" data-required-add="view-transactions" class="check" name="permissions[]" value="verify-transactions"
+                                            {{ in_array('verify-transactions', $permissions) ? 'checked' : ''}}>
+                                            <label for="verify-transactions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
@@ -589,7 +637,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="view-product-material-purchase-orders" data-required-remove="manage-product-material-purchase-orders,product-material-purchase-order-payment" class="check" name="permissions[]" value="view-product-material-purchase-orders"
+                                            <input type="checkbox" id="view-product-material-purchase-orders" data-required-remove="manage-product-material-purchase-orders,product-material-purchase-order-payment,product-material-purchase-print-barcode" class="check" name="permissions[]" value="view-product-material-purchase-orders"
                                             {{ in_array('view-product-material-purchase-orders', $permissions) ? 'checked' : ''}}>
                                             <label for="view-product-material-purchase-orders" class="checktoggle">checkbox</label>
                                         </div>
@@ -616,6 +664,18 @@
                                             <input type="checkbox" id="product-material-purchase-order-payment" data-required-add="view-product-material-purchase-orders" class="check" name="permissions[]" value="product-material-purchase-order-payment"
                                             {{ in_array('product-material-purchase-order-payment', $permissions) ? 'checked' : ''}}>
                                             <label for="product-material-purchase-order-payment" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Product Material Purchase Print Barcode</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="product-material-purchase-print-barcode" data-required-add="view-product-material-purchase-orders" class="check" name="permissions[]" value="product-material-purchase-print-barcode"
+                                            {{ in_array('product-material-purchase-print-barcode', $permissions) ? 'checked' : ''}}>
+                                            <label for="product-material-purchase-print-barcode" class="checktoggle">checkbox</label>
                                         </div>
                                     </div>
                                 </div>
@@ -858,7 +918,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="view-production" data-required-remove="manage-processes,receive-production-materials,dispatch-production-materials" class="check" name="permissions[]" value="view-production"
+                                            <input type="checkbox" id="view-production" data-required-remove="manage-processes,receive-production-materials,dispatch-production-materials,production-print-barcode" class="check" name="permissions[]" value="view-production"
                                             {{ in_array('view-production', $permissions) ? 'checked' : ''}}>
                                             <label for="view-production" class="checktoggle">checkbox</label>
                                         </div>
@@ -866,7 +926,7 @@
                                 </div>
                                 <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
                                     <div class="rs-erp-permission-c-item">
-                                        <h4>Manage Processes</h4>
+                                        <h4>Manage Production Processes</h4>
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
@@ -897,6 +957,18 @@
                                             <input type="checkbox" id="dispatch-production-materials" data-required-add="view-production" class="check" name="permissions[]" value="dispatch-production-materials"
                                             {{ in_array('dispatch-production-materials', $permissions) ? 'checked' : ''}}>
                                             <label for="dispatch-production-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Production Print Barcode</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="production-print-barcode" data-required-add="view-production" class="check" name="permissions[]" value="production-print-barcode"
+                                            {{ in_array('production-print-barcode', $permissions) ? 'checked' : ''}}>
+                                            <label for="production-print-barcode" class="checktoggle">checkbox</label>
                                         </div>
                                     </div>
                                 </div>

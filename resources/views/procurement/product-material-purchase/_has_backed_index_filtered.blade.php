@@ -11,7 +11,7 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             {{--<th class="erp-th text-center">Record Payment </th>--}}
-            @if(hasPermission( 'manage-product-material-purchase-orders'))
+            @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                 <th class="text-end erp-th">Action</th>
             @endif
         </tr>
@@ -76,14 +76,16 @@
                         <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
                     </td>--}}
 
-                    @if(hasPermission( 'manage-product-material-purchase-orders'))
+                    @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                        <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @if(hasPermission('product-material-purchase-print-barcode' ))
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @endif
                                         @if($purchase_order->is_revised == $purchase_order::IS_REVISED_NO)
                                             <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-revised-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Revised P.O</a>
                                         @endif

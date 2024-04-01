@@ -25,8 +25,11 @@ class ProductionService
         $delivery_status = $request->status_filtered;
 
         switch ($delivery_status){
-            case 'pre_production':
+            case 'all_pre_production':
                 return $this->getAllPreProductions($request);
+                break;
+            case 'pre_production':
+                return $this->getPendingPreProductions($request);
                 break;
             case 'pending_for_receive':
                 return $this->getPendingForReceivePreProductions($request);
@@ -44,6 +47,21 @@ class ProductionService
     }
 
     public function getAllPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+        $data['view'] = view('production.production._index_filtered', $data)->render();
+        return $data;
+    }
+
+    public function getPendingPreProductions($request){
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
@@ -160,6 +178,10 @@ class ProductionService
                 throw new \Exception('Pre Production not found');
             }
 
+            if($pre_production->received_status == PreProduction::RECEIVED_STATUS_PENDING){
+                throw new \Exception('Raw materials has not yet been received!');
+            }
+
             $process = PreProductionProcess::where('id', $processId)
                 ->where('deleted', PreProductionProcess::DELETED_NO)
                 ->where('status', PreProductionProcess::STATUS_ACTIVE)
@@ -191,10 +213,10 @@ class ProductionService
 
             if($count_completed == 0){
                 if($pre_production->delivery_status != PreProduction::DELIVERY_STATUS_DELIVERED){
-                    throw new \Exception('Production material not delivered!');
+                    throw new \Exception('All Production Materials not delivered!');
                 }
                 if($pre_production->received_status != PreProduction::RECEIVED_STATUS_DELIVERED){
-                    throw new \Exception('Production material not received!');
+                    throw new \Exception('All Production Materials not received!');
                 }
 
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;

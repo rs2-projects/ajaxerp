@@ -266,7 +266,7 @@
                     @endif
                 @endif
 
-                @if(hasPermission( 'view-chart-of-accounts','manage-chart-of-accounts'))
+                @if(hasPermission( 'view-chart-of-accounts','manage-chart-of-accounts','view-transactions','manage-transactions','add-expenses','verify-transactions'))
                     <li class="menu-title">
                         <span>Accounting</span>
                     </li>
@@ -276,7 +276,9 @@
                             </li>
                         @endif
                     <li>
-                        <a href="{{ route('accounting.transaction.index') }}" class="{{ ($activeMenu == 'accounting.transaction.index') ? 'active' : '' }}"><i class="la la-houzz"></i> <span>Transaction</span></a>
+                        @if(hasPermission( 'view-transactions','manage-transactions','add-expenses','verify-transactions'))
+                            <a href="{{ route('accounting.transaction.index') }}" class="{{ ($activeMenu == 'accounting.transaction.index') ? 'active' : '' }}"><i class="la la-houzz"></i> <span>Transaction</span></a>
+                        @endif
                     </li>
                 @endif
 

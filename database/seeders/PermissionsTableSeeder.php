@@ -233,6 +233,22 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'manage-chart-of-accounts',
                     'title' => 'Manage Chart of Accounts'
                 ],
+                [
+                    'slug' => 'view-transactions',
+                    'title' => 'View Transactions'
+                ],
+                [
+                    'slug' => 'manage-transactions',
+                    'title' => 'Manage Transactions'
+                ],
+                [
+                    'slug' => 'add-expenses',
+                    'title' => 'Add Expenses'
+                ],
+                [
+                    'slug' => 'verify-transactions',
+                    'title' => 'Verify Transactions'
+                ],
             ],
 
             //Procurement
@@ -256,6 +272,10 @@ class PermissionsTableSeeder extends Seeder
                 [
                     'slug' => 'product-material-purchase-order-payment',
                     'title' => 'Product Material Purchase Order Payment'
+                ],
+                [
+                    'slug' => 'product-material-purchase-print-barcode',
+                    'title' => 'Product Material Purchase Print Barcode'
                 ],
                 [
                     'slug' => 'view-asset-product-purchase-request',
@@ -324,6 +344,11 @@ class PermissionsTableSeeder extends Seeder
                 [
                     'slug' => 'dispatch-production-materials',
                     'title' => 'Dispatch Production Materials'
+                ],
+
+                [
+                    'slug' => 'production-print-barcode',
+                    'title' => 'Production Print Barcode'
                 ],
             ],
         ];

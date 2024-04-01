@@ -22,9 +22,23 @@ class EmployeeService
     {
         $this->paginate_limit = config('commonData.paginate_limit');
     }
+
+    public function indexData(){
+        $data['departments'] = Department::where('deleted', Department::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['designations'] = Designation::where('deleted', Designation::DELETED_NO)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return $data;
+    }
+
     public function getIndexFilteredData($request)
     {
         $keyword = $request->keyword_filtered??null;
+        $department_id = $request->department_id??null;
+        $designation_id = $request->designation_id??null;
         $data['employees'] = User::with('designation', 'department')
             ->where('type', User::TYPE_EMPLOYEE)
             ->where('role', User::ROLE_EMPLOYEE)
@@ -36,6 +50,16 @@ class EmployeeService
                     $query->orWhere('email', 'LIKE', "%{$keyword}%");
                     $query->orWhere('phone', 'LIKE', "%{$keyword}%");
                     $query->orWhere('employee_id', 'LIKE', "%{$keyword}%");
+                }
+            })
+            ->where(function ($q) use ($department_id){
+                if ($department_id !=''){
+                    $q->whereIn('department_id', $department_id);
+                }
+            })
+            ->where(function ($q) use ($designation_id){
+                if ($designation_id !=''){
+                    $q->whereIn('designation_id', $designation_id);
                 }
             })
             ->orderBy('first_name', 'asc')

@@ -2,8 +2,11 @@
 
 namespace App\Services\Settings;
 
+use App\Models\AttendanceReport;
 use App\Models\SettingsOfficeTime;
 use App\Models\SettingsOfficeTimeType;
+use App\Models\SettingsSalarySet;
+use App\Models\SettingsSalarySetEmployee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,6 +87,13 @@ class OfficeTimeSettingsService
                 $office_time->save();
 
             }
+
+            $salary_set_ids = SettingsSalarySet::where('settings_office_time_type_id', $type->id)->pluck('id')->toArray();
+            $employee_ids = SettingsSalarySetEmployee::whereIn('settings_salary_set_id', $salary_set_ids);
+            AttendanceReport::whereIn('employee_id', $employee_ids)
+                ->whereIn('settings_salary_set_id', $salary_set_ids)
+                ->where('salary_generated', AttendanceReport::SALARY_GENERATED_NO)
+                ->delete();
 
         }catch (\Exception $exception){
             DB::rollBack();

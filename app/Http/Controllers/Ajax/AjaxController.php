@@ -22,6 +22,19 @@ class AjaxController extends BackendController
         }
     }
 
+    public function getDesignationByMultipleDepartments(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getDesignationByMultipleDepartments($request);
+            $view = $this->view('ajax._get_designation_by_department')->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxError($exception->getMessage());
+        }
+    }
+
     public function getEmployees(Request $request, AjaxService $ajaxService)
     {
         try {

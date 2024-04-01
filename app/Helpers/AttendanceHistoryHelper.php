@@ -21,7 +21,7 @@ class AttendanceHistoryHelper
             if (empty($attendanceReport)){
                 $attendanceReport = new AttendanceReport();
                 $attendanceReport->created_at = Carbon::now();
-                $attendanceReport->created_by = ($inputted_by_type !=0) ? auth()->user()->id : null;
+                $attendanceReport->created_by = ($inputted_by_type != AttendanceReport::INPUTTED_BY_TYPE_CRON) ? auth()->user()->id : null;
                 $attendanceReport->inputted_by_type = $inputted_by_type;
             }
 
@@ -44,25 +44,25 @@ class AttendanceHistoryHelper
             $break_hour = $employeeAttendanceDetails['workingTimeDetails']['break_hour'];
             $userLeaveDetails = $employeeAttendanceDetails['userLeaveDetails'];
             if(empty($userLeaveDetails)){
-                $is_leave = 0;
-                $leave_type = 0;
+                $is_leave = AttendanceReport::IS_LEAVE_NOT_LEAVE;
+                $leave_type = AttendanceReport::LEAVE_TYPE_NOT_SET;
                 $settings_leave_type_id = null;
             }else{
-                $is_leave = 1;
-                $leave_type = ($userLeaveDetails['is_paid'] == 1) ? 1 : 2;
+                $is_leave = AttendanceReport::IS_LEAVE_LEAVE;
+                $leave_type = ($userLeaveDetails['is_paid'] == 1) ? AttendanceReport::LEAVE_TYPE_PAID : AttendanceReport::LEAVE_TYPE_UNPAID;
                 $settings_leave_type_id = $userLeaveDetails['settings_leave_type_id'];
             }
 
             if ($punch_in_time == null){
-                $time_in_status = 0;
+                $time_in_status = AttendanceReport::TIME_IN_STATUS_NOT_SET;
             }else{
-                $time_in_status = ($is_late == true) ? 2 : 1;
+                $time_in_status = ($is_late == true) ? AttendanceReport::TIME_IN_STATUS_LATE : AttendanceReport::TIME_IN_STATUS_ON_TIME;
             }
 
             if ($punch_out_time == null){
-                $time_out_status = 0;
+                $time_out_status = AttendanceReport::TIME_OUT_STATUS_NOT_SET;
             }else{
-                $time_out_status = ($is_early == true) ? 2 : 1;
+                $time_out_status = ($is_early == true) ? AttendanceReport::TIME_OUT_STATUS_EARLY : AttendanceReport::TIME_OUT_STATUS_ON_TIME;
             }
 
             $attendanceReport->employee_id = $employee_id;
@@ -73,8 +73,8 @@ class AttendanceHistoryHelper
             $attendanceReport->time_in_status = $time_in_status;
             $attendanceReport->time_out_status = $time_out_status;
             $attendanceReport->is_present = $is_present;
-            $attendanceReport->is_holiday = ($dayType == 'holiday') ? 1 : 0;
-            $attendanceReport->is_weekend = ($dayType == 'weekend') ? 1 : 0;
+            $attendanceReport->is_holiday = ($dayType == 'holiday') ? AttendanceReport::IS_HOLIDAY_HOLIDAY : AttendanceReport::IS_HOLIDAY_NOT_HOLIDAY;
+            $attendanceReport->is_weekend = ($dayType == 'weekend') ? AttendanceReport::IS_WEEKEND_WEEKEND : AttendanceReport::IS_WEEKEND_NOT_WEEKEND;
             $attendanceReport->is_leave = $is_leave;
             $attendanceReport->leave_type = $leave_type;
             $attendanceReport->settings_leave_type_id = $settings_leave_type_id;
@@ -86,7 +86,7 @@ class AttendanceHistoryHelper
             $attendanceReport->late_time = $late_hour;
             $attendanceReport->early_leaving_time = $early_hour;
             $attendanceReport->updated_at = Carbon::now();
-            $attendanceReport->updated_by = ($inputted_by_type !=0) ? auth()->user()->id : null;
+            $attendanceReport->updated_by = ($inputted_by_type != AttendanceReport::INPUTTED_BY_TYPE_CRON) ? auth()->user()->id : null;
             $attendanceReport->save();
 
             return $attendanceReport;

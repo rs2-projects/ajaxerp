@@ -28,7 +28,7 @@
                             </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block erp-step-input-block mb-0 two">
-                                    <label class="col-form-label">Salary Type <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Point Four Epos Solutions"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                    <label class="col-form-label">Salary Type</label>
                                     <select class="select select-step" name="salary_type" required>
                                         <option value="0">Basic Salary</option>
                                         <option value="1">Gross Salary</option>
@@ -38,13 +38,13 @@
                             </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block mb-0 erp-step-input-block ">
-                                    <label class="col-form-label">Rate (%) </label>
+                                    <label class="col-form-label">Rate (%) <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Percentage of Daily Rate of Basic / Gross Salary"><i class="fa-duotone fa-exclamation"></i></span></label>
                                     <input type="number" step="any" class="form-control " name="rate" required value="100">
                                 </div>
                             </div>
                             <div class="erp-filter-item flex-48">
                                 <div class="input-block mb-0 erp-step-input-block ">
-                                    <label class="col-form-label">Special Rate (%) </label>
+                                    <label class="col-form-label">Special Rate (%) <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Percentage of Daily Rate of Basic / Gross Salary"><i class="fa-duotone fa-exclamation"></i></span></label>
                                     <input type="number" step="any" class="form-control " name="special_rate" required value="100">
                                 </div>
                             </div>
