@@ -64,7 +64,7 @@
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             @foreach ($machines as $machine)
-                                                <option value="{{$machine->id}}">{{$machine->name}}</option>  
+                                                <option value="{{$machine->id}}">{{$machine->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -119,7 +119,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="production-estimate-output-selection-wrapper">
                                 <h4 class="process-child-title">Estimated Output</h4>
                                 <div class="pms-item-main-wrapper">
@@ -130,7 +130,7 @@
                                                 <input class="form-control" :name="'name['+index+'][]'" type="text" placeholder="" required="">
                                             </div>
                                         </div>
-                                        
+
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
@@ -144,14 +144,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Instruction</label>
                                     <textarea rows="1"  name="instruction[]" class="form-control"></textarea>
-                                </div>	
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -167,23 +167,23 @@
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
                             <textarea rows="3" class="form-control" name="notes"></textarea>
-                        </div>	
+                        </div>
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Product</button>
+                        <button class=" erp-search-btn text-center">Save Production</button>
                     </div>
                 <form>
             </div>
-        
+
         </div>
-        
+
 
     </div>
     <!--End::row-1 -->
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')
@@ -208,7 +208,7 @@
 
 @section('js_plugins')
     <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
-    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script> 
+    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
