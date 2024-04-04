@@ -5,6 +5,7 @@ namespace App\Services\Procurement\ProductMaterial;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
+use App\Models\Accounting\TransactionVat;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\Supplier;
@@ -1021,8 +1022,8 @@ class ProductMaterialPurchaseService
                     $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
                     $transaction->reference_id = $id;
                     $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->net_amount = $purchase->payable_amount;
-                    $transaction->total_vat_amount = 0;
+                    $transaction->net_amount = $purchase->subtotal_amount;
+                    $transaction->total_vat_amount = $purchase->total_vat_amount;
                     $transaction->total_amount = $purchase->payable_amount;
                     $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
                     $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
@@ -1031,6 +1032,31 @@ class ProductMaterialPurchaseService
                     $transaction->updated_at = Carbon::now();
                     $transaction->updated_by = auth()->user()->id;
                     $transaction->save();
+
+                    $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                        ->where('product_material_purchase_id', $purchase->id)
+                        ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                        ->select('tax_id', 
+                                DB::raw('SUM(total_price) as total_price_sum'), 
+                                DB::raw('SUM(tax_amount) as tax_amount_sum'), 
+                                DB::raw('MAX(tax_rate) as tax_rate'))
+                        ->groupBy('tax_id')
+                        ->get();
+
+
+                    foreach ($purchase_details as $details){
+                        $trns_vat = new TransactionVat();
+                        $trns_vat->transaction_id = $transaction->id;
+                        $trns_vat->tax_id = $details->tax_id;
+                        $trns_vat->main_amount = $details->total_price_sum;
+                        $trns_vat->vat_percent = $details->tax_rate;
+                        $trns_vat->vat_amount = $details->tax_amount_sum;
+                        $trns_vat->created_at = Carbon::now();
+                        $trns_vat->created_by = auth()->user()->id;
+                        $trns_vat->updated_at = Carbon::now();
+                        $trns_vat->updated_by = auth()->user()->id;
+                        $trns_vat->save();
+                    }
                 }
             }
 

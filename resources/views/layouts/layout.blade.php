@@ -17,7 +17,7 @@
     <div class="page-wrapper">
 
         <!-- Page Content -->
-        <div class="content container-fluid">
+        <div class="content container-fluid bg-white">
 
             <!-- PAGE-HEADER -->
             @include('layouts.partials._page_header')
