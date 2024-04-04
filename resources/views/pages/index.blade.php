@@ -21,7 +21,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 box-col-6 proorder-xl-6 right-002">
+                    <div class="col-12">
                         <div class="card sales">
                             <div class="card-header card-no-border pb-0">
                                 <div class="header-top d-flex justify-content-between align-items-center">
@@ -70,7 +70,7 @@
                             <div class="col-md-12">
                                 <label class="custom-sa-title three">Purchase Order (Production Marerial)</label>
                             </div>
-                            <div class="col-md-6 proorder-xl-2 right-003">
+                            <div class="col-xxl-6 col-sm-12 ">
                                 <div class="card since mb-3">
                                     <div class="card-body">
                                         <div class="customer-card d-flex b-l-primary border-2">
@@ -92,7 +92,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 proorder-xl-3 right-004">
+                            <div class="col-xxl-6 col-sm-12 ">
                                 <div class="card since mb-3">
                                     <div class="card-body money">
                                         <div class="customer-card d-flex b-l-secondary border-2">
@@ -115,7 +115,7 @@
                             <div class="col-md-12">
                                 <label class="custom-sa-title three">Purchase Requests (Assets)</label>
                             </div>
-                            <div class="col-md-6 proorder-xl-2 right-003">
+                            <div class="col-xxl-6 col-sm-12 ">
                                 <div class="card since mb-3">
                                     <div class="card-body">
                                         <div class="customer-card d-flex b-l-primary border-2">
@@ -137,7 +137,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 proorder-xl-3 right-004">
+                            <div class="col-xxl-6 col-sm-12 ">
                                 <div class="card since mb-3">
                                     <div class="card-body invoice-profit">
                                         <div class="customer-card d-flex b-l-success border-2">
@@ -158,7 +158,7 @@
                             <div class="col-md-12">
                                 <label class="custom-sa-title three">Purchase Order (Assets)</label>
                             </div>
-                            <div class="col-md-6 proorder-xl-2 right-003">
+                            <div class="col-xxl-6 col-sm-12">
                                 <div class="card since mb-0">
                                     <div class="card-body">
                                         <div class="customer-card d-flex b-l-primary border-2">
@@ -180,7 +180,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 proorder-xl-3 right-004">
+                            <div class="col-xxl-6 col-sm-12">
                                 <div class="card since mb-0">
                                     <div class="card-body money">
                                         <div class="customer-card d-flex b-l-secondary border-2">
@@ -212,7 +212,7 @@
             </div>
             <div class="col-xl-8 col-xl-100 box-col-12">
                 <div class="row">
-                    <div class="col-md-4 box-col-6 ">
+                    <div class="col-xxl-4 col-sm-4 order-xxl-0 order-sm-1 ">
                         <div class="card order-overview">
                             <div class="card-header pb-0">
                                 <div class="header-top d-flex justify-content-between align-items-center">
@@ -260,7 +260,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8 box-col-12">
+                    <div class="col-xxl-8 col-sm-8 order-xxl-1 order-sm-2 ">
                         <div class="card sales overview">
                             <div class="card-header card-no-border pb-0">
                                 <div class="header-top d-flex justify-content-between align-items-center">
@@ -286,7 +286,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 box-col-12">
+                    <div class="col-xxl-4 col-sm-6 order-xxl-2 order-sm-3 ">
                         <div class="card categories-chart">
                             <div class="card-header pb-0">
                                 <div class="header-top d-flex justify-content-between align-items-center">
@@ -347,7 +347,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8 box-col-12 proorder-xl-8 right-008">
+                    <div class="col-xxl-8 col-sm-12 order-xxl-3 order-sm-5 ">
                         <div class="card leads">
                             <div class="card-header card-no-border pb-0">
                                 <div class="header-top d-flex justify-content-between">
@@ -365,7 +365,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 p-child-right-01">
+                    <div class="col-xxl-4 col-sm-6 order-xxl-4 order-sm-4 ">
                         <div class="card">
                             <div class="card-header card-no-border pb-0">
                                 <div class="header-top d-flex justify-content-between">
@@ -408,7 +408,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xxl-8 col-xl-100 box-col-12 proorder-xl-1 right-001">
+                    <div class="col-xxl-8 col-sm-12 order-xl-5 order-sm-6 ">
                         <div class="card">
                             <div class="card-header card-no-border pb-0">
                                 <div class="header-top d-flex justify-content-between align-items-center">
@@ -601,72 +601,69 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-xxl-12 col-sm-12 order-last ">
                         <label class="custom-sa-title">Production </label>
                     </div>
-                    <div class="row proorder-xl-9 pe-0 right-009">
-                        <div class="col-xxl-4 col-xl-50 col-sm-6 proorder-xl-3 right-004">
-                            <div class="card since">
-                                <div class="card-body money">
-                                    <div class="customer-card d-flex b-l-secondary border-2">
-                                        <div class="ms-3">
-                                            <h3 class="mt-1">Queue</h3>
-                                            <h5 class="mt-1">6534</h5>
-                                        </div>
-                                        <div class="dashboard-user bg-light-secondary">
-                                            <span><i class="la la-cubes"></i></span>
-
-                                        </div>
+                    <div class="col-xxl-4 col-sm-6 order-last ">
+                        <div class="card since">
+                            <div class="card-body money">
+                                <div class="customer-card d-flex b-l-secondary border-2">
+                                    <div class="ms-3">
+                                        <h3 class="mt-1">Queue</h3>
+                                        <h5 class="mt-1">6534</h5>
                                     </div>
-                                    <div class="customer mt-2"><span class="me-1">
-														<i class="la la-long-arrow-up"></i></span><span
-                                            class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
+                                    <div class="dashboard-user bg-light-secondary">
+                                        <span><i class="la la-cubes"></i></span>
+
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-xxl-4 col-xl-50 col-sm-6 proorder-xl-3 right-004">
-                            <div class="card since">
-                                <div class="card-body money">
-                                    <div class="customer-card d-flex b-l-secondary border-2">
-                                        <div class="ms-3">
-                                            <h3 class="mt-1">On-Process</h3>
-                                            <h5 class="mt-1">6534</h5>
-                                        </div>
-                                        <div class="dashboard-user bg-light-secondary">
-                                            <span><i class="la la-cubes"></i></span>
-
-                                        </div>
-                                    </div>
-                                    <div class="customer mt-2"><span class="me-1">
-														<i class="la la-long-arrow-up"></i></span><span
-                                            class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xxl-4 col-xl-50 col-sm-6 proorder-xl-3 right-004">
-                            <div class="card since">
-                                <div class="card-body money">
-                                    <div class="customer-card d-flex b-l-secondary border-2">
-                                        <div class="ms-3">
-                                            <h3 class="mt-1">Completed</h3>
-                                            <h5 class="mt-1">6534</h5>
-                                        </div>
-                                        <div class="dashboard-user bg-light-secondary">
-                                            <span><i class="la la-cubes"></i></span>
-
-                                        </div>
-                                    </div>
-                                    <div class="customer mt-2"><span class="me-1">
-														<i class="la la-long-arrow-up"></i></span><span
-                                            class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
-                                    </div>
+                                <div class="customer mt-2"><span class="me-1">
+													<i class="la la-long-arrow-up"></i></span><span
+                                        class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-xxl-4 col-sm-6 order-last ">
+                        <div class="card since">
+                            <div class="card-body money">
+                                <div class="customer-card d-flex b-l-secondary border-2">
+                                    <div class="ms-3">
+                                        <h3 class="mt-1">On-Process</h3>
+                                        <h5 class="mt-1">6534</h5>
+                                    </div>
+                                    <div class="dashboard-user bg-light-secondary">
+                                        <span><i class="la la-cubes"></i></span>
 
+                                    </div>
+                                </div>
+                                <div class="customer mt-2"><span class="me-1">
+													<i class="la la-long-arrow-up"></i></span><span
+                                        class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6 order-last ">
+                        <div class="card since">
+                            <div class="card-body money">
+                                <div class="customer-card d-flex b-l-secondary border-2">
+                                    <div class="ms-3">
+                                        <h3 class="mt-1">Completed</h3>
+                                        <h5 class="mt-1">6534</h5>
+                                    </div>
+                                    <div class="dashboard-user bg-light-secondary">
+                                        <span><i class="la la-cubes"></i></span>
+
+                                    </div>
+                                </div>
+                                <div class="customer mt-2"><span class="me-1">
+													<i class="la la-long-arrow-up"></i></span><span
+                                        class="font-success me-2">+ 3.10%</span><span>Since last Week</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
