@@ -1,0 +1,302 @@
+.table-responsive.custom-scrollbar {
+    height: 330px;
+}
+.invoice-chart h5 {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #B27146;
+}
+.invoice-chart p {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #939393;
+}
+.total-revenue {
+    margin-bottom: 20px;
+}
+.total-revenue:last-child {
+    margin-bottom: 0;
+}
+.invoice-chart.total-collection-invoice h5 {
+    color: #00906D;
+}
+.custom-sa-title {
+    font-size: 18px;
+    line-height: 22px;
+    color: rgb(54, 54, 54);
+    font-weight: 600;
+    margin-bottom: 13px;
+}
+.overdue-img-box {
+    margin-right: 8px;
+}
+.overdue-img-box img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+    border-radius: 60%;
+}
+.al-overdue-name-box {
+    flex-basis: 75%;
+}
+.al-overdue-name-box h4 {
+    margin-bottom: 0;
+    font-size: 13.5px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+.al-overdue-name-box p {
+    margin-bottom: 0;
+    font-size: 11px;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+.al-overdue-amount {
+    flex-basis: 40%;
+}
+.al-overdue-amount h4 {
+    margin-bottom: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: end;
+    color: #1f2f3e;
+}
+.alhiab-overdue-item-wrapper {
+    padding: 5px 8px;
+    border-bottom: 1px dashed #ddd;
+}
+.alhiab-overdue-item-wrapper:nth-child(even) {
+    background: #f9f8f8;
+}
+.al-overdue-img-wrap {
+    flex-basis: 60%;
+}
+.alhisab-overdue-footer {
+    padding: 10px 0px 0px;
+}
+.view-all-link {
+    color: #1362fc;
+    font-weight: 600;
+    font-size: 15px;
+}
+.alhisab-overdue-body.alhisab-card-height {
+    min-height: 333px;
+}
+.default-dashboard .customer-card h3 {
+    font-size: 14px;
+    font-weight: 400;
+    color: #9B9B9B;
+}
+.custom-sa-title span {
+    font-weight: 400;
+    font-size: 15px;
+}
+.categories-chart .total-earn {
+    margin-top: 20px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-left: 20px;
+}
+.categories-chart .total-earn h6 {
+    color: #9B9B9B;
+}
+.categories-chart .earned {
+    padding: 0;
+    margin-top: -146px;
+}
+.categories-chart .categories-sales {
+    margin: 40px 0px;
+    display: grid;
+}
+.categories-chart .categories-sales .d-flex .flex-grow-1 h6 {
+    font-weight: 500;
+    font-size: 14px;
+    color: #9B9B9B;
+}
+.categories-chart .categories-sales span {
+    width: 11px;
+    height: 11px;
+    border-radius: 15px;
+    display: inline-block;
+}
+span.l-bg-primary{
+    background-color: #307ef3 !important;
+}
+.b-bg-secondary{
+    background: #73b773 !important;
+}
+span.e-bg-danger {
+    background: #dc3545 !important;
+}
+
+.al-cashbank-item-wrapper {
+    border-bottom: 2px dashed #00906D;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+.al-cashbank-item-wrapper h4 {
+    color: #00906D;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.al-cashbank-item-wrapper span {
+    font-size: 12px;
+    color: #939393;
+}
+.al-cashbank-item-wrapper p {
+    margin-bottom: 2px;
+    font-size: 15px;
+    line-height: 1.3;
+    color: #222;
+}
+.er-card-height {
+    height: 260px;
+    overflow: hidden;
+}
+
+/* Scrolling Bar end */
+/* width */
+.er-scrollbar::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+    background:#F6F6F6;
+}
+
+.er-scrollbar::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px #F6F6F6;
+    border-radius: 0px;
+}
+/* Handle */
+.er-scrollbar::-webkit-scrollbar-thumb {
+    background:var(--primary-color);
+    border-radius: 40px;
+}
+/* Handle on hover */
+.er-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+/* Scrolling Bar end */
+
+
+
+
+
+.er-cashbank-body.er-scrollbar {
+    height: 274px;
+    overflow: hidden;
+    overflow-y: scroll;
+    padding-right: 10px;
+}
+.al-overdue-name-box.finished-g-name-box {
+    padding: 5px;
+    flex-basis: 100%;
+}
+.al-overdue-amount.finished-g-count h4 {
+    padding: 5px;
+}
+
+.online-order .d-flex .order {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+.online-order .d-flex .arrow-chart span {
+    font-size: 16px;
+    font-weight: 500;
+}
+.online-order .d-flex .arrow-chart {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    align-items: end;
+}
+.online-order .d-flex .order::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-image: -webkit-gradient(linear, left top, right top, color-stop(60%, #307ef3), color-stop(40%, transparent));
+    background-image: linear-gradient(to right, #307ef3 60%, transparent 40%);
+}
+.online-order .d-flex .order::after {
+    position: absolute;
+    content: "";
+    width: 2px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 0, 0, 0)), to(#307ef3));
+    background-image: linear-gradient(180deg, rgba(255, 0, 0, 0), #307ef3);
+}
+.online-order .d-flex .order span::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 2px;
+    top: 0;
+    left: 0;
+    background-image: -webkit-gradient(linear, right top, left top, color-stop(60%, #307ef3), color-stop(40%, transparent));
+    background-image: linear-gradient(to left, #307ef3 60%, transparent 40%);
+}
+.online-order .d-flex .order span::after {
+    position: absolute;
+    content: "";
+    width: 2px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(255, 0, 0, 0)), to(#307ef3));
+    background-image: linear-gradient(360deg, rgba(255, 0, 0, 0), #307ef3);
+}
+.a-view-all-link {
+    font-size: 12px;
+    font-weight: 600;
+}
+.alhisab-overdue-body.alhisab-card-height.three {
+    min-height: 333px;
+}
+.custom-sa-title.two {
+    font-size: 20px;
+    text-transform: uppercase;
+    border-bottom: 1px dashed #222;
+    width: 100%;
+    padding-bottom: 11px;
+}
+.custom-sa-title.three {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ad5d11;
+}
+.default-dashboard .sales .d-flex .flex-shrink-0 span.bg-orange-primary {
+    background-color: orange !important;
+}
+.default-dashboard .sales .d-flex .flex-shrink-0 span.bg-red-primary {
+    background-color: red !important;
+}
