@@ -3,22 +3,20 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\BaseControllers\BackendController;
-use App\Services\Dashboard\DashboardSerice;
+use App\Services\Dashboard\DashboardService;
 use Illuminate\Http\Request;
 
 class DashboardController extends BackendController
 {
     public function __construct()
     {
-        $this->addBreadcrumbs('HR', route('dashboard'), 'fa fa-home');
-        $this->addBreadcrumbs('Employee', route('dashboard'));
+        $this->addBreadcrumbs('Home', route('dashboard'), 'fa fa-home');
     }
 
-    public function showDashboard(DashboardSerice $dashboardService)
+    public function showDashboard(DashboardService $dashboardService)
     {
         $this->setPageTitle("Dashboard");
         $this->setPageHeaderTitle("Dashboard");
-        $this->addBreadcrumbs('Details');
         $this->setActiveMenu('dashboard');
         $data = $dashboardService->getDashboardData();
         return $this->view('pages.index')->with($data);
