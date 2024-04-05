@@ -15,6 +15,7 @@ use App\Http\Controllers\Settings\UserRolePermissionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Production\Production\ProductionController;
+use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start
@@ -173,6 +174,17 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
+    });
+
+    Route::group(['prefix' => 'production-staff'], function () {
+        Route::get('/', [ProductionStaffController::class, 'index'])->name('production.production-staff.index');
+        Route::post('/filtered', [ProductionStaffController::class, 'indexFiltered'])->name('production.production-staff.filtered');
+        Route::get('/create', [ProductionStaffController::class, 'create'])->name('production.production-staff.create');
+        Route::post('/create', [ProductionStaffController::class, 'store'])->name('production.production-staff.store');
+        Route::get('/{id}/edit', [ProductionStaffController::class, 'edit'])->name('production.production-staff.edit');
+        Route::post('/{id}/update', [ProductionStaffController::class, 'update'])->name('production.production-staff.update');
+        Route::get('/{id}/delete', [ProductionStaffController::class, 'delete'])->name('production.production-staff.delete');
+        Route::get('/{id}/change-status/{status}', [ProductionStaffController::class, 'statusUpdate'])->name('production.production-staff.change-status');
     });
 });
 

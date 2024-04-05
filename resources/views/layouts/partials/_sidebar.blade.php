@@ -253,6 +253,9 @@
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
                         </li>
                     @endif
+                    <li>
+                        <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
+                    </li>
                 @endif
 
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))
