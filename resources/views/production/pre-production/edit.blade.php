@@ -56,7 +56,21 @@
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
                             <input type="hidden" name="pre_production_process_id[]" :value="process.process_id">
                             <div class="production-process-status-wrapper">
-                                <h4>Process @{{ index + 1 }}</h4>
+                                {{-- <h4>Process @{{ index + 1 }}</h4> --}}
+                                <div class="production-machine-selection-wrapper d-flex flex-wrap">
+                                    <div class="pms-item flex-48">
+                                        <h4>Process @{{ index + 1 }}</h4>
+                                    </div>
+                                    <div class="pms-item flex-48 ">
+                                        <div class="input-block erp-step-input-block mb-0 d-flex">
+                                            <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
+                                            <select class="select select-step select2" name="production_staff_id[]" required>
+                                                <option>Select Production Staff</option>
+                                                <option v-for="staff in staffs"  :value="staff.id" :key="staff.id" :selected="staff.id == process.process_production_staff_id">@{{staff.user_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
@@ -198,6 +212,9 @@
             font-weight: 700;
             font-weight: 800;
         }
+        .prod-p-staff{
+            width: 48%;
+        }
     </style>
 @endsection
 
@@ -222,6 +239,7 @@
                     processes: [],
                     categories: [],
                     machines: [],
+                    staffs: [],
                     process_indexes: [],
                 };
             },
@@ -240,6 +258,7 @@
                             const processes = response.data.processes;
                             const categories = response.data.categories;
                             const machines = response.data.machines;
+                            const staffs = response.data.staffs;
                             this.process_indexes = response.data.process_indexes;
 
                             categories.forEach((category) => {
@@ -250,6 +269,12 @@
                             machines.forEach((machine) => {
                                 this.machines.push({
                                     ...machine
+                                });
+                            });
+
+                            staffs.forEach((staff) => {
+                                this.staffs.push({
+                                    ...staff
                                 });
                             });
                             processes.forEach((process) => {
@@ -278,6 +303,7 @@
                                     index: processes.length,
                                     process_id: process.id,
                                     process_instruction:  process.instruction,
+                                    process_production_staff_id:  process.production_staff_id,
                                     materialSections: materials,
                                     estimatedOutputs: estimated_output,
                                     process_machine_ids: process_machine_ids,

@@ -13,6 +13,7 @@ use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionProcessPreviousProcess;
+use App\Models\Production\ProductionStaff;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -116,6 +117,12 @@ class PreProductionService
             ->where('status', FinishedGoods::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
+
+        $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
+            ->where('status', ProductionStaff::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
         return $data;
     }
 
@@ -182,6 +189,7 @@ class PreProductionService
                     
                     $process = new PreProductionProcess();
                     $process->pre_production_id = $pre_production->id;
+                    $process->production_staff_id = $request->production_staff_id[$key];
                     $process->instruction = $request->instruction[$key];
                     $process->created_by = auth()->user()->id;
                     $process->created_at = Carbon::now();
@@ -303,6 +311,7 @@ class PreProductionService
             ->where('status', FinishedGoods::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
+
         return $data;
     }
 
@@ -320,6 +329,11 @@ class PreProductionService
 
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
+            ->where('status', ProductionStaff::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -387,6 +401,7 @@ class PreProductionService
                             ->first();
                         if ($process){
                             $process->pre_production_id = $pre_production->id;
+                            $process->production_staff_id = $request->production_staff_id[$key];
                             $process->instruction = $request->instruction[$key];
                             $process->updated_by = auth()->user()->id;
                             $process->updated_at = Carbon::now();
@@ -541,6 +556,7 @@ class PreProductionService
                         // create new process
                         $process = new PreProductionProcess();
                         $process->pre_production_id = $pre_production->id;
+                        $process->production_staff_id = $request->production_staff_id[$key];
                         $process->instruction = $request->instruction[$key];
                         $process->created_by = auth()->user()->id;
                         $process->created_at = Carbon::now();

@@ -19,8 +19,8 @@
                     <form action="{{ route('login') }}" id="loginForm">
                         @csrf
                         <div class="input-block mb-4">
-                            <label class="col-form-label">Email Address</label>
-                            <input class="form-control" type="email" name="email" value="" required>
+                            <label class="col-form-label">Email/Username Address</label>
+                            <input class="form-control" type="text" name="email" value="" required>
                             <span class="email_error ie-span"></span>
                         </div>
                         <div class="input-block mb-4">

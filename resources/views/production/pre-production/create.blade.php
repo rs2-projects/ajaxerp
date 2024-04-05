@@ -55,7 +55,23 @@
                     <div>
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
                             <div class="production-process-status-wrapper">
-                                <h4>Process @{{ index + 1 }}</h4>
+                                {{-- <h4>Process @{{ index + 1 }}</h4> --}}
+                                <div class="production-machine-selection-wrapper d-flex flex-wrap">
+                                    <div class="pms-item flex-48">
+                                        <h4>Process @{{ index + 1 }}</h4>
+                                    </div>
+                                    <div class="pms-item flex-48 ">
+                                        <div class="input-block erp-step-input-block mb-0 d-flex">
+                                            <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
+                                            <select class="select select-step select2" name="production_staff_id[]" required>
+                                                <option>Select Production Staff</option>
+                                                @foreach ($staffs as $staff)
+                                                    <option value="{{$staff->id}}">{{$staff->user_name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <input type="hidden" name="process_id[]" :value="index">
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
@@ -198,6 +214,9 @@
             font-size: 12px;
             font-weight: 700;
             font-weight: 800;
+        }
+        .prod-p-staff{
+            width: 48%;
         }
     </style>
 @endsection
