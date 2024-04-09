@@ -9,7 +9,7 @@ class DashboardController extends BackendController
 {
     public function __construct()
     {
-        $this->addBreadcrumbs('Home', route('dashboard'), 'fa fa-home');
+        $this->addBreadcrumbs('Home', route('production-staff.dashboard'), 'fa fa-home');
     }
 
     public function showDashboard(DashboardService $dashboardService)

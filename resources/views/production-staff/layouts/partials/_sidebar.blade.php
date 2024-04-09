@@ -8,11 +8,11 @@
                 </li>
 
                 <li>
-                    <a href="{{ route('dashboard') }}" class="{{ ($activeMenu == 'dashboard')?'active':'' }}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
+                    <a href="{{ route('production-staff.dashboard') }}" class="{{ ($activeMenu == 'production-staff.dashboard')?'active':'' }}"><i class="la la-dashboard"></i> <span>Dashboard</span></a>
                 </li>
                 
                 <li>
-                    <a href="{{route('production.production.index')}}" class="{{ ($activeMenu == 'production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
+                    <a href="{{route('production-staff.production.production.index')}}" class="{{ ($activeMenu == 'production-staff.production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
                 </li>
                 
             </ul>

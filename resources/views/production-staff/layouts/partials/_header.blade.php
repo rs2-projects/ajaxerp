@@ -2,10 +2,10 @@
 
     <!-- Logo -->
     <div class="header-left">
-        <a href="{{ route('dashboard') }}" class="logo">
+        <a href="{{ route('production-staff.dashboard') }}" class="logo">
             <img src="{{ asset('assets') }}/img/logo.webp" >
         </a>
-        <a href="{{ route('dashboard') }}" class="logo2">
+        <a href="{{ route('production-staff.dashboard') }}" class="logo2">
             <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded" alt="Logo">
             <img src="{{ asset('assets') }}/img/logo-mini.png" class="sidebar-expanded-false" alt="Logo">
         </a>
@@ -133,9 +133,9 @@
                         <li class="notification-message">
                             <a href="activities.html">
                                 <div class="chat-block d-flex">
-												<span class="avatar flex-shrink-0">
-													<img src="{{ asset('assets') }}/img/profiles/avatar-13.jpg" alt="User Image">
-												</span>
+                                    <span class="avatar flex-shrink-0">
+                                        <img src="{{ asset('assets') }}/img/profiles/avatar-13.jpg" alt="User Image">
+                                    </span>
                                     <div class="media-body flex-grow-1">
                                         <p class="noti-details"><span class="noti-title">Bernardo Galaviz</span> added new task <span class="noti-title">Private chat module</span></p>
                                         <p class="noti-time"><span class="notification-time">2 days ago</span></p>
