@@ -9,6 +9,7 @@ use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\ProductionDispatch;
 use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
@@ -45,10 +46,29 @@ class ProductionService
         }
     }
 
+    // public function getAllPreProductions($request){
+    //     $keyword_filtered = $request->keyword_filtered??null;
+    //     $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+    //         ->where('is_verified', PreProduction::VERIFIED_YES)
+    //         ->where(function ($q) use ($keyword_filtered){
+    //             if ($keyword_filtered !=''){
+    //                 $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+    //             }
+    //         })
+    //         ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+    //     $data['view'] = view('production-staff.production._index_filtered', $data)->render();
+    //     return $data;
+    // }
+
     public function getAllPreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -61,10 +81,14 @@ class ProductionService
     }
 
     public function getPendingPreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PENDING)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -77,10 +101,14 @@ class ProductionService
     }
 
     public function getPendingForReceivePreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered ?? null;
         $data['pre_productions'] = PreProduction::with('pendingPreProductionMaterialDeliveries')
             ->where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered) {
                 if ($keyword_filtered != '') {
                     $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
@@ -94,10 +122,14 @@ class ProductionService
     }
 
     public function getPartialPreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PROCESSING)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -110,10 +142,14 @@ class ProductionService
     }
 
     public function getDeliveredPreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_COMPLETED)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -126,10 +162,14 @@ class ProductionService
     }
 
     public function getDispatchedPreProductions($request){
+        $staffId = auth()->guard('production-staff')->user()->id;
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('dispatched_status', PreProduction::DISPATCH_STATUS_DISPATCHED)
+            ->whereHas('process', function ($q) use ($staffId){
+                $q->where('production_staff_id', $staffId);
+            })
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -161,7 +201,6 @@ class ProductionService
             throw new \Exception('Pre Production not found');
         }
         $data['pre_production'] = $pre_production;
-
         return $data;
     }
 
@@ -187,7 +226,7 @@ class ProductionService
                 ->first();
             if($process){
                 $process->process_status = $status;
-                $process->updated_by = auth()->user()->id;
+                $process->updated_by = auth()->guard('production-staff')->user()->id;
                 $process->updated_at = now();
                 $process->save();
             }
@@ -199,7 +238,7 @@ class ProductionService
                 ->count();
             if($count_processing > 0){
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_PROCESSING;
-                $pre_production->updated_by = auth()->user()->id;
+                $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
                 $pre_production->save();  
             }
@@ -219,7 +258,7 @@ class ProductionService
                 }
 
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
-                $pre_production->updated_by = auth()->user()->id;
+                $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
                 $pre_production->save();  
             }
@@ -450,7 +489,7 @@ class ProductionService
             }
             
             $pre_production->dispatched_qty += $request->dispatched_qty;
-            $pre_production->updated_by = auth()->user()->id;
+            $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
             $pre_production->updated_at = now();
             $pre_production->save();
 
@@ -467,11 +506,11 @@ class ProductionService
             $dispatch->pre_production_id = $pre_production->id;
             $dispatch->finished_goods_id = $pre_production->finished_goods_id;
             $dispatch->dispatched_qty = $request->dispatched_qty;
-            $dispatch->dispatched_by = auth()->user()->id;
+            $dispatch->dispatched_by = auth()->guard('production-staff')->user()->id;
             $dispatch->dispatched_at = now();
-            $dispatch->created_by = auth()->user()->id;
+            $dispatch->created_by = auth()->guard('production-staff')->user()->id;
             $dispatch->created_at = now();
-            $dispatch->updated_by = auth()->user()->id;
+            $dispatch->updated_by = auth()->guard('production-staff')->user()->id;
             $dispatch->updated_at = now();
             $dispatch->save();
             $dispatch->dispatch_no = 1000 + $dispatch->id;

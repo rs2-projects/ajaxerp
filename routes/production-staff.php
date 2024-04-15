@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductionStaff\DashboardController;
+use App\Http\Controllers\ProductionStaff\LogoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductionStaff\ProductionController;
 
@@ -24,4 +25,7 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production-staff.production.production.dispatch.store');
         Route::get('/{id}/print-barcode/{type}', [ProductionController::class, 'printBarcode'])->name('production-staff.production.production.print-barcode');
     });
+
+    // logout 
+    Route::get('logout', [LogoutController::class, 'logout'])->name('production-staff.logout');
 });

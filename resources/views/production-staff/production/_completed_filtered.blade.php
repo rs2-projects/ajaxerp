@@ -58,16 +58,16 @@
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                @if(hasPermission('dispatch-production-materials'))
+                                                {{-- @if(hasPermission('dispatch-production-materials')) --}}
                                                     @if($data->dispatched_status != $data::DISPATCH_STATUS_DISPATCHED)  
                                                         <a class="dropdown-item" href="{{ route('production-staff.production.production.dispatch-data', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Dispatch</a>
                                                     @endif
-                                                @endif
+                                                {{-- @endif --}}
                                                 <a class="dropdown-item" href="{{ route('production-staff.production.production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
-                                                @if(hasPermission('production-print-barcode'))
+                                                {{-- @if(hasPermission('production-print-barcode')) --}}
                                                     <a class="dropdown-item" href="{{ route('production-staff.production.production.print-barcode', [$data->id,'printer']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
                                                     <a class="dropdown-item" href="{{ route('production-staff.production.production.print-barcode', [$data->id,'pdf']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
-                                                @endif
+                                                {{-- @endif --}}
                                             </div>
                                         </div>
                                     </div>

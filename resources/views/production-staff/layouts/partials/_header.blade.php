@@ -267,7 +267,7 @@
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="#">My Profile</a>
                
-                <a class="dropdown-item" href="{{route('logout')}}">Logout</a>
+                <a class="dropdown-item" href="{{route('production-staff.logout')}}">Logout</a>
             </div>
         </li>
     </ul>

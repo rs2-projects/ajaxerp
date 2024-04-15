@@ -111,6 +111,16 @@ class PreProduction extends Model
             ->where('status', PreProductionProcess::STATUS_ACTIVE);
     }
 
+    // production staff wise process
+
+    public function pstaff_process()
+    {
+        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->where('production_staff_id', auth()->guard('production-staff')->user()->id);
+    }
+
     // process materials
     public function material()
     {

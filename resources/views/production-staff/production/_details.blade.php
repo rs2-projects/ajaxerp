@@ -33,19 +33,18 @@
                     </div>
                 </div>
                 <div class="product-process-main-item-wrapper">
-                    @foreach ($pre_production->process as $processKey=> $processData)
+                    @foreach ($pre_production->pstaff_process as $processKey=> $processData)
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Process {{ $processKey + 1 }}</h4>
                                 @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                    @if(hasPermission('manage-processes'))
+                                    {{-- @if(hasPermission('manage-processes')) --}}
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
-                                        {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a> --}}
-                                    @endif
+                                    {{-- @endif --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    @if(hasPermission('manage-processes')) 
+                                    {{-- @if(hasPermission('manage-processes'))  --}}
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
-                                    @endif
+                                    {{-- @endif --}}
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif

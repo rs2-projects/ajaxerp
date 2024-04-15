@@ -37,6 +37,7 @@ class PreProductionProcess extends Model
 
     protected $fillable = [
         'pre_production_id',
+        'production_staff_id',
         'instruction',
         'process_status',
         'status',
