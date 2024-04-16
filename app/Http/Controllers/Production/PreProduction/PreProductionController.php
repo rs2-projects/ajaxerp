@@ -46,7 +46,12 @@ class PreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
-
+    public function details($id){
+        $this->setPageTitle("Pre Production Details");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->detailsData($id);
+        return $this->view('production.pre-production._details')->with($data);
+    }
     public function create()
     {
         $this->setPageTitle("Create New Pre-Production");

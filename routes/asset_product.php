@@ -93,11 +93,11 @@ Route::group(['prefix' => 'procurement'], function () {
         Route::post('/create', [PurchaseOrderController::class, 'store'])->name('procurement.asset-purchase-order.store')->middleware('permission:manage-asset-product-purchase-orders');
         Route::get('/selected-purchase-data-get', [PurchaseOrderController::class, 'getSelectedPurchaseData'])->name('procurement.asset-purchase-order.get-selected-purchase-data')->middleware('permission:manage-asset-product-purchase-orders');
 
-        // edit 
+        // edit
         Route::get('/{id}/edit', [PurchaseOrderController::class, 'edit'])->name('procurement.asset-purchase-order.edit')->middleware('permission:manage-asset-product-purchase-orders');
         Route::get('/{id}/get-edit-purchase-data', [PurchaseOrderController::class, 'getEditPurchaseData'])->name('procurement.asset-purchase-order.get-edit-purchase-data')->middleware('permission:manage-asset-product-purchase-orders');
         Route::post('/{id}/update', [PurchaseOrderController::class, 'update'])->name('procurement.asset-purchase-order.update')->middleware('permission:manage-asset-product-purchase-orders');
-            
+
         Route::get('/get-all-asset-products',[PurchaseOrderController::class, 'getAllAssetProducts'])->name('procurement.asset-purchase-order.get-all-asset-products')->middleware('permission:manage-asset-product-purchase-orders');
         Route::get('/get-all-taxes',[PurchaseOrderController::class, 'getAllTaxes'])->name('procurement.asset-purchase-order.get-all-taxes')->middleware('permission:manage-asset-product-purchase-orders');
         Route::get('/get-all-suppliers',[PurchaseOrderController::class, 'getAllSuppliers'])->name('procurement.asset-purchase-order.get-all-suppliers')->middleware('permission:manage-asset-product-purchase-orders');
@@ -108,7 +108,7 @@ Route::group(['prefix' => 'procurement'], function () {
         // investigation
         Route::get('/{purchase_id}/investigate', [PurchaseOrderController::class, 'investigate'])->name('procurement.asset-purchase-order.investigate')->middleware('permission:manage-asset-product-purchase-orders');
         Route::post('/{purchase_id}/investigate', [PurchaseOrderController::class, 'investigateStore'])->name('procurement.asset-purchase-order.investigate.store')->middleware('permission:manage-asset-product-purchase-orders');
-    
+
         // make payment
         Route::get('/{id}/make-payment', [PuchaseOrderPaymentController::class, 'makePayment'])->name('procurement.asset-purchase-order.make-payment')->middleware('permission:asset-product-purchase-order-payment');
         Route::post('/{id}/make-payment-submit', [PuchaseOrderPaymentController::class, 'makePaymentSubmit'])->name('procurement.asset-purchase-order.make-payment-submit')->middleware('permission:asset-product-purchase-order-payment');
@@ -165,6 +165,7 @@ Route::group(['prefix' => 'production'], function () {
     Route::group(['prefix' => 'pre-production'], function () {
         Route::get('/', [PreProductionController::class, 'index'])->name('production.pre-production.index')->middleware('permission:view-pre-productions');
         Route::post('/filtered', [PreProductionController::class, 'indexFiltered'])->name('production.pre-production.filtered')->middleware('permission:view-pre-productions');
+        Route::get('/{id}/details', [PreProductionController::class, 'details'])->name('production.pre-production.details')->middleware('permission:manage-pre-productions');
         Route::get('/create', [PreProductionController::class, 'create'])->name('production.pre-production.create')->middleware('permission:manage-pre-productions');
         Route::post('/create', [PreProductionController::class, 'store'])->name('production.pre-production.store')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/edit', [PreProductionController::class, 'edit'])->name('production.pre-production.edit')->middleware('permission:manage-pre-productions');

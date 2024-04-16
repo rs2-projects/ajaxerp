@@ -54,7 +54,7 @@ class PreProductionService
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-        
+
         $data['view'] = view('production.pre-production._index_filtered', $data)->render();
         return $data;
     }
@@ -180,13 +180,13 @@ class PreProductionService
             $category_id = $request->product_material_category_id;
             $material_id = $request->product_material_id;
             $quantity = $request->quantity;
-            
+
             $uniqueProductMaterials = [];
             $processes = [];
 
             if (isset($request->process_id) && is_array($request->process_id) && count($request->process_id) > 0) {
                 foreach ($request->process_id as $key => $process_id) {
-                    
+
                     $process = new PreProductionProcess();
                     $process->pre_production_id = $pre_production->id;
                     $process->production_staff_id = $request->production_staff_id[$key];
@@ -224,13 +224,13 @@ class PreProductionService
                             }
                         }
                     }
-                   
+
                     if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-                        
+
                         foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                             if (
-                                ($request->product_material_category_id[$key][$categoryKey] != '') && 
-                                ($request->product_material_id[$key][$categoryKey] != '') && 
+                                ($request->product_material_category_id[$key][$categoryKey] != '') &&
+                                ($request->product_material_id[$key][$categoryKey] != '') &&
                                 ($request->quantity[$key][$categoryKey] != '')
                                 ) {
                                 $material = new PreProductionProcessMaterial();
@@ -276,7 +276,7 @@ class PreProductionService
                     }
                 }
             }
-            
+
             foreach ($uniqueProductMaterials as $materialData) {
                 $material = new PreProductionMaterial();
                 $material->pre_production_id = $pre_production->id;
@@ -285,8 +285,8 @@ class PreProductionService
                 $material->quantity = $materialData['quantity'];
                 $material->save();
             }
-            
-            
+
+
         }catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
@@ -342,7 +342,7 @@ class PreProductionService
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->pluck('id')->toArray();
         $data['process_indexes'] = array_flip($process_ids);
-        
+
         return $data;
     }
 
@@ -386,14 +386,14 @@ class PreProductionService
             $processes = [];
 
             if (isset($request->pre_production_process_id) && is_array($request->pre_production_process_id) && count($request->pre_production_process_id) > 0) {
-                
+
                 $processes_id = $request->pre_production_process_id??[];
                 PreProductionProcess::where('pre_production_id', $pre_production->id)
                     ->whereNotIn('id', $processes_id)
                     ->delete();
-                
+
                 foreach ($request->pre_production_process_id as $key=>$process_id) {
-                    
+
                     if ($process_id != ""){
                         // update process
                         $process = PreProductionProcess::where('id', $process_id)
@@ -410,7 +410,7 @@ class PreProductionService
                             // previous processes
                             PreProductionProcessPreviousProcess::where('pre_production_id', $pre_production->id)
                                     ->where('pre_production_process_id', $process_id)->delete();
-                                    
+
                             $processes[$key] = $process->id;
                             if (isset($request->previous_process[$key]) && is_array($request->previous_process[$key]) && count($request->previous_process[$key]) > 0) {
                                 foreach ($request->previous_process[$key] as $previous_process_key) {
@@ -461,8 +461,8 @@ class PreProductionService
                                 foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                                     if (
                                         $request->process_material_id[$key][$categoryKey] != "" &&
-                                        $request->product_material_category_id[$key][$categoryKey] != '' && 
-                                        $request->product_material_id[$key][$categoryKey] != '' && 
+                                        $request->product_material_category_id[$key][$categoryKey] != '' &&
+                                        $request->product_material_id[$key][$categoryKey] != '' &&
                                         $request->quantity[$key][$categoryKey] != ''
                                     ){
                                         $material = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
@@ -474,7 +474,7 @@ class PreProductionService
                                             $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                             $material->quantity = $request->quantity[$key][$categoryKey];
                                             $material->save();
-            
+
                                             $material_id = $request->product_material_id[$key][$categoryKey];
                                             $quantity = $request->quantity[$key][$categoryKey];
                                             $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -496,7 +496,7 @@ class PreProductionService
                                         $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                         $material->quantity = $request->quantity[$key][$categoryKey];
                                         $material->save();
-        
+
                                         $material_id = $request->product_material_id[$key][$categoryKey];
                                         $quantity = $request->quantity[$key][$categoryKey];
                                         $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -594,11 +594,11 @@ class PreProductionService
 
                         // create process materials
                         if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-                        
+
                             foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                                 if (
-                                    ($request->product_material_category_id[$key][$categoryKey] != '') && 
-                                    ($request->product_material_id[$key][$categoryKey] != '') && 
+                                    ($request->product_material_category_id[$key][$categoryKey] != '') &&
+                                    ($request->product_material_id[$key][$categoryKey] != '') &&
                                     ($request->quantity[$key][$categoryKey] != '')
                                     ) {
                                     $material = new PreProductionProcessMaterial();
@@ -608,7 +608,7 @@ class PreProductionService
                                     $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                     $material->quantity = $request->quantity[$key][$categoryKey];
                                     $material->save();
-    
+
                                     $material_id = $request->product_material_id[$key][$categoryKey];
                                     $quantity = $request->quantity[$key][$categoryKey];
                                     $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -643,7 +643,7 @@ class PreProductionService
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -676,7 +676,7 @@ class PreProductionService
         }
         DB::commit();
     }
-    
+
     public function delete($id)
     {
         $pre_production = PreProduction::where('id', $id)
@@ -707,5 +707,19 @@ class PreProductionService
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
+    }
+
+    public function detailsData($id)
+    {
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('id', $id)
+            ->first();
+        if(!$pre_production){
+            throw new \Exception('Pre Production not found');
+        }
+        $data['pre_production'] = $pre_production;
+
+        return $data;
     }
 }
