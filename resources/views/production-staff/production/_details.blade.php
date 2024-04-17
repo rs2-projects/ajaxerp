@@ -144,7 +144,7 @@
 @endsection
 
 @section('modals')
-    @include('inventory.assets.asset-product-category._add_category_modal')
+    @include('production-staff.production._verify_output_modal')
 @endsection
 
 @section('css')
@@ -204,9 +204,50 @@
             })
         }
 
-        function showVerifyOutputModal(id, processId){
+        function showVerifyOutputModal(id, process_id){
             console.log(id);
-            console.log(processId);
+            console.log(process_id);
+            let url = "{{route('production-staff.production.production.verify-output-data', ['id' => ':id', 'process_id' => ':process_id'])}}";
+            url = url.replace(':id', id);
+            url = url.replace(':process_id', process_id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#verify_output_modal_body").html(response.view);
+                    $("#verifyOutputModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function verifyOutput(uri) {
+           console.log(uri);
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to verify this output?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(
+                        uri,
+                        {},
+                        function (response) {
+                          if (response.status == 200){
+                            toastr.success(response.message);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1000);
+                          }else{
+                            toastr.error(response.message);
+                          }
+                        }
+                    );
+                } else if (result.isDenied) {
+
+                }
+            })
         }
     </script>
 @endsection

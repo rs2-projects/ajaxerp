@@ -7,6 +7,7 @@ use App\Models\Production\PreProductionMaterialDelivery;
 use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
+use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\ProductionDispatch;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Auth;
@@ -521,5 +522,32 @@ class ProductionService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+    
+    public function verifyOutputData($id, $processId)
+    {
+        $data['estimated_outputs'] = PreProductionProcessEstimatedOutput::where('pre_production_id', $id)
+            ->where('pre_production_process_id', $processId)
+            ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+            ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+            ->get();
+        if (!$data['estimated_outputs']) {
+            throw new \Exception('Process not found');
+        }
+        return $data;
+    }
+
+    public function updateVerifyOutput($id){
+        $estimatedOutput = PreProductionProcessEstimatedOutput::where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+            ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+            ->where('id', $id)
+            ->first();
+        if(!$estimatedOutput){
+            throw new \Exception('Estimated Output not found');
+        }
+        $estimatedOutput->verified_qtn = $estimatedOutput->verified_qtn + 1;
+        $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
+        $estimatedOutput->updated_at = now();
+        $estimatedOutput->save();
     }
 }

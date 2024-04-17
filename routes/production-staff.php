@@ -24,6 +24,8 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production-staff.production.production.dispatch-data');
         Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production-staff.production.production.dispatch.store');
         Route::get('/{id}/print-barcode/{type}', [ProductionController::class, 'printBarcode'])->name('production-staff.production.production.print-barcode');
+        Route::get('/{id}/verify-output/{process_id}', [ProductionController::class, 'verifyOutput'])->name('production-staff.production.production.verify-output-data');
+        Route::get('/{id}/verify-output/update', [ProductionController::class, 'updateVerifyOutput'])->name('production-staff.production.production.verify-output.update');
     });
 
     // logout 

@@ -111,6 +111,30 @@ class ProductionController extends BackendController
         return $this->returnAjaxSuccess([], 'Dispatched successfully');
     }
 
+    public function verifyOutput($id, $processId)
+    {
+        try {
+            $data = $this->service->verifyOutputData($id, $processId);
+            $view = $this->view('production-staff.production._verify_output_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function updateVerifyOutput($id)
+    {   
+        try {
+            $this->service->updateVerifyOutput($id);
+            return $this->returnAjaxSuccess([], 'Verified Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+
     public function printBarcode($id, $type){
         try {
 
