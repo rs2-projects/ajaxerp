@@ -20,7 +20,8 @@ class LoginService
             ->first();
         if (empty($user)) {
             if($this->loginProductionStaff($request) === true) {
-                return route('production-staff.dashboard');
+                // return route('production-staff.dashboard');
+                return route('production-staff.production.production.index');
             }
             throw new \Exception('Invalid Credentials');
         }

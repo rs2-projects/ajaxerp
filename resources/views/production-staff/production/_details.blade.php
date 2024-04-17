@@ -43,7 +43,7 @@
                                     {{-- @endif --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                     {{-- @if(hasPermission('manage-processes'))  --}}
-                                        <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
+                                        <a href="javascript:void(0)" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}')" class="complete-process-btn">Verify Output</a>
                                     {{-- @endif --}}
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
@@ -144,7 +144,7 @@
 @endsection
 
 @section('modals')
-    
+    @include('inventory.assets.asset-product-category._add_category_modal')
 @endsection
 
 @section('css')
@@ -202,6 +202,11 @@
 
                 }
             })
+        }
+
+        function showVerifyOutputModal(id, processId){
+            console.log(id);
+            console.log(processId);
         }
     </script>
 @endsection

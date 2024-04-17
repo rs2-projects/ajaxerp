@@ -2,10 +2,10 @@
 
     <!-- Logo -->
     <div class="header-left">
-        <a href="{{ route('production-staff.dashboard') }}" class="logo">
+        <a href="{{ route('production-staff.production.production.index') }}" class="logo">
             <img src="{{ asset('assets') }}/img/logo.webp" >
         </a>
-        <a href="{{ route('production-staff.dashboard') }}" class="logo2">
+        <a href="{{ route('production-staff.production.production.index') }}" class="logo2">
             <img src="{{ asset('assets') }}/img/logo.webp" class="sidebar-expanded" alt="Logo">
             <img src="{{ asset('assets') }}/img/logo-mini.png" class="sidebar-expanded-false" alt="Logo">
         </a>

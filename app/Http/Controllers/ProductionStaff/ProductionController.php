@@ -18,8 +18,8 @@ class ProductionController extends BackendController
 
     public function __construct()
     {
-        $this->addBreadcrumbs('Dashboard', route('production-staff.dashboard'), 'fa fa-home');
-        $this->addBreadcrumbs('Production');
+        // $this->addBreadcrumbs('Dashboard', route('production-staff.dashboard'), 'fa fa-home');
+        // $this->addBreadcrumbs('Production');
 
         $this->service = new ProductionService();
     }
