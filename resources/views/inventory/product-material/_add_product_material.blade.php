@@ -107,10 +107,27 @@
                                     <div class="tab-pane fade " id="address" role="tabpanel" aria-labelledby="address-tab">
                                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-48">
-                                                <div class="input-block mb-0 erp-step-input-block ">
+                                                <div class="input-block mb-0 erp-step-input-block single-color-wrapper">
                                                     <label class="col-form-label">Color </label>
                                                     <input type="text" class="form-control " name="color">
                                                 </div>
+                                                <div class="row multiple-color-wrapper" style="display: none;">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Upside Color</label>
+                                                            <input type="text" class="form-control " name="upside_color">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Downside Color</label>
+                                                            <input type="text" class="form-control " name="downside_color">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label>
+                                                    Both Side Color? <input type="checkbox" onchange="changeBothSideColor(this, '#addProductMaterial')" name="both_side_color" value="1">
+                                                </label>
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
