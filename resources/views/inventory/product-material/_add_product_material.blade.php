@@ -105,7 +105,7 @@
 
                                     </div>
                                     <div class="tab-pane fade " id="address" role="tabpanel" aria-labelledby="address-tab">
-                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
+                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center1 justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block single-color-wrapper">
                                                     <label class="col-form-label">Color </label>
