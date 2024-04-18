@@ -110,8 +110,8 @@ class PreProductionController extends BackendController
     public function statusUpdate($id, $status)
     {
         try {
-            $this->service->statusUpdateData($id, $status);
-            return $this->returnAjaxSuccess([], 'Status Update Successfully');
+            $data = $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

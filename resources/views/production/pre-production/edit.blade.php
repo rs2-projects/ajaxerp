@@ -9,6 +9,12 @@
                     <div class="product-general-info-box d-flex flex-wrap">
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Batch No <span class="text-red">*</span></label>
+                                <input class="form-control" value="{{$pre_production->pre_production_batch_no}}" name="pre_production_batch_no" type="text" placeholder="" required="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Order Details <span class="text-red">*</span></label>
                                 <input value="{{$pre_production->order_details}}" class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
@@ -186,7 +192,7 @@
                         </div>	
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Product</button>
+                        <button class=" erp-search-btn text-center">Update Production</button>
                     </div>
                 <form>
             </div>

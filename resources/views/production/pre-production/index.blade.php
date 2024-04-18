@@ -45,6 +45,9 @@
                             <li class="nav-item erp-nav-item" role="presentation">
                                 <button class="nav-link erp-nav-link" data="verified" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Sent to Production</button>
                             </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="revision" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Revision</button>
+                            </li>
                         </ul>
 
                         <div class="my-attendance-report-wrapper" id="ajax-data-load">
@@ -184,7 +187,13 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .pp-batch-num{
+            font-size: 10px;
+            font-weight: normal;
+            margin-top: 0px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

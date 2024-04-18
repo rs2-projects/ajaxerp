@@ -7,6 +7,12 @@
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">Batch No</label>
+                            <h4>{{$pre_production->pre_production_batch_no}}</h4>
+                        </div>
+                    </div>
+                    <div class="pgib-item flex-32 pd-item">
+                        <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
                             <h4>{{$pre_production->order_details}}</h4>
                         </div>
@@ -45,7 +51,9 @@
                                         <label class="col-form-label">Machine Selection </label>
                                         <h4 class="input-box-title">
                                             @foreach ($processData?->processMachines as $machineData)
-                                                <span>{{$machineData->machine->name}}</span>
+                                                @if($machineData->machine?->name)
+                                                    <span>{{$machineData->machine?->name}}</span>
+                                                @endif
                                             @endforeach
                                         </h4>
                                     </div>
@@ -123,11 +131,21 @@
 
                         </div>
                     @endforeach
-                        <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                            <button class=" erp-search-btn text-center"  @if($pre_production->is_verified==$pre_production::VERIFIED_NO) id="verifiedBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,1]) }}" @endif>
-                                @if($pre_production->is_verified==$pre_production::VERIFIED_NO) Verify @else Varified @endif
-                            </button>
+                    @if(hasPermission('verify-pre-productions'))
+                        <div class="d-flex justify-content-center">
+                            <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                                <button class=" erp-search-btn text-center"  @if($pre_production->is_verified !=$pre_production::VERIFIED_YES) id="verifiedBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,1]) }}" @endif>
+                                    @if($pre_production->is_verified==$pre_production::VERIFIED_YES) Varified @else Verify @endif
+                                </button>
+                            </div>
+                            @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
+                                <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                                    <button class=" erp-search-btn text-center" id="revisionBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,2]) }}">
+                                        @if($pre_production->is_verified==$pre_production::VERIFIED_REVISION) Revisioned @else Revision @endif</button>
+                                </div>
+                            @endif
                         </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -156,6 +174,9 @@
             color: #fff;
             padding: 5px 20px;
         }
+        #revisionBtn{
+            background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
+        }
     </style>
 @endsection
 
@@ -171,16 +192,35 @@
     <script>
         function preProductionUpdateStatus(button){
             let url = $(button).attr('data-href');
-            // console.log(callbacka);
-            ajaxGet(url, {}, function (response) {
-                if (response.status == 200) {
-                    $("#verifiedBtn").html('Verified');
-                    $("#verifiedBtn").prop('disabled',true)
-                    showSuccessAlert('Success',response.message)
-                } else {
-                    toastr.error(response.message);
+            
+            Swal.fire({
+                title: '',
+                html: 'Are you sure to update status?',
+                showDenyButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ajaxGet(url, {}, function (response) {
+                        if (response.status == 200) {
+                            if(response[0].status == 1){
+                            $("#revisionBtn").hide();
+                                $("#verifiedBtn").html('Verified');
+                                $("#verifiedBtn").prop('disabled',true);
+                            }
+                            if(response[0].status == 2){
+                            $("#revisionBtn").prop('disabled',true);
+                            $("#revisionBtn").html('Revisioned');
+                            }
+                            showSuccessAlert('Success',response.message)
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }, 'default');
+                } else if (result.isDenied) {
+
                 }
-            }, 'default');
+            })
         }
     </script>
 @endsection

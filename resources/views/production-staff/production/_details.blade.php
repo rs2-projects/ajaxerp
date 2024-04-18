@@ -43,7 +43,7 @@
                                     {{-- @endif --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                     {{-- @if(hasPermission('manage-processes'))  --}}
-                                        <a href="javascript:void(0)" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}')" class="complete-process-btn">Verify Output</a>
+                                        <a href="javascript:void(0)" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}')" class="complete-process-btn">Quality Control</a>
                                     {{-- @endif --}}
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
@@ -161,7 +161,77 @@
             color: #fff;
             padding: 5px 20px;
         }
-    </style>
+        .qc-btn {
+            padding: 3px 10px;
+            background: #ddd;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .qc-btn:last-child{
+            margin-right: 0;
+        }
+        .qc-btn.qc-perfect {
+            background: #55ce63;
+            color: #fff !important;
+        }
+        .qc-btn.qc-damage {
+            background: red;
+            color: #fff !important;
+        }
+        tr.erp-tbody-tr.perfect-qc-tr {
+            background: #e6ffd7 !important;
+        }
+        tr.erp-tbody-tr.damage-qc-tr {
+            background: #ff2b2b1a !important;
+        }
+        .qc-btn-all {
+            padding: 3px 10px;
+            background: #0d6efd;
+            font-size: 12px;
+            color: #fff;
+            border-radius: 5px;
+            font-weight: 700;
+        }
+        .qc-btn-all:hover {
+            background: #55ce63;
+        }
+        .qc-quantity-wraper {
+            padding: 10px;
+            border: 1px dashed  #ddd;
+            margin-bottom: 10px;
+        }
+        .qc-quantity-wraper h4 {
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 500;
+            background: #f1f1f1a6;
+            padding: 5px 10px;
+            color: #0c0c0c;
+            border-radius: 2px;
+        }
+        .qc-quantity-wraper h4 span {
+            font-weight: 700;
+        }
+        .qc-quantity-wraper h4.perfect-h4 {
+            color: #0aa31b;
+        }
+        .qc-quantity-wraper h4.damage-h4 {
+            color: #f00;
+        }
+        .qc-header {
+            margin-bottom: 10px;
+        }
+        .qc-header .re-btn {
+            background: #a500fd;
+            padding: 5px 20px;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+ </style>
 @endsection
 
 @section('css_plugins')

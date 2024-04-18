@@ -40,6 +40,9 @@ class PreProductionService
             case 'verified':
                 return $this->getVerfiedPreProductions($request);
                 break;
+            case 'revision':
+                return $this->getRevisionedPreProductions($request);
+                break;
         }
     }
 
@@ -91,6 +94,22 @@ class PreProductionService
         return $data;
     }
 
+    public function getRevisionedPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('is_verified', PreProduction::VERIFIED_REVISION)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+        $data['view'] = view('production.pre-production._index_filtered', $data)->render();
+        return $data;
+    }
+
     public function getDocument($id)
     {
         $data['item'] = PreProduction::where('id', $id)
@@ -103,6 +122,14 @@ class PreProductionService
     }
 
     public function createData(){
+        $pre_production_count = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->count();
+        if($pre_production_count > 0){
+            $data['pre_production_batch_no'] = 10001 + $pre_production_count;
+        }else{
+            $data['pre_production_batch_no'] = 10001;
+        }
+
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
@@ -147,6 +174,14 @@ class PreProductionService
             //     throw new \Exception("Pre Production already exists");
             // }
 
+            $check_duplicate_batch_no = PreProduction::where('pre_production_batch_no', $request->pre_production_batch_no)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->first();
+
+            if (!empty($check_duplicate_batch_no)) {
+                throw new \Exception("Batch No already exists");
+            }
+
             $image_path = null;
             $document_path = null;
             if ($request->hasFile('image')) {
@@ -163,6 +198,7 @@ class PreProductionService
             $pre_production = new PreProduction();
             $pre_production->order_details = $request->order_details;
             $pre_production->pre_production_no = '';
+            $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->image = $image_path??null;
             $pre_production->design_of_documents = $document_path??null;
             $pre_production->description = $request->description;
@@ -358,6 +394,15 @@ class PreProductionService
                 return redirect()->back()->with(['failed' => 'Pre Production not found!']);
             }
 
+            $check_duplicate_batch_no = PreProduction::where('pre_production_batch_no', $request->pre_production_batch_no)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+
+            if (!empty($check_duplicate_batch_no)) {
+                throw new \Exception("Batch No already exists");
+            }
+
             $image_path = null;
             $document_path = null;
             if ($request->hasFile('image')) {
@@ -371,6 +416,7 @@ class PreProductionService
                 $document_path = $document_path['path'];
             }
 
+            $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->order_details = $request->order_details;
             $pre_production->image = $image_path??$pre_production->image;
             $pre_production->design_of_documents = $document_path??$pre_production->design_of_documents;
@@ -704,6 +750,10 @@ class PreProductionService
             $pre_production->updated_by = auth()->user()->id;
             $pre_production->updated_at = now();
             $pre_production->save();
+            
+            $data['status'] = $status;
+            return $data;
+
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }

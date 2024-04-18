@@ -75,6 +75,7 @@ class PreProduction extends Model
 
     protected $fillable = [
         'pre_production_no',
+        'pre_production_batch_no',
         'order_details',
         'image',
         'design_of_documents',

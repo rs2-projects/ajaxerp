@@ -322,6 +322,10 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Manage Pre Productions'
                 ],
                 [
+                    'slug' => 'verify-pre-productions',
+                    'title' => 'Verify Pre Productions'
+                ],
+                [
                     'slug' => 'view-material-requests',
                     'title' => 'View Material Requests'
                 ],
