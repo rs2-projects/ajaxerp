@@ -31,6 +31,7 @@ class PreProductionProcessEstimatedOutput extends Model
         'pre_production_process_id',
         'unit',
         'quantity',
+        'verified_qty',
         'name',
         'status',
         'created_by',

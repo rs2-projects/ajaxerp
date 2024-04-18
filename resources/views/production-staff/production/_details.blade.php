@@ -205,8 +205,6 @@
         }
 
         function showVerifyOutputModal(id, process_id){
-            console.log(id);
-            console.log(process_id);
             let url = "{{route('production-staff.production.production.verify-output-data', ['id' => ':id', 'process_id' => ':process_id'])}}";
             url = url.replace(':id', id);
             url = url.replace(':process_id', process_id);
@@ -220,8 +218,8 @@
             }, 'default');
         }
 
-        function verifyOutput(uri) {
-           console.log(uri);
+        function verifyOutput(uri, checkbox) {
+            console.log(uri);
             Swal.fire({
                 title: '',
                 html: 'Are you sure to verify this output?',
@@ -235,6 +233,7 @@
                         {},
                         function (response) {
                           if (response.status == 200){
+                            $("#verifyOutputModal").modal('hide');
                             toastr.success(response.message);
                             setTimeout(function () {
                                 location.reload();
@@ -245,7 +244,7 @@
                         }
                     );
                 } else if (result.isDenied) {
-
+                    checkbox.checked = false;
                 }
             })
         }

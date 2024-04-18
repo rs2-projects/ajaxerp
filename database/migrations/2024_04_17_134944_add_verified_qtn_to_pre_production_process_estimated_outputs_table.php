@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pre_production_process_estimated_outputs', function (Blueprint $table) {
-            $table->unsignedInteger('verified_qtn')->after('quantity')->default(0);
+            $table->unsignedInteger('verified_qty')->after('quantity')->default(0);
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pre_production_process_estimated_outputs', function (Blueprint $table) {
-            $table->dropColumn('verified_qtn');
+            $table->dropColumn('verified_qty');
         });
     }
 };

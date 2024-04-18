@@ -538,16 +538,74 @@ class ProductionService
     }
 
     public function updateVerifyOutput($id){
-        $estimatedOutput = PreProductionProcessEstimatedOutput::where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
-            ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
-            ->where('id', $id)
-            ->first();
-        if(!$estimatedOutput){
-            throw new \Exception('Estimated Output not found');
+        DB::beginTransaction();
+        try {
+            $estimatedOutput = PreProductionProcessEstimatedOutput::where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+                ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+                ->where('id', $id)
+                ->first();
+            if(!$estimatedOutput){
+                throw new \Exception('Estimated Output not found');
+            }
+
+            $estimatedOutput->verified_qty = $estimatedOutput->verified_qty + 1;
+            $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
+            $estimatedOutput->updated_at = now();
+            $estimatedOutput->save();
+
+            $pre_production_id = $estimatedOutput->pre_production_id;
+            $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+                ->where('id', $pre_production_id)
+                ->first();
+
+            $processId = $estimatedOutput->pre_production_process_id;
+            $process = PreProductionProcess::where('id', $processId)
+                ->where('deleted', PreProductionProcess::DELETED_NO)
+                ->where('status', PreProductionProcess::STATUS_ACTIVE)
+                ->first();
+
+            $total_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
+                ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+                ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+                ->count();
+
+            $verified_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
+                ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+                ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+                ->whereColumn('quantity', 'verified_qty')
+                ->count();
+
+            if ($total_outputs == $verified_outputs) {
+                $process->process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
+                $process->updated_by = auth()->guard('production-staff')->user()->id;
+                $process->updated_at = now();
+                $process->save();
+            }
+
+            $count_completed = PreProductionProcess::where('pre_production_id', $pre_production_id)
+                ->where('deleted', PreProductionProcess::DELETED_NO)
+                ->where('status', PreProductionProcess::STATUS_ACTIVE)
+                ->where('process_status', '!=' , PreProductionProcess::PROCESS_STATUS_COMPLETED)
+                ->count();
+
+            if($count_completed == 0){
+                if($pre_production->delivery_status != PreProduction::DELIVERY_STATUS_DELIVERED){
+                    throw new \Exception('All Production Materials not delivered!');
+                }
+                if($pre_production->received_status != PreProduction::RECEIVED_STATUS_DELIVERED){
+                    throw new \Exception('All Production Materials not received!');
+                }
+                $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
+                $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
+                $pre_production->updated_at = now();
+                $pre_production->save();  
+            }
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
         }
-        $estimatedOutput->verified_qtn = $estimatedOutput->verified_qtn + 1;
-        $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
-        $estimatedOutput->updated_at = now();
-        $estimatedOutput->save();
+        DB::commit();
+
     }
 }
