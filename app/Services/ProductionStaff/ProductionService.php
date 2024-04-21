@@ -9,6 +9,7 @@ use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\ProductionDispatch;
+use App\Models\Products\ProductMaterialCategory;
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -202,6 +203,11 @@ class ProductionService
             throw new \Exception('Pre Production not found');
         }
         $data['pre_production'] = $pre_production;
+
+        $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+            ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
         return $data;
     }
 
@@ -530,15 +536,26 @@ class ProductionService
             ->where('pre_production_process_id', $processId)
             ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
             ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->id = $item->id;
+                $item->name = $item->name;
+                $item->quantity = $item->quantity;
+                $item->verified_qty = $item->verified_qty;
+                $item->damage_qty = $item->damage_qty;
+                $item->pending_qty = $item->quantity - $item->verified_qty;
+                return $item;
+            });
+
         if (!$data['estimated_outputs']) {
             throw new \Exception('Process not found');
         }
         return $data;
     }
 
-    public function updateVerifyOutput($id){
+    public function updateVerifyOutput($id, $type){
         DB::beginTransaction();
+        $process_status = PreProductionProcess::PROCESS_STATUS_PROCESSING;
         try {
             $estimatedOutput = PreProductionProcessEstimatedOutput::where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
                 ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
@@ -548,7 +565,14 @@ class ProductionService
                 throw new \Exception('Estimated Output not found');
             }
 
-            $estimatedOutput->verified_qty = $estimatedOutput->verified_qty + 1;
+            if($type == 1){
+                $estimatedOutput->verified_qty = $estimatedOutput->verified_qty + 1;
+            } else if($type == 2){
+                $estimatedOutput->damage_qty = $estimatedOutput->damage_qty + 1;
+            } else if($type == 3){
+                $estimatedOutput->verified_qty = $estimatedOutput->quantity;
+            }
+    
             $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
             $estimatedOutput->updated_at = now();
             $estimatedOutput->save();
@@ -580,6 +604,7 @@ class ProductionService
                 $process->updated_by = auth()->guard('production-staff')->user()->id;
                 $process->updated_at = now();
                 $process->save();
+                $process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
             }
 
             $count_completed = PreProductionProcess::where('pre_production_id', $pre_production_id)
@@ -606,6 +631,9 @@ class ProductionService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+
+        $data['process_status'] = $process_status;
+        return $data;
 
     }
 }

@@ -43,7 +43,7 @@
                                     {{-- @endif --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                     {{-- @if(hasPermission('manage-processes'))  --}}
-                                        <a href="javascript:void(0)" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}')" class="complete-process-btn">Quality Control</a>
+                                        <a href="javascript:void(0)" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
                                     {{-- @endif --}}
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
@@ -145,6 +145,7 @@
 
 @section('modals')
     @include('production-staff.production._verify_output_modal')
+    @include('production-staff.production._re_requisiton_modal')
 @endsection
 
 @section('css')
@@ -274,7 +275,10 @@
             })
         }
 
-        function showVerifyOutputModal(id, process_id){
+        let currentProcessBtn = '';
+
+        function showVerifyOutputModal(id, process_id, process_btn){
+            currentProcessBtn = process_btn;
             let url = "{{route('production-staff.production.production.verify-output-data', ['id' => ':id', 'process_id' => ':process_id'])}}";
             url = url.replace(':id', id);
             url = url.replace(':process_id', process_id);
@@ -288,8 +292,7 @@
             }, 'default');
         }
 
-        function verifyOutput(uri, checkbox) {
-            console.log(uri);
+        function verifyOutput(uri, btn, type) {
             Swal.fire({
                 title: '',
                 html: 'Are you sure to verify this output?',
@@ -303,21 +306,104 @@
                         {},
                         function (response) {
                           if (response.status == 200){
-                            $("#verifyOutputModal").modal('hide');
+                            console.log(response);
                             toastr.success(response.message);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
+                            if(response[0].process_status == 2){
+                                currentProcessBtn.removeAttribute('onclick');
+                                currentProcessBtn.classList.remove('complete-process-btn');
+                                currentProcessBtn.classList.add('rs-pre-completed-process');
+                                currentProcessBtn.textContent = 'Completed Process';
+                                
+                            }
+                            if(type == 'perfect' ){
+                                btn.closest('tr').classList.add('perfect-qc-tr');
+                                btn.classList.remove('qc-perfect');
+                                btn.removeAttribute('onclick');
+
+                                const btnWrap = btn.closest('.qc-btn-wrap');
+                                const damageBtn = btnWrap.querySelector('.qc-damage');
+                                damageBtn.classList.remove('qc-damage');
+                                damageBtn.removeAttribute('onclick');
+
+                                const quantityWrapper = btn.closest('.pms-item-main-wrapper');
+                                const perfectCount = quantityWrapper.querySelector('.perfect-count');
+                                perfectCount.textContent = parseInt(perfectCount.textContent) + 1;
+
+                            }else if(type == 'damage'){
+                                btn.closest('tr').classList.add('damage-qc-tr');
+                                btn.classList.remove('qc-damage');
+                                btn.removeAttribute('onclick');
+
+                                const btnWrap = btn.closest('.qc-btn-wrap');
+                                const perfectBtn = btnWrap.querySelector('.qc-perfect');
+                                perfectBtn.classList.remove('qc-perfect');
+                                perfectBtn.removeAttribute('onclick');
+
+                                const quantityWrapper = btn.closest('.pms-item-main-wrapper');
+                                const damageCount = quantityWrapper.querySelector('.damage-count');
+                                damageCount.textContent = parseInt(damageCount.textContent) + 1;
+                            }else if(type == 'perfect-all'){
+                                btn.removeAttribute('onclick');
+                                btn.classList.add('qc-btn');
+                                btn.classList.remove('qc-btn-all', 'qc-perfect-all');
+                                const sectionButtons = btn.closest('.pms-item-main-wrapper').querySelectorAll('.qc-btn');
+                                sectionButtons.forEach(function (button) {
+                                    button.closest('tr').classList.add('perfect-qc-tr');
+                                    button.classList.remove('qc-perfect', 'qc-damage');
+                                    button.removeAttribute('onclick');
+                                });
+
+                                const quantityWrapper = btn.closest('.pms-item-main-wrapper');
+                                const perfectCount = quantityWrapper.querySelector('.perfect-count');
+                                perfectCount.textContent = btn.getAttribute('qty')
+                            }
                           }else{
                             toastr.error(response.message);
                           }
                         }
                     );
                 } else if (result.isDenied) {
-                    checkbox.checked = false;
+                    // checkbox.checked = false;
                 }
             })
         }
+
+        function showReRequisitionModal(){
+            $("#verifyOutputModal").modal('hide');
+            $("#reRequisitionModal").modal('show');
+            let process_id = currentProcessBtn.getAttribute('process_id');
+        }
+
+        // function verifyOutput(uri, checkbox) {
+        //     console.log(uri);
+        //     Swal.fire({
+        //         title: '',
+        //         html: 'Are you sure to verify this output?',
+        //         showDenyButton: true,
+        //         confirmButtonText: 'Yes',
+        //         denyButtonText: `No`,
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             ajaxGet(
+        //                 uri,
+        //                 {},
+        //                 function (response) {
+        //                   if (response.status == 200){
+        //                     $("#verifyOutputModal").modal('hide');
+        //                     toastr.success(response.message);
+        //                     setTimeout(function () {
+        //                         location.reload();
+        //                     }, 1000);
+        //                   }else{
+        //                     toastr.error(response.message);
+        //                   }
+        //                 }
+        //             );
+        //         } else if (result.isDenied) {
+        //             checkbox.checked = false;
+        //         }
+        //     })
+        // }
     </script>
 @endsection
 

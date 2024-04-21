@@ -124,11 +124,11 @@ class ProductionController extends BackendController
         }
     }
 
-    public function updateVerifyOutput($id)
+    public function updateVerifyOutput($id, $type)
     {   
         try {
-            $this->service->updateVerifyOutput($id);
-            return $this->returnAjaxSuccess([], 'Verified Successfully');
+            $data = $this->service->updateVerifyOutput($id, $type);
+            return $this->returnAjaxSuccess([$data], 'Verified Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
