@@ -12,6 +12,11 @@ class FinishedGoods extends Model
 
     protected $table = 'finished_goods';
     public $timestamps = false;
+
+    //type
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
+
     //unit constant
     const UNIT_TYPE_BOX = 1;
     const UNIT_TYPE_CM = 2;
@@ -61,6 +66,7 @@ class FinishedGoods extends Model
     ];
 
     protected $fillable = [
+        'type',
         'finished_goods_category_id',
         'name',
         'code',
@@ -77,6 +83,10 @@ class FinishedGoods extends Model
         'thickness',
         'remarks',
         'warehouse_id',
+        'embossed_up',
+        'color_up',
+        'embossed_down',
+        'color_down',
         'comments',
         'status',
         'created_by',
