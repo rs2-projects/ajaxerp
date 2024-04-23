@@ -5,7 +5,7 @@
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Product Name & Code </th>
                 <th class="erp-th text-center">Total QTY </th>
-                <th class="erp-th text-center">Last Calculated Price </th>
+                {{-- <th class="erp-th text-center">Last Calculated Price </th> --}}
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
                 @if(hasPermission( 'manage-finished-goods'))
@@ -35,9 +35,9 @@
                         <a href="javascript:void(0)" class="text-center d-table-title" >{{ $finished_good->available_qty??0 }}</a>
                     </td>
 
-                    <td class="erp-tbody-td text-center">
+                    {{-- <td class="erp-tbody-td text-center">
                         <a href="javascript:void(0)" class="last-cal-status-btn" onclick="purchaseHistory({{$finished_good->id}})">Check Status</a>
-                    </td>
+                    </td> --}}
 
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($finished_good->status == $finished_good::STATUS_ACTIVE) ? 'status-approved' : '' }}">
@@ -72,7 +72,7 @@
                             @endforeach
                         @endif
                     </td>
-                    @if(hasPermission( 'manage-finished-goods'))
+                    @if(hasPermission('manage-finished-goods'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">

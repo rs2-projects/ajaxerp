@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        @if(hasPermission( 'manage-finished-goods'))
+        @if(hasPermission('manage-finished-goods'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addProductMaterial"><i class="fa-solid fa-plus"></i> New Product</a>
@@ -63,8 +63,10 @@
 @endsection
 
 @section('modals')
-    @include('inventory.finished-good._add_finished_good')
-    @include('inventory.finished-good._edit_finished_good')
+    @if(hasPermission('manage-finished-goods'))
+        @include('inventory.finished-good._add_finished_good')
+        @include('inventory.finished-good._edit_finished_good')
+    @endif
     {{--@include('inventory.finished-good._purchase_history_modal')--}}
 @endsection
 
@@ -198,7 +200,7 @@
             }, 'default');
         }*/
 
-        function purchaseHistory(id){
+         /*function purchaseHistory(id){
             let url = "{{route('inventory.finished-good.purchase-history', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
@@ -209,7 +211,7 @@
                     toastr.error(response.message);
                 }
             }, 'default');
-        }
+        }*/
 
         function initSectionMultipleSelect(){
             $('#sections_id').multipleSelect({
