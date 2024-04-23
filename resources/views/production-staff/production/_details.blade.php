@@ -43,7 +43,7 @@
                                     {{-- @endif --}}
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                     {{-- @if(hasPermission('manage-processes'))  --}}
-                                        <a href="javascript:void(0)" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
+                                        <a href="javascript:void(0)" pre_production_id="{{$pre_production->id}}" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
                                     {{-- @endif --}}
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
@@ -82,23 +82,36 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Category Selection </label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Matarial Selection </label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-15">
+                                            <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                    <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
+                                                    <label class="col-form-label">QTY</label>
+                                                    <h4 class="input-box-title">{{$processMaterial->base_quantity}}</h4>
                                                 </div>
                                             </div>
+                                            @if($processMaterial->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processMaterial->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -139,8 +152,44 @@
     </div>
 
     <!--End::row-1 -->
-
 </div>
+
+{{-- add mutiple material template --}}
+    <div id="newMaterialRow" style="display: none">
+        <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
+            <div class="pms-item flex-32">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">Category Selection </label>
+                    <select class="select select-step select2" name="product_material_category_id[]" onchange="getMaterial(this)">
+                        <option value="">Select Category</option>
+                        @foreach ($categories as $category)
+                            <option value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="pms-item flex-32">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">Material Selection </label>
+                    <select name="product_material_id[]" class="select select-step material-product material-product2" >
+                        <option value="">Select Material</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pms-item flex-15">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">QTY </label>
+                    <input name="quantity[]" class="form-control" type="number" placeholder="">
+                </div>
+            </div>
+            <div class="pms-item flex-10">
+                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                    <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
+                    <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -245,6 +294,16 @@
 
 @section('js')
     <script>
+        // $(document).ready(function() {
+        //     $(".select-step").select2({
+        //         closeOnSelect: true,
+        //         containerCssClass: "select2-box-container",
+        //         dropdownCssClass: "select2-box-dropdown",
+        //         width: '100%'
+
+        //     });
+        // });
+
         function changeStatus(uri) {
            console.log(uri);
             Swal.fire({
@@ -372,38 +431,71 @@
             $("#verifyOutputModal").modal('hide');
             $("#reRequisitionModal").modal('show');
             let process_id = currentProcessBtn.getAttribute('process_id');
+            let pre_production_id = currentProcessBtn.getAttribute('pre_production_id');
+            $("#process_id").val(process_id);
+            $("#pre_production_id").val(pre_production_id);
         }
 
-        // function verifyOutput(uri, checkbox) {
-        //     console.log(uri);
-        //     Swal.fire({
-        //         title: '',
-        //         html: 'Are you sure to verify this output?',
-        //         showDenyButton: true,
-        //         confirmButtonText: 'Yes',
-        //         denyButtonText: `No`,
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             ajaxGet(
-        //                 uri,
-        //                 {},
-        //                 function (response) {
-        //                   if (response.status == 200){
-        //                     $("#verifyOutputModal").modal('hide');
-        //                     toastr.success(response.message);
-        //                     setTimeout(function () {
-        //                         location.reload();
-        //                     }, 1000);
-        //                   }else{
-        //                     toastr.error(response.message);
-        //                   }
-        //                 }
-        //             );
-        //         } else if (result.isDenied) {
-        //             checkbox.checked = false;
-        //         }
-        //     })
-        // }
+        function getMaterial(select){
+            let category_id = $(select).val();
+            var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
+            console.log(materialSelect);
+
+            let url = "{{ route('production-staff.production.production.get-material-by-category') }}";
+            if(category_id > 0){
+                ajaxGet(url, {category_id:category_id}, function (response) {
+                    if (response.status == 200) {
+                        materialSelect.html(response.view);
+                    } else {
+                        materialSelect.html('');
+                        toastr.error(response.message);
+                    }
+                });
+            } else {
+                materialSelect.html('');
+                return;
+            }
+        }
+
+        function addMaterialSection(){
+            var item = $('#newMaterialRow').html();
+            $('.materialWraper').append(item);
+
+            $(".select-step").select2({
+                closeOnSelect: true,
+                containerCssClass: "select2-box-container",
+                dropdownCssClass: "select2-box-dropdown",
+                width: '100%'
+
+            });
+
+        }
+
+        function removeMaterialSection(element){
+            $(element).closest('.material-item-parent').remove();
+        }
+
+        $("#reRequisitionStoreForm").on('submit', function (e) {
+            console.log("okk")
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+                console.log(url);
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#reRequisitionModal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message);
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
     </script>
 @endsection
 

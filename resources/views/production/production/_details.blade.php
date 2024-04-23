@@ -56,7 +56,7 @@
                                         <label class="col-form-label">Machine Selection </label>
                                         <h4 class="input-box-title">
                                             @foreach ($processData?->processMachines as $machineData)
-                                                <span>{{$machineData->machine->name}}</span>
+                                               @if($machineData->machine?->name) <span>{{$machineData->machine?->name}}</span>@endif
                                             @endforeach
                                         </h4>
                                     </div>

@@ -275,6 +275,7 @@ class PreProductionService
                                 $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                 $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                 $material->quantity = $request->quantity[$key][$categoryKey];
+                                $material->base_quantity = $request->quantity[$key][$categoryKey];
                                 $material->save();
 
                                 $material_id = $request->product_material_id[$key][$categoryKey];
@@ -319,6 +320,11 @@ class PreProductionService
                 $material->product_material_category_id = $materialData['category_id'];
                 $material->product_material_id = $materialData['material_id'];
                 $material->quantity = $materialData['quantity'];
+                $material->base_quantity = $materialData['quantity'];
+                $material->created_by = auth()->user()->id;
+                $material->created_at = Carbon::now();
+                $material->updated_by = auth()->user()->id;
+                $material->updated_at = Carbon::now();
                 $material->save();
             }
 
@@ -519,6 +525,7 @@ class PreProductionService
                                             $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                             $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                             $material->quantity = $request->quantity[$key][$categoryKey];
+                                            $material->base_quantity = $request->quantity[$key][$categoryKey];
                                             $material->save();
 
                                             $material_id = $request->product_material_id[$key][$categoryKey];
@@ -541,6 +548,7 @@ class PreProductionService
                                         $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                         $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                         $material->quantity = $request->quantity[$key][$categoryKey];
+                                        $material->base_quantity = $request->quantity[$key][$categoryKey];
                                         $material->save();
 
                                         $material_id = $request->product_material_id[$key][$categoryKey];
@@ -653,6 +661,7 @@ class PreProductionService
                                     $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                     $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                     $material->quantity = $request->quantity[$key][$categoryKey];
+                                    $material->base_quantity = $request->quantity[$key][$categoryKey];
                                     $material->save();
 
                                     $material_id = $request->product_material_id[$key][$categoryKey];
@@ -712,6 +721,11 @@ class PreProductionService
                     $material->product_material_category_id = $materialData['category_id'];
                     $material->product_material_id = $materialData['material_id'];
                     $material->quantity = $materialData['quantity'];
+                    $material->base_quantity = $materialData['quantity'];
+                    $material->created_by = auth()->user()->id;
+                    $material->created_at = Carbon::now();
+                    $material->updated_by = auth()->user()->id;
+                    $material->updated_at = Carbon::now();
                     $material->save();
                 }
             }

@@ -8,9 +8,12 @@ use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\PreProductionProcessEstimatedOutput;
+use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionDispatch;
+use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Barryvdh\DomPDF\PDF;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -635,5 +638,138 @@ class ProductionService
         $data['process_status'] = $process_status;
         return $data;
 
+    }
+
+    public function getMaterialByCategory($request)
+    {
+        $data['materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('product_material_category_id', $request->category_id)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return $data;
+
+    }
+
+    public function reRecuisitionStore($request){
+        DB::beginTransaction();
+        try {
+            $process = PreProductionProcess::where('id', $request->process_id)
+                ->where('pre_production_id', $request->pre_production_id)
+                ->where('deleted', PreProductionProcess::DELETED_NO)
+                ->where('status', PreProductionProcess::STATUS_ACTIVE)
+                ->first();
+
+            if (!$process) {
+                throw new \Exception("Process not found");
+            }
+            $uniqueProductMaterials = [];
+
+            if (isset($request->product_material_category_id) && is_array($request->product_material_category_id) && (count($request->product_material_category_id) > 0)) {
+                foreach ($request->product_material_category_id as $key=>$category_id) {
+                    if(($request->product_material_category_id[$key] != '') &&
+                        ($request->product_material_id[$key] != '') &&
+                        ($request->quantity[$key] != '')
+                    ){
+                        $material = PreProductionProcessMaterial::where('pre_production_process_id', $request->process_id)
+                            ->where('pre_production_id', $request->pre_production_id)
+                            ->where('product_material_category_id', $request->product_material_category_id[$key])
+                            ->where('product_material_id', $request->product_material_id[$key])
+                            ->first();
+                        if(!$material){
+                            $material = new PreProductionProcessMaterial();
+                            $material->pre_production_id = $request->pre_production_id;
+                            $material->pre_production_process_id = $process->id;
+                            $material->product_material_category_id = $request->product_material_category_id[$key];
+                            $material->product_material_id = $request->product_material_id[$key];
+                            $material->quantity = $request->quantity[$key];
+                            $material->extra_quantity = $request->quantity[$key];
+                            $material->save();
+
+                            $material_id = $request->product_material_id[$key];
+                            $quantity = $request->quantity[$key];
+                            $category_id = $request->product_material_category_id[$key];
+                            if(isset($uniqueProductMaterials[$material_id])) {
+                                $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                            } else {
+                                $uniqueProductMaterials[$material_id] = [
+                                    'material_id' => $material_id,
+                                    'category_id' => $category_id,
+                                    'quantity' => $quantity,
+                                ];
+                            }
+                        }else{
+                            $material->product_material_category_id = $request->product_material_category_id[$key];
+                            $material->product_material_id = $request->product_material_id[$key];
+                            $material->quantity += $request->quantity[$key];
+                            $material->extra_quantity += $request->quantity[$key];
+                            $material->save();
+
+                            $material_id = $request->product_material_id[$key];
+                            $quantity = $request->quantity[$key];
+                            $category_id = $request->product_material_category_id[$key];
+                            if(isset($uniqueProductMaterials[$material_id])) {
+                                $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                            } else {
+                                $uniqueProductMaterials[$material_id] = [
+                                    'material_id' => $material_id,
+                                    'category_id' => $category_id,
+                                    'quantity' => $quantity,
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $pre_production = PreProduction::where('id', $request->pre_production_id)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->where('status', PreProduction::STATUS_ACTIVE)
+                ->first();
+            if (!$pre_production) {
+                throw new \Exception("Pre Production not found");
+            }
+            $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_PARTIAL;
+            $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
+            $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
+            $pre_production->updated_at = now();
+            $pre_production->save();
+
+            foreach ($uniqueProductMaterials as $materialData) {
+                $material = PreProductionMaterial::where('pre_production_id', $request->pre_production_id)
+                    ->where('product_material_category_id', $materialData['category_id'])
+                    ->where('product_material_id', $materialData['material_id'])
+                    ->where('deleted', PreProductionMaterial::DELETED_NO)
+                    ->where('status', PreProductionMaterial::STATUS_ACTIVE)
+                    ->first();
+                if($material){
+                    $material->quantity += $materialData['quantity'];
+                    $material->extra_quantity += $request->quantity[$key];
+                    $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_PARTIAL;
+                    $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
+                    $material->updated_by = auth()->guard('production-staff')->user()->id;
+                    $material->updated_at = Carbon::now();
+                    $material->save();
+                }else{
+                    $material = new PreProductionMaterial();
+                    $material->pre_production_id = $request->pre_production_id;
+                    $material->product_material_category_id = $materialData['category_id'];
+                    $material->product_material_id = $materialData['material_id'];
+                    $material->quantity = $materialData['quantity'];
+                    $material->extra_quantity = $materialData['quantity'];
+                    $material->created_by = auth()->guard('production-staff')->user()->id;
+                    $material->created_at = Carbon::now();
+                    $material->updated_by = auth()->guard('production-staff')->user()->id;
+                    $material->updated_at = Carbon::now();
+                    $material->save();
+                }
+            }
+        
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
     }
 }

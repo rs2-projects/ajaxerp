@@ -134,6 +134,28 @@ class ProductionController extends BackendController
         }
     }
 
+    public function getMaterialByCategory(Request $request){
+        try {
+            $data = $this->service->getMaterialByCategory($request);
+            $view = $this->view('production-staff.production._get_material_by_category')->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function reRecuisitionStore(Request $request){
+
+        try {
+            $data = $this->service->reRecuisitionStore($request);
+            return $this->returnAjaxSuccess([], 'Re-Recuisition Success');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
 
     public function printBarcode($id, $type){
         try {
