@@ -42,4 +42,12 @@ class BoardEmbossed extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function getShowImageAttribute()
+    {
+        if ($this->image != null && $this->image != '') {
+            return asset($this->image);
+        }
+        return asset('assets/img/placeholder.jpg');
+    }
 }

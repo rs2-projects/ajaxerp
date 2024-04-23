@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
+use App\Http\Controllers\Inventory\BoardsController;
 use App\Http\Controllers\Procurement\Assets\UserPurchaseRequestController;
 use App\Http\Controllers\Procurement\Assets\AdminPurchaseRequestController;
 use App\Http\Controllers\Procurement\Assets\PuchaseOrderPaymentController;
@@ -16,6 +17,8 @@ use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Production\Production\ProductionController;
 use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
+use App\Http\Controllers\Settings\BoardColorController;
+use App\Http\Controllers\Settings\BoardEmbossedController;
 
 Route::group(['prefix' => 'inventory'], function () {
     // asset product category route start
@@ -41,6 +44,19 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
     });
+
+    // boards
+    Route::group(['prefix' => 'boards'], function () {
+        Route::get('/', [BoardsController::class, 'index'])->name('inventory.boards.index');
+        Route::post('/filtered', [BoardsController::class, 'indexFiltered'])->name('inventory.boards.filtered');
+        Route::get('/create', [BoardsController::class, 'create'])->name('inventory.boards.create');
+        Route::post('/create', [BoardsController::class, 'store'])->name('inventory.boards.store');
+        Route::get('/{id}/edit', [BoardsController::class, 'edit'])->name('inventory.boards.edit');
+        Route::post('/{id}/update', [BoardsController::class, 'update'])->name('inventory.boards.update');
+        Route::get('/{id}/delete', [BoardsController::class, 'delete'])->name('inventory.boards.delete');
+    });
+
+
 });
 
 
@@ -198,4 +214,30 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/deliver/{barcode}/{count}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document')->middleware('permission:view-material-requests');
+});
+
+
+// settings
+Route::group(['prefix' => 'settings'], function () {
+    // board color route start
+    Route::group(['prefix' => 'board-color'], function () {
+        Route::get('/', [BoardColorController::class, 'index'])->name('settings.board-color.index');
+        Route::post('/filtered', [BoardColorController::class, 'indexFiltered'])->name('settings.board-color.filtered');
+        Route::post('/create', [BoardColorController::class, 'store'])->name('settings.board-color.store');
+        Route::get('/{id}/edit', [BoardColorController::class, 'edit'])->name('settings.board-color.edit');
+        Route::post('/{id}/update', [BoardColorController::class, 'update'])->name('settings.board-color.update');
+        Route::get('/{id}/delete', [BoardColorController::class, 'delete'])->name('settings.board-color.delete');
+    });
+    // board color route end
+
+    // board embossed route start
+    Route::group(['prefix' => 'board-embossed'], function () {
+        Route::get('/', [BoardEmbossedController::class, 'index'])->name('settings.board-embossed.index');
+        Route::post('/filtered', [BoardEmbossedController::class, 'indexFiltered'])->name('settings.board-embossed.filtered');
+        Route::post('/create', [BoardEmbossedController::class, 'store'])->name('settings.board-embossed.store');
+        Route::get('/{id}/edit', [BoardEmbossedController::class, 'edit'])->name('settings.board-embossed.edit');
+        Route::post('/{id}/update', [BoardEmbossedController::class, 'update'])->name('settings.board-embossed.update');
+        Route::get('/{id}/delete', [BoardEmbossedController::class, 'delete'])->name('settings.board-embossed.delete');
+    });
+    // board embossed route end
 });
