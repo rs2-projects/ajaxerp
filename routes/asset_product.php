@@ -49,7 +49,6 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::group(['prefix' => 'boards'], function () {
         Route::get('/', [BoardsController::class, 'index'])->name('inventory.boards.index');
         Route::post('/filtered', [BoardsController::class, 'indexFiltered'])->name('inventory.boards.filtered');
-        Route::get('/create', [BoardsController::class, 'create'])->name('inventory.boards.create');
         Route::post('/create', [BoardsController::class, 'store'])->name('inventory.boards.store');
         Route::get('/{id}/edit', [BoardsController::class, 'edit'])->name('inventory.boards.edit');
         Route::post('/{id}/update', [BoardsController::class, 'update'])->name('inventory.boards.update');

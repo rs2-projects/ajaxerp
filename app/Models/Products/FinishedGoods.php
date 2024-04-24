@@ -112,4 +112,19 @@ class FinishedGoods extends Model
     public function finishedGoodsCategory(){
         return $this->belongsTo(FinishedGoodsCategory::class, 'finished_goods_category_id', 'id');
     }
+
+    public function embossed_ups(){
+        return $this->belongsTo(BoardEmbossed::class, 'embossed_up', 'id');
+    }
+    public function embossed_downs(){
+        return $this->belongsTo(BoardEmbossed::class, 'embossed_down', 'id');
+    }
+
+    public function color_ups(){
+        return $this->belongsTo(BoardColor::class, 'color_up', 'id');
+    }
+    public function color_downs(){
+        return $this->belongsTo(BoardColor::class, 'color_down', 'id');
+    }
+    
 }

@@ -24,9 +24,9 @@ class BoardsController extends BackendController
     public function index()
     {
         $this->setPageTitle("Boards");
-        $this->setActiveMenu('inventory.boards.index');
-
-        return  $this->view('inventory.boards.index');
+        $this->setActivemenu('inventory.boards.index');
+        $data = $this->service->indexData();
+        return $this->view('inventory.boards.index')->with($data);
     }
 
     public function indexFiltered(Request $request)
@@ -42,7 +42,7 @@ class BoardsController extends BackendController
     public function store(StoreBoardRequest $request)
     {
         try {
-            $this->service->store($request);
+            $this->service->storeData($request);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
@@ -52,6 +52,8 @@ class BoardsController extends BackendController
     public function edit($id)
     {
         try {
+            $this->setPageTitle("Edit Boards");
+            $this->setActiveMenu('inventory.boards.index');
             $data = $this->service->editData($id);
             $view = $this->view('inventory.boards._edit_data')
                 ->with($data)
@@ -65,7 +67,7 @@ class BoardsController extends BackendController
     public function update(UpdateBoardRequest $request, $id)
     {
         try {
-            $this->service->update($request, $id);
+            $this->service->updateData($request, $id);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
@@ -75,7 +77,7 @@ class BoardsController extends BackendController
     public function delete($id)
     {
         try {
-            $this->service->delete($id);
+            $this->service->deleteData($id);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
