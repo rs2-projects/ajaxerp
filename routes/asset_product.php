@@ -15,6 +15,7 @@ use App\Http\Controllers\Settings\UserRoleController;
 use App\Http\Controllers\Settings\UserRolePermissionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Inventory\ReceiveProductController;
+use App\Http\Controllers\Production\BoardPreProduction\BoardPreProductionController;
 use App\Http\Controllers\Production\Production\ProductionController;
 use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
 use App\Http\Controllers\Settings\BoardColorController;
@@ -191,6 +192,20 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
     });
+
+    // board pre production
+    Route::group(['prefix' => 'board-pre-production'], function () {
+        Route::get('/', [BoardPreProductionController::class, 'index'])->name('production.board-pre-production.index');
+        Route::post('/filtered', [BoardPreProductionController::class, 'indexFiltered'])->name('production.board-pre-production.filtered');
+        Route::get('/create', [BoardPreProductionController::class, 'create'])->name('production.board-pre-production.create');
+        Route::get('get-material-by-category', [BoardPreProductionController::class, 'getMaterialByCategory'])->name('production.board-pre-production.get-material-products');
+        Route::post('/create', [BoardPreProductionController::class, 'store'])->name('production.board-pre-production.store');
+        Route::get('/{id}/edit', [BoardPreProductionController::class, 'edit'])->name('production.board-pre-production.edit');
+        Route::post('/{id}/update', [BoardPreProductionController::class, 'update'])->name('production.board-pre-production.update');
+        Route::get('/{id}/delete', [BoardPreProductionController::class, 'delete'])->name('production.board-pre-production.delete');
+        Route::get('/{id}/get-details', [BoardPreProductionController::class, 'details'])->name('production.board-pre-production.get-production-details');
+        Route::post('/{id}/send-to-production', [BoardPreProductionController::class, 'sendToProduction'])->name('production.board-pre-production.send-to-production');
+     });
 
     Route::group(['prefix' => 'production-staff'], function () {
         Route::get('/', [ProductionStaffController::class, 'index'])->name('production.production-staff.index');

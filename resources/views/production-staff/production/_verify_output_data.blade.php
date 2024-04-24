@@ -13,11 +13,11 @@
                     <table class="table mb-0 erp-table table-responsive">
                         <thead class="erp-thead">
                             <tr class="erp-tr">
-                                <th class="erp-th">Sl.</td>
-                                <th class="erp-th">Name</td>
+                                <th class="erp-th">Sl.</th>
+                                <th class="erp-th">Name</th>
                                 <th class="erp-th">
                                     <a href="javascript:void(0)" qty={{$data->quantity}} class="qc-btn-all qc-perfect-all" onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 3]) }}' , this, 'perfect-all')"><span class="me-1"><i class="fa-solid fa-check"></i></span> Perfect All</a>
-                                </td>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="erp-tbody">

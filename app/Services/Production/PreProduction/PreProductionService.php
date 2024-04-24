@@ -51,6 +51,7 @@ class PreProductionService
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -67,6 +68,7 @@ class PreProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('is_verified', PreProduction::VERIFIED_NO)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -83,6 +85,7 @@ class PreProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -99,6 +102,7 @@ class PreProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('is_verified', PreProduction::VERIFIED_REVISION)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -142,6 +146,7 @@ class PreProductionService
 
         $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
             ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -155,7 +160,7 @@ class PreProductionService
 
     public function getProducts($id){
         $data['products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
-            ->where('status', Machine::STATUS_ACTIVE)
+            ->where('status', ProductMaterial::STATUS_ACTIVE)
             ->where('product_material_category_id', $id)
             ->orderBy('id', 'desc')
             ->get();
@@ -351,6 +356,7 @@ class PreProductionService
 
         $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
             ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
 

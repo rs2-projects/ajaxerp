@@ -2,6 +2,8 @@
 
 namespace App\Models\Production;
 
+use App\Models\Machine;
+use App\Models\Products\FinishedGoods;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,4 +46,23 @@ class BoardPreProduction extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function board_materials(){
+        return $this->hasMany(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id');
+    }
+
+    public function finishedGoods()
+    {
+        return $this->belongsTo(FinishedGoods::class, 'finished_goods_id', 'id');
+    }
+
+    public function machine()
+    {
+        return $this->belongsTo(Machine::class, 'machine_id', 'id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(ProductionStaff::class, 'staff_id', 'id');
+    }
 }

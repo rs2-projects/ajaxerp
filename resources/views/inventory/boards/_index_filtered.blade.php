@@ -37,7 +37,7 @@
                     <td class="erp-tbody-td text-center">{{ $data->color_ups?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->embossed_downs?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->color_downs?->name??'N/A' }}</td>
-                    @if(hasPermission('manage-finished-goods'))
+                    {{-- @if(hasPermission('manage-finished-goods')) --}}
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                         </td>
-                    @endif
+                    {{-- @endif --}}
                 </tr>
                 @empty
                 <tr class="erp-tbody-tr">

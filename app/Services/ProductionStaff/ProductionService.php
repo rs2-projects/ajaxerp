@@ -71,6 +71,7 @@ class ProductionService
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })
@@ -91,6 +92,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PENDING)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })
@@ -111,6 +113,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::with('pendingPreProductionMaterialDeliveries')
             ->where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })
@@ -132,6 +135,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PROCESSING)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })
@@ -152,6 +156,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_COMPLETED)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })
@@ -172,6 +177,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('dispatched_status', PreProduction::DISPATCH_STATUS_DISPATCHED)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->whereHas('process', function ($q) use ($staffId){
                 $q->where('production_staff_id', $staffId);
             })

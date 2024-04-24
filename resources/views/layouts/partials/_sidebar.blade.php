@@ -257,6 +257,9 @@
                             <a href="{{route('production.production.index')}}" class="{{ ($activeMenu == 'production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
                         </li>
                     @endif
+                    <li>
+                        <a href="{{route('production.board-pre-production.index')}}" class="{{ ($activeMenu == 'production.board-pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Board Pre Production</span></a>
+                    </li>
                     @if(hasPermission('view-machines','manage-machines'))
                         <li>
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>

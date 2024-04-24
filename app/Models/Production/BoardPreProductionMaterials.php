@@ -2,6 +2,7 @@
 
 namespace App\Models\Production;
 
+use App\Models\Products\ProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,4 +43,10 @@ class BoardPreProductionMaterials extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+
+    public function product_material()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'product_material_id');
+    }
 }

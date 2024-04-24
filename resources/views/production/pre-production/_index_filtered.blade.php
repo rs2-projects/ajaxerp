@@ -39,7 +39,7 @@
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     @if($data->design_of_documents)
-                                        <a href="javascript:void(0)" onclick="getDocunent({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
+                                        <a href="javascript:void(0)" onclick="getDocument({{$data->id}})" class="document-view-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">
                                             <img src="{{ asset('assets/img/product/documents.png') }}" alt="" class="document-img-box"><small>View</small>
                                         </a>
                                     @else N/A

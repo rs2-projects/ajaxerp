@@ -43,7 +43,8 @@
                             </div>
                             <div class="pms-item flex-10">
                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                    <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
+                                    <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
+                                            <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
                                     {{-- <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a> --}}
                                 </div>
                             </div>

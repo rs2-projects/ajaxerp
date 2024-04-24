@@ -23,7 +23,7 @@
                                     </div>
                                     <div class="erp-filter-item flex-25"> 
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Product Search">
+                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Pre Production Search">
                                         </div>
                                     </div>
                                     <div class="erp-filter-item"> 
@@ -231,7 +231,7 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
-        function getDocunent(id){
+        function getDocument(id){
             let url = "{{route('production.pre-production.get-design-document', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
