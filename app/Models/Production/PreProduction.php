@@ -14,6 +14,9 @@ class PreProduction extends Model
     protected $table = 'pre_productions';
     public $timestamps = false;
 
+    //type
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
     const VERIFIED_NO = 0;
     const VERIFIED_YES = 1;
     const VERIFIED_REVISION = 2;
@@ -74,6 +77,7 @@ class PreProduction extends Model
     ];
 
     protected $fillable = [
+        'type',
         'pre_production_no',
         'pre_production_batch_no',
         'order_details',
