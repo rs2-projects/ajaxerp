@@ -7,13 +7,13 @@
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <label class="col-form-label">Batch No</label>
+                            <h4>{{$pre_production->pre_production_batch_no}}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Product(Finished Product) </label>
+                            <label class="col-form-label">Product (Finished Product)</label>
                             <h4>{{$pre_production->finishedGoods->name}}</h4>
                         </div>
                     </div>
@@ -23,44 +23,36 @@
                             <h4>{{$pre_production->estimated_production_qty}}</h4>
                         </div>
                     </div>
-                    
-                    @if ($pre_production->type==1)
-                        <div class="pgib-item flex-32 pd-item">
-                            <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Production Staff</label>
-                                <h4>
-                                    @if ($board_process->process_staff)
-                                        {{ $board_process->process_staff->title . ' (' . $board_process->process_staff->user_name . ')' }}
-                                    @else
-                                        N/A
-                                    @endif
-                                </h4>
-                            </div>
+                    <div class="pgib-item flex-32 pd-item">
+                        <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">Production Staff</label>
+                            <h4>
+                                @if ($board_process->process_staff)
+                                    {{ $board_process->process_staff->title . ' (' . $board_process->process_staff->user_name . ')' }}
+                                @else
+                                    N/A
+                                @endif
+                            </h4>
                         </div>
-                        <div class="pgib-item flex-32 pd-item">
-                            <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Machine </label>
-                                <h4>{{$p_machine->machine?->name ?? 'N/A'}}</h4>
-                            </div>
+                    </div>
+                    <div class="pgib-item flex-32 pd-item">
+                        <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">Machine </label>
+                            <h4>{{$p_machine->machine?->name ?? 'N/A'}}</h4>
                         </div>
-                    @endif
-                    
+                    </div>
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Description</label>
-                            <p>{{$pre_production->description ?? 'N/A'}}</p>
+                            <label class="col-form-label">Note</label>
+                            <p>{{$pre_production->notes ?? 'N/A'}}</p>
                         </div>
                     </div>
                 </div>
                 <div class="product-process-main-item-wrapper">
-                    @foreach ($pre_production->pstaff_process as $processKey=> $processData)
+                    @foreach ($pre_production->process as $processKey=> $processData)
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
-                                @if ($pre_production->type==0)
-                                    <h4>Process {{ $processKey + 1 }}</h4>
-                                @else
-                                    <h4>Material</h4>
-                                @endif
+                                <h4>Material</h4>
                                 @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
                                     {{-- @if(hasPermission('manage-processes')) --}}
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
@@ -73,104 +65,33 @@
                                     <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif
                             </div>
-                            @if ($pre_production->type==0)
-                                <div class="production-machine-selection-wrapper d-flex flex-wrap p-de-box-wrapper">
-                                    <div class="pms-item flex-48">
-                                        <div class="input-block erp-step-input-block mb-0 p-de-input-box">
-                                            <label class="col-form-label">Machine Selection </label>
-                                            <h4 class="input-box-title">
-                                                @foreach ($processData?->processMachines as $machineData)
-                                                    <span>{{$machineData->machine->name}}</span>
-                                                @endforeach
-                                            </h4>
-                                        </div>
-                                    </div>
-                                    <div class="pms-item flex-48">
-                                        <div class="input-block erp-step-input-block mb-0 p-de-input-box">
-                                            <label class="col-form-label">Previous Process </label>
-                                            <h4 class="input-box-title-2">
-                                                @if($processData->previousProcess->count() > 0)
-                                                    @foreach ($processData->previousProcess as $previousKey => $previousProcess)
-                                                        <span>Process {{$previousKey + 1}}</span>
-                                                    @endforeach
-                                                @else
-                                                    <span>N/A</span>
-                                                @endif
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            <div class="{{$pre_production->type== 0 ? 'production-matarial-selection-wrapper' : ''}}">
-                                @if ($pre_production->type==0)<h4 class="process-child-title">Material</h4>@endif
+                            <div class="production-matarial-selection-wrappers">
                                 <div class="pms-item-main-wrapper">
                                     @foreach ($processData->materials as $processMaterial)
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection </label>
+                                                    <label class="col-form-label">Category</label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection </label>
+                                                    <label class="col-form-label">Matarial</label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-10">
-                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">QTY</label>
-                                                    <h4 class="input-box-title">{{$processMaterial->base_quantity}}</h4>
-                                                </div>
-                                            </div>
-                                            @if($processMaterial->extra_quantity)
-                                                <div class="pms-item flex-1">
-                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                        <i class="fa fa-plus"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="pms-item flex-10">
-                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                        <label class="col-form-label"></label>
-                                                        <h4 class="input-box-title">{{$processMaterial->extra_quantity}}</h4>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="production-estimate-output-selection-wrapper">
-                                <h4 class="process-child-title">Estimated Output</h4>
-                                <div class="pms-item-main-wrapper">
-                                    @foreach ($processData->estimated_output as $outputData)
-                                        <div class="pms-item-wrapper d-flex flex-wrap align-items-end">
-                                            <div class="pms-item flex-60">
-                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">Name <span class="text-danger">*</span></label>
-                                                    <h4 class="input-box-title"> {{$outputData->name}}</h4>
-                                                </div>
-                                            </div>
                                             <div class="pms-item flex-15">
-                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                    <h4 class="input-box-title">{{$outputData->quantity}}</h4>
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">QTY </label>
+                                                    <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
-                            @if ($pre_production->type==0)
-                                <div class="production-instrucion-output-selection-wrapper">
-                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-3">
-                                        <label class="col-form-label">Instruction<span class="text-danger">*</span></label>
-                                        <h4 class="input-box-title">{{$processData->instruction}}</h4>
-                                    </div>	
-                                </div>
-                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -179,49 +100,49 @@
     </div>
 
     <!--End::row-1 -->
+
 </div>
 
 {{-- add mutiple material template --}}
-    <div id="newMaterialRow" style="display: none">
-        <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
-            <div class="pms-item flex-32">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Category Selection </label>
-                    <select class="select1 select-step1" name="product_material_category_id[]" onchange="getMaterial(this)">
-                        <option value="">Select Category</option>
-                        @foreach ($categories as $category)
-                            <option value="{{$category->id}}">{{$category->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
+<div id="newMaterialRow" style="display: none">
+    <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
+        <div class="pms-item flex-32">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">Category Selection </label>
+                <select class="select1 select-step1" name="product_material_category_id[]" onchange="getMaterial(this)">
+                    <option value="">Select Category</option>
+                    @foreach ($categories as $category)
+                        <option value="{{$category->id}}">{{$category->name}}</option>
+                    @endforeach
+                </select>
             </div>
-            <div class="pms-item flex-32">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Material Selection </label>
-                    <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
-                        <option value="">Select Material</option>
-                    </select>
-                </div>
+        </div>
+        <div class="pms-item flex-32">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">Material Selection </label>
+                <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
+                    <option value="">Select Material</option>
+                </select>
             </div>
-            <div class="pms-item flex-15">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">QTY </label>
-                    <input name="quantity[]" class="form-control" type="number" placeholder="">
-                </div>
+        </div>
+        <div class="pms-item flex-15">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">QTY </label>
+                <input name="quantity[]" class="form-control" type="number" placeholder="">
             </div>
-            <div class="pms-item flex-10">
-                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                    <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
-                    <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
-                </div>
+        </div>
+        <div class="pms-item flex-10">
+            <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
+                <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('modals')
-    @include('production-staff.production._verify_output_modal')
-    @include('production-staff.production._re_requisiton_modal')
+    
 @endsection
 
 @section('css')
@@ -308,7 +229,7 @@
             border-radius: 5px;
             font-size: 14px;
         }
- </style>
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -321,16 +242,6 @@
 
 @section('js')
     <script>
-        // $(document).ready(function() {
-        //     $(".select-step").select2({
-        //         closeOnSelect: true,
-        //         containerCssClass: "select2-box-container",
-        //         dropdownCssClass: "select2-box-dropdown",
-        //         width: '100%'
-
-        //     });
-        // });
-
         function changeStatus(uri) {
            console.log(uri);
             Swal.fire({

@@ -16,6 +16,7 @@ use App\Http\Controllers\Settings\UserRolePermissionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Production\BoardPreProduction\BoardPreProductionController;
+use App\Http\Controllers\Production\BoardProduction\BoardProductionController;
 use App\Http\Controllers\Production\Production\ProductionController;
 use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
 use App\Http\Controllers\Settings\BoardColorController;
@@ -217,6 +218,22 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/delete', [ProductionStaffController::class, 'delete'])->name('production.production-staff.delete');
         Route::get('/{id}/change-status/{status}', [ProductionStaffController::class, 'statusUpdate'])->name('production.production-staff.change-status');
     });
+});
+
+// board production
+Route::group(['prefix' => 'board-production'], function () {
+    Route::get('/', [BoardProductionController::class, 'index'])->name('production.board-production.index');
+    Route::post('/filtered', [BoardProductionController::class, 'indexFiltered'])->name('production.board-production.filtered');
+    Route::get('/{id}/get-document', [BoardProductionController::class, 'getDocument'])->name('production.board-production.get-design-document');
+    Route::get('/{id}/details', [BoardProductionController::class, 'details'])->name('production.board-production.details');
+    Route::get('/{id}/change/{processId}/process-status/{status}', [BoardProductionController::class, 'changeProcessStatus'])->name('production.board-production.update-process-status');
+    Route::get('/{id}/receive', [BoardProductionController::class, 'receive'])->name('production.board-production.receive');
+    Route::post('/{id}/receive', [BoardProductionController::class, 'receiveStore'])->name('production.board-production.receive.store');
+    Route::get('/{id}/get-deliveries', [BoardProductionController::class, 'getDeliveries'])->name('production.board-production.get-delivery-details');
+    Route::get('/{id}/check-barcode-validity', [BoardProductionController::class, 'checkBarCode'])->name('production.board-production.check-barcode');
+    Route::get('/{id}/dispatch', [BoardProductionController::class, 'dispatch'])->name('production.board-production.dispatch-data');
+    Route::post('/{id}/dispatch', [BoardProductionController::class, 'dispatchStore'])->name('production.board-production.dispatch.store');
+    Route::get('/{id}/print-barcode/{type}', [BoardProductionController::class, 'printBarcode'])->name('production.board-production.print-barcode');
 });
 
 Route::group(['prefix' => 'material-request'], function () {

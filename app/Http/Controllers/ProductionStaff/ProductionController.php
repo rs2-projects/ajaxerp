@@ -54,6 +54,10 @@ class ProductionController extends BackendController
         $this->setPageTitle("Production Details");
         $this->setActiveMenu('production.production.index');
         $data = $this->service->detailsData($id);
+        // if ($data['pre_production']->type == PreProduction::TYPE_BOARD) {
+        //     return $this->view('production-staff.production._details2')->with($data);
+        // }
+
         return $this->view('production-staff.production._details')->with($data);
     }
 

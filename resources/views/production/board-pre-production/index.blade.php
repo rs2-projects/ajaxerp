@@ -54,12 +54,29 @@
 @section('css')
     <style>
         .gap-bottom{
-            margin-bottom: 30px !important;
+            margin-bottom: 20px !important;
         }
         .estimated-output-wrapper {
             padding: 10px 0px;
             border: 1px dashed #ddd;
             margin-bottom: 10px;
+        }
+        .output-icon{
+            top: 40px;
+            margin-left: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #0168e9;
+        }
+        .output-icon2{
+            top: 34px;
+            margin-left: 10px;
+            font-weight: 700;
+            font-size: 21px;
+            color: #0168e9;
+        }
+        .custom-color{
+            color: #0168e9 !important;
         }
     </style>
 @endsection

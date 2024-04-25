@@ -240,6 +240,8 @@ class ProductionService
     public function receiveData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('id', $id)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
@@ -284,6 +286,7 @@ class ProductionService
         try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
+                ->where('type', PreProduction::TYPE_OTHERS)
                 ->where('id', $id)
                 ->first();
             if(!$pre_production){
@@ -405,6 +408,8 @@ class ProductionService
 
     public function getDeliveryData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){
@@ -428,6 +433,8 @@ class ProductionService
     // dispatch
     public function dispatchData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){

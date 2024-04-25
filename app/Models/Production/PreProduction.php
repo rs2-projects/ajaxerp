@@ -149,4 +149,5 @@ class PreProduction extends Model
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
+    
 }

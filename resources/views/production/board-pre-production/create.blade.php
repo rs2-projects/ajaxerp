@@ -110,7 +110,7 @@
             <div class="pms-item flex-32">
                 <div class="input-block erp-step-input-block mb-0">
                     <label class="col-form-label">Category Selection </label>
-                    <select class="select select-step select2" name="product_material_category_id[]" onchange="getMaterial(this)">
+                    <select class="select1 select-step1 select21" name="product_material_category_id[]" onchange="getMaterial(this)">
                         <option value="">Select Category</option>
                         @foreach ($categories as $category)
                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -121,7 +121,7 @@
             <div class="pms-item flex-32">
                 <div class="input-block erp-step-input-block mb-0">
                     <label class="col-form-label">Material Selection </label>
-                    <select name="product_material_id[]" class="select select-step material-product material-product2" >
+                    <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
                         <option value="">Select Material</option>
                     </select>
                 </div>
@@ -181,7 +181,7 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            initSelect2();
+            // initSelect2();
             $("#preProductionStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -235,7 +235,7 @@
         }
 
         function initSelect2() {
-            $('.select-step').select2({
+            $('.process-wrapper .select-step1').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });

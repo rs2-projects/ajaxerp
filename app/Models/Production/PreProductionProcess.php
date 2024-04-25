@@ -71,4 +71,22 @@ class PreProductionProcess extends Model
     {
         return $this->hasMany(PreProductionProcessPreviousProcess::class, 'pre_production_process_id');
     }
+
+    public function process_staff(){
+
+        return $this->belongsTo(ProductionStaff::class, 'production_staff_id');
+    }
+
+    public function pre_production(){
+        
+        return $this->belongsTo(PreProduction::class, 'pre_production_id');
+    }
+
+    public function process_machine(){
+        
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_process_id');
+    }
+
+    public function process_material(){
+    }
 }

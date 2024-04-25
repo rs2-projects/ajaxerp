@@ -17,21 +17,23 @@
             <label class="col-form-label estimated-output-title">Estimated Output Quantity</label>
             <div class="pms-item-wrapper d-flexflex-wrap align-items-end pre-d-item-wrapper">
                 <div class="row mb-2">
-                    <div class="pms-item col">
+                    <div class="pms-item col position-relative">
                         <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                            <label class="col-form-label">Unit</label>
+                            <label class="col-form-label custom-color">Unit</label>
                             <h4 class="input-box-title unit-input-text">0</h4>
                         </div>
+                        <span class="position-absolute output-icon">X</span>
                     </div>
-                    <div class="pms-item col">
+                    <div class="pms-item col position-relative">
                         <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                            <label class="col-form-label">Quantity</label>
+                            <label class="col-form-label custom-color">Quantity</label>
                             <h4 class="input-box-title quantity-text">{{$item->estimated_quantity}}</h4>
                         </div>
+                        <span class="position-absolute output-icon2">=</span>
                     </div>
                     <div class="pms-item col">
                         <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                            <label class="col-form-label">Output</label>
+                            <label class="col-form-label custom-color">Output</label>
                             <h4 class="input-box-title output-text">0</h4>
                         </div>
                     </div>

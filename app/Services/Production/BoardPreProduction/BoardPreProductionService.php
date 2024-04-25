@@ -8,6 +8,7 @@ use App\Models\Production\BoardPreProductionMaterials;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionProcess;
+use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProductionProcessMachine;
 use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionStaff;
@@ -286,12 +287,14 @@ class BoardPreProductionService
 
             $pre_production = new PreProduction();
             $pre_production->type = PreProduction::TYPE_BOARD;
+            $pre_production->board_pre_production_id = $board_pre_production->id;
             $pre_production->pre_production_no = '';
             $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->order_details = "";
             $pre_production->finished_goods_id = $board_pre_production->finished_goods_id;
             $pre_production->estimated_production_qty = $board_pre_production->estimated_quantity*$request->unit;
             $pre_production->notes = $board_pre_production->note;
+            $pre_production->is_verified = PreProduction::VERIFIED_YES;
             $pre_production->created_by = auth()->user()->id;
             $pre_production->created_at = Carbon::now();
             $pre_production->updated_by = auth()->user()->id;
@@ -314,6 +317,23 @@ class BoardPreProductionService
             $machine->pre_production_process_id = $process->id;
             $machine->machine_id = $board_pre_production->machine_id??null;
             $machine->save();
+
+            $board_name = FinishedGoods::where('id', $board_pre_production->finished_goods_id)
+                ->where('deleted', FinishedGoods::DELETED_NO)
+                ->where('status', FinishedGoods::STATUS_ACTIVE)
+                ->where('type', FinishedGoods::TYPE_BOARD)
+                ->first();
+
+            $output = new PreProductionProcessEstimatedOutput();
+            $output->pre_production_id = $pre_production->id;
+            $output->pre_production_process_id = $process->id;
+            $output->name = $board_name->name;
+            $output->quantity = $pre_production->estimated_production_qty;
+            $output->created_by = auth()->user()->id;
+            $output->created_at = Carbon::now();
+            $output->updated_by = auth()->user()->id;
+            $output->updated_at = Carbon::now();
+            $output->save();
 
             $board_materials = BoardPreProductionMaterials::where('board_pre_production_id', $board_pre_production->id)
                 ->where('deleted', BoardPreProductionMaterials::DELETED_NO)
