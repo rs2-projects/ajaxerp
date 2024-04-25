@@ -103,4 +103,13 @@ class BoardPreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
+
+    public function sendToProduction(Request $request, $id){
+        try {
+            $this->service->sendToProduction($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Sent to production successfully');
+    }
 }

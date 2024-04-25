@@ -5,6 +5,11 @@ namespace App\Services\Production\BoardPreProduction;
 use App\Models\Machine;
 use App\Models\Production\BoardPreProduction;
 use App\Models\Production\BoardPreProductionMaterials;
+use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionMaterial;
+use App\Models\Production\PreProductionProcess;
+use App\Models\Production\PreProductionProcessMachine;
+use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionStaff;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
@@ -257,5 +262,109 @@ class BoardPreProductionService
             throw new \Exception('Pre Production not found');
         }
         return $data;
+    }
+
+    public function sendToProduction($request, $id){
+        DB::beginTransaction();
+        try {
+            $board_pre_production = BoardPreProduction::where('id', $id)
+                ->where('deleted', BoardPreProduction::DELETED_NO)
+                ->where('status', BoardPreProduction::STATUS_ACTIVE)
+                ->first();
+
+            if (empty($board_pre_production)) {
+                return redirect()->back()->with(['failed' => 'Board Pre Production not found!']);
+            }
+
+            $check_duplicate_batch_no = PreProduction::where('pre_production_batch_no', $request->pre_production_batch_no)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->first();
+
+            if (!empty($check_duplicate_batch_no)) {
+                throw new \Exception("Batch No already exists");
+            }
+
+            $pre_production = new PreProduction();
+            $pre_production->type = PreProduction::TYPE_BOARD;
+            $pre_production->pre_production_no = '';
+            $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
+            $pre_production->order_details = "";
+            $pre_production->finished_goods_id = $board_pre_production->finished_goods_id;
+            $pre_production->estimated_production_qty = $board_pre_production->estimated_quantity*$request->unit;
+            $pre_production->notes = $board_pre_production->note;
+            $pre_production->created_by = auth()->user()->id;
+            $pre_production->created_at = Carbon::now();
+            $pre_production->updated_by = auth()->user()->id;
+            $pre_production->updated_at = Carbon::now();
+            $pre_production->save();
+            $pre_production->pre_production_no = 1000 + $pre_production->id;
+            $pre_production->save();
+
+            $process = new PreProductionProcess();
+            $process->pre_production_id = $pre_production->id;
+            $process->production_staff_id = $board_pre_production->staff_id??null;
+            $process->created_by = auth()->user()->id;
+            $process->created_at = Carbon::now();
+            $process->updated_by = auth()->user()->id;
+            $process->updated_at = Carbon::now();
+            $process->save();
+
+            $machine = new PreProductionProcessMachine();
+            $machine->pre_production_id = $pre_production->id;
+            $machine->pre_production_process_id = $process->id;
+            $machine->machine_id = $board_pre_production->machine_id??null;
+            $machine->save();
+
+            $board_materials = BoardPreProductionMaterials::where('board_pre_production_id', $board_pre_production->id)
+                ->where('deleted', BoardPreProductionMaterials::DELETED_NO)
+                ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
+                ->get();
+
+            $uniqueProductMaterials = [];
+
+            foreach ($board_materials as $key => $data) {
+                $material = new PreProductionProcessMaterial();
+                $material->pre_production_id = $pre_production->id;
+                $material->pre_production_process_id = $process->id;
+                $material->product_material_category_id = $data->product_material_category_id;
+                $material->product_material_id = $data->product_material_id;
+                $material->quantity = $data->quantity * $request->unit;
+                $material->base_quantity = $data->quantity * $request->unit;
+                $material->save();
+
+                $material_id = $data->product_material_id;
+                $quantity = $data->quantity * $request->unit;
+                $category_id = $data->product_material_category_id;
+
+                if(isset($uniqueProductMaterials[$material_id])) {
+                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                } else {
+                    $uniqueProductMaterials[$material_id] = [
+                        'material_id' => $material_id,
+                        'category_id' => $category_id,
+                        'quantity' => $quantity,
+                    ];
+                }
+            }
+
+            foreach ($uniqueProductMaterials as $materialData) {
+                $material = new PreProductionMaterial();
+                $material->pre_production_id = $pre_production->id;
+                $material->product_material_category_id = $materialData['category_id'];
+                $material->product_material_id = $materialData['material_id'];
+                $material->quantity = $materialData['quantity'];
+                $material->base_quantity = $materialData['quantity'];
+                $material->created_by = auth()->user()->id;
+                $material->created_at = Carbon::now();
+                $material->updated_by = auth()->user()->id;
+                $material->updated_at = Carbon::now();
+                $material->save();
+            }
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
     }
 }

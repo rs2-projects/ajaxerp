@@ -53,11 +53,11 @@
 
 @section('css')
     <style>
-        .unit-bottom{
+        .gap-bottom{
             margin-bottom: 30px !important;
         }
         .estimated-output-wrapper {
-            padding: 10px;
+            padding: 10px 0px;
             border: 1px dashed #ddd;
             margin-bottom: 10px;
         }
@@ -85,6 +85,49 @@
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
+            });
+
+            $(document).on("input", "#unit_input", function(e) {
+                var unit = $('#unit_input').val();
+                var quantity = parseInt($('.quantity-text').text());
+                if(unit){
+                    $('.unit-input-text').text(unit);
+                    var output = unit * quantity;
+                    $('.output-text').text(output);
+                    $('.product-unit').text(unit);
+                    
+                    $('.product-total-qty').each(function() {
+                        var productQty = parseInt($(this).closest('.erp-tbody-tr').find('.product-qty').text());
+                        $(this).text(unit * productQty);
+                    });
+                }else{
+                    $('.unit-input-text').text(0); 
+                    $('.output-text').text(0);
+                    $('.product-unit').text(0);
+                    $('.product-total-qty').each(function() {
+                        var productQty = parseInt($(this).closest('.erp-tbody-tr').find('.product-qty').text());
+                        $(this).text(0);
+                    });
+                }
+            });
+
+            $(document).on("submit", "#sendToProductionStoreForm", function(e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#sendToProductionModal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
             });
         });
         

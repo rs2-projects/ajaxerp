@@ -59,7 +59,7 @@ class BoardsService
                     $q->where('finished_goods_category_id', $category_filtered);
                 }
             })
-            ->orderBy('name', 'asc')
+            ->orderBy('id', 'desc')
             ->paginate($this->paginate_limit);
         return $data;
     }
