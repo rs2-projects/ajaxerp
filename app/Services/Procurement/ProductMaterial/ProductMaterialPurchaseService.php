@@ -1012,13 +1012,15 @@ class ProductMaterialPurchaseService
                     $account = AccCoaAccount::where('slug', 'purchase-products')
                         ->where('deleted', AccCoaAccount::DELETED_NO)
                         ->first();
-
+                    $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                        ->where('deleted', AccCoaAccount::DELETED_NO)
+                        ->first();
                     $transaction = new Transaction();
                     $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
                     $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
                     $transaction->transaction_date = $purchase->purchase_date;
                     $transaction->account_id = $account->id;
-                    $transaction->category_id = $account->acc_coa_category_id;
+                    $transaction->category_id = $purchaseAccountCategory->id;
                     $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
                     $transaction->reference_id = $id;
                     $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
@@ -1036,9 +1038,9 @@ class ProductMaterialPurchaseService
                     $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                         ->where('product_material_purchase_id', $purchase->id)
                         ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-                        ->select('tax_id', 
-                                DB::raw('SUM(total_price) as total_price_sum'), 
-                                DB::raw('SUM(tax_amount) as tax_amount_sum'), 
+                        ->select('tax_id',
+                                DB::raw('SUM(total_price) as total_price_sum'),
+                                DB::raw('SUM(tax_amount) as tax_amount_sum'),
                                 DB::raw('MAX(tax_rate) as tax_rate'))
                         ->groupBy('tax_id')
                         ->get();
@@ -1164,7 +1166,7 @@ class ProductMaterialPurchaseService
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->with('purchaseDetails', 'purchaseDetails.productMaterial')
             ->first();
-        
+
         $data['type'] = $type;
         return $data;
     }

@@ -3007,6 +3007,9 @@ input[type=file].form-control {
     position: absolute;
     width: 100%;
   }
+    .header .header-left img {
+        width: 150px;
+    }
 }
 
 @media (min-width: 992px) {

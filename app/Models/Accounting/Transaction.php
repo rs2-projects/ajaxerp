@@ -11,6 +11,7 @@ class Transaction extends Model
     protected $table = 'transactions';
     public $timestamps = false;
 
+    //TODO: need to check the account id and category id in every transaction add and edit
     const PAID_TYPE_UNPAID = 0;
     const PAID_TYPE_PAID = 1;
     const PAID_TYPES = [
@@ -34,6 +35,8 @@ class Transaction extends Model
     const REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT = 6;
     const REFERENCE_TYPE_INVOICE_PAYMENT = 7;
     const REFERENCE_TYPE_RETURN_INVOICE_PAYMENT = 8;
+    const REFERENCE_TYPE_INVOICE_CREATE = 9;
+    const REFERENCE_TYPE_ASSET_PRODUCT_SELL = 10;
     const REFERENCE_TYPES = [
         self::REFERENCE_TYPE_INCOME => 'Income',
         self::REFERENCE_TYPE_EXPENSE => 'Expense',
@@ -44,6 +47,8 @@ class Transaction extends Model
         self::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT => 'Product Material Purchase Payment',
         self::REFERENCE_TYPE_INVOICE_PAYMENT => 'Invoice Payment',
         self::REFERENCE_TYPE_RETURN_INVOICE_PAYMENT => 'Return Invoice Payment',
+        self::REFERENCE_TYPE_INVOICE_CREATE => 'Invoice Create',
+        self::REFERENCE_TYPE_ASSET_PRODUCT_SELL => 'Asset Product Sell',
     ];
 
     const IS_REVIEWED_NO = 0;
