@@ -1,10 +1,11 @@
 @extends('production-staff.layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row">
+    <div class="row" id="VueApp">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
+                    <input type="hidden" id="pre_production__id" value="{{$pre_production->id}}">
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
@@ -61,8 +62,10 @@
                                 @else
                                     <h4>Material</h4>
                                 @endif
-                                <div>
-                                    <a href="javascript:void(0)" class="">Scan Raw Materials</a>
+                                <div class="d-flex">
+                                    @if($pre_production->scan_status != $pre_production::SCAN_STATUS_SCANNED)
+                                        <a href="#" @click.prevent="scanRawMaterialModal()" class="raw-material-scan-btn">Scan Raw Materials</a>
+                                    @endif
                                     @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
                                     @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
@@ -175,6 +178,7 @@
                 </div>
             </div>
         </div>
+        @include('production-staff.production._scan_raw_material_modal')
     </div>
 
     <!--End::row-1 -->
@@ -307,6 +311,20 @@
             border-radius: 5px;
             font-size: 14px;
         }
+        .raw-material-scan-btn{
+            background: #a500fd;
+            padding: 5px 20px;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .scan-material-category{
+            padding-top: 3px;
+            font-size: 11px;
+            font-weight: 500;
+        }
  </style>
 @endsection
 
@@ -315,21 +333,12 @@
 @endsection
 
 @section('js_plugins')
-
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @endsection
 
 @section('js')
     <script>
-        // $(document).ready(function() {
-        //     $(".select-step").select2({
-        //         closeOnSelect: true,
-        //         containerCssClass: "select2-box-container",
-        //         dropdownCssClass: "select2-box-dropdown",
-        //         width: '100%'
-
-        //     });
-        // });
-
         function changeStatus(uri) {
            console.log(uri);
             Swal.fire({
@@ -521,6 +530,148 @@
                 }
             }, 'show_input_error');
         });
+
+        // scan raw materials....
+        var { createApp } = Vue;
+        var vueApp = createApp({
+            data() {
+                return {
+                    deliveries: [],
+                };
+            },
+            methods: {
+                scanRawMaterialModal(){
+                    this.getMaterials();
+                    // $("#scanRawMaterialModal").modal('show');
+                },
+                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                    if (event.key === 'Enter') {
+                        const barcodeValue = event.target.value;
+                        if(barcodeValue !=''){
+                            const id = document.getElementById('pre_production__id').value;
+                            let url = `{{ route('production-staff.production.production.check-barcode.scan', ':id') }}`;
+                            url = url.replace(':id', id);
+
+                            let data = {
+                                barcode: barcodeValue,
+                                delivery_id: deliverId,
+                                delivery_details_id: detailsId,
+                            }
+
+                            axios.get(url, { params: data })
+                            .then(response => {
+                                event.target.value = '';
+                                if(response.data.is_valid_code == 1){
+                                    if(response.data.code_quantity > 0 && response.data.code_quantity > this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts){
+                                        this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.push(response.data.code);
+                                        this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts++;
+                                    }else{
+                                        showErrorAlert('Error', 'Scanned quantity can\'t be larger than received quantity');
+                                    }
+                                }else{
+                                    showErrorAlert('Error', 'Invalid Barcode');
+                                }
+                            })
+                            .catch(error => {
+                                event.target.value = '';
+                                showErrorAlert('Error', 'Invalid Barcode');
+                                console.log(error);
+                            });
+                        }
+                    }
+                },
+                removeBarcode(deliverIndex,detailsIndex,barcodeIndex) {
+                    this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.splice(barcodeIndex, 1);
+                    this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts--;
+                },
+                getMaterials() {
+                    // var currentUrl = window.location.href;
+                    // var params = currentUrl.split('/');
+                    // var idIndex = params.length - 2;
+                    // var id = params[idIndex];
+                    const id = document.getElementById('pre_production__id').value;
+                    let url = "{{ route('production-staff.production.production.get-delivery-details.scan', ':id') }}";
+                    url = url.replace(':id', id);
+                    
+                    axios.get(url)
+                    .then(response => {
+                        this.deliveries = response.data.deliveries.map(delivery => {
+                            return {
+                                ...delivery,
+                                delivery_details: delivery.delivery_details.map(detail => {
+                                    return {
+                                        ...detail,
+                                        scannedBarcodes: [],
+                                        barcodeCounts: 0,
+                                    };
+                                })
+                            };
+                        });
+                        $("#scanRawMaterialModal").modal('show');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching delivery details:', error);
+                    });
+                },
+
+                checkValidation(e, deliveryIndex) {
+                    e.preventDefault();
+                    const delivery = this.deliveries[deliveryIndex];
+                    if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
+                        showErrorAlert('Oops!', 'Please add scanned items!');
+                    } else {
+                        receiveStoreForm(delivery.id, deliveryIndex);
+                    }
+                },
+
+                clearScaneedCodes(deliveryIndex) {
+                    this.deliveries[deliveryIndex].delivery_details.forEach(detail => {
+                        detail.scannedBarcodes = [];
+                        detail.barcodeCounts = 0;
+                    });
+                },
+                formatDate(dateString) {
+                    const options = { year: 'numeric', month: 'short', day: '2-digit' };
+                    return new Date(dateString).toLocaleDateString('en-US', options);
+                },
+
+                updateDeliveries(res){
+                    console.log(res);
+                    this.deliveries = res?.map(delivery => {
+                        return {
+                            ...delivery,
+                            delivery_details: delivery.delivery_details?.map(detail => {
+                                return {
+                                    ...detail,
+                                    scannedBarcodes: [],
+                                    barcodeCounts: 0,
+                                };
+                            })
+                        };
+                    });
+                }
+
+            },
+            mounted() {
+                // this.getMaterials();
+            }
+        }).mount('#VueApp');
+
+        function receiveStoreForm(deliveryID, deliveryIndex){
+            var self = $("#deliverStoreForm" + deliveryID);
+            var formData = new FormData($(self)[0]);
+            var url = $(self).attr('action');
+
+            formPost(url, formData, function (res) {
+                if(res.status == 200){
+                    showSuccessAlert('Success',res.message);
+                    vueApp.clearScaneedCodes(deliveryIndex);
+                    vueApp.updateDeliveries(res.deliveries);
+                }else{
+                    showErrorAlert('Error',res.message)
+                }
+            }, 'show_input_error');
+        }
     </script>
 @endsection
 

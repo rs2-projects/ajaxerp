@@ -21,6 +21,15 @@ class PreProductionMaterialDelivery extends Model
         self::RECEIVED_STATUS_PARTIAL => 'Partial',
     ];
 
+    const SCAN_STATUS_PENDING = 0;
+    const SCAN_STATUS_SCANNED = 1;
+    const SCAN_STATUS_PARTIAL = 2;
+    const SCANNED = [
+        self::SCAN_STATUS_PENDING => 'Pending',
+        self::SCAN_STATUS_SCANNED => 'Scanned',
+        self::SCAN_STATUS_PARTIAL => 'Partial',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -40,6 +49,7 @@ class PreProductionMaterialDelivery extends Model
         'delivery_date',
         'pre_production_id',
         'received_status',
+        'scan_status',
         'status',
         'created_by',
         'created_at',

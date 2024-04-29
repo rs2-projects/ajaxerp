@@ -225,6 +225,10 @@ class ProductionService
                     throw new \Exception('All Production Materials not received!');
                 }
 
+                if($pre_production->scan_status != PreProduction::SCAN_STATUS_SCANNED){
+                    throw new \Exception('All Production Materials not scanned!');
+                }
+
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
                 $pre_production->updated_by = auth()->user()->id;
                 $pre_production->updated_at = now();
