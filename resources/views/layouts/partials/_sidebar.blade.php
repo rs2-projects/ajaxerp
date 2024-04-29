@@ -231,6 +231,15 @@
                             </ul>
                         </li>
                     @endif
+
+                    <li class="submenu">
+                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.boards.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Boards</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li>
+                                <a href="{{ route('inventory.boards.index') }}" class="{{ ($activeMenu == 'inventory.boards.index') ? 'active' : '' }}"> <span>Board List</span></a>
+                            </li>
+                        </ul>
+                    </li>
                 @endif
 
                 {{-- production & pre production --}}
@@ -248,11 +257,20 @@
                             <a href="{{route('production.production.index')}}" class="{{ ($activeMenu == 'production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
                         </li>
                     @endif
+                    <li>
+                        <a href="{{route('production.board-pre-production.index')}}" class="{{ ($activeMenu == 'production.board-pre-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Board Pre Production</span></a>
+                    </li>
+                    <li>
+                        <a href="{{route('production.board-production.index')}}" class="{{ ($activeMenu == 'production.board-production.index') ? 'active' : '' }}"><i class="la la-server"></i> <span>Production (Board)</span></a>
+                    </li>
                     @if(hasPermission('view-machines','manage-machines'))
                         <li>
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
                         </li>
                     @endif
+                    <li>
+                        <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
+                    </li>
                 @endif
 
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))

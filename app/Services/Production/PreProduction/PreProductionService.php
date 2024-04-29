@@ -13,6 +13,7 @@ use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionProcessPreviousProcess;
+use App\Models\Production\ProductionStaff;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -39,6 +40,9 @@ class PreProductionService
             case 'verified':
                 return $this->getVerfiedPreProductions($request);
                 break;
+            case 'revision':
+                return $this->getRevisionedPreProductions($request);
+                break;
         }
     }
 
@@ -47,13 +51,14 @@ class PreProductionService
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-        
+
         $data['view'] = view('production.pre-production._index_filtered', $data)->render();
         return $data;
     }
@@ -63,6 +68,7 @@ class PreProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('is_verified', PreProduction::VERIFIED_NO)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -79,6 +85,24 @@ class PreProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
+            ->where(function ($q) use ($keyword_filtered){
+                if ($keyword_filtered !=''){
+                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+
+        $data['view'] = view('production.pre-production._index_filtered', $data)->render();
+        return $data;
+    }
+
+    public function getRevisionedPreProductions($request){
+        $keyword_filtered = $request->keyword_filtered??null;
+        $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('is_verified', PreProduction::VERIFIED_REVISION)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -102,6 +126,14 @@ class PreProductionService
     }
 
     public function createData(){
+        $pre_production_count = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->count();
+        if($pre_production_count > 0){
+            $data['pre_production_batch_no'] = 10001 + $pre_production_count;
+        }else{
+            $data['pre_production_batch_no'] = 10001;
+        }
+
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
@@ -114,14 +146,21 @@ class PreProductionService
 
         $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
             ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
+
+        $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
+            ->where('status', ProductionStaff::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
         return $data;
     }
 
     public function getProducts($id){
         $data['products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
-            ->where('status', Machine::STATUS_ACTIVE)
+            ->where('status', ProductMaterial::STATUS_ACTIVE)
             ->where('product_material_category_id', $id)
             ->orderBy('id', 'desc')
             ->get();
@@ -140,6 +179,14 @@ class PreProductionService
             //     throw new \Exception("Pre Production already exists");
             // }
 
+            $check_duplicate_batch_no = PreProduction::where('pre_production_batch_no', $request->pre_production_batch_no)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->first();
+
+            if (!empty($check_duplicate_batch_no)) {
+                throw new \Exception("Batch No already exists");
+            }
+
             $image_path = null;
             $document_path = null;
             if ($request->hasFile('image')) {
@@ -156,6 +203,7 @@ class PreProductionService
             $pre_production = new PreProduction();
             $pre_production->order_details = $request->order_details;
             $pre_production->pre_production_no = '';
+            $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->image = $image_path??null;
             $pre_production->design_of_documents = $document_path??null;
             $pre_production->description = $request->description;
@@ -173,15 +221,16 @@ class PreProductionService
             $category_id = $request->product_material_category_id;
             $material_id = $request->product_material_id;
             $quantity = $request->quantity;
-            
+
             $uniqueProductMaterials = [];
             $processes = [];
 
             if (isset($request->process_id) && is_array($request->process_id) && count($request->process_id) > 0) {
                 foreach ($request->process_id as $key => $process_id) {
-                    
+
                     $process = new PreProductionProcess();
                     $process->pre_production_id = $pre_production->id;
+                    $process->production_staff_id = $request->production_staff_id[$key];
                     $process->instruction = $request->instruction[$key];
                     $process->created_by = auth()->user()->id;
                     $process->created_at = Carbon::now();
@@ -216,13 +265,13 @@ class PreProductionService
                             }
                         }
                     }
-                   
+
                     if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-                        
+
                         foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                             if (
-                                ($request->product_material_category_id[$key][$categoryKey] != '') && 
-                                ($request->product_material_id[$key][$categoryKey] != '') && 
+                                ($request->product_material_category_id[$key][$categoryKey] != '') &&
+                                ($request->product_material_id[$key][$categoryKey] != '') &&
                                 ($request->quantity[$key][$categoryKey] != '')
                                 ) {
                                 $material = new PreProductionProcessMaterial();
@@ -231,6 +280,7 @@ class PreProductionService
                                 $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                 $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                 $material->quantity = $request->quantity[$key][$categoryKey];
+                                $material->base_quantity = $request->quantity[$key][$categoryKey];
                                 $material->save();
 
                                 $material_id = $request->product_material_id[$key][$categoryKey];
@@ -268,17 +318,22 @@ class PreProductionService
                     }
                 }
             }
-            
+
             foreach ($uniqueProductMaterials as $materialData) {
                 $material = new PreProductionMaterial();
                 $material->pre_production_id = $pre_production->id;
                 $material->product_material_category_id = $materialData['category_id'];
                 $material->product_material_id = $materialData['material_id'];
                 $material->quantity = $materialData['quantity'];
+                $material->base_quantity = $materialData['quantity'];
+                $material->created_by = auth()->user()->id;
+                $material->created_at = Carbon::now();
+                $material->updated_by = auth()->user()->id;
+                $material->updated_at = Carbon::now();
                 $material->save();
             }
-            
-            
+
+
         }catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
@@ -301,8 +356,10 @@ class PreProductionService
 
         $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
             ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
+
         return $data;
     }
 
@@ -323,12 +380,17 @@ class PreProductionService
             ->orderBy('id', 'desc')
             ->get();
 
+        $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
+            ->where('status', ProductionStaff::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $process_ids = PreProductionProcess::where('pre_production_id', $id)
             ->where('deleted', PreProductionProcess::DELETED_NO)
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->pluck('id')->toArray();
         $data['process_indexes'] = array_flip($process_ids);
-        
+
         return $data;
     }
 
@@ -344,6 +406,15 @@ class PreProductionService
                 return redirect()->back()->with(['failed' => 'Pre Production not found!']);
             }
 
+            $check_duplicate_batch_no = PreProduction::where('pre_production_batch_no', $request->pre_production_batch_no)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->where('id', '!=', $id)
+                ->first();
+
+            if (!empty($check_duplicate_batch_no)) {
+                throw new \Exception("Batch No already exists");
+            }
+
             $image_path = null;
             $document_path = null;
             if ($request->hasFile('image')) {
@@ -357,6 +428,7 @@ class PreProductionService
                 $document_path = $document_path['path'];
             }
 
+            $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->order_details = $request->order_details;
             $pre_production->image = $image_path??$pre_production->image;
             $pre_production->design_of_documents = $document_path??$pre_production->design_of_documents;
@@ -372,14 +444,14 @@ class PreProductionService
             $processes = [];
 
             if (isset($request->pre_production_process_id) && is_array($request->pre_production_process_id) && count($request->pre_production_process_id) > 0) {
-                
+
                 $processes_id = $request->pre_production_process_id??[];
                 PreProductionProcess::where('pre_production_id', $pre_production->id)
                     ->whereNotIn('id', $processes_id)
                     ->delete();
-                
+
                 foreach ($request->pre_production_process_id as $key=>$process_id) {
-                    
+
                     if ($process_id != ""){
                         // update process
                         $process = PreProductionProcess::where('id', $process_id)
@@ -387,6 +459,7 @@ class PreProductionService
                             ->first();
                         if ($process){
                             $process->pre_production_id = $pre_production->id;
+                            $process->production_staff_id = $request->production_staff_id[$key];
                             $process->instruction = $request->instruction[$key];
                             $process->updated_by = auth()->user()->id;
                             $process->updated_at = Carbon::now();
@@ -395,7 +468,7 @@ class PreProductionService
                             // previous processes
                             PreProductionProcessPreviousProcess::where('pre_production_id', $pre_production->id)
                                     ->where('pre_production_process_id', $process_id)->delete();
-                                    
+
                             $processes[$key] = $process->id;
                             if (isset($request->previous_process[$key]) && is_array($request->previous_process[$key]) && count($request->previous_process[$key]) > 0) {
                                 foreach ($request->previous_process[$key] as $previous_process_key) {
@@ -446,8 +519,8 @@ class PreProductionService
                                 foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                                     if (
                                         $request->process_material_id[$key][$categoryKey] != "" &&
-                                        $request->product_material_category_id[$key][$categoryKey] != '' && 
-                                        $request->product_material_id[$key][$categoryKey] != '' && 
+                                        $request->product_material_category_id[$key][$categoryKey] != '' &&
+                                        $request->product_material_id[$key][$categoryKey] != '' &&
                                         $request->quantity[$key][$categoryKey] != ''
                                     ){
                                         $material = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
@@ -458,8 +531,9 @@ class PreProductionService
                                             $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                             $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                             $material->quantity = $request->quantity[$key][$categoryKey];
+                                            $material->base_quantity = $request->quantity[$key][$categoryKey];
                                             $material->save();
-            
+
                                             $material_id = $request->product_material_id[$key][$categoryKey];
                                             $quantity = $request->quantity[$key][$categoryKey];
                                             $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -480,8 +554,9 @@ class PreProductionService
                                         $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                         $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                         $material->quantity = $request->quantity[$key][$categoryKey];
+                                        $material->base_quantity = $request->quantity[$key][$categoryKey];
                                         $material->save();
-        
+
                                         $material_id = $request->product_material_id[$key][$categoryKey];
                                         $quantity = $request->quantity[$key][$categoryKey];
                                         $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -541,6 +616,7 @@ class PreProductionService
                         // create new process
                         $process = new PreProductionProcess();
                         $process->pre_production_id = $pre_production->id;
+                        $process->production_staff_id = $request->production_staff_id[$key];
                         $process->instruction = $request->instruction[$key];
                         $process->created_by = auth()->user()->id;
                         $process->created_at = Carbon::now();
@@ -578,11 +654,11 @@ class PreProductionService
 
                         // create process materials
                         if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-                        
+
                             foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                                 if (
-                                    ($request->product_material_category_id[$key][$categoryKey] != '') && 
-                                    ($request->product_material_id[$key][$categoryKey] != '') && 
+                                    ($request->product_material_category_id[$key][$categoryKey] != '') &&
+                                    ($request->product_material_id[$key][$categoryKey] != '') &&
                                     ($request->quantity[$key][$categoryKey] != '')
                                     ) {
                                     $material = new PreProductionProcessMaterial();
@@ -591,8 +667,9 @@ class PreProductionService
                                     $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                     $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                     $material->quantity = $request->quantity[$key][$categoryKey];
+                                    $material->base_quantity = $request->quantity[$key][$categoryKey];
                                     $material->save();
-    
+
                                     $material_id = $request->product_material_id[$key][$categoryKey];
                                     $quantity = $request->quantity[$key][$categoryKey];
                                     $category_id = $request->product_material_category_id[$key][$categoryKey];
@@ -627,7 +704,7 @@ class PreProductionService
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -650,6 +727,11 @@ class PreProductionService
                     $material->product_material_category_id = $materialData['category_id'];
                     $material->product_material_id = $materialData['material_id'];
                     $material->quantity = $materialData['quantity'];
+                    $material->base_quantity = $materialData['quantity'];
+                    $material->created_by = auth()->user()->id;
+                    $material->created_at = Carbon::now();
+                    $material->updated_by = auth()->user()->id;
+                    $material->updated_at = Carbon::now();
                     $material->save();
                 }
             }
@@ -660,7 +742,7 @@ class PreProductionService
         }
         DB::commit();
     }
-    
+
     public function delete($id)
     {
         $pre_production = PreProduction::where('id', $id)
@@ -688,8 +770,26 @@ class PreProductionService
             $pre_production->updated_by = auth()->user()->id;
             $pre_production->updated_at = now();
             $pre_production->save();
+            
+            $data['status'] = $status;
+            return $data;
+
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
+    }
+
+    public function detailsData($id)
+    {
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('id', $id)
+            ->first();
+        if(!$pre_production){
+            throw new \Exception('Pre Production not found');
+        }
+        $data['pre_production'] = $pre_production;
+
+        return $data;
     }
 }

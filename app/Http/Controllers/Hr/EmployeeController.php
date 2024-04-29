@@ -12,6 +12,8 @@ use App\Http\Requests\Hr\Employee\UpdateExperienceInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdatePersonalInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdateProfileInfoRequest;
 use App\Services\Hr\EmployeeService;
+use App\Services\Hr\UserLeavesService;
+use App\Services\User\LeavesService;
 use Illuminate\Http\Request;
 
 class EmployeeController extends BackendController
@@ -239,5 +241,26 @@ class EmployeeController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'User Role updated successfully');
+    }
+
+    public function getUserLeaveNumberOfDays(Request $request, LeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->getUserLeaveNumberOfDays($request);
+            return $this->returnAjaxSuccess($data);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
+
+    public function storeEmpLeave(Request $request)
+    {
+        try {
+            $this->service->storeEmpLeave($request);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been created successfully.');
     }
 }

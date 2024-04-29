@@ -111,7 +111,15 @@ class ProductMaterialService
             $product_material->low_stock_at_least = $request->low_stock_at_least;
             $product_material->tax_id = $request->tax_id;
             $product_material->description = $request->description;
-            $product_material->color = $request->color;
+
+            if($request->both_side_color == 1) {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_YES;
+                $product_material->color = $request->upside_color;
+                $product_material->downside_color = $request->downside_color;
+            } else {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_NO;
+                $product_material->color = $request->color;
+            }
             $product_material->working_temperature = $request->working_temperature;
             $product_material->length = $request->length;
             $product_material->width = $request->width;
@@ -275,7 +283,16 @@ class ProductMaterialService
             $product_material->low_stock_at_least = $request->low_stock_at_least;
             $product_material->tax_id = $request->tax_id;
             $product_material->description = $request->description;
-            $product_material->color = $request->color;
+
+            if($request->both_side_color == 1) {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_YES;
+                $product_material->color = $request->upside_color;
+                $product_material->downside_color = $request->downside_color;
+            } else {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_NO;
+                $product_material->color = $request->color;
+            }
+
             $product_material->working_temperature = $request->working_temperature;
             $product_material->length = $request->length;
             $product_material->width = $request->width;
@@ -364,7 +381,7 @@ class ProductMaterialService
             //     ->where('available_qty', '>', 0)
             //     ->orderBy('id', 'desc')
             //     ->get();
-        
+
             $details = ProductMaterialPurchaseDetails::where('product_material_id', $id)
                 ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
@@ -377,7 +394,7 @@ class ProductMaterialService
                 ->where('price_calculated', 1)
                 ->whereIn('id', $purchaseIds)
                 ->get();
-            
+
             $calculated = ProductMaterialPurchaseCalculatedPrice::where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
                 ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
                 ->whereIn('product_material_purchase_id', $purchase->pluck('id')->toArray())
@@ -386,7 +403,7 @@ class ProductMaterialService
                 ->get();
             $data['purchase_history'] = $calculated;
 
-            
+
             return $data;
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());

@@ -46,7 +46,12 @@ class PreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
-
+    public function details($id){
+        $this->setPageTitle("Pre Production Details");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->detailsData($id);
+        return $this->view('production.pre-production._details')->with($data);
+    }
     public function create()
     {
         $this->setPageTitle("Create New Pre-Production");
@@ -105,8 +110,8 @@ class PreProductionController extends BackendController
     public function statusUpdate($id, $status)
     {
         try {
-            $this->service->statusUpdateData($id, $status);
-            return $this->returnAjaxSuccess([], 'Status Update Successfully');
+            $data = $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

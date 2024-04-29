@@ -56,7 +56,7 @@
                                         <label class="col-form-label">Machine Selection </label>
                                         <h4 class="input-box-title">
                                             @foreach ($processData?->processMachines as $machineData)
-                                                <span>{{$machineData->machine->name}}</span>
+                                               @if($machineData->machine?->name) <span>{{$machineData->machine?->name}}</span>@endif
                                             @endforeach
                                         </h4>
                                     </div>
@@ -83,20 +83,20 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Category Selection</label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Matarial Selection</label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-15">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">QTY </label>
                                                     <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
                                                 </div>
                                             </div>
@@ -111,13 +111,13 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end">
                                             <div class="pms-item flex-60">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Name</label>
                                                     <h4 class="input-box-title"> {{$outputData->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-15">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">QTY</label>
                                                     <h4 class="input-box-title">{{$outputData->quantity}}</h4>
                                                 </div>
                                             </div>
@@ -127,7 +127,7 @@
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-3">
-                                    <label class="col-form-label">Instruction<span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Instruction</label>
                                     <h4 class="input-box-title">{{$processData->instruction}}</h4>
                                 </div>	
                             </div>

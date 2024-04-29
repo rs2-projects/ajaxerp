@@ -99,12 +99,29 @@
 
                                     </div>
                                     <div class="tab-pane fade " id="address" role="tabpanel" aria-labelledby="address-tab">
-                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
+                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center1 justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-48">
-                                                <div class="input-block mb-0 erp-step-input-block ">
+                                                <div class="input-block mb-0 erp-step-input-block  single-color-wrapper" style="display: {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_YES)?'none':'' }};" >
                                                     <label class="col-form-label">Color </label>
                                                     <input type="text" class="form-control " value="{{ $product_material->color }}" name="color">
                                                 </div>
+                                                <div class="row multiple-color-wrapper"  style="display: {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_NO)?'none':'' }};">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Upside Color</label>
+                                                            <input type="text" class="form-control " name="upside_color" value="{{ $product_material->color }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Downside Color</label>
+                                                            <input type="text" class="form-control " name="downside_color" value="{{ $product_material->downside_color }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label>
+                                                    Both Side Color? <input type="checkbox" onchange="changeBothSideColor(this, '#productMaterialUpdateForm')" {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_YES)?'checked':'' }} name="both_side_color" value="1">
+                                                </label>
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
@@ -343,6 +360,15 @@
             });
         }
 
+        function changeBothSideColor(checkbox, parent_element) {
+            if($(checkbox).is(':checked')) {
+                $(parent_element + ' .single-color-wrapper').slideUp();
+                $(parent_element + ' .multiple-color-wrapper').slideDown();
+            } else {
+                $(parent_element + ' .single-color-wrapper').slideDown();
+                $(parent_element + ' .multiple-color-wrapper').slideUp();
+            }
+        }
     </script>
 @endsection
 

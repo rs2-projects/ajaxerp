@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'production-staff' => [
+            'driver' => 'session',
+            'provider' => 'productionStaff',
+        ],
     ],
 
     /*
@@ -63,6 +67,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'productionStaff' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Production\ProductionStaff::class,
         ],
 
         // 'users' => [

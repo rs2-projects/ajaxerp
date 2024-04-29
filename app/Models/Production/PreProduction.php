@@ -14,11 +14,16 @@ class PreProduction extends Model
     protected $table = 'pre_productions';
     public $timestamps = false;
 
+    //type
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
     const VERIFIED_NO = 0;
     const VERIFIED_YES = 1;
+    const VERIFIED_REVISION = 2;
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
+        self::VERIFIED_REVISION => 'Revision',
     ];
 
     const PROCESS_STATUS_PENDING = 0;
@@ -72,7 +77,9 @@ class PreProduction extends Model
     ];
 
     protected $fillable = [
+        'type',
         'pre_production_no',
+        'pre_production_batch_no',
         'order_details',
         'image',
         'design_of_documents',
@@ -111,6 +118,16 @@ class PreProduction extends Model
             ->where('status', PreProductionProcess::STATUS_ACTIVE);
     }
 
+    // production staff wise process
+
+    public function pstaff_process()
+    {
+        return $this->hasMany(PreProductionProcess::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->where('production_staff_id', auth()->guard('production-staff')->user()->id);
+    }
+
     // process materials
     public function material()
     {
@@ -132,4 +149,5 @@ class PreProduction extends Model
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
+    
 }

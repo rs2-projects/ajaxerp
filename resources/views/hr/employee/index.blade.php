@@ -109,6 +109,7 @@
 
 @section('modals')
     @include('hr.employee._change_role')
+    @include('hr.employee._add_user_leave_modal')
 @endsection
 
 @section('css')
@@ -116,11 +117,12 @@
 @endsection
 
 @section('css_plugins')
-
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
-
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
@@ -132,6 +134,14 @@
         };
         $(document).ready(function() {
             getData();
+            initializeDatepicker();
+
+            $('#start_date').on('dp.change', function(e){
+                updateNumberOfDays();
+            });
+            $('#end_date').on('dp.change', function(e){
+                updateNumberOfDays();
+            });
 
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
@@ -168,6 +178,26 @@
                         $("#editRoleModal").modal('hide');
                         showSuccessAlert('Success',res.message)
                         getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $("#userLeavesStoreForm").on('submit', function (e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#add_emp_leave").modal('hide');
+                        $(self)[0].reset();
+                        // user and leave tregger change
+                        $("#user_id").trigger('change');
+                        $("#settings_leave_type_id").trigger('change');
+                        showSuccessAlert('Success',res.message)
                     }else{
                         showErrorAlert('Error',res.message)
                     }
@@ -227,10 +257,119 @@
             }, 'default');
         }
 
+        function showUserLeaveModal(id){
+            $("#add_emp_leave").modal('show');
+        }
+
+        function employeeChange(value){
+            let user_id = $(value).val();
+            let url = "{{ route('ajax.get-leave-type-by-user') }}"
+            ajaxGet(url, {user_id: user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#settings_leave_type_id").html(response.view);
+                } else {
+                    toastr.error(response.message);
+                    $("#settings_leave_type_id").html('<option value="">Select Leave Type</option>');
+                    $("#settings_leave_type_id").trigger('change');
+                }
+            }, 'default');
+        }
+
+        function updateNumberOfDays() {
+
+            let startDate = $('#start_date').val();
+            let endDate = $('#end_date').val();
+
+            if(!startDate || !endDate) {
+                $("#number_of_days").val(0);
+                return false;
+            }
+            let startDateTime = new Date(startDate).getTime();
+            let endDateTime = new Date(endDate).getTime();
+
+            if(startDate > endDate) {
+                $('#end_date').val('');
+                $("#number_of_days").val(0);
+                showInfoAlert('Oops!', 'End date can\'t be less then start date!');
+                return false;
+            }
+            let user_id = $("#user_id").val();
+            let leave_type_id = $("#settings_leave_type_id").val();
+            if (!user_id) {
+                $("#number_of_days").val(0);
+                toastr.error('Please select employee');
+                return false;
+            }
+            if (!leave_type_id) {
+                $("#number_of_days").val(0);
+                toastr.error('Please select leave type');
+                return false;
+            }
+
+            ajaxGet("{{ route('user.get-user-leave-number-of-days') }}", {start_date: startDate, end_date: endDate,leave_type_id:leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#number_of_days").val(response.general_days_number);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function LeaveTypeChnage(value){
+            let leave_type_id = $(value).val();
+            let user_id = $("#user_id").val();
+            let url = "{{ route('ajax.get-user-total-leave-by-leave-type') }}"
+
+            ajaxGet(url, {leave_type_id: leave_type_id,user_id:user_id}, function (response) {
+                if (response.status == 200) {
+                    $("#remaining_leave").val(response.data.remaining_leaves);
+
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function leaveTypeSelect2() {
+            $('#edit_settings_leave_type_id').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+        function yearSelect2() {
+            $('.year-select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+        function monthSelect2() {
+            $('.month-select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+
+
+
         function initializeSelect() {
             $('.select2').select2({
                 minimumResultsForSearch: -1,
                 width: '100%'
+            });
+        }
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                //format: 'DD/MM/YYYY',
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
             });
         }
 

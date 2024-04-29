@@ -46,6 +46,9 @@ class ProductMaterial extends Model
         self::UNIT_TYPE_YD => 'YD',
     ];
 
+    const BOTH_SIDE_COLOR_NO = 0;
+    const BOTH_SIDE_COLOR_YES = 1;
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -75,7 +78,9 @@ class ProductMaterial extends Model
         'total_returned_qty',
         'total_damage_qty',
         'available_qty',
+        'both_side_color',
         'color',
+        'downside_color',
         'working_temperature',
         'length',
         'width',
@@ -111,7 +116,7 @@ class ProductMaterial extends Model
         return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
-    
+
 
 
 }

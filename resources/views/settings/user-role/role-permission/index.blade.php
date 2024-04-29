@@ -869,7 +869,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="view-pre-productions" data-required-remove="manage-pre-productions" class="check" name="permissions[]" value="view-pre-productions"
+                                            <input type="checkbox" id="view-pre-productions" data-required-remove="manage-pre-productions,verify-pre-productions" class="check" name="permissions[]" value="view-pre-productions"
                                             {{ in_array('view-pre-productions', $permissions) ? 'checked' : ''}}>
                                             <label for="view-pre-productions" class="checktoggle">checkbox</label>
                                         </div>
@@ -884,6 +884,18 @@
                                             <input type="checkbox" id="manage-pre-productions" data-required-add="view-pre-productions" class="check" name="permissions[]" value="manage-pre-productions"
                                             {{ in_array('manage-pre-productions', $permissions) ? 'checked' : ''}}>
                                             <label for="manage-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Verify Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="verify-pre-productions" data-required-add="view-pre-productions" class="check" name="permissions[]" value="verify-pre-productions"
+                                            {{ in_array('verify-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="verify-pre-productions" class="checktoggle">checkbox</label>
                                         </div>
                                     </div>
                                 </div>

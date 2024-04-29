@@ -9,6 +9,12 @@
                     <div class="product-general-info-box d-flex flex-wrap">
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Batch No <span class="text-red">*</span></label>
+                                <input class="form-control" value="{{$pre_production->pre_production_batch_no}}" name="pre_production_batch_no" type="text" placeholder="" required="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Order Details <span class="text-red">*</span></label>
                                 <input value="{{$pre_production->order_details}}" class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
@@ -36,7 +42,7 @@
                         <div class="psib-item flex-68">
                             <div class="input-block erp-step-input-block mb-0 two">
                                 <label class="col-form-label">Product<small>(Finished Product)</small> Selection <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                <select class="select select-step" name="finished_goods_id">
+                                <select class="select select-step" name="finished_goods_id" required="">
                                     <option>Select Product</option>
                                     @foreach ($finished_products as $f_product)
                                         <option value="{{$f_product->id}}" {{$pre_production->finished_goods_id == $f_product->id? 'selected' : ''}}>{{$f_product->name}}</option>
@@ -56,7 +62,21 @@
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
                             <input type="hidden" name="pre_production_process_id[]" :value="process.process_id">
                             <div class="production-process-status-wrapper">
-                                <h4>Process @{{ index + 1 }}</h4>
+                                {{-- <h4>Process @{{ index + 1 }}</h4> --}}
+                                <div class="production-machine-selection-wrapper d-flex flex-wrap">
+                                    <div class="pms-item flex-48">
+                                        <h4>Process @{{ index + 1 }}</h4>
+                                    </div>
+                                    <div class="pms-item flex-48 ">
+                                        <div class="input-block erp-step-input-block mb-0 d-flex">
+                                            <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
+                                            <select class="select select-step select2" name="production_staff_id[]" required>
+                                                <option>Select Production Staff</option>
+                                                <option v-for="staff in staffs"  :value="staff.id" :key="staff.id" :selected="staff.id == process.process_production_staff_id">@{{staff.user_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
@@ -69,7 +89,7 @@
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Previous Process </label>
                                         <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
                                             <option v-for="(innerProcess, idx) in processes.slice(0, index)" :selected="processSelectedIndexes(process).includes(idx)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
@@ -78,21 +98,21 @@
                             </div>
                             <div class="production-matarial-selection-wrapper">
                                 <h4 class="process-child-title">Material</h4>
-                                <div class="pms-item-main-wrapper">
+                                <div class="pms-item-main-wrapper" v-if="process.materialSections.length > 0">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
                                         <input type="hidden" :name="'process_material_id['+index+'][]'" :value="materialSection.id"/>
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Category Selection </label>
                                                 <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
-                                                    <option>Select Category</option>
+                                                    <option value="">Select Category</option>
                                                     <option v-for="category in categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Material Selection </label>
                                                 <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
                                                     <option v-for="product in processes[index].materialSections[materialIndex].products"
@@ -104,8 +124,8 @@
                                         </div>
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input v-model="materialSection.quantity" :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
+                                                <label class="col-form-label">QTY </label>
+                                                <input v-model="materialSection.quantity" :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" >
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -115,6 +135,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div v-else class="pms-item-main-wrapper d-flex justify-content-center"> 
+                                    <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
                                 </div>
                             </div>
                             
@@ -169,7 +192,7 @@
                         </div>	
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Product</button>
+                        <button class=" erp-search-btn text-center">Update Production</button>
                     </div>
                 <form>
             </div>
@@ -198,6 +221,9 @@
             font-weight: 700;
             font-weight: 800;
         }
+        .prod-p-staff{
+            width: 48%;
+        }
     </style>
 @endsection
 
@@ -222,6 +248,7 @@
                     processes: [],
                     categories: [],
                     machines: [],
+                    staffs: [],
                     process_indexes: [],
                 };
             },
@@ -240,6 +267,7 @@
                             const processes = response.data.processes;
                             const categories = response.data.categories;
                             const machines = response.data.machines;
+                            const staffs = response.data.staffs;
                             this.process_indexes = response.data.process_indexes;
 
                             categories.forEach((category) => {
@@ -250,6 +278,12 @@
                             machines.forEach((machine) => {
                                 this.machines.push({
                                     ...machine
+                                });
+                            });
+
+                            staffs.forEach((staff) => {
+                                this.staffs.push({
+                                    ...staff
                                 });
                             });
                             processes.forEach((process) => {
@@ -278,6 +312,7 @@
                                     index: processes.length,
                                     process_id: process.id,
                                     process_instruction:  process.instruction,
+                                    process_production_staff_id:  process.production_staff_id,
                                     materialSections: materials,
                                     estimatedOutputs: estimated_output,
                                     process_machine_ids: process_machine_ids,
@@ -382,7 +417,7 @@
                     let previous_process_ids = process.previous_process_ids;
                     let indexes = [];
 
-                    previous_process_ids.forEach(id => {
+                    previous_process_ids?.forEach(id => {
                         if (id in process_ids) {
                             indexes.push(process_ids[id]);
                         }

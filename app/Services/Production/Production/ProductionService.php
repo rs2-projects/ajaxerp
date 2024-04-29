@@ -50,6 +50,7 @@ class ProductionService
         $keyword_filtered = $request->keyword_filtered??null;
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -66,6 +67,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PENDING)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -82,6 +84,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::with('pendingPreProductionMaterialDeliveries')
             ->where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered) {
                 if ($keyword_filtered != '') {
                     $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
@@ -99,6 +102,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_PROCESSING)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -115,6 +119,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('process_status', PreProduction::PROCESS_STATUS_COMPLETED)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -131,6 +136,7 @@ class ProductionService
         $data['pre_productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('is_verified', PreProduction::VERIFIED_YES)
             ->where('dispatched_status', PreProduction::DISPATCH_STATUS_DISPATCHED)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
@@ -234,6 +240,8 @@ class ProductionService
     public function receiveData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('id', $id)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
@@ -278,6 +286,7 @@ class ProductionService
         try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
+                ->where('type', PreProduction::TYPE_OTHERS)
                 ->where('id', $id)
                 ->first();
             if(!$pre_production){
@@ -399,6 +408,8 @@ class ProductionService
 
     public function getDeliveryData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){
@@ -422,6 +433,8 @@ class ProductionService
     // dispatch
     public function dispatchData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){

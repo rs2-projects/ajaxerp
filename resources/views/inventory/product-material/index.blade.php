@@ -240,6 +240,15 @@
             });
         }
 
+        function changeBothSideColor(checkbox, parent_element) {
+            if($(checkbox).is(':checked')) {
+                $(parent_element + ' .single-color-wrapper').slideUp();
+                $(parent_element + ' .multiple-color-wrapper').slideDown();
+            } else {
+                $(parent_element + ' .single-color-wrapper').slideDown();
+                $(parent_element + ' .multiple-color-wrapper').slideUp();
+            }
+        }
     </script>
 @endsection
 
