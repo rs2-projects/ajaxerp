@@ -39,6 +39,7 @@ class AssetProductAssign extends Model
         'model',
         'asset_product_id',
         'qty',
+        'unit_price',
         'employee_id',
         'assign_status',
         'reason',

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('model', 128)->nullable();
             $table->unsignedBigInteger('asset_product_id');
             $table->unsignedInteger('qty')->default(1);
+            $table->decimal('unit_price', 12,2)->default(0);
             $table->unsignedBigInteger('employee_id')->nullable();
             $table->unsignedSmallInteger('assign_status')->default(1)
                 ->comment('1=Assigned,2=In Maintenance,3=Sold,4=Disposed,5=Repaired,6=Returned');
