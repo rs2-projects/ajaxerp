@@ -1,7 +1,7 @@
 @extends('production-staff.layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
-    <div class="row">	
+    <div class="row">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
@@ -23,7 +23,7 @@
                             <h4>{{$pre_production->estimated_production_qty}}</h4>
                         </div>
                     </div>
-                    
+
                     @if ($pre_production->type==1)
                         <div class="pgib-item flex-32 pd-item">
                             <div class="input-block erp-step-input-block mb-0">
@@ -44,7 +44,7 @@
                             </div>
                         </div>
                     @endif
-                    
+
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Description</label>
@@ -61,17 +61,16 @@
                                 @else
                                     <h4>Material</h4>
                                 @endif
-                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                    {{-- @if(hasPermission('manage-processes')) --}}
+                                <div>
+                                    <a href="javascript:void(0)" class="">Scan Raw Materials</a>
+                                    @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
-                                    {{-- @endif --}}
-                                @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    {{-- @if(hasPermission('manage-processes'))  --}}
+                                    @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                         <a href="javascript:void(0)" pre_production_id="{{$pre_production->id}}" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
-                                    {{-- @endif --}}
-                                @else
-                                    <p class="rs-pre-completed-process">Completed Process</p>
-                                @endif
+                                    @else
+                                        <p class="rs-pre-completed-process">Completed Process</p>
+                                    @endif
+                                </div>
                             </div>
                             @if ($pre_production->type==0)
                                 <div class="production-machine-selection-wrapper d-flex flex-wrap p-de-box-wrapper">
@@ -115,7 +114,7 @@
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">Matarial Selection </label>
-                                                
+
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
@@ -168,7 +167,7 @@
                                     <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-3">
                                         <label class="col-form-label">Instruction<span class="text-danger">*</span></label>
                                         <h4 class="input-box-title">{{$processData->instruction}}</h4>
-                                    </div>	
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -399,7 +398,7 @@
                                 currentProcessBtn.classList.remove('complete-process-btn');
                                 currentProcessBtn.classList.add('rs-pre-completed-process');
                                 currentProcessBtn.textContent = 'Completed Process';
-                                
+
                             }
                             if(type == 'perfect' ){
                                 btn.closest('tr').classList.add('perfect-qc-tr');

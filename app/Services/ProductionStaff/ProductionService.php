@@ -122,7 +122,7 @@ class ProductionService
             })
             ->has('pendingPreProductionMaterialDeliveries')
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-        
+
         $data['view'] = view('production-staff.production._pending_for_receive_filtered', $data)->render();
         return $data;
     }
@@ -249,6 +249,7 @@ class ProductionService
                 $process->save();
             }
 
+            //TODO: why check this?
             $count_processing = PreProductionProcess::where('pre_production_id', $id)
                 ->where('deleted', PreProductionProcess::DELETED_NO)
                 ->where('status', PreProductionProcess::STATUS_ACTIVE)
@@ -258,7 +259,7 @@ class ProductionService
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_PROCESSING;
                 $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
-                $pre_production->save();  
+                $pre_production->save();
             }
 
             $count_completed = PreProductionProcess::where('pre_production_id', $id)
@@ -278,7 +279,7 @@ class ProductionService
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
                 $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
-                $pre_production->save();  
+                $pre_production->save();
             }
         }catch (\Exception $e) {
             DB::rollBack();
@@ -350,10 +351,10 @@ class ProductionService
             }
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
-                
+
                 foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
                     if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
-                        
+
                         foreach($request->code[$detailsKey] as $itemKey => $itemCode){
                             $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
                                 ->where('pre_production_id', $id)
@@ -432,12 +433,12 @@ class ProductionService
                 $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
                 $pre_production->save();
             }
-        
+
             // $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             //     ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             //     ->where('pre_production_id', $id)
             //     ->with(
-            //         'delivery_details', 
+            //         'delivery_details',
             //         'delivery_details.material',
             //         'delivery_details.material.category',
             //         'delivery_details.material.product',
@@ -464,7 +465,7 @@ class ProductionService
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'delivery_details', 
+                'delivery_details',
                 'delivery_details.material',
                 'delivery_details.material.category',
                 'delivery_details.material.product',
@@ -505,7 +506,7 @@ class ProductionService
             if($request->dispatched_qty > ($pre_production->estimated_production_qty - $pre_production->dispatched_qty) || $request->dispatched_qty == 0){
                 throw new \Exception('Invalid Quantity!');
             }
-            
+
             $pre_production->dispatched_qty += $request->dispatched_qty;
             $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
             $pre_production->updated_at = now();
@@ -540,7 +541,7 @@ class ProductionService
         }
         DB::commit();
     }
-    
+
     public function verifyOutputData($id, $processId)
     {
         $data['estimated_outputs'] = PreProductionProcessEstimatedOutput::where('pre_production_id', $id)
@@ -583,7 +584,7 @@ class ProductionService
             } else if($type == 3){
                 $estimatedOutput->verified_qty = $estimatedOutput->quantity;
             }
-    
+
             $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
             $estimatedOutput->updated_at = now();
             $estimatedOutput->save();
@@ -634,7 +635,7 @@ class ProductionService
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
                 $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
-                $pre_production->save();  
+                $pre_production->save();
             }
 
         }catch (\Exception $e) {
@@ -773,7 +774,7 @@ class ProductionService
                     $material->save();
                 }
             }
-        
+
         }catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
