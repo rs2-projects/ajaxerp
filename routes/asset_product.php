@@ -45,6 +45,13 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/update', [AssetProductController::class, 'update'])->name('inventory.asset-product.update')->middleware('permission:manage-asset-product');
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
+        
+        Route::post('/{id}/assign-product', [AssetProductController::class, 'assignProduct'])->name('inventory.asset-product.assign-asset-product');
+        Route::post('/{id}/maintenance-product', [AssetProductController::class, 'maintenanceProduct'])->name('inventory.asset-product.maintenance-asset-product');
+        Route::post('/{id}/sell-product', [AssetProductController::class, 'sellProduct'])->name('inventory.asset-product.sell-asset-product');
+        Route::post('/{id}/dispose-product', [AssetProductController::class, 'disposeProduct'])->name('inventory.asset-product.disposed-asset-product');
+        Route::get('/{id}/details', [AssetProductController::class, 'assignedDetails'])->name('inventory.asset-product.assigned-details');
+        Route::post('/{id}/return-product', [AssetProductController::class, 'returnProduct'])->name('inventory.asset-product.return-asset-product');
     });
 
     // boards

@@ -360,6 +360,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
             Route::get('get-designation-by-multiple-departments', [AjaxController::class, 'getDesignationByMultipleDepartments'])->name('ajax.get-designation-by-multiple-departments');
             Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
+            Route::get('get-employee-by-designation', [AjaxController::class, 'getEmployeeByDesignation'])->name('ajax.get-employee-by-designation');
             Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
             Route::get('get-leave-type-by-user',[AjaxController::class, 'getLeaveTypeByUser'])->name('ajax.get-leave-type-by-user');
             Route::get('get-employee-total-leave-by-leave-type',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveType'])->name('ajax.get-user-total-leave-by-leave-type');

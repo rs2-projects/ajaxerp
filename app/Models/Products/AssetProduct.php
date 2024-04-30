@@ -62,4 +62,11 @@ class AssetProduct extends Model
     {
         return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');
     }
+    
+    public function asset_product_assigns(){
+        return $this->hasMany(AssetProductAssign::class, 'asset_product_id', 'id')
+            ->where('deleted', AssetProductAssign::DELETED_NO)
+            ->where('status', AssetProductAssign::STATUS_ACTIVE)
+            ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_ASSIGNED);
+    }
 }

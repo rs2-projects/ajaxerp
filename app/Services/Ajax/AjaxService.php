@@ -68,6 +68,21 @@ class AjaxService
 
         return $data;
     }
+
+    public function getEmployeeByDesignation($request)
+    {
+        $data['employees'] = User::where('deleted', User::DELETED_NO)
+            ->where('status', User::STATUS_ACTIVE)
+            ->where('role', User::ROLE_EMPLOYEE)
+            ->where('type', User::TYPE_EMPLOYEE)
+            ->where('designation_id', $request->designation_id)
+            ->orderBy('first_name', 'asc')
+            ->get();
+
+        return $data;
+
+    }
+
     public function salarySetGetEmployees($request)
     {
         if(isset($request->salary_set_id)) {

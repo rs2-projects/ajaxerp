@@ -34,7 +34,7 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $product->category->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $product->total_purchased_qty??0 }}</td>
+                    <td class="erp-tbody-td text-center">{{ $product->available_qty??0 }}</td>
                     <td class="erp-tbody-td text-center">{{ getRealSubStr($product->description??'N/A', 60) }}</td>
 
                     <td class="erp-tbody-td text-center">
@@ -60,11 +60,11 @@
                                         @if($product->total_purchased_qty == 0)
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.asset-product.delete',$product->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
-                                        {{-- <a class="dropdown-item" href="javascript:void(0)" onclick="assignItem({{$product->id}})"><i class="fa-solid fa-people-arrows m-r-5"></i></i> Assign</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="maintenceItem({{$product->id}})"><i class="fa-solid fa-gears m-r-5"></i></i> Maintenance</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="sellItem({{$product->id}})"><i class="fa-solid fa-cart-shopping m-r-5"></i></i> Sell</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="disposeItem({{$product->id}})"><i class="fa-solid fa-cubes m-r-5"></i></i> Disposed</a> --}}
-                                </div>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="assignItem({{$product->id}})"><i class="fa-solid fa-people-arrows m-r-5"></i> Assign</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="maintenceItem({{$product->id}})"><i class="fa-solid fa-gears m-r-5"></i> Maintenance</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="sellItem({{$product->id}})"><i class="fa-solid fa-cart-shopping m-r-5"></i> Sell</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="disposeItem({{$product->id}})"><i class="fa-solid fa-cubes m-r-5"></i> Disposed</a>
+                                    </div>
                                 </div>
                             </div>
                         </td>

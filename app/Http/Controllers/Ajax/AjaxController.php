@@ -44,6 +44,20 @@ class AjaxController extends BackendController
             return $this->returnAjaxError($exception->getMessage());
         }
     }
+
+    public function getEmployeeByDesignation(Request $request, AjaxService $ajaxService)
+    {
+        try {
+            $data = $ajaxService->getEmployeeByDesignation($request);
+            $view = $this->view('ajax._get_employee_by_designation')->with($data)
+                ->render();
+
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxError($exception->getMessage());
+        }
+    }
+
     public function salarySetGetEmployees(Request $request, AjaxService $ajaxService)
     {
         try {
