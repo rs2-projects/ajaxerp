@@ -366,6 +366,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -375,6 +378,11 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    } else {
+                        $has_others = 1;
                     }
 
                     $qty = $request->qty[$key];
@@ -404,6 +412,7 @@ class ProductMaterialPurchaseService
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
                     $purchaseDetails->product_material_purchase_id = $purchase->id;
                     $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
@@ -439,6 +448,8 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
             $purchase->save();
 
 

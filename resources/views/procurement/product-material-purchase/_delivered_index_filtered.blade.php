@@ -93,7 +93,12 @@
                                                 <a class="dropdown-item" href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
                                             @else
                                                 @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
-                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calulate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Price</a>
+                                                    @if($purchase_order->has_others == \App\Models\Procurements\ProductMaterialPurchase::HAS_OTHERS_YES)
+                                                        <a class="dropdown-item" href="{{route('procurement.purchase-order.calulate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Others Price</a>
+                                                    @endif
+                                                @endif
+                                                @if($purchase_order->has_boards == \App\Models\Procurements\ProductMaterialPurchase::HAS_BOARD_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calulate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Board Price</a>
                                                 @endif
                                             @endif
                                         @endif

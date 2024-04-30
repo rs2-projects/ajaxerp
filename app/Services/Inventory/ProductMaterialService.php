@@ -52,6 +52,8 @@ class ProductMaterialService
             ->orderBy('name', 'asc')
             ->get();
 
+        $data['material_types'] = ProductMaterial::TYPES;
+
         $data['total_product'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)->count();
 
         return $data;
@@ -102,6 +104,7 @@ class ProductMaterialService
             }
 
             $product_material = new ProductMaterial();
+            $product_material->type = $request->type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->name = $request->name;
             $product_material->image = $image_path??null;
             $product_material->product_material_category_id = $request->product_material_category_id;

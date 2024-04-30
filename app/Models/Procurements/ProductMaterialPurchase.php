@@ -12,6 +12,11 @@ class ProductMaterialPurchase extends Model
     protected $table = 'product_material_purchases';
     public $timestamps = false;
 
+    const HAS_BOARD_NO = 0;
+    const HAS_BOARD_YES = 1;
+    const HAS_OTHERS_NO = 0;
+    const HAS_OTHERS_YES = 1;
+
     const PURCHASE_CREATE_TYPE_NEW = 0;
     const PURCHASE_CREATE_TYPE_REVISED = 1;
     const PURCHASE_CREATE_TYPE_BACKED = 2;
@@ -121,6 +126,8 @@ class ProductMaterialPurchase extends Model
         'backed_at',
         'notes',
         'invoice_footer',
+        'has_boards',
+        'has_others',
         'status',
         'created_by',
         'created_at',
