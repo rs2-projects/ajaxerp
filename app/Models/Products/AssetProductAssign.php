@@ -24,12 +24,14 @@ class AssetProductAssign extends Model
     const RETURN_TYPE_TERMINATION = 2;
     const RETURN_TYPE_REPLACE = 3;
     const RETURN_TYPE_RESIGNATION = 4;
+    const RETURN_TYPE_FOR_MAINTENANCE = 5;
 
     const RETURN_TYPES = [
         self::RETURN_TYPE_REPLACE => 'Replace',
         self::RETURN_TYPE_LEAVE => 'Leave',
         self::RETURN_TYPE_TERMINATION => 'Termination',
-        self::RETURN_TYPE_RESIGNATION => 'Resignation'
+        self::RETURN_TYPE_RESIGNATION => 'Resignation',
+        self::RETURN_TYPE_FOR_MAINTENANCE => 'For Maintenance',
     ];
 
     const STATUS_INACTIVE = 0;

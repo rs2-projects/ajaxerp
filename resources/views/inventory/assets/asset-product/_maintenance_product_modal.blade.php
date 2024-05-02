@@ -14,34 +14,37 @@
                     <div class="erp-modal-body-content">
                         <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-start justify-content-between mb-3 ">
                             <input type="hidden" name="asset_product_id" id="maintenance_id" value="">
+                            <input type="hidden" name="maintenance_type" id="maintenance_type" value="">
+                            <input type="hidden" name="asset_assign_id" id="asset_assign_id" value="">
                             <div class="input-block flex-48 mb-2">
                                 <label class="col-form-label">Date <span class="text-danger">*</span></label>
-                                <input class="form-control datetimepicker" type="text" name="date" value="{{ now()->format('Y-m-d') }}" required>
+                                <input class="form-control datetimepicker" id="maintenance_date" type="text" name="date" value="{{ now()->format('Y-m-d') }}" required>
                                 <span class="name_error ie-span"></span>
                             </div>
                         
                             <div class="input-block flex-48 mb-2">
                                 <label class="col-form-label">SL No <span class="text-danger">*</span></label>
-                                <input class="form-control " name="sl_no" type="text" required>
+                                <input class="form-control " id="maintenance_sl_no" value="" name="sl_no" type="text" required>
                             </div>
 
                             <div class="input-block flex-48 mb-2">
                                 <label class="col-form-label">Model <span class="text-danger">*</span></label>
-                                <input class="form-control " name="model" type="text" required>
+                                <input class="form-control " id="maintenance_model" value="" name="model" type="text" required>
                             </div>
 
                             <div class="input-block flex-48 mb-2">
                                 <label class="col-form-label">Warranty Date</label>
-                                <input class="form-control datetimepicker" type="text" name="warranty">
+                                <input class="form-control datetimepicker" id="maintenance_warranty_date" type="text" name="warranty">
                                 <span class="name_error ie-span"></span>
                             </div>
                             <div class="input-block flex-48 mb-3">
                                 <label class="col-form-label">Reason <span class="text-danger">*</span></label>
-                                <textarea cols="30" rows="3" class="form-control" name="reason" required></textarea>
+                                <textarea cols="30" rows="3" id="maintenance_reason" class="form-control" name="reason" required></textarea>
                             </div>
                             <div class="input-block flex-48 mb-3">
                                 <label class="col-form-label">Remarks <span class="text-danger">*</span></label>
-                                <textarea cols="30" rows="3" class="form-control" name="remarks" required></textarea>
+                                <textarea cols="30" rows="3" id="maintenance_remarks" class="form-control" name="remarks" required></textarea>
+                            </div>
                             </div>
                             <div class="submit-section mt-2">
                                 <button class="btn btn-primary submit-btn" type="submit">Save</button>

@@ -39,7 +39,7 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="returnItem({{$data->id}})"><i class="fa-solid fa-arrow-rotate-left m-r-5"></i> Return</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.asset-product.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-solid fa-gears m-r-5"></i> Maintenance</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="assignToMaintenanceItem({{$data->id}}, {{$data->asset_product_id}}, 'from_assign')"><i class="fa-solid fa-gears m-r-5"></i> Maintenance</a>
                                 </div>
                                 </div>
                             </div>

@@ -297,7 +297,7 @@ class AssetProductService
         $product->save();
     }
 
-    public function detailsData($id)
+    public function assetDetails($id)
     {
         $data['item'] = AssetProduct::where('id', $id)
             ->where('deleted', AssetProduct::DELETED_NO)
@@ -305,6 +305,18 @@ class AssetProductService
             
         if (!$data['item']) {
             throw new \Exception('Asset Product not found');
+        }
+        return $data;
+    }
+
+    public function assignedDetails($id){
+        $data['assign_details'] = AssetProductAssign::where('id', $id)
+            ->where('deleted', AssetProductAssign::DELETED_NO)
+            ->where('status', AssetProductAssign::STATUS_ACTIVE)
+            ->first();
+
+        if (!$data['assign_details']) {
+            throw new \Exception('Data not found');
         }
         return $data;
     }
@@ -391,25 +403,75 @@ class AssetProductService
                 throw new \Exception('Asset Product not found');
             }
 
-            $product->available_qty = $product->available_qty - 1;
-            $product->maintenance_qty = $product->maintenance_qty + 1;
-            $product->updated_by = auth()->user()->id;
-            $product->updated_at = now();
-            $product->save();
+            $type = "";
+            if(isset($request->maintenance_type)){
+                $type = $request->maintenance_type;
+            }
+            if($type == ""){
+                $product->available_qty = $product->available_qty - 1;
+                $product->maintenance_qty = $product->maintenance_qty + 1;
+                $product->updated_by = auth()->user()->id;
+                $product->updated_at = now();
+                $product->save();
 
-            $assign = new AssetProductAssign();
-            $assign->asset_product_id = $id;
-            $assign->date = $request->date;
-            $assign->sl_no = $request->sl_no;
-            $assign->model = $request->model;
-            $assign->warranty = $request->warranty;
-            $assign->remarks = $request->remarks;
-            $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_MAINTENANCE;
-            $assign->created_by = auth()->user()->id;
-            $assign->created_at = now();
-            $assign->updated_by = auth()->user()->id;
-            $assign->updated_at = now();
-            $assign->save();
+                $assign = new AssetProductAssign();
+                $assign->asset_product_id = $id;
+                $assign->date = $request->date;
+                $assign->sl_no = $request->sl_no;
+                $assign->model = $request->model;
+                $assign->warranty = $request->warranty;
+                $assign->remarks = $request->remarks;
+                $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_MAINTENANCE;
+                $assign->created_by = auth()->user()->id;
+                $assign->created_at = now();
+                $assign->updated_by = auth()->user()->id;
+                $assign->updated_at = now();
+                $assign->save();
+
+            }else{
+                $product->assigned_qty = $product->assigned_qty - 1;
+                $product->maintenance_qty = $product->maintenance_qty + 1;
+                $product->updated_by = auth()->user()->id;
+                $product->updated_at = now();
+                $product->save();
+
+                $assign = AssetProductAssign::where('asset_product_id', $id)
+                    ->where('id', $request->asset_assign_id)
+                    ->where('status', AssetProductAssign::STATUS_ACTIVE)
+                    ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_ASSIGNED)
+                    ->first();
+                if(!$assign){
+                    throw new \Exception('Data not found');
+                }
+
+                $assign->date = $request->date;
+                $assign->sl_no = $request->sl_no;
+                $assign->model = $request->model;
+                $assign->warranty = $request->warranty;
+                $assign->remarks = $request->remarks;
+                $assign->reason = $request->reason;
+                $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
+                $assign->return_type = AssetProductAssign::RETURN_TYPE_FOR_MAINTENANCE;
+                $assign->return_date = $request->date;
+                $assign->return_reason = $request->reason;
+                $assign->updated_by = auth()->user()->id;
+                $assign->updated_at = now();
+                $assign->save();
+
+                $new_assign = new AssetProductAssign();
+                $new_assign->asset_product_id = $id;
+                $new_assign->date = $request->date;
+                $new_assign->sl_no = $request->sl_no;
+                $new_assign->model = $request->model;
+                $new_assign->warranty = $request->warranty;
+                $new_assign->remarks = $request->remarks;
+                $new_assign->assign_status = AssetProductAssign::ASSIGN_STATUS_MAINTENANCE;
+                $new_assign->created_by = auth()->user()->id;
+                $new_assign->created_at = now();
+                $new_assign->updated_by = auth()->user()->id;
+                $new_assign->updated_at = now();
+                $new_assign->save();
+            }
             
         }catch (\Exception $e) {
             DB::rollBack();

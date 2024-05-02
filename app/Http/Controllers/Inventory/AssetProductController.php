@@ -77,14 +77,24 @@ class AssetProductController extends BackendController
         return $this->returnAjaxSuccess([], 'Asset Product updated successfully');
     }
 
-    public function assignedDetails($id)
+    public function assetDetails($id)
     {
         try {
-            $data = $this->service->detailsData($id);
+            $data = $this->service->assetDetails($id);
             $view = $this->view('inventory.assets.asset-product._assign_details_data')
                 ->with($data)
                 ->render();
             return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function assignedDetails($id)
+    {
+        try {
+            $data = $this->service->assignedDetails($id);
+            return $this->returnAjaxSuccess(['data' => $data]);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

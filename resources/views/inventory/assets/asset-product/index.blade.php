@@ -318,7 +318,7 @@
         }
 
         function viewItem(id){
-            let url = "{{route('inventory.asset-product.assigned-details', ':id')}}";
+            let url = "{{route('inventory.asset-product.asset-details', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
@@ -354,6 +354,48 @@
             $("#return_product_modal").modal('show');
             $("#return_id").val(id);
         }
+
+        function assignToMaintenanceItem(id, asset_id, type){
+            if(type){
+                let url = "{{route('inventory.asset-product.assigned-details', ':id')}}";
+                url = url.replace(':id', id);
+                ajaxGet(url, {}, function (response) {
+                    if (response.status == 200) {
+                        let data = response?.data?.assign_details;
+
+                        console.log(data);
+                        $("#maintenance_product_modal").modal('show');
+                        $("#maintenance_id").val(asset_id);
+                        $("#asset_assign_id").val(id);
+                        $("#maintenance_type").val(type);
+                        $("#maintenance_date").val(data.date);
+                        $("#maintenance_sl_no").val(data.sl_no);
+                        $("#maintenance_model").val(data.model);
+                        $("#maintenance_warranty_date").val(data.warranty);
+                        $("#maintenance_reason").val(data.reason);
+                        $("#maintenance_remarks").val(data.remarks);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                }, 'default');
+            }
+
+        }
+
+        $('#maintenance_product_modal').on('hidden.bs.modal', function (e) {
+            var today = new Date();
+            var formattedDate = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+            $("#maintenance_id").val("");
+            $("#asset_assign_id").val("");
+            $("#maintenance_type").val("");
+            $("#maintenance_date").val(formattedDate);
+            $("#maintenance_sl_no").val("");
+            $("#maintenance_model").val("");
+            $("#maintenance_warranty_date").val("");
+            $("#maintenance_reason").val("");
+            $("#maintenance_remarks").val("");
+        });
+
 
         function getDesignation(select) {
             var department_id = $(select).val();
