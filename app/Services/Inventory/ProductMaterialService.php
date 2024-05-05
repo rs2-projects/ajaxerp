@@ -242,6 +242,8 @@ class ProductMaterialService
                 ->orderBy('name', 'asc')
                 ->get();
 
+            $data['material_types'] = ProductMaterial::TYPES;
+
             return $data;
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
@@ -277,6 +279,7 @@ class ProductMaterialService
             }
 
             $product_material->name = $request->name;
+            $product_material->type = $request->type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->image = $image_path??$product_material->image;
             $product_material->product_material_category_id = $request->product_material_category_id;
             $product_material->warehouse_id = $request->warehouse_id;

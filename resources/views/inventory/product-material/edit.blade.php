@@ -32,6 +32,17 @@
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48">
+                                                <div class="input-block erp-step-input-block mb-0 two">
+                                                    <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                                    <select class="select select-step" name="type" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
+                                                        <option value="">Select Type</option>
+                                                        @foreach($material_types as $key=>$type)
+                                                            <option {{ ($key == $product_material->type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="erp-filter-item flex-100">
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Product Image </label>
                                                     <input type="file" class="form-control " name="image" accept="image/*">

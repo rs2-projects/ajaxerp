@@ -43,7 +43,7 @@
                             <div class="input-block erp-step-input-block mb-0 two">
                                 <label class="col-form-label">Product<small>(Finished Product)</small> Selection <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
                                 <select class="select select-step" name="finished_goods_id" required="">
-                                    <option>Select Product</option>
+                                    <option value="">Select Product</option>
                                     @foreach ($finished_products as $f_product)
                                         <option value="{{$f_product->id}}">{{$f_product->name}}</option>
                                     @endforeach
@@ -70,7 +70,7 @@
                                         <div class="input-block erp-step-input-block mb-0 d-flex">
                                             <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
                                             <select class="select select-step select2" name="production_staff_id[]" required>
-                                                <option>Select Production Staff</option>
+                                                <option value="">Select Production Staff</option>
                                                 @foreach ($staffs as $staff)
                                                     <option value="{{$staff->id}}">{{$staff->user_name}}</option>
                                                 @endforeach

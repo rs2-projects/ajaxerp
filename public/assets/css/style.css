@@ -13889,3 +13889,11 @@ a.em-profile-wrap:hover {
   margin-left: 5px;
   border-radius: 5px;
 }
+.back-to-admin-btn a {
+  font-size: 15px;
+  color: #0d6efd;
+  background: #0d6efd1c;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+}

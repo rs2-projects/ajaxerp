@@ -125,7 +125,11 @@ class ProductMaterial extends Model
         return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
-
-
-
+    public function countPurchaseDetails()
+    {
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_id', 'id')
+            ->where('deleted', self::DELETED_NO)
+            ->where('status', self::STATUS_ACTIVE)
+            ->count();
+    }
 }

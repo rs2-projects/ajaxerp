@@ -10,6 +10,9 @@
                 <th class="erp-th text-center">Phone</th>
                 <th class="erp-th text-center">Department</th>
                 <th class="erp-th text-center">Designation</th>
+                @if(hasPermission('login-employye-account'))
+                    <th class="erp-th text-center">Login</th>
+                @endif
                 <th class="erp-th text-center">Action</th>
             </tr>
         </thead>
@@ -35,7 +38,13 @@
                     <td class="erp-tbody-td text-center">{{ $item->phone??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $item->department->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $item->designation->name??'N/A' }}</td>
-
+                    @if(hasPermission('login-employye-account'))
+                        <td class="erp-tbody-td text-center">
+                            <div class="erp-table-login">
+                                <a href="{{ route('hr.employee.login', $item->id) }}">Login</a>
+                            </div>
+                        </td>
+                    @endif
                     <td class="text-end erp-tbody-td">
                         <div class="erp-action-t">
                             <div class="dropdown dropdown-action">

@@ -13,6 +13,7 @@ use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeAttendanceController;
 use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\EmployeeLoginController;
 use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
@@ -275,6 +276,10 @@ Route::group(['middleware' => 'auth'], function () {
             // employee leave
             Route::get('get-user-leave-number-of-days',[EmployeeController::class, 'getUserLeaveNumberOfDays'])->name('hr.employee.get-user-leave-number-of-days');
             Route::post('/employee-leave/create', [EmployeeController::class, 'storeEmpLeave'])->name('hr.employee-leaves.store');
+            
+            // employee panel login
+            Route::get('/{id}/login', [EmployeeLoginController::class, 'login'])->name('hr.employee.login');
+            Route::get('login/back-to-admin', [EmployeeLoginController::class, 'backToAdmin'])->name('hr.employee.login.back-to-admin');
         });
         // Employee route end
 

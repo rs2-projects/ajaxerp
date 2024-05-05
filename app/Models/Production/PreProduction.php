@@ -159,5 +159,13 @@ class PreProduction extends Model
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
+
+    public function pendingForReceiveCount(){
+        return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
+            ->count();
+    }
     
 }

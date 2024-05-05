@@ -61,6 +61,10 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Manage Employees'
                 ],
                 [
+                    'slug' => 'login-employye-account',
+                    'title' => 'Login Employee Account'
+                ],
+                [
                     'slug' => 'view-employee-termination',
                     'title' => 'View Employee Termination'
                 ],
