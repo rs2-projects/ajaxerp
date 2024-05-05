@@ -3,7 +3,7 @@
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
             <div class="erp-employee-list-wrapper purchase-order-in-main">
-                <form action="{{route('procurement.purchase-order.calculate-price.store', $purchase->id)}}" id="calculatePriceFormSubmit" method="POST" @submit="checkValidation">
+                <form action="{{route('procurement.purchase-order.board.calculate-price.store', $purchase->id)}}" id="calculateBoardPriceFormSubmit" method="POST" @submit="checkValidation">
                     @csrf
                     <div class="erp-main-filter-wrapper bg-card attd-table">
                         <div class="rs-erp-calculated-price-wrapper">
@@ -159,9 +159,18 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control" required>
+                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
+                                        <div class="rs-ecp-bottom-box-item">
+                                            <div class="rs-ecp-std-item-title-box">
+                                                <h4>Price USD</h4>
+                                            </div>
+                                            <div class="rs-ecp-std-item-input-box">
+                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                            </div>
+                                        </div>
+
                                         <div class="rs-ecp-bottom-box-item">
                                             <div class="rs-ecp-std-item-title-box">
                                                 <h4>CBM</h4>
@@ -271,17 +280,23 @@
             },
             methods: {
                 exchangeRateHandler(event) {
-                    const exchangeRate = event.target.value;
-                    const priceElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.unit_price');
-                    const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
+                    // const exchangeRate = event.target.value;
+                    // const priceElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.unit_price');
+                    // const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
 
-                    if (priceElement && priceFOBPHPElement) {
-                        const price = parseFloat(priceElement.textContent);
-                        const priceFOBPHP = exchangeRate * price;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
-                    }
+                    // if (priceElement && priceFOBPHPElement) {
+                    //     const price = parseFloat(priceElement.textContent);
+                    //     const priceFOBPHP = exchangeRate * price;
+                    //     priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                    // }
+                    this.calculatePriceFOB(event);
                     this.calculatePriceExcludingVat(event);
                 },
+                priceUsdHandler(event){
+                    this.calculatePriceFOB(event);
+                    this.calculatePriceExcludingVat(event);
+                },
+
                 totalPcPerContainerHandler(event) {
                     this.calculateFreightCost(event);
                     this.calculateTaxesImportDuties(event);
@@ -322,6 +337,27 @@
                 setVatValueHandler(event){
                     const vatPercentage = event.target.value;
                     this.calculateVat(vatPercentage);
+                },
+
+                calculatePriceFOB(event){
+                    const parentElement = event.target.closest('.rs-ecp-single-wrap');
+                    if (!parentElement) return;
+
+                    const exchangeRateInput = parentElement.querySelector('.exchange_rate');
+                    const priceUsdInput = parentElement.querySelector('.price_usd');
+                    const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
+
+                    if (!exchangeRateInput || !priceUsdInput) return;
+
+                    const exchangeRate = parseFloat(exchangeRateInput.value);
+                    const priceUsd = parseFloat(priceUsdInput.value);
+
+                    if (isNaN(exchangeRate) || isNaN(priceUsd)) {
+                        priceFOBPHPElement.textContent = 0;
+                    } else {
+                        const priceFOBPHP = exchangeRate * priceUsd;
+                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                    }
                 },
 
                 calculateFreightCost(event) {
@@ -522,7 +558,7 @@
         }).mount('#VueApp');
 
         function calculatePriceFormSubmit(){
-            var self = $("#calculatePriceFormSubmit");
+            var self = $("#calculateBoardPriceFormSubmit");
             var formData = new FormData($(self)[0]);
             var url = $(self).attr('action');
 
