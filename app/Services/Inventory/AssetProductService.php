@@ -297,7 +297,7 @@ class AssetProductService
         $product->save();
     }
 
-    public function assetDetails($id)
+    public function assetDetails($id, $type)
     {
         $data['item'] = AssetProduct::where('id', $id)
             ->where('deleted', AssetProduct::DELETED_NO)
@@ -306,6 +306,24 @@ class AssetProductService
         if (!$data['item']) {
             throw new \Exception('Asset Product not found');
         }
+
+        if($type == 'assigned'){
+            $data['details'] = AssetProductAssign::where('asset_product_id', $id)
+                ->where('deleted', AssetProductAssign::DELETED_NO)
+                ->where('status', AssetProductAssign::STATUS_ACTIVE)
+                ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_ASSIGNED)
+                ->orderBy('id', 'desc')->get();
+
+        }else if ($type == 'maintenance'){
+            $data['details'] = AssetProductAssign::where('asset_product_id', $id)
+                ->where('deleted', AssetProductAssign::DELETED_NO)
+                ->where('status', AssetProductAssign::STATUS_ACTIVE)
+                ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_MAINTENANCE)
+                ->orderBy('id', 'desc')->get();
+        }
+
+        $data['type'] = $type;
+
         return $data;
     }
 
@@ -649,6 +667,44 @@ class AssetProductService
             $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
             $assign->updated_by = auth()->user()->id;
             $assign->updated_at = now();
+            $assign->save();
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function repairProductStore($request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $assign = AssetProductAssign::where('id', $id)
+                ->where('deleted', AssetProductAssign::DELETED_NO)
+                ->first();
+            if (!$assign) {
+                throw new \Exception('Data not found');
+            }
+
+            $product = AssetProduct::where('id', $assign->asset_product_id)
+                ->where('deleted', AssetProduct::DELETED_NO)
+                ->first();
+            if (!$product) {
+                throw new \Exception('Asset Product not found');
+            }
+
+            $product->available_qty = $product->available_qty + 1;
+            $product->maintenance_qty = $product->maintenance_qty - 1;
+            $product->updated_by = auth()->user()->id;
+            $product->updated_at = now();
+            $product->save();
+
+            $assign->repair_date = $request->repair_date;
+            $assign->repair_note = $request->repair_note;
+            $assign->repaired_by = auth()->user()->id;
+            $assign->repaired_at = now();
+            $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_REPAIRED;
             $assign->save();
 
         }catch (\Exception $e) {

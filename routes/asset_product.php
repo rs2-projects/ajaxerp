@@ -50,9 +50,10 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/maintenance-product', [AssetProductController::class, 'maintenanceProduct'])->name('inventory.asset-product.maintenance-asset-product');
         Route::post('/{id}/sell-product', [AssetProductController::class, 'sellProduct'])->name('inventory.asset-product.sell-asset-product');
         Route::post('/{id}/dispose-product', [AssetProductController::class, 'disposeProduct'])->name('inventory.asset-product.disposed-asset-product');
-        Route::get('/{id}/details', [AssetProductController::class, 'assetDetails'])->name('inventory.asset-product.asset-details');
+        Route::get('/{id}/details/{type}', [AssetProductController::class, 'assetDetails'])->name('inventory.asset-product.asset-details');
         Route::post('/{id}/return-product', [AssetProductController::class, 'returnProduct'])->name('inventory.asset-product.return-asset-product');
         Route::get('/{id}/assign-details', [AssetProductController::class, 'assignedDetails'])->name('inventory.asset-product.assigned-details');
+        Route::post('/{id}/repair-product', [AssetProductController::class, 'repairProduct'])->name('inventory.asset-product.repair-asset-product');
     });
 
     // boards

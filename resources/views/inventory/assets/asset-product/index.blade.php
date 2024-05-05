@@ -90,6 +90,7 @@
     @include('inventory.assets.asset-product._disposed_product_modal')
     @include('inventory.assets.asset-product._assign_details_modal')
     @include('inventory.assets.asset-product._return_product_modal')
+    @include('inventory.assets.asset-product._repair_product_modal')
 @endsection
 
 @section('css')
@@ -293,6 +294,27 @@
                 }, 'show_input_error');
             });
 
+            // repair
+            $(document).on("submit", "#repairProductStoreForm", function(e) {
+                e.preventDefault();
+                var self = this;
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                let id = $("#repair_id").val();
+                let url = "{{route('inventory.asset-product.repair-asset-product', ':id')}}";
+                url = url.replace(':id', id);
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#repair_product_modal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
         });
 
         function getData(){
@@ -317,9 +339,10 @@
             }, 'default');
         }
 
-        function viewItem(id){
-            let url = "{{route('inventory.asset-product.asset-details', ':id')}}";
+        function viewItem(id, type){
+            let url = "{{route('inventory.asset-product.asset-details', ['id' => ':id', 'type' => ':type'])}}";
             url = url.replace(':id', id);
+            url = url.replace(':type', type);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     $("#assign_details_modal_body").html(response.view);
@@ -355,6 +378,11 @@
             $("#return_id").val(id);
         }
 
+        function repairedItem(id){
+            $("#repair_product_modal").modal('show');
+            $("#repair_id").val(id);
+        }
+
         function assignToMaintenanceItem(id, asset_id, type){
             if(type){
                 let url = "{{route('inventory.asset-product.assigned-details', ':id')}}";
@@ -362,8 +390,6 @@
                 ajaxGet(url, {}, function (response) {
                     if (response.status == 200) {
                         let data = response?.data?.assign_details;
-
-                        console.log(data);
                         $("#maintenance_product_modal").modal('show');
                         $("#maintenance_id").val(asset_id);
                         $("#asset_assign_id").val(id);
