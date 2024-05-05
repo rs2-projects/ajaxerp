@@ -4,6 +4,7 @@ namespace App\Services\Procurement\ProductMaterial;
 
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseCalculatedPrice;
+use App\Models\Products\ProductMaterial;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +13,10 @@ class PurchaseCalculatePriceService
     public function indexData($purchase_id)
     {
         try {
-            $purchase = ProductMaterialPurchase::where('id', $purchase_id)
+            $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
+                $q->where('product_type', ProductMaterial::TYPE_OTHERS);
+            }])
+                ->where('id', $purchase_id)
                 ->where('deleted', ProductMaterialPurchase::DELETED_NO)
                 ->first();
 
@@ -41,7 +45,7 @@ class PurchaseCalculatePriceService
                 $delete_item = ProductMaterialPurchaseCalculatedPrice::where('product_material_purchase_id', $purchase->id)
                         ->whereNotIn('id', $product_material_purchase_detail_ids)
                         ->delete();
-                
+
                 foreach ($request->product_material_purchase_detail_id as $key=>$details_id) {
                     if (isset($request->product_material_purchase_detail_id[$key]) &&  $request->product_material_purchase_detail_id[$key] != null){
                         // update
@@ -145,5 +149,26 @@ class PurchaseCalculatePriceService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+
+    public function boardCalculateFormData($purchase_id)
+    {
+        try {
+            $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
+                $q->where('product_type', ProductMaterial::TYPE_BOARD);
+            }])
+                ->where('id', $purchase_id)
+                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->first();
+
+            if (!$purchase) {
+                throw new \Exception('Purchase Order Not Found');
+            }
+            $data['purchase'] = $purchase;
+            return $data;
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 }

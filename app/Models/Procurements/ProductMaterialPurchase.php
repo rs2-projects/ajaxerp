@@ -84,6 +84,9 @@ class ProductMaterialPurchase extends Model
     const PRICE_CALCULATED_NO =0;
     const PRICE_CALCULATED_YES =1;
 
+    const BOARD_PRICE_CALCULATED_NO =0;
+    const BOARD_PRICE_CALCULATED_YES =1;
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -126,6 +129,12 @@ class ProductMaterialPurchase extends Model
         'backed_at',
         'notes',
         'invoice_footer',
+        'price_calculated',
+        'price_calculated_at',
+        'price_calculated_by',
+        'board_price_calculated',
+        'board_price_calculated_at',
+        'board_price_calculated_by',
         'has_boards',
         'has_others',
         'status',

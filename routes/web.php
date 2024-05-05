@@ -488,8 +488,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/make-payment-submit', [PurchaseMakePaymentController::class, 'makePaymentSubmit'])->name('procurement.product-material-purchase.make-payment-submit')->middleware('permission:product-material-purchase-order-payment');
 
             // calculate price
-            Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
-            Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+            Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calculate-price.index')->middleware('permission:manage-product-material-purchase-orders');
+            Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calculate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+            // calculate price boards
+            Route::get('/{purchase_id}/board/calculate-price', [PurchaseOrderCalculatePriceController::class, 'showBoardCalculateForm'])->name('procurement.purchase-order.board.calculate-price.index')->middleware('permission:manage-product-material-purchase-orders');
+            Route::post('/{purchase_id}/board/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'storeBoardCalculateForm'])->name('procurement.purchase-order.board.calculate-price.store')->middleware('permission:manage-product-material-purchase-orders');
 
             // print barcode
             Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data')->middleware('permission:product-material-purchase-print-barcode');

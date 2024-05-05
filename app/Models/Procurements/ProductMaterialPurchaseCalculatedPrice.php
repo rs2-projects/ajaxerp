@@ -27,6 +27,7 @@ class ProductMaterialPurchaseCalculatedPrice extends Model
     ];
 
     protected $fillable = [
+        'product_type',
         'product_material_purchase_id',
         'product_material_purchase_detail_id',
         'product_material_id',
