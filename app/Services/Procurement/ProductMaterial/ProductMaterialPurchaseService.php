@@ -1016,6 +1016,7 @@ class ProductMaterialPurchaseService
 
             if ($status == $purchase::PURCHASE_STATUS_ON_PROCESS){
                 $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
+                    ->where('paid_type', Transaction::PAID_TYPE_UNPAID)
                     ->where('reference_id', $id)
                     ->where('deleted', Transaction::DELETED_NO)
                     ->first();
