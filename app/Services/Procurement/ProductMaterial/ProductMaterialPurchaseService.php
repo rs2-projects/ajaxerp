@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductMaterialPurchaseService
 {
-
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
