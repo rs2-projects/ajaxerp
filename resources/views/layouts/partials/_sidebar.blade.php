@@ -233,7 +233,7 @@
                     @endif
 
                     <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.boards.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Boards</span> <span class="menu-arrow"></span></a>
+                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.boards.index') ? 'active' : '' }} noti-dot"><i class="la la-object-ungroup"></i> <span> Finished Boards</span> <span class="menu-arrow"></span></a>
                         <ul>
                             <li>
                                 <a href="{{ route('inventory.boards.index') }}" class="{{ ($activeMenu == 'inventory.boards.index') ? 'active' : '' }}"> <span>Board List</span></a>

@@ -37,4 +37,9 @@ class ProductMaterialCategory extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(ProductMaterial::class, 'product_material_category_id', 'id');
+    }
 }

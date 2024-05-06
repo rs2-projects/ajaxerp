@@ -47,7 +47,10 @@ class BoardPreProductionService
             ->orderBy('name', 'asc')
             ->get();
 
-        $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+        $data['categories'] = ProductMaterialCategory::whereHas('products', function ($q) {
+            $q->where('type', ProductMaterial::TYPE_BOARD);
+        })
+            ->where('deleted', ProductMaterialCategory::DELETED_NO)
             ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
@@ -70,6 +73,7 @@ class BoardPreProductionService
     {
         $data['materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('type', ProductMaterial::TYPE_BOARD)
             ->where('product_material_category_id', $request->category_id)
             ->orderBy('name', 'asc')
             ->get();
@@ -172,7 +176,7 @@ class BoardPreProductionService
             if (empty($pre_production)) {
                 return redirect()->back()->with(['failed' => 'Pre Production not found!']);
             }
-            
+
             $pre_production->finished_goods_id = $request->finished_goods_id;
             $pre_production->estimated_quantity = $request->estimated_quantity;
             $pre_production->machine_id = $request->machine_id;

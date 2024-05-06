@@ -46,6 +46,7 @@ class ProductMaterialPurchasePayment extends Model
         'transaction_id',
         'account_id',
         'payment_method',
+        'amount_php',
         'amount',
         'payment_date',
         'note',
