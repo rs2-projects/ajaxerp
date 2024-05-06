@@ -19,6 +19,13 @@ class PreProductionMaterialDeliveryDetailsItems extends Model
         self::RECEIVED_YES => 'Yes',
     ];
 
+    const SCANNED_NO = 0;
+    const SCANNED_YES = 1;
+    const SCANNEDS = [
+        self::SCANNED_NO => 'No',
+        self::SCANNED_YES => 'Yes',
+    ];
+
     protected $fillable = [
         'pre_production_id',
         'pre_production_material_delivery_id',
@@ -27,6 +34,7 @@ class PreProductionMaterialDeliveryDetailsItems extends Model
         'product_material_id',
         'product_material_purchase_details_id',
         'barcode',
-        'received'
+        'received',
+        'scanned'
     ];
 }

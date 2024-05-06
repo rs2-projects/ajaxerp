@@ -53,6 +53,15 @@ class PreProduction extends Model
         self::RECEIVED_STATUS_PARTIAL => 'Partial',
     ];
 
+    const SCAN_STATUS_PENDING = 0;
+    const SCAN_STATUS_SCANNED = 1;
+    const SCAN_STATUS_PARTIAL = 2;
+    const SCANNED = [
+        self::SCAN_STATUS_PENDING => 'Pending',
+        self::SCAN_STATUS_SCANNED => 'Scanned',
+        self::SCAN_STATUS_PARTIAL => 'Partial',
+    ];
+
     const DISPATCH_STATUS_PENDING = 0;
     const DISPATCH_STATUS_DISPATCHED = 1;
     const DISPATCH_STATUS_PARTIAL = 2;
@@ -91,6 +100,7 @@ class PreProduction extends Model
         'process_status',
         'delivery_status',
         'received_status',
+        'scan_status',
         'dispatched_qty',
         'dispatched_status',
         'damage_qty',
@@ -148,6 +158,14 @@ class PreProduction extends Model
             ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
+    }
+
+    public function pendingForReceiveCount(){
+        return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
+            ->count();
     }
     
 }

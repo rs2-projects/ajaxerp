@@ -113,7 +113,12 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .erp-table-login a {
+            font-size: 13px;
+            color: #fff !important;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

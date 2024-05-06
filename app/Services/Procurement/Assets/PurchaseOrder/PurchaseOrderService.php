@@ -615,13 +615,16 @@ class PurchaseOrderService
                     $account = AccCoaAccount::where('slug', 'purchase-products')
                         ->where('deleted', AccCoaAccount::DELETED_NO)
                         ->first();
+                    $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                        ->where('deleted', AccCoaAccount::DELETED_NO)
+                        ->first();
 
                     $transaction = new Transaction();
                     $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
                     $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
                     $transaction->transaction_date = $purchase->purchase_date;
                     $transaction->account_id = $account->id;
-                    $transaction->category_id = $account->acc_coa_category_id;
+                    $transaction->category_id = $purchaseAccountCategory->id;
                     $transaction->reference_type = Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE;
                     $transaction->reference_id = $id;
                     $transaction->reference_description = "Asset Product Purchase ".$purchase->purchase_order_id;
@@ -639,9 +642,9 @@ class PurchaseOrderService
                     $purchase_details = AssetProductPurchaseOrderDetails::where('deleted', AssetProductPurchaseOrderDetails::DELETED_NO)
                         ->where('asset_product_purchase_order_id', $purchase->id)
                         ->where('status', AssetProductPurchaseOrderDetails::STATUS_ACTIVE)
-                        ->select('tax_id', 
-                                DB::raw('SUM(total_price) as total_price_sum'), 
-                                DB::raw('SUM(tax_amount) as tax_amount_sum'), 
+                        ->select('tax_id',
+                                DB::raw('SUM(total_price) as total_price_sum'),
+                                DB::raw('SUM(tax_amount) as tax_amount_sum'),
                                 DB::raw('MAX(tax_rate) as tax_rate'))
                         ->groupBy('tax_id')
                         ->get();

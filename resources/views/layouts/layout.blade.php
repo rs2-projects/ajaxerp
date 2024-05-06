@@ -19,6 +19,7 @@
         <!-- Page Content -->
         <div class="content container-fluid bg-white">
 
+            {{-- @include('layouts.partials._back_to_admin') --}}
             <!-- PAGE-HEADER -->
             @include('layouts.partials._page_header')
             <!-- PAGE-HEADER END -->

@@ -1,0 +1,126 @@
+<!-- Add Department Modal -->
+<div id="scanRawMaterialModal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header erp-modal-header">
+                <h5 class="modal-title">Scan Raw Materials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="pd-table-box">
+                <div v-if="deliveries.length > 0">
+                    <div class="pd-table-box-item-wrapper" v-for="(deliverData, deliverIndex) in deliveries" :key="deliverIndex">
+                        <form action="{{route('production-staff.production.production.scan.store', $pre_production->id)}}" 
+                            :id="'deliverStoreForm'+deliverData.id" method="post" 
+                            @submit="checkValidation($event, deliverIndex)">
+                            @csrf
+                            <input type="hidden" name="pre_production_id" :value="deliverData.pre_production_id">
+                            <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.id">  
+                            {{-- <input type="hidden" id="pre_production_material_delivery_id" name="pre_production_id" value="{{$pre_production->id}}">  --}}
+                            <div class="pd-table-box-item">
+                                <div class="pd-deliver-date-box">
+                                    <p>Delivery: <span>@{{ formatDate(deliverData.delivery_date) }}</span></p>
+                                </div>
+                                <div class="my-attendance-report-wrapper">
+                                    <div class="big-table">
+                                        <div class="de-table-wrapper">
+                                            <div class="table-responsive">
+                                                <table class="table mb-0 erp-table">
+                                                    <thead class="erp-thead">
+                                                        <tr class="erp-tr">
+                                                            <th class="erp-th text-center">Item </th>
+                                                            <th class="erp-th text-center">Qty </th>
+                                                            <th class="erp-th text-center">Received Qty</th>
+                                                            <th class="erp-th text-center">Scanned Qty</th>
+                                                            <th class="text-center erp-th">Pending Scan</th>
+                                                            <th class="text-center erp-th">QR Code</th>
+                                                            <th class="text-center erp-th">Items Scanned</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="erp-tbody">
+                                                        <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
+                                                            <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                            <td class="erp-tbody-td text-start">
+                                                                <h4 class="text-start d-table-title">@{{detailsData.material.product.name}}</h4>
+                                                                <h4 class="text-start d-table-title scan-material-category">@{{detailsData.material.category.name}}</h4>
+                                                            </td>
+                                                            <td class="erp-tbody-td text-center">
+                                                                <h4 class="text-center d-table-title">@{{detailsData.total_quantity}}</h4>
+                                                            </td>
+                                                            <td class="erp-tbody-td text-center">
+                                                                <h4 class="text-center d-table-title">@{{detailsData.quantity}}</h4>
+                                                            </td>
+                                                            <td class="erp-tbody-td text-center">
+                                                                <h4 class="text-center d-table-title">@{{detailsData.scanned_qty}}</h4>
+                                                            </td>
+                                                            <td class="erp-tbody-td text-center">
+                                                                <div class="pd-recived-product-wrapper">
+                                                                    <div class="pre-counter">
+                                                                        <span>@{{detailsData.pending_scans.length}}</span>
+                                                                    </div>
+                                                                    <div class="pd-recived-product-scrol-box">
+                                                                        <div v-for="(item, itemIndex) in detailsData.pending_scans" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2">
+                                                                            <div class="pd-recived-product-c-item">
+                                                                                <p class="mb-0">@{{item.barcode}}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="erp-tbody-td text-center">
+                                                                {{-- if quantity-received_qtn > 0 show this --}}
+                                                                <div v-if="detailsData.scanned_qty === detailsData.quantity">
+                                                                    <h4 class="text-center d-table-title approved-status">Scanned</h4>
+                                                                </div>
+                                                                <div class="pd-input-box" v-else>
+                                                                    <input
+                                                                        class="form-control text-center bar-code-input"
+                                                                        type="text"
+                                                                        placeholder="Scan QR / Bar Code"
+                                                                        @keydown.enter.prevent="handleBarcodeScan($event, deliverData.id, detailsData.id, deliverIndex, detailsIndex, detailsData.material.product.id)"
+                                                                        />
+                                                                </div>
+                                                                {{-- otherwise show fully received text --}}
+                                                            </td>
+
+                                                            <td class="erp-tbody-td text-center">
+                                                                <div class="pd-recived-product-wrapper">
+                                                                    <div class="pre-counter">@{{ detailsData.barcodeCounts }}</div>
+                                                                    <div class="pd-recived-product-scrol-box">
+                                                                    <div
+                                                                        class="pd-recived-product-item d-flex align-items-center gap-2"
+                                                                        v-for="(barCode, barCodeIndex) in detailsData.scannedBarcodes"
+                                                                        :key="barCodeIndex"
+                                                                    >
+                                                                        <div class="pd-recived-product-c-item">
+                                                                            <input type="hidden" :name="'code['+detailsIndex+'][]'" :value="barCode"/>
+                                                                            <p class="mb-0">@{{ barCode }}</p>
+                                                                        </div>
+                                                                        <div class="pd-recived-product-c-item">
+                                                                            <a href="#" @click.prevent="removeBarcode(deliverIndex, detailsIndex, barCodeIndex)"><i class="fa-solid fa-xmark"></i></a>
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="production-instrucion-output-selection-wrapper my-2 p-2 text-center">
+                                <button v-if="deliverData.scan_status != 1" class=" erp-search-btn text-center" type="submit">Scan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div v-else> No Data Found </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add Department Modal -->

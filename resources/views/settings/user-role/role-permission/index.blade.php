@@ -240,7 +240,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="view-employees" data-required-remove="manage-employees" class="check" name="permissions[]" value="view-employees"
+                                            <input type="checkbox" id="view-employees" data-required-remove="manage-employees,login-employye-account" class="check" name="permissions[]" value="view-employees"
                                             {{ in_array('view-employees', $permissions) ? 'checked' : ''}}>
                                             <label for="view-employees" class="checktoggle">checkbox</label>
                                         </div>
@@ -255,6 +255,18 @@
                                             <input type="checkbox" id="manage-employees" data-required-add="view-employees" class="check" name="permissions[]" value="manage-employees"
                                             {{ in_array('manage-employees', $permissions) ? 'checked' : ''}}>
                                             <label for="manage-employees" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Login Employee Account</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="login-employye-account" data-required-add="view-employees" class="check" name="permissions[]" value="login-employye-account"
+                                            {{ in_array('login-employye-account', $permissions) ? 'checked' : ''}}>
+                                            <label for="login-employye-account" class="checktoggle">checkbox</label>
                                         </div>
                                     </div>
                                 </div>

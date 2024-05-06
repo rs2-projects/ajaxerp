@@ -366,6 +366,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -375,6 +378,11 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    } else {
+                        $has_others = 1;
                     }
 
                     $qty = $request->qty[$key];
@@ -404,6 +412,7 @@ class ProductMaterialPurchaseService
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
                     $purchaseDetails->product_material_purchase_id = $purchase->id;
                     $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
@@ -439,6 +448,8 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
             $purchase->save();
 
 
@@ -1012,13 +1023,15 @@ class ProductMaterialPurchaseService
                     $account = AccCoaAccount::where('slug', 'purchase-products')
                         ->where('deleted', AccCoaAccount::DELETED_NO)
                         ->first();
-
+                    $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                        ->where('deleted', AccCoaAccount::DELETED_NO)
+                        ->first();
                     $transaction = new Transaction();
                     $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
                     $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
                     $transaction->transaction_date = $purchase->purchase_date;
                     $transaction->account_id = $account->id;
-                    $transaction->category_id = $account->acc_coa_category_id;
+                    $transaction->category_id = $purchaseAccountCategory->id;
                     $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
                     $transaction->reference_id = $id;
                     $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
@@ -1036,26 +1049,28 @@ class ProductMaterialPurchaseService
                     $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                         ->where('product_material_purchase_id', $purchase->id)
                         ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-                        ->select('tax_id', 
-                                DB::raw('SUM(total_price) as total_price_sum'), 
-                                DB::raw('SUM(tax_amount) as tax_amount_sum'), 
+                        ->select('tax_id',
+                                DB::raw('SUM(total_price) as total_price_sum'),
+                                DB::raw('SUM(tax_amount) as tax_amount_sum'),
                                 DB::raw('MAX(tax_rate) as tax_rate'))
                         ->groupBy('tax_id')
                         ->get();
 
 
                     foreach ($purchase_details as $details){
-                        $trns_vat = new TransactionVat();
-                        $trns_vat->transaction_id = $transaction->id;
-                        $trns_vat->tax_id = $details->tax_id;
-                        $trns_vat->main_amount = $details->total_price_sum;
-                        $trns_vat->vat_percent = $details->tax_rate;
-                        $trns_vat->vat_amount = $details->tax_amount_sum;
-                        $trns_vat->created_at = Carbon::now();
-                        $trns_vat->created_by = auth()->user()->id;
-                        $trns_vat->updated_at = Carbon::now();
-                        $trns_vat->updated_by = auth()->user()->id;
-                        $trns_vat->save();
+                        if($details->tax_id){
+                            $trns_vat = new TransactionVat();
+                            $trns_vat->transaction_id = $transaction->id;
+                            $trns_vat->tax_id = $details->tax_id;
+                            $trns_vat->main_amount = $details->total_price_sum;
+                            $trns_vat->vat_percent = $details->tax_rate;
+                            $trns_vat->vat_amount = $details->tax_amount_sum;
+                            $trns_vat->created_at = Carbon::now();
+                            $trns_vat->created_by = auth()->user()->id;
+                            $trns_vat->updated_at = Carbon::now();
+                            $trns_vat->updated_by = auth()->user()->id;
+                            $trns_vat->save();
+                        }
                     }
                 }
             }
@@ -1164,7 +1179,7 @@ class ProductMaterialPurchaseService
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->with('purchaseDetails', 'purchaseDetails.productMaterial')
             ->first();
-        
+
         $data['type'] = $type;
         return $data;
     }

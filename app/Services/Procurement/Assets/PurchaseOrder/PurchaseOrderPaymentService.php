@@ -74,14 +74,16 @@ class PurchaseOrderPaymentService
             if ($request->amount > $purchase->due_amount) {
                 throw new \Exception("Payment amount can't be greater than due amount");
             }
-
+            $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
             // Create Transaction
             $transaction = new Transaction();
             $transaction->paid_type = Transaction::PAID_TYPE_PAID;
             $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
             $transaction->transaction_date = $request->date;
             $transaction->account_id = $account->id;
-            $transaction->category_id = $account->acc_coa_category_id;
+            $transaction->category_id = $purchaseAccountCategory->id;
             $transaction->reference_type = Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT;
             $transaction->reference_id = null;
             $transaction->reference_description = "Asset Product Purchase Payment ".$purchase->purchase_order_id;

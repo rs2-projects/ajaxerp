@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\ProductionStaff\Production\StoreProductionDispatchRequest;
 use App\Http\Requests\ProductionStaff\Production\StoreProductionReceiveRequest;
+use App\Http\Requests\ProductionStaff\Production\StoreProductionScanRequest;
 use App\Models\Production\PreProduction;
 use App\Services\ProductionStaff\ProductionService;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -54,10 +55,6 @@ class ProductionController extends BackendController
         $this->setPageTitle("Production Details");
         $this->setActiveMenu('production.production.index');
         $data = $this->service->detailsData($id);
-        // if ($data['pre_production']->type == PreProduction::TYPE_BOARD) {
-        //     return $this->view('production-staff.production._details2')->with($data);
-        // }
-
         return $this->view('production-staff.production._details')->with($data);
     }
 
@@ -97,6 +94,26 @@ class ProductionController extends BackendController
     public function checkBarCode(Request $request, $id){
         $data = $this->service->checkBarCode($request, $id);
         return $data;
+    }
+
+    public function getScanDeliveries($id){
+        $data = $this->service->getDeliveryScanData($id);
+        return $this->returnAjaxSuccess($data);
+    }
+
+    public function checkScanBarCode(Request $request, $id){
+        $data = $this->service->checkScanBarCode($request, $id);
+        return $data;
+    }
+
+    public function scanStore(StoreProductionScanRequest $request, $id){
+        try {
+            $this->service->scanStoreData($request, $id);
+            $data = $this->service->getDeliveryScanData($id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess($data, 'Scanned successfully');
     }
 
     public function dispatch($id){

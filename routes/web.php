@@ -13,6 +13,7 @@ use App\Http\Controllers\Hr\DepartmentController;
 use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeAttendanceController;
 use App\Http\Controllers\Hr\EmployeeController;
+use App\Http\Controllers\Hr\EmployeeLoginController;
 use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
@@ -275,6 +276,10 @@ Route::group(['middleware' => 'auth'], function () {
             // employee leave
             Route::get('get-user-leave-number-of-days',[EmployeeController::class, 'getUserLeaveNumberOfDays'])->name('hr.employee.get-user-leave-number-of-days');
             Route::post('/employee-leave/create', [EmployeeController::class, 'storeEmpLeave'])->name('hr.employee-leaves.store');
+            
+            // employee panel login
+            Route::get('/{id}/login', [EmployeeLoginController::class, 'login'])->name('hr.employee.login');
+            Route::get('login/back-to-admin', [EmployeeLoginController::class, 'backToAdmin'])->name('hr.employee.login.back-to-admin');
         });
         // Employee route end
 
@@ -360,6 +365,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('get-designation-by-department', [AjaxController::class, 'getDesignationByDepartment'])->name('ajax.get-designation-by-department');
             Route::get('get-designation-by-multiple-departments', [AjaxController::class, 'getDesignationByMultipleDepartments'])->name('ajax.get-designation-by-multiple-departments');
             Route::get('get-employees',[AjaxController::class,'getEmployees'])->name('ajax.get-employees');
+            Route::get('get-employee-by-designation', [AjaxController::class, 'getEmployeeByDesignation'])->name('ajax.get-employee-by-designation');
             Route::get('salary-set/get-employees',[AjaxController::class,'salarySetGetEmployees'])->name('ajax.salary-set.get-employees');
             Route::get('get-leave-type-by-user',[AjaxController::class, 'getLeaveTypeByUser'])->name('ajax.get-leave-type-by-user');
             Route::get('get-employee-total-leave-by-leave-type',[AjaxController::class, 'getEmployeeTotalLeaveByLeaveType'])->name('ajax.get-user-total-leave-by-leave-type');
@@ -486,9 +492,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/make-payment', [PurchaseMakePaymentController::class, 'makePayment'])->name('procurement.product-material-purchase.make-payment')->middleware('permission:product-material-purchase-order-payment');
             Route::post('/{id}/make-payment-submit', [PurchaseMakePaymentController::class, 'makePaymentSubmit'])->name('procurement.product-material-purchase.make-payment-submit')->middleware('permission:product-material-purchase-order-payment');
 
-            // calculate price
-            Route::get('/{purchase_id}/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calulate-price.index')->middleware('permission:manage-product-material-purchase-orders');
-            Route::post('/{purchase_id}/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calulate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+            // calculate others price
+            Route::get('/{purchase_id}/others/calculate-price', [PurchaseOrderCalculatePriceController::class, 'index'])->name('procurement.purchase-order.calculate-price.index')->middleware('permission:manage-product-material-purchase-orders');
+            Route::post('/{purchase_id}/others/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'store'])->name('procurement.purchase-order.calculate-price.store')->middleware('permission:manage-product-material-purchase-orders');
+            // calculate price boards
+            Route::get('/{purchase_id}/board/calculate-price', [PurchaseOrderCalculatePriceController::class, 'showBoardCalculateForm'])->name('procurement.purchase-order.board.calculate-price.index')->middleware('permission:manage-product-material-purchase-orders');
+            Route::post('/{purchase_id}/board/calculate-price/store', [PurchaseOrderCalculatePriceController::class, 'storeBoardCalculateForm'])->name('procurement.purchase-order.board.calculate-price.store')->middleware('permission:manage-product-material-purchase-orders');
 
             // print barcode
             Route::get('/{id}/get-print-barcode-data/{type}', [ProductMaterialPurchaseController::class, 'printBarcodeData'])->name('procurement.product-material-purchase.print-barcode-data')->middleware('permission:product-material-purchase-print-barcode');

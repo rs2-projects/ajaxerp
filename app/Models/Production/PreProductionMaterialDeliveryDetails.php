@@ -21,6 +21,15 @@ class PreProductionMaterialDeliveryDetails extends Model
         self::RECEIVED_STATUS_PARTIAL => 'Missing',
     ];
 
+    const SCAN_STATUS_PENDING = 0;
+    const SCAN_STATUS_SCANNED = 1;
+    const SCAN_STATUS_PARTIAL = 2;
+    const SCANNED = [
+        self::SCAN_STATUS_PENDING => 'Pending',
+        self::SCAN_STATUS_SCANNED => 'Scanned',
+        self::SCAN_STATUS_PARTIAL => 'Partial',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -44,6 +53,8 @@ class PreProductionMaterialDeliveryDetails extends Model
         'quantity',
         'received_qty',
         'received_status',
+        'scanned_qty',
+        'scan_status',
         'status',
         'created_by',
         'created_at',
@@ -71,5 +82,11 @@ class PreProductionMaterialDeliveryDetails extends Model
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
             ->where('received', 0);
+    }
+
+    public function pending_scans()
+    {
+        return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
+            ->where('scanned', 0);
     }
 }

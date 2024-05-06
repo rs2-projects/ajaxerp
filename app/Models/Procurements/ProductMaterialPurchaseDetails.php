@@ -53,6 +53,7 @@ class ProductMaterialPurchaseDetails extends Model
         'barcode',
         'product_material_purchase_id',
         'product_material_id',
+        'product_type',
         'description',
         'color',
         'qty',

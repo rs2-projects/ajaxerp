@@ -3007,6 +3007,9 @@ input[type=file].form-control {
     position: absolute;
     width: 100%;
   }
+    .header .header-left img {
+        width: 150px;
+    }
 }
 
 @media (min-width: 992px) {
@@ -13885,4 +13888,12 @@ a.em-profile-wrap:hover {
 .edit--modal-data-img-src{
   margin-left: 5px;
   border-radius: 5px;
+}
+.back-to-admin-btn a {
+  font-size: 15px;
+  color: #0d6efd;
+  background: #0d6efd1c;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 600;
 }

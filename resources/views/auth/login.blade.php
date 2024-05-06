@@ -40,6 +40,9 @@
                             </div>
                             <span class="password_error ie-span"></span>
                         </div>
+                        <div class="input-block mb-4 d-flex align-items-center">
+                            <label for="remember_me"> <input type="checkbox" name="remember_me" id="remember_me" class="me-1" value="1"> <span>Remember me?</span></label>
+                        </div>
                         <div class="input-block mb-4 text-center">
                             <button class="btn btn-primary account-btn" type="submit">Login</button>
                         </div>

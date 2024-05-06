@@ -13,6 +13,14 @@ class ProductMaterial extends Model
     use HasFactory;
     protected $table = 'product_materials';
     public $timestamps = false;
+
+    const TYPE_BOARD = 0;
+    const TYPE_OTHERS = 1;
+    const TYPES = [
+        self::TYPE_BOARD => 'Board',
+        self::TYPE_OTHERS => 'Others'
+    ];
+
     const UNIT_TYPE_BOX = 1;
     const UNIT_TYPE_CM = 2;
     const UNIT_TYPE_DZ = 3;
@@ -64,6 +72,7 @@ class ProductMaterial extends Model
     ];
 
     protected $fillable = [
+        'type',
         'product_material_category_id',
         'tax_id',
         'unit_type',
@@ -116,7 +125,11 @@ class ProductMaterial extends Model
         return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
-
-
-
+    public function countPurchaseDetails()
+    {
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_id', 'id')
+            ->where('deleted', self::DELETED_NO)
+            ->where('status', self::STATUS_ACTIVE)
+            ->count();
+    }
 }

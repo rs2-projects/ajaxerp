@@ -28,6 +28,12 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::get('/{id}/verify/{type}/update', [ProductionController::class, 'updateVerifyOutput'])->name('production-staff.production.production.verify-output.update');
         Route::get('get-material-by-category', [ProductionController::class, 'getMaterialByCategory'])->name('production-staff.production.production.get-material-by-category');
         Route::post('/re-recuisition/store', [ProductionController::class, 'reRecuisitionStore'])->name('production-staff.production.production.re-recuisition.store');
+
+        // scan raw materials
+        Route::get('/{id}/get-scan-deliveries', [ProductionController::class, 'getScanDeliveries'])->name('production-staff.production.production.get-delivery-details.scan');
+        Route::get('/{id}/check-scan-barcode-validity', [ProductionController::class, 'checkScanBarCode'])->name('production-staff.production.production.check-barcode.scan');
+        Route::post('/{id}/scan-store', [ProductionController::class, 'scanStore'])->name('production-staff.production.production.scan.store');
+        
     });
 
     // logout 
