@@ -1151,8 +1151,8 @@ class ProductMaterialPurchaseService
                 ->where('product_material_purchase_id', $purchase->id)
                 ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
                 ->select('tax_id',
-                    DB::raw('SUM(total_price) as total_price_sum'),
-                    DB::raw('SUM(tax_amount) as tax_amount_sum'),
+                    DB::raw('SUM(total_price_php) as total_price_sum'),
+                    DB::raw('SUM(tax_amount_php) as tax_amount_sum'),
                     DB::raw('MAX(tax_rate) as tax_rate'))
                 ->groupBy('tax_id')
                 ->get();
