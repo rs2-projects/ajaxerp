@@ -1102,64 +1102,7 @@ class ProductMaterialPurchaseService
             $purchase->save();
 
             if ($status == $purchase::PURCHASE_STATUS_ON_PROCESS){
-                $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
-                    ->where('reference_id', $id)
-                    ->where('deleted', Transaction::DELETED_NO)
-                    ->first();
-                if(empty($transaction)){
-                    $account = AccCoaAccount::where('slug', 'purchase-products')
-                        ->where('deleted', AccCoaAccount::DELETED_NO)
-                        ->first();
-                    $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
-                        ->where('deleted', AccCoaAccount::DELETED_NO)
-                        ->first();
-                    $transaction = new Transaction();
-                    $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
-                    $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
-                    $transaction->transaction_date = $purchase->purchase_date;
-                    $transaction->account_id = $account->id;
-                    $transaction->category_id = $purchaseAccountCategory->id;
-                    $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
-                    $transaction->reference_id = $id;
-                    $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->net_amount = $purchase->subtotal_amount_php;
-                    $transaction->total_vat_amount = $purchase->total_vat_amount_php;
-                    $transaction->total_amount = $purchase->payable_amount_php;
-                    $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->created_at = Carbon::now();
-                    $transaction->created_by = auth()->user()->id;
-                    $transaction->updated_at = Carbon::now();
-                    $transaction->updated_by = auth()->user()->id;
-                    $transaction->save();
-
-                    $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
-                        ->where('product_material_purchase_id', $purchase->id)
-                        ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-                        ->select('tax_id',
-                                DB::raw('SUM(total_price_php) as total_price_sum'),
-                                DB::raw('SUM(tax_amount_php) as tax_amount_sum'),
-                                DB::raw('MAX(tax_rate) as tax_rate'))
-                        ->groupBy('tax_id')
-                        ->get();
-
-
-                    foreach ($purchase_details as $details){
-                        if($details->tax_id){
-                            $trns_vat = new TransactionVat();
-                            $trns_vat->transaction_id = $transaction->id;
-                            $trns_vat->tax_id = $details->tax_id;
-                            $trns_vat->main_amount = $details->total_price_sum;
-                            $trns_vat->vat_percent = $details->tax_rate;
-                            $trns_vat->vat_amount = $details->tax_amount_sum;
-                            $trns_vat->created_at = Carbon::now();
-                            $trns_vat->created_by = auth()->user()->id;
-                            $trns_vat->updated_at = Carbon::now();
-                            $trns_vat->updated_by = auth()->user()->id;
-                            $trns_vat->save();
-                        }
-                    }
-                }
+                $this->storeUnpaidTransactionIfEmpty($purchase);
             }
 
         }catch (\Exception $e) {
@@ -1168,6 +1111,69 @@ class ProductMaterialPurchaseService
         }
 
         DB::commit();
+    }
+
+    public function storeUnpaidTransactionIfEmpty($purchase)
+    {
+        $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
+            ->where('paid_type', Transaction::PAID_TYPE_UNPAID)
+            ->where('reference_id', $purchase->id)
+            ->where('deleted', Transaction::DELETED_NO)
+            ->first();
+        if(empty($transaction)){
+            $account = AccCoaAccount::where('slug', 'purchase-products')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
+            $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
+            $transaction = new Transaction();
+            $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
+            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+            $transaction->transaction_date = $purchase->purchase_date;
+            $transaction->account_id = $account->id;
+            $transaction->category_id = $purchaseAccountCategory->id;
+            $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
+            $transaction->reference_id = $purchase->id;
+            $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->net_amount = $purchase->subtotal_amount_php;
+            $transaction->total_vat_amount = $purchase->total_vat_amount_php;
+            $transaction->total_amount = $purchase->payable_amount_php;
+            $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->created_at = Carbon::now();
+            $transaction->created_by = auth()->user()->id;
+            $transaction->updated_at = Carbon::now();
+            $transaction->updated_by = auth()->user()->id;
+            $transaction->save();
+
+            $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('product_material_purchase_id', $purchase->id)
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                ->select('tax_id',
+                    DB::raw('SUM(total_price) as total_price_sum'),
+                    DB::raw('SUM(tax_amount) as tax_amount_sum'),
+                    DB::raw('MAX(tax_rate) as tax_rate'))
+                ->groupBy('tax_id')
+                ->get();
+
+
+            foreach ($purchase_details as $details){
+                if($details->tax_id){
+                    $trns_vat = new TransactionVat();
+                    $trns_vat->transaction_id = $transaction->id;
+                    $trns_vat->tax_id = $details->tax_id;
+                    $trns_vat->main_amount = $details->total_price_sum;
+                    $trns_vat->vat_percent = $details->tax_rate;
+                    $trns_vat->vat_amount = $details->tax_amount_sum;
+                    $trns_vat->created_at = Carbon::now();
+                    $trns_vat->created_by = auth()->user()->id;
+                    $trns_vat->updated_at = Carbon::now();
+                    $trns_vat->updated_by = auth()->user()->id;
+                    $trns_vat->save();
+                }
+            }
+        }
     }
 
     public function getAllProductMaterials($request)

@@ -108,6 +108,8 @@ class PurchaseMakePaymentService
 
             if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){
                 $purchase->purchase_status = $purchase::PURCHASE_STATUS_ON_PROCESS;
+                $productMaterialPurchaseService = new ProductMaterialPurchaseService();
+                $productMaterialPurchaseService->storeUnpaidTransactionIfEmpty($purchase);
             }
 
             $purchase->updated_at = Carbon::now();
