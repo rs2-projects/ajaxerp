@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\DB;
 
 class BoardPreProductionService
 {
+    /**
+     * @var int
+     */
+    private int $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -27,7 +32,7 @@ class BoardPreProductionService
 
     public function indexFilteredData($request)
     {
-        $keyword_filtered = $request->keyword_filtered??null;
+        $keyword_filtered = $request->keyword_filtered ?? null;
         $data['pre_productions'] = BoardPreProduction::where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
             ->where(function ($q) use ($keyword_filtered){
