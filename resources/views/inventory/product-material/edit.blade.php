@@ -40,6 +40,9 @@
                                                             <option {{ ($key == $product_material->type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @if($product_material->countPurchaseDetails() > 0)
+                                                        <small class="text-red">Can't change due to having purchase</small>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-100">

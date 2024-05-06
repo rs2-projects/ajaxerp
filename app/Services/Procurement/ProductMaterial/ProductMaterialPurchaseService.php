@@ -1058,17 +1058,19 @@ class ProductMaterialPurchaseService
 
 
                     foreach ($purchase_details as $details){
-                        $trns_vat = new TransactionVat();
-                        $trns_vat->transaction_id = $transaction->id;
-                        $trns_vat->tax_id = $details->tax_id;
-                        $trns_vat->main_amount = $details->total_price_sum;
-                        $trns_vat->vat_percent = $details->tax_rate;
-                        $trns_vat->vat_amount = $details->tax_amount_sum;
-                        $trns_vat->created_at = Carbon::now();
-                        $trns_vat->created_by = auth()->user()->id;
-                        $trns_vat->updated_at = Carbon::now();
-                        $trns_vat->updated_by = auth()->user()->id;
-                        $trns_vat->save();
+                        if($details->tax_id){
+                            $trns_vat = new TransactionVat();
+                            $trns_vat->transaction_id = $transaction->id;
+                            $trns_vat->tax_id = $details->tax_id;
+                            $trns_vat->main_amount = $details->total_price_sum;
+                            $trns_vat->vat_percent = $details->tax_rate;
+                            $trns_vat->vat_amount = $details->tax_amount_sum;
+                            $trns_vat->created_at = Carbon::now();
+                            $trns_vat->created_by = auth()->user()->id;
+                            $trns_vat->updated_at = Carbon::now();
+                            $trns_vat->updated_by = auth()->user()->id;
+                            $trns_vat->save();
+                        }
                     }
                 }
             }

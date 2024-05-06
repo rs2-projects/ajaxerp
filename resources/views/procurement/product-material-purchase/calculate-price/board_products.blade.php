@@ -280,15 +280,6 @@
             },
             methods: {
                 exchangeRateHandler(event) {
-                    // const exchangeRate = event.target.value;
-                    // const priceElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.unit_price');
-                    // const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
-
-                    // if (priceElement && priceFOBPHPElement) {
-                    //     const price = parseFloat(priceElement.textContent);
-                    //     const priceFOBPHP = exchangeRate * price;
-                    //     priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
-                    // }
                     this.calculatePriceFOB(event);
                     this.calculatePriceExcludingVat(event);
                 },
@@ -420,8 +411,8 @@
                     if (isNaN(totalPcPerContainer) || isNaN(totalTransportCostToWh)) {
                         transportCostToWhElement.textContent = 0;
                     } else {
-                        const taxesImportDuties = totalTransportCostToWh / totalPcPerContainer;
-                        transportCostToWhElement.textContent = taxesImportDuties.toFixed(2);
+                        const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
+                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
                     }
                 },
 
