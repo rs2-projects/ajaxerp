@@ -49,6 +49,9 @@ class LoginService
         Auth::login($user, $request->remember_me ?? 0);
 
         $user->resetPermissionSession();
+        if (isset($request->redirectTo) && ($request->redirectTo != '')) {
+            return route('dashboard').'/'.$request->redirectTo;
+        }
         return route('dashboard');
     }
 
