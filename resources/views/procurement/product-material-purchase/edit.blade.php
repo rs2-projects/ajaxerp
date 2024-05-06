@@ -73,6 +73,12 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
+                                                    <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
+                                                    <div ><input class="form-control " required  name="php_rate" value="{{ $purchase->php_rate }}" type="number"></div>
+                                                </div>
+                                            </div>
+                                            <div class="supplier-invoice-input-box">
+                                                <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
                                                     <div ><input class="form-control " required name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
                                                 </div>

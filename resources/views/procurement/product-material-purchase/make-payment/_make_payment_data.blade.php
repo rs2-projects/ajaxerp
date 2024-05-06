@@ -45,7 +45,7 @@
                         </div>
                     </div>
 
-                    <div class="erp-filter-item flex-48">
+                    <div class="erp-filter-item flex-100">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Date <span class="text-danger">*</span></label>
                             <div class="cal-icon">
@@ -53,11 +53,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="erp-filter-item flex-48">
+                        <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">PHP Rate</label>
+                            <input class="form-control" readonly value="{{$purchase->php_rate}}" id="php_rate" name="php_rate" type="text" >
+                        </div>
+                    </div>
 
                     <div class="erp-filter-item flex-48">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Amount <span class="text-danger">*</span></label>
-                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ $purchase->due_amount }}" value="{{ $purchase->due_amount }}" name="amount">
+                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ $purchase->due_amount }}" value="{{ $purchase->due_amount }}" id="amount" name="amount">
+                            <small id="php_amount">PHP Amount: <span id="php_amount_val">{{$purchase->php_rate * $purchase->due_amount}}</span></small>
                         </div>
                     </div>
 
