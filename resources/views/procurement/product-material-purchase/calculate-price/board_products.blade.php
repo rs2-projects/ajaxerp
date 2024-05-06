@@ -205,7 +205,7 @@
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
                                             <div class="rs-ecp-std-item-title-box">
-                                                <h4>Total Taxes Import Duties MNL</h4>
+                                                <h4>Total Taxes I.D. <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Product Category" data-bs-original-title="Total Taxes Import Duties MNL" style="color: #48b36e;border: 1px solid #48b36e;"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
                                                 <input type="number" step="0.01" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
