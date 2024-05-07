@@ -198,6 +198,7 @@ Route::group(['prefix' => 'production'], function () {
         Route::post('/{id}/update', [PreProductionController::class, 'update'])->name('production.pre-production.update')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/delete', [PreProductionController::class, 'delete'])->name('production.pre-production.delete')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-material-products', [PreProductionController::class, 'getProducts'])->name('production.pre-production.get-material-products')->middleware('permission:manage-pre-productions');
+        Route::get('/{id}/get-board-products', [PreProductionController::class, 'getBoardProducts'])->name('production.pre-production.get-board-products')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');

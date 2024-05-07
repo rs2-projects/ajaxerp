@@ -103,13 +103,12 @@
                             <div class="production-matarial-selection-wrapper">
                                 <h4 class="process-child-title">Material</h4>
                                 <div class="pms-item-main-wrapper">
-                                    <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
-                                        <input type="hidden" :name="'material_type['+index+'][]'" :value='materialSection.type'>
-                                        
-                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
+                                    <div class="pms-item-wrapper d-flex flex-wrap align-items-end other-material-section" v-for="(materialOtherSection, materialOtherIndex) in process.materialSections.others" :key="materialOtherIndex">
+                                        <input type="hidden" :name="'other_material['+index+'][]'"/>
+                                        <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Material Category</label>
-                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <label class="col-form-label">Category Selection </label>
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-other-index="materialOtherIndex" onchange="categoryChangeOutside(this)">
                                                     <option value="">Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -117,34 +116,12 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
+                                        <div class="pms-item flex-32">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Board Category </label>
-                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
-                                                    <option value="">Select Category</option>
-                                                    @foreach ($finished_categoris as $category)
-                                                        <option value="{{$category->id}}">{{$category->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
-                                            <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Material </label>
+                                                <label class="col-form-label">Material Selection </label>
                                                 <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
-                                                    <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
-                                                        @{{ product.name }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
-                                            <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Finished Board </label>
-                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
-                                                    <option value="">Select Board</option>
-                                                    <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
+                                                    <option v-for="product in materialOtherSection.products" :key="product.id" :value="product.id">
                                                         @{{ product.name }}
                                                     </option>
                                                 </select>
@@ -159,6 +136,44 @@
                                         <div class="pms-item flex-10">
                                             <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                 {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
+                                                <a v-if="materialIndex > 0" @click.prevent="removeMaterialOtherSection(index,materialOtherIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="pms-item-wrapper d-flex flex-wrap align-items-end board-material-section" v-for="(materialBoardSection, materialBoardIndex) in process.materialSections.boards" :key="materialBoardIndex">
+                                        <input type="hidden" :name="'board_material['+index+'][]'"/>
+                                        <div class="pms-item flex-32">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Board Category </label>
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-board-index="materialBoardIndex" onchange="boardCategoryChangeOutside(this)">
+                                                    <option value="">Select Board Category</option>
+                                                    @foreach ($finished_categoris as $data)
+                                                        <option value="{{$data->id}}">{{$data->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="pms-item flex-32">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Finished Board</label>
+                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
+                                                    <option value="">Select Board</option>
+                                                    <option v-for="product in materialBoardSection.board_products" :key="product.id" :value="product.id">
+                                                        @{{ product.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="pms-item flex-15">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">QTY </label>
+                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="pms-item flex-10">
+                                            <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                 <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
                                             </div>
                                         </div>
@@ -254,6 +269,13 @@
         .prod-p-staff{
             width: 48%;
         }
+        .add-more-btn{
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+        .add-board-btn{
+            background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
+        }
     </style>
 @endsection
 
@@ -276,10 +298,11 @@
             data() {
                 return {
                     processes: [{
-                        materialSections: [{
-                            type: 'other',
-                            products: []
-                        }],
+                        materialSections: {
+                            others: [{
+                                products: [],
+                            }], 
+                        },
                         estimatedOutputs: [{}]
                     }],
                 };
@@ -309,18 +332,22 @@
                 },
 
                 addMaterialOtherSection(processIndex){
-                    this.processes[processIndex].materialSections.push({
-                        type: 'other'
-                    });
+                    this.processes[processIndex].materialSections.others.push({});
                     this.$nextTick(() => {
                         initSelect2();
                     });
                 },
 
                 addMaterialBoardSection(processIndex){
-                    this.processes[processIndex].materialSections.push({
-                        type: 'board'
-                    });
+                    if (!this.processes[processIndex].materialSections.boards) {
+                        this.processes[processIndex].materialSections.boards = [{
+                            board_products: []
+                        }];
+                    } else {
+                        this.processes[processIndex].materialSections.boards.push({
+                            board_products: []
+                        });
+                    }
                     this.$nextTick(() => {
                         initSelect2();
                     });
@@ -328,9 +355,6 @@
 
                 removeMaterialSection(processIndex, materialIndex) {
                     this.processes[processIndex].materialSections.splice(materialIndex, 1);
-                    this.$nextTick(() => {
-                        initSelect2();
-                    });
                 },
 
                 addEstimatedOutputSection(processIndex){
@@ -340,36 +364,21 @@
                         initSelect2();
                     });
                 },
-
                 removeEstimatedOutputSection(processIndex, estimatedIndex) {
                     this.processes[processIndex].estimatedOutputs.splice(estimatedIndex, 1);
                 },
 
-                getMaterialProducts(categoryId, processIndex, materialIndex) {
+                getMaterialProducts(categoryId, processIndex, materialOtherIndex) {
                     let url = "{{ route('production.pre-production.get-material-products', ':id') }}";
                     url = url.replace(':id', categoryId);
                     axios.get(url)
                         .then(response => {
                             const products = response.data.products;
-                            vueApp.processes[processIndex].materialSections[materialIndex].products = products;
+                            vueApp.processes[processIndex].materialSections.others[materialOtherIndex].products = products;
                         })
                         .catch(error => {
                             console.error('Error fetching products:', error);
                         });
-                },
-
-                getBoardProducts(categoryId, processIndex, materialIndex){
-                    let url = "{{ route('production.pre-production.get-board-products', ':id') }}";
-                    url = url.replace(':id', categoryId);
-                    axios.get(url)
-                        .then(response => {
-                            const products = response.data.products;
-                            vueApp.processes[processIndex].materialSections[materialIndex].products = products;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching products:', error);
-                        });
-
                 },
 
                 checkValidation(e) {
@@ -438,16 +447,9 @@
         }
         function categoryChangeOutside(select) {
             const index = select.dataset.index;
-            const materialIndex = select.dataset.materialIndex;
+            const materialOtherIndex = select.dataset.materialOtherIndex;
             let cat = $(select).val();
-            vueApp.getMaterialProducts(cat, index, materialIndex);
-        }
-
-        function boardCategoryChangeOutside(select){
-            const index = select.dataset.index;
-            const materialIndex = select.dataset.materialIndex;
-            let cat = $(select).val();
-            vueApp.getBoardProducts(cat, index, materialIndex);
+            vueApp.getMaterialProducts(cat, index, materialOtherIndex);
         }
 
         function preProductionFormSubmit(){

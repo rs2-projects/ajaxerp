@@ -14,6 +14,7 @@ use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionProcessPreviousProcess;
 use App\Models\Production\ProductionStaff;
+use App\Models\Products\FinishedGoodsCategory;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -149,6 +150,11 @@ class PreProductionService
             ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
+        
+        $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
 
         $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
             ->where('status', ProductionStaff::STATUS_ACTIVE)
@@ -162,6 +168,16 @@ class PreProductionService
         $data['products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
             ->where('product_material_category_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
+        return $data;
+    }
+
+    public function getBoardProducts($id){
+        $data['products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_BOARD)
+            ->where('finished_goods_category_id', $id)
             ->orderBy('id', 'desc')
             ->get();
         return $data;
@@ -186,6 +202,8 @@ class PreProductionService
             if (!empty($check_duplicate_batch_no)) {
                 throw new \Exception("Batch No already exists");
             }
+
+            dd($request->all());
 
             $image_path = null;
             $document_path = null;
