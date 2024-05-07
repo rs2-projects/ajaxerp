@@ -106,6 +106,7 @@ class PreProduction extends Model
         'damage_qty',
         'received_qty',
         'sale_qty',
+        'used_qty',
         'available_qty',
         'created_by',
         'created_at',
