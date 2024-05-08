@@ -58,6 +58,8 @@ class PreProductionBoard extends Model
         'finished_board_category_id',
         'finished_board_id',
         'quantity',
+        'base_quantity',
+        'extra_quantity',
         'delivered_qty',
         'received_qty',
         'scanned_qty',

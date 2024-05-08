@@ -292,7 +292,10 @@
                     const newIndex = this.processes.length + 1;
                     this.processes.push({
                         index: newIndex,
-                        materialSections: [{}],
+                        materialSections: [{
+                            type: 'other',
+                            products: []
+                        }],
                         estimatedOutputs: [{}]
                     });
                     this.$nextTick(() => {

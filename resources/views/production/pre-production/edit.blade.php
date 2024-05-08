@@ -247,6 +247,7 @@
                 return {
                     processes: [],
                     categories: [],
+                    board_categories: [],
                     machines: [],
                     staffs: [],
                     process_indexes: [],
@@ -266,6 +267,7 @@
                         .then(response => {
                             const processes = response.data.processes;
                             const categories = response.data.categories;
+                            const board_categories = response.data.finished_categoris;
                             const machines = response.data.machines;
                             const staffs = response.data.staffs;
                             this.process_indexes = response.data.process_indexes;
@@ -275,6 +277,13 @@
                                     ...category
                                 });
                             });
+
+                            board_categories.forEach((board_category) => {
+                                this.board_categories.push({
+                                    ...board_category
+                                });
+                            });
+
                             machines.forEach((machine) => {
                                 this.machines.push({
                                     ...machine
@@ -290,12 +299,14 @@
                                 const materials = process.materials.map(material => {
                                     return {
                                         id: material.id,
+                                        type: 'other',
                                         pre_production_process_id: material.pre_production_process_id,
                                         product_material_category_id: material.product_material_category_id,
                                         product_material_id: material.product_material_id,
                                         quantity: material.quantity
                                     };
                                 });
+
                                 const estimated_output = process.estimated_output.map( output => {
                                     return {
                                         id: output.id,
@@ -308,16 +319,31 @@
 
                                 const previous_process_ids = process.previous_process.map(pp => pp.process_id);
 
-                                this.processes.push({
+                                const newProcess = {
                                     index: processes.length,
                                     process_id: process.id,
-                                    process_instruction:  process.instruction,
-                                    process_production_staff_id:  process.production_staff_id,
+                                    process_instruction: process.instruction,
+                                    process_production_staff_id: process.production_staff_id,
                                     materialSections: materials,
                                     estimatedOutputs: estimated_output,
                                     process_machine_ids: process_machine_ids,
                                     previous_process_ids: previous_process_ids
-                                });
+                                };
+
+                                if (process.board_materials.length > 0) {
+                                    process.board_materials.forEach(board => {
+                                        newProcess.materialSections.push({
+                                            id: board.id,
+                                            type: 'board',
+                                            pre_production_process_id: board.pre_production_process_id,
+                                            product_material_category_id: board.finished_board_category_id,
+                                            product_material_id: board.finished_board_id,
+                                            quantity: board.quantity
+                                        });
+                                    });
+                                }
+
+                                this.processes.push(newProcess);
                             });
 
                             if(initialLoad === true) {
