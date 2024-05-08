@@ -4,6 +4,7 @@ namespace App\Services\Inventory;
 
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionBoard;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
 use App\Models\Production\PreProductionMaterialDeliveryDetails;
@@ -137,6 +138,7 @@ class PreProductionMaterialRequestService
     }
 
     public function deliverStoreData($request, $id){
+        dd($request->all());
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
             ->where('id', $id)
@@ -243,39 +245,94 @@ class PreProductionMaterialRequestService
     }
 
     public function getMaterialData($id){
-        $data['materials'] = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+        // $data['materials'] = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+        //     ->where('pre_production_id', $id)
+        //     ->with('category', 'product')
+        //     ->get();
+
+        $materials = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
             ->where('pre_production_id', $id)
             ->with('category', 'product')
             ->get();
-        
+
+        $board_materials = PreProductionBoard::where('deleted', PreProductionBoard::DELETED_NO)
+            ->where('pre_production_id', $id)
+            ->with('category', 'product')
+            ->get();
+
+        $processedMaterials = $materials->map(function ($material) {
+            return [
+                'type' => 'other',
+                'material' => $material
+            ];
+        });
+
+        $data['board_materials'] =$board_materials;
+
+        $processedBoardMaterials = $board_materials->map(function ($boardMaterial) {
+            return [
+                'type' => 'board',
+                'material' => $boardMaterial
+            ];
+        });
+
+        $data['materials'] = $processedMaterials->concat($processedBoardMaterials)->toArray();        
         return $data;
     }
 
-    public function checkBarCode($material_id, $barcode, $count){
+    public function checkBarCode($material_id, $barcode, $count, $type){
         // $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
         //     ->where('product_material_id', $material_id)
         //     ->where('barcode', $barcode)
         //     ->where('available_qty', '>', $count)
         //     ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
         //     ->first();
-        $is_valid_code = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
-            ->where('product_material_id', $material_id)
-            ->where('barcode', $barcode)
-            ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-            ->first();
-        if(!$is_valid_code){
-            throw new \Exception('Invalid Barcode');
-        }else{
-            $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+
+
+        if($type == 'other'){
+            $is_valid_code = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('product_material_id', $material_id)
                 ->where('barcode', $barcode)
-                ->where('available_qty', '>', $count)
                 ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
                 ->first();
-            if(!$data){
-                throw new \Exception('Barcode already used!');
+            if(!$is_valid_code){
+                throw new \Exception('Invalid Barcode');
+            }else{
+                $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                    ->where('product_material_id', $material_id)
+                    ->where('barcode', $barcode)
+                    ->where('available_qty', '>', $count)
+                    ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                    ->first();
+                if(!$data){
+                    throw new \Exception('Barcode already used!');
+                }
+                return $data;
             }
-            return $data;
+        }else if($type == 'board'){
+
+            $is_valid_code = PreProduction::where('deleted', PreProduction::DELETED_NO)
+                ->where('is_verified', PreProduction::VERIFIED_YES)
+                ->where('type', PreProduction::TYPE_BOARD)
+                ->where('pre_production_no', $barcode)
+                ->where('status', PreProduction::STATUS_ACTIVE)
+                ->first();
+
+            if(!$is_valid_code){
+                throw new \Exception('Invalid Barcode');
+            }else{
+                $data = PreProduction::where('deleted', PreProduction::DELETED_NO)
+                    ->where('is_verified', PreProduction::VERIFIED_YES)
+                    ->where('type', PreProduction::TYPE_BOARD)
+                    ->where('pre_production_no', $barcode)
+                    ->where('available_qty', '>', $count)
+                    ->where('status', PreProduction::STATUS_ACTIVE)
+                    ->first();
+                if(!$data){
+                    throw new \Exception('Barcode already used!');
+                }
+                return $data;
+            }
         }
     }
 }

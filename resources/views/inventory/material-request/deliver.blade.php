@@ -50,23 +50,24 @@
 											</thead>
 											<tbody class="erp-tbody">
 												<tr class="erp-tbody-tr" v-for="(material, index) in materials">
-													<input type="hidden" name="pre_production_material_id[]" :value="material.id">
-													<input type="hidden" name="product_material_id[]" :value="material.product.id">
-													<input type= "hidden" name="total_quantity[]" :value="material.quantity">
+													<input type="hidden" name="type[]" :value="material.type">
+													<input type="hidden" name="pre_production_material_id[]" :value="material.material.id">
+													<input type="hidden" name="product_material_id[]" :value="material.material.product.id">
+													<input type= "hidden" name="total_quantity[]" :value="material.material.quantity">
 													<td class="erp-tbody-td text-start">
-														<h4 class="text-start d-table-title">@{{material.category.name}}</h4>
+														<h4 class="text-start d-table-title">@{{material.material.category.name}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<h4 class="text-center d-table-title">@{{material.product.name}}</h4>
+														<h4 class="text-center d-table-title">@{{material.material.product.name}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<h4 class="text-center d-table-title">@{{material.quantity}}</h4>
+														<h4 class="text-center d-table-title">@{{material.material.quantity}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<h4 class="text-center d-table-title">@{{material.delivered_qty}}</h4>
+														<h4 class="text-center d-table-title">@{{material.material.delivered_qty}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
-														<div v-if="material.quantity === material.delivered_qty">
+														<div v-if="material.material.quantity === material.material.delivered_qty">
 															<h4 class="text-center d-table-title approved-status">Delivered</h4>
 														</div>
 														<div class="pd-input-box" v-else>
@@ -74,7 +75,7 @@
 																class="form-control text-center bar-code-input"
 																type="text"
 																placeholder="Scan QR / Bar Code"
-																@keydown.enter.prevent="handleBarcodeScan($event, index, material.product.id)"
+																@keydown.enter.prevent="handleBarcodeScan($event, index, material.material.product.id)"
 																/>
 														</div>
 													</td>
@@ -88,10 +89,16 @@
 																v-for="(barCode, barCodeIndex) in material.scannedBarcodes"
 																:key="barCodeIndex"
 															>
-																<div class="pd-recived-product-c-item">
+																<div class="pd-recived-product-c-item" v-if="material.type == 'other'">
 																	<input type="hidden" :name="'barcode['+index+'][]'" :value="barCode.barcode"/>
 																	<input type="hidden" :name="'product_material_purchase_details_id['+index+'][]'" :value="barCode.id"/>
 																	<p class="mb-0">@{{ barCode.barcode }}</p>
+																</div>
+
+																<div class="pd-recived-product-c-item" v-if="material.type == 'board'">
+																	<input type="hidden" :name="'barcode['+index+'][]'" :value="barCode.pre_production_no"/>
+																	<input type="hidden" :name="'product_material_purchase_details_id['+index+'][]'" :value="barCode.id"/>
+																	<p class="mb-0">@{{ barCode.pre_production_no }}</p>
 																</div>
 																<div class="pd-recived-product-c-item">
 																	<a href="#" @click.prevent="removeBarcode(index, barCodeIndex)"><i class="fa-solid fa-xmark"></i></a>
@@ -150,20 +157,22 @@
                 if (event.key === 'Enter') {
                     const barcodeValue = event.target.value;
 					let codeCount = 0;
+					let type = this.materials[index].type;
+
 					this.materials[index].scannedBarcodes.map((code, index) => {
 					    if(code.barcode == barcodeValue){
 							codeCount ++;
 						}
 					});
 
-					let url = `{{ route('inventory.material-request.check-barcode', ['id' => ':material_id', 'barcode' => ':barcodeValue', 'count' => ':codeCount']) }}`;
+					let url = `{{ route('inventory.material-request.check-barcode', ['id' => ':material_id', 'barcode' => ':barcodeValue', 'count' => ':codeCount', 'type' => ':type']) }}`;
 					url = url.replace(':material_id', material_id);
 					url = url.replace(':barcodeValue', barcodeValue);
 					url = url.replace(':codeCount', codeCount);
+					url = url.replace(':type', type);
 
-					let available_qtn = this.materials[index].quantity - this.materials[index].delivered_qty;
+					let available_qtn = this.materials[index].material.quantity - this.materials[index].material.delivered_qty;
 					let scaneed_qtn = this.materials[index].barcodeCounts;
-
 					if(available_qtn > scaneed_qtn){
 						axios.get(url)
 						.then(response => {
@@ -181,7 +190,8 @@
 							showErrorAlert('Error', error.response.data.message)
 						});
 					}else{
-						showErrorAlert('Error', 'No item available for delivery')
+						showErrorAlert('Error', 'No item available for delivery');
+						event.target.value = '';
 					}
                 }
             },
@@ -196,6 +206,7 @@
 
                 axios.get(url)
                 .then(response => {
+					console.log(response.data.board_materials);
                     this.materials = response.data.materials.map(material => {
                         return {
                             scannedBarcodes: [],

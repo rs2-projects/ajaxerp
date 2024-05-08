@@ -2,6 +2,8 @@
 
 namespace App\Models\Production;
 
+use App\Models\Products\FinishedGoods;
+use App\Models\Products\FinishedGoodsCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -75,4 +77,13 @@ class PreProductionBoard extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(FinishedGoodsCategory::class, 'finished_board_category_id', 'id');
+    }
+    public function product()
+    {
+        return $this->belongsTo(FinishedGoods::class, 'finished_board_id', 'id');
+    }
 }

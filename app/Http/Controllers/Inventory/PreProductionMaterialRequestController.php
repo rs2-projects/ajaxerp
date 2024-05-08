@@ -79,8 +79,8 @@ class PreProductionMaterialRequestController extends BackendController
         return $this->returnAjaxSuccess($data);
     }
 
-    public function checkBarCode($material_id, $barcode, $count){
-        $data = $this->service->checkBarCode($material_id, $barcode, $count);
+    public function checkBarCode($material_id, $barcode, $count, $type){
+        $data = $this->service->checkBarCode($material_id, $barcode, $count, $type);
         return $data;
     }
 }
