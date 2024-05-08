@@ -15,14 +15,20 @@
                         </div>
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
-                                <input class="form-control" name="order_details" type="text" placeholder="" required="">
+                                <label class="col-form-label">Date <span class="text-red">*</span></label>
+                                <input class="form-control datetimepicker" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="date" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-25">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Image</label>
                                 <input class="form-control" name="image" type="file" placeholder="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
+                                <input class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-36">
@@ -165,8 +171,8 @@
                                     </div>
                                     <div class="pms-item flex-100">
                                         <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                            <a href="#" class="erp-search-btn text-center add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
-                                            <a  @click.prevent="addMaterialBoardSection(index)" href="#" class="erp-search-btn text-center add-more-btn add-board-btn"><i class="la la-plus-circle"></i>Board</a>
+                                            <a href="#" class="erp-search-btn text-center pp-add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
+                                            <a href="#" @click.prevent="addMaterialBoardSection(index)" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                         </div>
                                     </div>
                                 </div>
@@ -258,12 +264,15 @@
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
     <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
     <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -401,6 +410,9 @@
 
         }).mount('#VueApp');
 
+        $(document).ready(function () {
+            initializeDatepicker();
+        });
 
         // other functions
         function initSelect2() {
@@ -469,6 +481,18 @@
                     showErrorAlert('Error',res.message)
                 }
             }, 'show_input_error');
+        }
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
         }
     </script>
 @endsection

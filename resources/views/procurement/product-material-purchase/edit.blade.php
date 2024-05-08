@@ -176,7 +176,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                                {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                                {{ getCurrencySymbol('usd') }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
@@ -225,7 +225,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                    {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                    {{getCurrencySymbol('usd')}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                                 {{--<div class="po-product-delete-icon-box two">
                                                                     <a href="#"><i class="fa fa-times"></i></a>
@@ -292,7 +292,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol()}}
+                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol('usd')}}
                                                                 <span class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
                                                             </h4>
 
@@ -305,7 +305,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol()}}
+                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol('usd')}}
                                                                 <span class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
                                                             </h4>
 
@@ -321,7 +321,7 @@
                                                                     <label for="discount-fixed" :class="{checked:(discount_type == 1)}">
                                                                         <input class="radio-input instagram" type="radio" id="discount-fixed" name="discount_type" value="1" style="display: none;"  v-model="discount_type" v-on:change="changeDiscountType" :checked="discount_type == 1" />
                                                                         <span class="radio-tile instagram">
-                                                                            <span class="radio-icon"> {{getCurrencySymbol()}}</span>
+                                                                            <span class="radio-icon"> {{getCurrencySymbol('usd')}}</span>
                                                                        </span>
                                                                     </label>
 
@@ -341,7 +341,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end sub-total-amount pe-2">
-                                                                {{getCurrencySymbol()}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
+                                                                {{getCurrencySymbol('usd')}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
                                                             </h4>
 
                                                         </div>
@@ -354,7 +354,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                                {{getCurrencySymbol()}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
+                                                                {{getCurrencySymbol('usd')}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
                                                             </h4>
                                                         </div>
                                                     </div>

@@ -87,6 +87,7 @@ class PreProduction extends Model
 
     protected $fillable = [
         'type',
+        'date',
         'pre_production_no',
         'pre_production_batch_no',
         'order_details',

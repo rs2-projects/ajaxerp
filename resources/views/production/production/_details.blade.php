@@ -84,13 +84,13 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection</label>
+                                                    <label class="col-form-label">Material Category</label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection</label>
+                                                    <label class="col-form-label">Matarial</label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
@@ -99,6 +99,30 @@
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">QTY </label>
                                                     <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    @foreach ($processData->board_materials as $processBoard)
+                                        <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board Category </label>
+                                                    <h4 class="input-box-title">{{$processBoard->category->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board </label>
+
+                                                    <h4 class="input-box-title">{{$processBoard->product->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-15">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">QTY </label>
+                                                    <h4 class="input-box-title">{{$processBoard->quantity}}</h4>
                                                 </div>
                                             </div>
                                         </div>
