@@ -20,10 +20,10 @@ class BoardsService
     public function indexData()
     {
         //finished goods category
-        $data['finished_good_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+        /*$data['finished_good_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
             ->where('status',FinishedGoodsCategory::STATUS_ACTIVE)
             ->orderBy('name','asc')
-            ->get();
+            ->get();*/
 
         $data['board_colors'] = BoardColor::where('deleted', BoardColor::DELETED_NO)
             ->where('status', BoardColor::STATUS_ACTIVE)

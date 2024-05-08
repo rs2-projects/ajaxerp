@@ -16,9 +16,11 @@ class ProductMaterial extends Model
 
     const TYPE_BOARD = 0;
     const TYPE_OTHERS = 1;
+    const TYPE_PAPER = 2;
     const TYPES = [
         self::TYPE_BOARD => 'Board',
-        self::TYPE_OTHERS => 'Others'
+        self::TYPE_OTHERS => 'Others',
+        self::TYPE_PAPER => 'Paper'
     ];
 
     const UNIT_TYPE_BOX = 1;
