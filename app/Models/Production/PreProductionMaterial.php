@@ -59,6 +59,8 @@ class PreProductionMaterial extends Model
         'product_material_category_id',
         'product_material_id',
         'quantity',
+        'base_quantity',
+        'extra_quantity',
         'delivered_qty',
         'received_qty',
         'scanned_qty',

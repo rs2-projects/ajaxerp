@@ -60,6 +60,11 @@ class PreProductionProcess extends Model
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_process_id');
     }
 
+    public function board_materials()
+    {
+        return $this->hasMany(PreProductionProcessBoard::class, 'pre_production_process_id');
+    }
+
     public function estimated_output()
     {
         return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id', 'id')
