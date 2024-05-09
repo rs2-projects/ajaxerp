@@ -24,11 +24,11 @@ class PreProductionBoard extends Model
     ];
 
     const RECEIVED_STATUS_PENDING = 0;
-    const RECEIVED_STATUS_RECEIVED = 1;
+    const RECEIVED_STATUS_DELIVERED = 1;
     const RECEIVED_STATUS_PARTIAL = 2;
     const RECEIVEDS = [
         self::RECEIVED_STATUS_PENDING => 'Pending',
-        self::RECEIVED_STATUS_RECEIVED => 'Received',
+        self::RECEIVED_STATUS_DELIVERED => 'Received',
         self::RECEIVED_STATUS_PARTIAL => 'Partial',
     ];
 

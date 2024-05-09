@@ -65,4 +65,26 @@ class PreProductionBoardDeliveryDetails extends Model
         'deleted_at',
     ];
 
+    public function board()
+    {
+        return $this->belongsTo(PreProductionBoard::class, 'pre_production_board_id', 'id')->where('deleted', PreProductionMaterial::DELETED_NO);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(PreProductionBoardDeliveryDetailsItem::class, 'pre_production_board_delivery_details_id', 'id');
+    }
+
+    public function pending_items()
+    {
+        return $this->hasMany(PreProductionBoardDeliveryDetailsItem::class, 'pre_production_board_delivery_details_id', 'id')
+            ->where('received', 0);
+    }
+
+    public function pending_scans()
+    {
+        return $this->hasMany(PreProductionBoardDeliveryDetailsItem::class, 'pre_production_board_delivery_details_id', 'id')
+            ->where('scanned', 0);
+    }
+
 }
