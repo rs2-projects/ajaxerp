@@ -2,6 +2,8 @@
 
 namespace App\Services\Inventory;
 
+use App\Imports\Inventory\BoardProductsImport;
+use App\Imports\Inventory\PaperProductsImport;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Inventory\Warehouse;
@@ -17,6 +19,7 @@ use App\Models\Products\ProductMaterialSection;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductMaterialService
 {
@@ -28,6 +31,7 @@ class ProductMaterialService
     public function indexData()
     {
         $data['material_categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+            ->where('type', ProductMaterialCategory::TYPE_OTHERS)
             ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
@@ -194,6 +198,7 @@ class ProductMaterialService
             }
 
             $data['material_categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+                ->where('type', ProductMaterialCategory::TYPE_OTHERS)
                 ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
                 ->get();
@@ -473,5 +478,28 @@ class ProductMaterialService
             ->get();
 
         return $data;
+    }
+
+    public function importProducts($request, $type)
+    {
+        switch ($type) {
+            case 'boards':
+                $this->importBoardProducts($request);
+                break;
+            case 'papers':
+                $this->importPaperProducts($request);
+                break;
+            default:
+                throw new \Exception('Invalid type');
+        }
+    }
+
+    public function importBoardProducts($request)
+    {
+        Excel::import(new BoardProductsImport(), $request->product_file);
+    }
+    public function importPaperProducts($request)
+    {
+        Excel::import(new PaperProductsImport(), $request->product_file);
     }
 }

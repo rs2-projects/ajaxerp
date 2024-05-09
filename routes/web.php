@@ -276,7 +276,7 @@ Route::group(['middleware' => 'auth'], function () {
             // employee leave
             Route::get('get-user-leave-number-of-days',[EmployeeController::class, 'getUserLeaveNumberOfDays'])->name('hr.employee.get-user-leave-number-of-days');
             Route::post('/employee-leave/create', [EmployeeController::class, 'storeEmpLeave'])->name('hr.employee-leaves.store');
-            
+
             // employee panel login
             Route::get('/{id}/login', [EmployeeLoginController::class, 'login'])->name('hr.employee.login');
             Route::get('login/back-to-admin', [EmployeeLoginController::class, 'backToAdmin'])->name('hr.employee.login.back-to-admin');
@@ -459,6 +459,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{id}/change-status/{status}', [ProductMaterialController::class, 'statusUpdate'])->name('inventory.product-material.change-status')->middleware('permission:manage-product-material');
             Route::get('/get-sections-by-warehouse', [ProductMaterialController::class, 'getSectionsByWarehouse'])->name('inventory.product-material.get-sections-by-warehouse')->middleware('permission:manage-product-material');
             Route::get('/get-racks-by-sections', [ProductMaterialController::class, 'getRacksBySections'])->name('inventory.product-material.get-racks-by-sections')->middleware('permission:manage-product-material');
+
+            Route::post('import/boards', [ProductMaterialController::class, 'importBoards'])->name('inventory.product-material.import-boards')->middleware('permission:manage-product-material');
+            Route::post('import/papers', [ProductMaterialController::class, 'importPapers'])->name('inventory.product-material.import-papers')->middleware('permission:manage-product-material');
         });
     });
     // inventory route end

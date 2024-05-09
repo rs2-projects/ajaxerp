@@ -179,6 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         'Intervention\Image\ImageServiceProvider',
         Barryvdh\Snappy\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -197,6 +198,7 @@ return [
         'Image' => 'Intervention\Image\Facades\Image',
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
 ];
