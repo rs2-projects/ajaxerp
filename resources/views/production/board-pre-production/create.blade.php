@@ -8,42 +8,30 @@
                     @csrf
                     <div class="product-selection-info-box d-flex flex-wrap" style="padding-right: 0px">
                         <div class="row w-100">
-                            <div class="col-md-8">
-                                <div class="input-block erp-step-input-block mb-2 two">
-                                    <label class="col-form-label">Product<small> (Finished Product)</small> <span class="text-red">*</span></label>
-                                    <select class="select select-step" name="finished_goods_id" required="">
-                                        <option>Select Product</option>
-                                        @foreach ($finished_products as $f_product)
-                                            <option value="{{$f_product->id}}">{{$f_product->name}}</option>
+                            <div class="col-md-4">
+                                <div class="input-block erp-step-input-block mb-0">
+                                    <label class="col-form-label">Code <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="code" placeholder="Enter Code" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-block erp-step-input-block mb-0">
+                                    <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
+                                    <select class="select select-step select2" name="machine_id">
+                                        <option value="">Select Machine</option>
+                                        @foreach ($machines as $machine)
+                                            <option value="{{$machine->id}}">{{$machine->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="input-block erp-step-input-block mb-2">
-                                    <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                    <input class="form-control" name="estimated_quantity" type="number" placeholder="" required="">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row w-100">
-                            <div class="col-md-6">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Production Staff <span class="text-danger">*</span></label>
-                                    <select class="select select-step select2" name="staff_id" required>
-                                        <option>Select Production Staff</option>
+                                    <label class="col-form-label">Staff <span class="text-danger">*</span></label>
+                                    <select class="select select-step select2" name="Staff_id">
+                                        <option value="">Select Staff</option>
                                         @foreach ($staffs as $staff)
-                                            <option value="{{$staff->id}}">{{$staff->user_name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
-                                    <select class="select select-step select2" name="machine_id">
-                                        @foreach ($machines as $machine)
-                                            <option value="{{$machine->id}}">{{$machine->name}}</option>
+                                            <option value="{{$staff->id}}">{{$staff->title}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -51,8 +39,8 @@
                         </div>
                         <div class="row w-100">
                             <div class="col-12">
-                                <label class="col-form-label">Note</label>
-                                <textarea rows="1"  name="note" class="form-control"></textarea>
+                                <label class="col-form-label">Product Description</label>
+                                <textarea rows="1"  name="product_description" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
@@ -64,83 +52,105 @@
                                 <div class=" pms-item-wrapper d-flex flex-wrap align-items-end">
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Category Selection </label>
-                                            <select class="select select-step" name="product_material_category_id[]" onchange="getMaterial(this)">
-                                                <option value="">Select Category</option>
-                                                @foreach ($categories as $category)
-                                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                            <label class="col-form-label">Raw Boards <span class="text-danger">*</span> </label>
+                                            <select class="select select-step" name="raw_board" onchange="getMaterial(this)">
+                                                <option value="">Select Board</option>
+                                                @foreach ($boards as $board)
+                                                    <option value="{{ $board->id }}">{{ $board->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="pms-item flex-32">
+                                        <div class="input-block erp-step-input-block mb-0">
+                                            <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
+                                            <select name="plate_up" class="select select-step material-product" >
+                                                <option value="">Select Plate Up</option>
+                                                @foreach ($plates as $plate)
+                                                    <option value="{{ $plate->id }}">{{ $plate->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Material Selection </label>
-                                            <select name="product_material_id[]" class="select select-step material-product" >
-                                                <option value="">Select Material</option>
+                                            <label class="col-form-label">Plate Down <span class="text-danger">*</span> </label>
+                                            <select name="plate_down" class="select select-step material-product" >
+                                                <option value="">Select Plate Down</option>
+                                                @foreach ($plates as $plate)
+                                                    <option value="{{ $plate->id }}">{{ $plate->name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="pms-item flex-15">
-                                        <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">QTY </label>
-                                            <input name="quantity[]" class="form-control " type="number" placeholder="">
-                                        </div>
-                                    </div>
-                                    <div class="pms-item flex-10">
-                                        <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                            <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
+                                    <div class="pms-item flex-100 mt-3">
+                                        <div class="d-flex">
+                                            <div class="flex-50">
+                                                <div class="d-flex pe-3">
+                                                    <div class="pms-item flex-80">
+                                                        <div class="input-block erp-step-input-block mb-0">
+                                                            <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
+                                                            <select name="color_up" class="select select-step material-product" >
+                                                                <option value="">Select Paper Up</option>
+                                                                @foreach ($papers as $paper)
+                                                                    <option value="{{ $paper->id }}">{{ $paper->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pms-item flex-20 ps-2">
+                                                        <div class="input-block erp-step-input-block mb-0">
+                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
+                                                            <input type="number" name="color_up_ qty" class="form-control" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex-50">
+                                                <div class="d-flex ps-3">
+                                                    <div class="pms-item flex-80">
+                                                        <div class="input-block erp-step-input-block mb-0">
+                                                            <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
+                                                            <select name="color_up" class="select select-step material-product" >
+                                                                <option value="">Select Paper Up</option>
+                                                                @foreach ($papers as $paper)
+                                                                    <option value="{{ $paper->id }}">{{ $paper->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="pms-item flex-20 ps-2">
+                                                        <div class="input-block erp-step-input-block mb-0">
+                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
+                                                            <input type="number" name="color_up_qty" class="form-control" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Production</button>
+
+                    <div class="row w-100 mt-3">
+                        <div class="col-12">
+                            <label class="col-form-label">Production Description</label>
+                            <textarea rows="1"  name="production_description" class="form-control"></textarea>
+                        </div>
                     </div>
-                <form>
+
+                    <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                        <button class=" erp-search-btn text-center">Save Pre Production</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    {{-- add mutiple material template --}}
-    <div id="newMaterialRow" style="display: none">
-        <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
-            <div class="pms-item flex-32">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Category Selection </label>
-                    <select class="select1 select-step1 select21" name="product_material_category_id[]" onchange="getMaterial(this)">
-                        <option value="">Select Category</option>
-                        @foreach ($categories as $category)
-                            <option value="{{$category->id}}">{{$category->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="pms-item flex-32">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Material Selection </label>
-                    <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
-                        <option value="">Select Material</option>
-                    </select>
-                </div>
-            </div>
-            <div class="pms-item flex-15">
-                <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">QTY </label>
-                    <input name="quantity[]" class="form-control" type="number" placeholder="">
-                </div>
-            </div>
-            <div class="pms-item flex-10">
-                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                    <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
-                    <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+
 @endsection
 
 @section('modals')

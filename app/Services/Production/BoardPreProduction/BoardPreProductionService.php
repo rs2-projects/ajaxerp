@@ -12,6 +12,7 @@ use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProductionProcessMachine;
 use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionStaff;
+use App\Models\Products\BoardEmbossed;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
@@ -52,14 +53,6 @@ class BoardPreProductionService
             ->orderBy('name', 'asc')
             ->get();
 
-        $data['categories'] = ProductMaterialCategory::whereHas('products', function ($q) {
-            $q->where('type', ProductMaterial::TYPE_BOARD);
-        })
-            ->where('deleted', ProductMaterialCategory::DELETED_NO)
-            ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
-            ->get();
-
         $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
             ->where('status', FinishedGoods::STATUS_ACTIVE)
             ->where('type', FinishedGoods::TYPE_BOARD)
@@ -70,6 +63,25 @@ class BoardPreProductionService
             ->where('status', ProductionStaff::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
+
+        $data['boards'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('type', ProductMaterial::TYPE_BOARD)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $data['plates'] = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
+            ->where('status', BoardEmbossed::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $data['papers'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('type', ProductMaterial::TYPE_PAPER)
+            ->orderBy('name', 'asc')
+            ->get();
+
+
 
         return $data;
     }
