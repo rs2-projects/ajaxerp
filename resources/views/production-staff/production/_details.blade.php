@@ -79,7 +79,7 @@
                                 <div class="production-machine-selection-wrapper d-flex flex-wrap p-de-box-wrapper">
                                     <div class="pms-item flex-48">
                                         <div class="input-block erp-step-input-block mb-0 p-de-input-box">
-                                            <label class="col-form-label">Machine Selection </label>
+                                            <label class="col-form-label">Machine </label>
                                             <h4 class="input-box-title">
                                                 @foreach ($processData?->processMachines as $machineData)
                                                     <span>{{$machineData->machine->name}}</span>
@@ -110,13 +110,13 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection </label>
+                                                    <label class="col-form-label">Material Category </label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection </label>
+                                                    <label class="col-form-label">Material </label>
 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
@@ -142,6 +142,43 @@
                                             @endif
                                         </div>
                                     @endforeach
+
+                                    @foreach ($processData->board_materials as $processBoard)
+                                        <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board Category </label>
+                                                    <h4 class="input-box-title">{{$processBoard->category->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board </label>
+
+                                                    <h4 class="input-box-title">{{$processBoard->product->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-10">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">QTY </label>
+                                                    <h4 class="input-box-title">{{$processBoard->quantity}}</h4>
+                                                </div>
+                                            </div>
+                                            @if($processBoard->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processBoard->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="production-estimate-output-selection-wrapper">
@@ -151,13 +188,13 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end">
                                             <div class="pms-item flex-60">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Name </label>
                                                     <h4 class="input-box-title"> {{$outputData->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-15">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">QTY</label>
                                                     <h4 class="input-box-title">{{$outputData->quantity}}</h4>
                                                 </div>
                                             </div>
@@ -187,10 +224,11 @@
 {{-- add mutiple material template --}}
     <div id="newMaterialRow" style="display: none">
         <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
+            <input type="hidden" name="material_type[]" value="other" />
             <div class="pms-item flex-32">
                 <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Category Selection </label>
-                    <select class="select1 select-step1" name="product_material_category_id[]" onchange="getMaterial(this)">
+                    <label class="col-form-label"> Material Category </label>
+                    <select class="select1 select-step1" name="product_material_category_id[]" type="other" onchange="getMaterial(this)">
                         <option value="">Select Category</option>
                         @foreach ($categories as $category)
                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -200,7 +238,7 @@
             </div>
             <div class="pms-item flex-32">
                 <div class="input-block erp-step-input-block mb-0">
-                    <label class="col-form-label">Material Selection </label>
+                    <label class="col-form-label">Material </label>
                     <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
                         <option value="">Select Material</option>
                     </select>
@@ -214,7 +252,44 @@
             </div>
             <div class="pms-item flex-10">
                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                    <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a>
+                    {{-- <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a> --}}
+                    <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="newBoardRow" style="display: none">
+        <div class="material-item-parent pms-item-wrapper d-flex flex-wrap align-items-end">
+            <input type="hidden" name="material_type[]" value="board" />
+            <div class="pms-item flex-32">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label"> Board Category </label>
+                    <select class="select1 select-step1" name="product_material_category_id[]" type="board" onchange="getMaterial(this)">
+                        <option value="">Select Category</option>
+                        @foreach ($finished_categoris as $category)
+                            <option value="{{$category->id}}">{{$category->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="pms-item flex-32">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">Board </label>
+                    <select name="product_material_id[]" class="select1 select-step1 material-product material-product2" >
+                        <option value="">Select Board</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pms-item flex-15">
+                <div class="input-block erp-step-input-block mb-0">
+                    <label class="col-form-label">QTY </label>
+                    <input name="quantity[]" class="form-control" type="number" placeholder="">
+                </div>
+            </div>
+            <div class="pms-item flex-10">
+                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                    {{-- <a href="javascript:void(0)" class="add-more-m-btn" onclick="addMaterialSection()"><i class="la la-plus-circle"></i></a> --}}
                     <a href="javascript:void(0)" onclick="removeMaterialSection(this)" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
                 </div>
             </div>
@@ -472,6 +547,8 @@
         }
 
         function getMaterial(select){
+            console.log(select.attr('type'));
+
             let category_id = $(select).val();
             var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
             console.log(materialSelect);
@@ -492,8 +569,13 @@
             }
         }
 
-        function addMaterialSection(){
-            var item = $('#newMaterialRow').html();
+        function addMaterialSection(add_type){
+            let item = '';
+            if(add_type == 'other'){
+                item = $('#newMaterialRow').html();
+            }else{
+                item = $('#newBoardRow').html();
+            }
             $('.materialWraper').append(item);
 
             $(".materialWraper .select-step1").select2({
@@ -503,7 +585,6 @@
                 width: '100%'
 
             });
-
         }
 
         function removeMaterialSection(element){
@@ -544,9 +625,10 @@
                     this.getMaterials();
                     // $("#scanRawMaterialModal").modal('show');
                 },
-                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
                     if (event.key === 'Enter') {
                         const barcodeValue = event.target.value;
+                        const delivery_type = this.deliveries[deliverIndex].type;
                         if(barcodeValue !=''){
                             const id = document.getElementById('pre_production__id').value;
                             let url = `{{ route('production-staff.production.production.check-barcode.scan', ':id') }}`;
@@ -556,6 +638,7 @@
                                 barcode: barcodeValue,
                                 delivery_id: deliverId,
                                 delivery_details_id: detailsId,
+                                type: delivery_type
                             }
 
                             axios.get(url, { params: data })
@@ -595,32 +678,38 @@
                     
                     axios.get(url)
                     .then(response => {
-                        this.deliveries = response.data.deliveries.map(delivery => {
-                            return {
-                                ...delivery,
-                                delivery_details: delivery.delivery_details.map(detail => {
-                                    return {
-                                        ...detail,
-                                        scannedBarcodes: [],
-                                        barcodeCounts: 0,
-                                    };
-                                })
-                            };
-                        });
+                        this.deliveries = response.data.deliveries.map(delivery_data => {
+                                let details_data = [];
+                                if(delivery_data.type == 'other'){
+                                    details_data = delivery_data?.delivery.delivery_details;
+                                }else{
+                                    details_data = delivery_data?.delivery.board_delivery_details;
+                                }
+                                return {
+                                    ...delivery_data,
+                                    delivery_details: details_data.map(detail => {
+                                        return {
+                                            ...detail,
+                                            scannedBarcodes: [],
+                                            barcodeCounts: 0,
+                                        };
+                                    })
+                                };
+                            });
                         $("#scanRawMaterialModal").modal('show');
                     })
                     .catch(error => {
                         console.error('Error fetching delivery details:', error);
                     });
                 },
-
+                
                 checkValidation(e, deliveryIndex) {
                     e.preventDefault();
                     const delivery = this.deliveries[deliveryIndex];
                     if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
                         showErrorAlert('Oops!', 'Please add scanned items!');
                     } else {
-                        receiveStoreForm(delivery.id, deliveryIndex);
+                        receiveStoreForm(delivery.delivery.id, deliveryIndex);
                     }
                 },
 
@@ -635,12 +724,17 @@
                     return new Date(dateString).toLocaleDateString('en-US', options);
                 },
 
-                updateDeliveries(res){
-                    console.log(res);
-                    this.deliveries = res?.map(delivery => {
+                updateDeliveries(response){
+                    this.deliveries = response.map(delivery_data => {
+                        let details_data = [];
+                        if(delivery_data.type == 'other'){
+                            details_data = delivery_data?.delivery.delivery_details;
+                        }else{
+                            details_data = delivery_data?.delivery.board_delivery_details;
+                        }
                         return {
-                            ...delivery,
-                            delivery_details: delivery.delivery_details?.map(detail => {
+                            ...delivery_data,
+                            delivery_details: details_data.map(detail => {
                                 return {
                                     ...detail,
                                     scannedBarcodes: [],
@@ -661,7 +755,6 @@
             var self = $("#deliverStoreForm" + deliveryID);
             var formData = new FormData($(self)[0]);
             var url = $(self).attr('action');
-
             formPost(url, formData, function (res) {
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message);

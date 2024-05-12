@@ -295,25 +295,24 @@
                     // }
 
                     updateDeliveries(response){
-                        console.log(response);
-                        this.deliveries = response.data.deliveries.map(delivery_data => {
-                                let details_data = [];
-                                if(delivery_data.type == 'other'){
-                                    details_data = delivery_data?.delivery.delivery_details;
-                                }else{
-                                    details_data = delivery_data?.delivery.board_delivery_details;
-                                }
-                                return {
-                                    ...delivery_data,
-                                    delivery_details: details_data.map(detail => {
-                                        return {
-                                            ...detail,
-                                            scannedBarcodes: [],
-                                            barcodeCounts: 0,
-                                        };
-                                    })
-                                };
-                            });
+                        this.deliveries = response.map(delivery_data => {
+                            let details_data = [];
+                            if(delivery_data.type == 'other'){
+                                details_data = delivery_data?.delivery.delivery_details;
+                            }else{
+                                details_data = delivery_data?.delivery.board_delivery_details;
+                            }
+                            return {
+                                ...delivery_data,
+                                delivery_details: details_data.map(detail => {
+                                    return {
+                                        ...detail,
+                                        scannedBarcodes: [],
+                                        barcodeCounts: 0,
+                                    };
+                                })
+                            };
+                        });
                     }
 
                 },
