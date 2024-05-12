@@ -45,7 +45,7 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/update', [AssetProductController::class, 'update'])->name('inventory.asset-product.update')->middleware('permission:manage-asset-product');
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
-        
+
         Route::post('/{id}/assign-product', [AssetProductController::class, 'assignProduct'])->name('inventory.asset-product.assign-asset-product');
         Route::post('/{id}/maintenance-product', [AssetProductController::class, 'maintenanceProduct'])->name('inventory.asset-product.maintenance-asset-product');
         Route::post('/{id}/sell-product', [AssetProductController::class, 'sellProduct'])->name('inventory.asset-product.sell-asset-product');
@@ -279,6 +279,8 @@ Route::group(['prefix' => 'settings'], function () {
         Route::get('/{id}/edit', [BoardEmbossedController::class, 'edit'])->name('settings.board-embossed.edit');
         Route::post('/{id}/update', [BoardEmbossedController::class, 'update'])->name('settings.board-embossed.update');
         Route::get('/{id}/delete', [BoardEmbossedController::class, 'delete'])->name('settings.board-embossed.delete');
+
+        Route::post('bulk-import', [BoardEmbossedController::class, 'importPlates'])->name('settings.board-embossed.bulk-import');
     });
     // board embossed route end
 });

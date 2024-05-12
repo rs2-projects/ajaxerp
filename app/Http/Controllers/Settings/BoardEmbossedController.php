@@ -16,14 +16,14 @@ class BoardEmbossedController extends BackendController
     public function __construct()
     {
         $this->addBreadcrumbs('Settings', route('settings.office-time'), 'fa fa-cog');
-        $this->addBreadcrumbs('Board Embossed');
+        $this->addBreadcrumbs('Plate');
 
         $this->service = new BoardEmbossedService();
     }
 
     public function index()
     {
-        $this->setPageTitle("Board Embossed");
+        $this->setPageTitle("Plate");
         $this->setActiveMenu('settings.board-embossed.index');
 
         return  $this->view('settings.board-embossed.index');
@@ -46,7 +46,7 @@ class BoardEmbossedController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
-        return $this->returnAjaxSuccess([], 'Board Embossed created successfully');
+        return $this->returnAjaxSuccess([], 'Plate created successfully');
     }
 
     public function edit($id)
@@ -69,7 +69,7 @@ class BoardEmbossedController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
-        return $this->returnAjaxSuccess([], 'Board Embossed updated successfully');
+        return $this->returnAjaxSuccess([], 'Plate updated successfully');
     }
 
     public function delete($id)
@@ -79,6 +79,18 @@ class BoardEmbossedController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
-        return $this->returnAjaxSuccess([], 'Board Embossed deleted successfully');
+        return $this->returnAjaxSuccess([], 'Plate deleted successfully');
     }
+
+    public function importPlates(Request $request)
+    {
+        try {
+            $this->service->importPlates($request);
+            return redirect()->back()->with(['success' => 'Plates Imported Successfully!']);
+        }catch (\Exception $e) {
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+//            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
 }

@@ -1,11 +1,11 @@
 <!-- Add New Product Modal -->
-<div id="boardProductImportModal" class="modal custom-modal fade" role="dialog">
+<div id="plateImportModal" class="modal custom-modal fade" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
-            <form action="{{ route('inventory.product-material.import-boards') }}" id="boardProductImportForm" enctype="multipart/form-data" method="post">
+            <form action="{{ route('settings.board-embossed.bulk-import') }}" id="plateImportForm" enctype="multipart/form-data" method="post">
                 @csrf
                 <div class="modal-header erp-modal-header">
-                    <h5 class="modal-title">Import Board Products</h5>
+                    <h5 class="modal-title">Import Plates</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -14,7 +14,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-end">
-                                <a href="{{ asset('demo-files/demo-board-products.xlsx') }}" class="text-primary"><i class="fa-solid fa-download"></i> Download Demo File</a>
+                                <a href="{{ asset('demo-files/demo-plates.xlsx') }}" class="text-primary"><i class="fa-solid fa-download"></i> Download Demo File</a>
                             </div>
                            <div class="form-group">
                                <label for="product_file" class="mb-1">Import File</label>
@@ -24,7 +24,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" id="boardProductImportSubmitBtn" type="submit">Import</button>
+                                        <button class=" erp-search-btn text-center" id="plateImportSubmitBtn" type="submit">Import</button>
                                     </div>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@
             @csrf
             <div class="modal-content">
                 <div class="modal-header erp-modal-header">
-                    <h5 class="modal-title">Add Board Embossed</h5>
+                    <h5 class="modal-title">Add Plate</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

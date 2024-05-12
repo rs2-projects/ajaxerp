@@ -132,7 +132,8 @@ class ProductMaterialController extends BackendController
             return redirect()->back()->with(['success' => 'Boards Imported Successfully!']);
 //            return $this->returnAjaxSuccess([], 'Boards Imported Successfully!');
         }catch (\Exception $e) {
-            return $this->returnAjaxError([],$e->getMessage());
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+//            return $this->returnAjaxError([],$e->getMessage());
         }
     }
 
@@ -143,7 +144,8 @@ class ProductMaterialController extends BackendController
             return redirect()->back()->with(['success' => 'Papers Imported Successfully!']);
 //            return $this->returnAjaxSuccess([], 'Papers Imported Successfully');
         }catch (\Exception $e) {
-            return $this->returnAjaxError([],$e->getMessage());
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+//            return $this->returnAjaxError([],$e->getMessage());
         }
     }
 }

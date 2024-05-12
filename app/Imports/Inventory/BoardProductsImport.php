@@ -29,6 +29,9 @@ class BoardProductsImport implements ToCollection, WithStartRow
         }
         $default_board_category_id = $default_board_category->id;
         foreach ($collection as $item) {
+            if ($item[0] == '') {
+                continue;
+            }
             //check product material name unique
             $product_material = ProductMaterial::where('name', $item[0])
                 ->where('product_material_category_id', $default_board_category_id)

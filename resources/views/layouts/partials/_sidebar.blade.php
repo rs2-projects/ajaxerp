@@ -271,6 +271,10 @@
                     <li>
                         <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
                     </li>
+
+                    <li>
+                        <a href="{{ route('settings.board-embossed.index') }}" class="{{ ($activeMenu == 'settings.board-embossed.index') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Plate</span></a>
+                    </li>
                 @endif
 
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))
