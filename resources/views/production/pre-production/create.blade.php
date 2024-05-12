@@ -59,7 +59,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" name="estimated_production_qty" type="number" placeholder="" required="">
+                                <input class="form-control" name="estimated_production_qty" type="number" min="0" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -159,7 +159,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY </label>
-                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="">
+                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" min="0" placeholder="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -192,7 +192,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
+                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" min="0" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">

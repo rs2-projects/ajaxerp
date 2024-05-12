@@ -90,7 +90,7 @@
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial</label>
+                                                    <label class="col-form-label">Material</label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
