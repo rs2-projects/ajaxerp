@@ -10,7 +10,14 @@ class FinishedGoodsCategory extends Model
     use HasFactory;
     protected $table = 'finished_goods_categories';
     public $timestamps = false;
-    // 0 => 'Inactive', 1 => 'Active'
+
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
+    const TYPES = [
+        self::TYPE_BOARD => 'Board',
+        self::TYPE_OTHERS => 'Others'
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -26,6 +33,7 @@ class FinishedGoodsCategory extends Model
     ];
 
     protected $fillable = [
+        'type',
         'name',
         'description',
         'status',

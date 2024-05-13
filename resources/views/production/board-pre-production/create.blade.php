@@ -28,7 +28,7 @@
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Staff <span class="text-danger">*</span></label>
-                                    <select class="select select-step select2" name="Staff_id">
+                                    <select class="select select-step select2" name="staff_id">
                                         <option value="">Select Staff</option>
                                         @foreach ($staffs as $staff)
                                             <option value="{{$staff->id}}">{{$staff->title}}</option>
@@ -53,19 +53,21 @@
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Raw Boards <span class="text-danger">*</span> </label>
-                                            <select class="select select-step" name="raw_board">
+                                            <select class="select select-step" name="product_material_id[]" required>
                                                 <option value="">Select Board</option>
                                                 @foreach ($boards as $board)
                                                     <option value="{{ $board->id }}">{{ $board->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <input type="hidden" name="quantity[]" value="1" class="form-control">
+                                        <input type="hidden" name="type[]" value="0" class="form-control">
                                     </div>
 
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
-                                            <select name="plate_up" class="select select-step material-product" >
+                                            <select name="plate_up" class="select select-step material-product" required>
                                                 <option value="">Select Plate Up</option>
                                                 @foreach ($plates as $plate)
                                                     <option value="{{ $plate->id }}">{{ $plate->name }}</option>
@@ -76,7 +78,7 @@
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Plate Down <span class="text-danger">*</span> </label>
-                                            <select name="plate_down" class="select select-step material-product" >
+                                            <select name="plate_down" class="select select-step material-product" required>
                                                 <option value="">Select Plate Down</option>
                                                 @foreach ($plates as $plate)
                                                     <option value="{{ $plate->id }}">{{ $plate->name }}</option>
@@ -88,10 +90,11 @@
                                         <div class="d-flex">
                                             <div class="flex-50">
                                                 <div class="d-flex pe-3">
+                                                    <input type="hidden" name="type[]" value="1" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
-                                                            <select name="color_up" class="select select-step material-product" >
+                                                            <select name="product_material_id[]" class="select select-step material-product" required>
                                                                 <option value="">Select Paper Up</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
@@ -102,18 +105,19 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="color_up_ qty" min="1" class="form-control" required>
+                                                            <input type="number" name="quantity[]" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="flex-50">
                                                 <div class="d-flex ps-3">
+                                                    <input type="hidden" name="type[]" value="2" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
-                                                            <select name="color_up" class="select select-step material-product" >
-                                                                <option value="">Select Paper Up</option>
+                                                            <label class="col-form-label">Paper Down <span class="text-danger">*</span> </label>
+                                                            <select name="product_material_id[]" class="select select-step material-product" required>
+                                                                <option value="">Select Paper Down</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
                                                                 @endforeach
@@ -123,7 +127,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="color_up_qty" min="1" class="form-control" required>
+                                                            <input type="number" name="quantity[]" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -191,7 +195,6 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            // initSelect2();
             $("#preProductionStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -213,36 +216,36 @@
             });
         });
 
-        function getMaterial(select){
-            let category_id = $(select).val();
-            var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
-            console.log(materialSelect);
+        // function getMaterial(select){
+        //     let category_id = $(select).val();
+        //     var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
+        //     console.log(materialSelect);
 
-            let url = "{{ route('production.board-pre-production.get-material-products') }}";
-            if(category_id > 0){
-                ajaxGet(url, {category_id:category_id}, function (response) {
-                    if (response.status == 200) {
-                        materialSelect.html(response.view);
-                    } else {
-                        materialSelect.html('');
-                        toastr.error(response.message);
-                    }
-                });
-            } else {
-                materialSelect.html('');
-                return;
-            }
-        }
+        //     let url = "{{ route('production.board-pre-production.get-material-products') }}";
+        //     if(category_id > 0){
+        //         ajaxGet(url, {category_id:category_id}, function (response) {
+        //             if (response.status == 200) {
+        //                 materialSelect.html(response.view);
+        //             } else {
+        //                 materialSelect.html('');
+        //                 toastr.error(response.message);
+        //             }
+        //         });
+        //     } else {
+        //         materialSelect.html('');
+        //         return;
+        //     }
+        // }
 
-        function addMaterialSection(){
-            var item = $('#newMaterialRow').html();
-            $('.materialWraper').append(item);
-            initSelect2();
-        }
+        // function addMaterialSection(){
+        //     var item = $('#newMaterialRow').html();
+        //     $('.materialWraper').append(item);
+        //     initSelect2();
+        // }
 
-        function removeMaterialSection(element){
-            $(element).closest('.material-item-parent').remove();
-        }
+        // function removeMaterialSection(element){
+        //     $(element).closest('.material-item-parent').remove();
+        // }
 
         function initSelect2() {
             $('.process-wrapper .select-step1').select2({

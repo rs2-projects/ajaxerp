@@ -22,8 +22,12 @@ class UpdateBoardPreProductionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'finished_goods_id' => 'required',
-            'estimated_quantity' => 'required'
+            'code' => 'required',
+            'machine_id' => 'required',
+            'staff_id' => 'required',
+            'quantity' => 'required',
+            'plate_up' => 'required',
+            'plate_down' => 'required'
         ];
     }
 }
