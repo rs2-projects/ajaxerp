@@ -35,14 +35,11 @@ jobs:
             -   name: Install Dependencies On Server
                 run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-            -   name: Print Environment Variables
-                env:
-                    DB_CONNECTION: mysql
-                    DB_HOST: 127.0.0.1
-                    DB_PORT: 3306
-                    DB_DATABASE: duphilco_ajaxtradingcorp_staging
-                    DB_USER: root
-                    DB_PASSWORD: RebUseLUbunTuAws2828
-                run: |
-                    php artisan config:clear
-                    php artisan migrate --force
+            -   name: Run Migrations
+
+                uses: appleboy/ssh-action@master
+
+                with:
+                    script: |
+                        cd /var/www/staging.ajaxtradingcorp.com/
+                        php artisan migrate --force
