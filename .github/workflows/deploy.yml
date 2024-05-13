@@ -44,4 +44,5 @@ jobs:
                     DB_USER: root
                     DB_PASSWORD: RebUseLUbunTuAws2828
                 run: |
+                    php artisan config:clear
                     php artisan migrate --force
