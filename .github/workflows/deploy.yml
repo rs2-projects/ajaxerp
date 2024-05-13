@@ -32,6 +32,8 @@ jobs:
 
             git pull
 
+            php artisan migrate
+
       - name: Install Dependencies On Server
         run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
