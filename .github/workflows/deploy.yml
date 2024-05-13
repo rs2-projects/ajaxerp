@@ -37,11 +37,11 @@ jobs:
 
       - name: Print Environment Variables
         run: |
-          echo "DB_HOST: $DB_HOST"
-          echo "DB_PORT: $DB_PORT"
-          echo "DB_DATABASE: $DB_DATABASE"
-          echo "DB_USERNAME: $DB_USERNAME"
-          echo "DB_PASSWORD: $DB_PASSWORD"
+          echo "DB_HOST: 127.0.0.1"
+          echo "DB_PORT: 3306"
+          echo "DB_DATABASE: duphilco_ajaxtradingcorp_staging"
+          echo "DB_USERNAME: root"
+          echo "DB_PASSWORD: RebUseLUbunTuAws2828"
 
       - name: Migrate Database
         run: php artisan migrate --force
