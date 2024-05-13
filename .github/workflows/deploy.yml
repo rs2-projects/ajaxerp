@@ -1,49 +1,47 @@
 name: Laravel
 
 on:
-  push:
-    branches: [ "staging" ]
+    push:
+        branches: [ "staging" ]
 
 jobs:
 
-  deploy:
+    deploy:
 
-    runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
 
-    steps:
+        steps:
 
-      - name: Checkout
+            -   name: Checkout
 
-        uses: actions/checkout@v2
+                uses: actions/checkout@v2
 
-      - name: Deployment
+            -   name: Deployment
 
-        uses: appleboy/ssh-action@master
+                uses: appleboy/ssh-action@master
 
-        with:
+                with:
 
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          username: ${{ secrets.SSH_USERNAME }}
+                    host: ${{ secrets.SSH_HOST }}
+                    key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    username: ${{ secrets.SSH_USERNAME }}
 
-          script: |
+                    script: |
 
-            cd /var/www/staging.ajaxtradingcorp.com/
+                        cd /var/www/staging.ajaxtradingcorp.com/
 
-            git pull
+                        git pull
 
-            php artisan migrate
+            -   name: Install Dependencies On Server
+                run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-      - name: Install Dependencies On Server
-        run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-      - name: Print Environment Variables
-        run: |
-          echo "DB_HOST: 127.0.0.1"
-          echo "DB_PORT: 3306"
-          echo "DB_DATABASE: duphilco_ajaxtradingcorp_staging"
-          echo "DB_USERNAME: root"
-          echo "DB_PASSWORD: RebUseLUbunTuAws2828"
-
-      - name: Migrate Database
-        run: php artisan migrate --force
+            -   name: Print Environment Variables
+                env:
+                    DB_CONNECTION: mysql
+                    DB_HOST: 127.0.0.1
+                    DB_PORT: 3306
+                    DB_DATABASE: duphilco_ajaxtradingcorp_staging
+                    DB_USER: root
+                    DB_PASSWORD: RebUseLUbunTuAws2828
+                run: |
+                    php artisan migrate --force
