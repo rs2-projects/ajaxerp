@@ -33,7 +33,7 @@ jobs:
             git pull
 
       - name: Install Dependencies On Server
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Migrate Database
         run: php artisan migrate --force
