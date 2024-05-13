@@ -89,7 +89,7 @@ class OfficeTimeSettingsService
             }
 
             $salary_set_ids = SettingsSalarySet::where('settings_office_time_type_id', $type->id)->pluck('id')->toArray();
-            $employee_ids = SettingsSalarySetEmployee::whereIn('settings_salary_set_id', $salary_set_ids);
+            $employee_ids = SettingsSalarySetEmployee::whereIn('settings_salary_set_id', $salary_set_ids)->pluck('employee_id')->toArray();
             AttendanceReport::whereIn('employee_id', $employee_ids)
                 ->whereIn('settings_salary_set_id', $salary_set_ids)
                 ->where('salary_generated', AttendanceReport::SALARY_GENERATED_NO)
