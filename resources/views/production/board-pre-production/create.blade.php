@@ -6,7 +6,7 @@
             <div class="new-production-wrapper bg-card attd-table">
                 <form action="{{route('production.board-pre-production.store')}}" id="preProductionStoreForm" method="POST">
                     @csrf
-                    <div class="product-selection-info-box d-flex flex-wrap" style="padding-right: 0px">
+                    <div class="product-selection-info-box d-flex flex-wrap" style="padding-right: 0">
                         <div class="row w-100">
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
@@ -163,22 +163,7 @@
 @endsection
 
 @section('css')
-    <style>
-        .remove-process-btn{
-            margin-top: 0;
-            border-radius: 0px 0px 50px 50px;
-            padding: 5px 30px;
-            border: 2px dashed rgb(233 49 49);
-            background-color: #ffe3e3;
-            border-top: none;
-            font-size: 12px;
-            font-weight: 700;
-            font-weight: 800;
-        }
-        .prod-p-staff{
-            width: 48%;
-        }
-    </style>
+
 @endsection
 
 @section('css_plugins')
@@ -186,8 +171,8 @@
 @endsection
 
 @section('js_plugins')
-    <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
-    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
+    <script src="{{asset('assets/plugins/multipleselect/multiple-select.js')}}"></script>
+    <script src="{{asset('assets/plugins/multipleselect/multi-select.js')}}"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
