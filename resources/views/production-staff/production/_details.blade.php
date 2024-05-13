@@ -161,7 +161,7 @@
                                             <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">QTY </label>
-                                                    <h4 class="input-box-title">{{$processBoard->quantity}}</h4>
+                                                    <h4 class="input-box-title">{{$processBoard->base_quantity}}</h4>
                                                 </div>
                                             </div>
                                             @if($processBoard->extra_quantity)
@@ -547,15 +547,14 @@
         }
 
         function getMaterial(select){
-            console.log(select.attr('type'));
-
+            let material_type = $(select).attr('type');
+            console.log(material_type)
             let category_id = $(select).val();
             var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
-            console.log(materialSelect);
 
             let url = "{{ route('production-staff.production.production.get-material-by-category') }}";
             if(category_id > 0){
-                ajaxGet(url, {category_id:category_id}, function (response) {
+                ajaxGet(url, {category_id:category_id, type: material_type}, function (response) {
                     if (response.status == 200) {
                         materialSelect.html(response.view);
                     } else {
@@ -592,12 +591,28 @@
         }
 
         $("#reRequisitionStoreForm").on('submit', function (e) {
+            var categories = $("select[name='product_material_category_id[]']").toArray();
+            var materials = $("select[name='product_material_id[]']").toArray();
+            var quantities = $("input[name='quantity[]']").toArray();
+            var isValid = false;
+
+            for (var i = 0; i < categories.length; i++) {
+                if ($(categories[i]).val() !== "" && $(materials[i]).val() !== "" && $(quantities[i]).val() !== "") {
+                    isValid = true;
+                    break;
+                }
+            }
+            if (!isValid) {
+                showErrorAlert('Error', "Please select at least one category, material, and quantity.")
+                e.preventDefault();
+                return;
+            }
+            
             var self = this;
             e.preventDefault();
             var formData = new FormData($(self)[0]);
             $(".ie-span").text("").hide();
             var url = $(self).attr('action');
-            console.log(url);
             formPost(url, formData, function (res) {
                 if(res.status == 200){
                     $("#reRequisitionModal").modal('hide');
@@ -709,7 +724,7 @@
                     if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
                         showErrorAlert('Oops!', 'Please add scanned items!');
                     } else {
-                        receiveStoreForm(delivery.delivery.id, deliveryIndex);
+                        scanStoreForm(delivery.delivery.id, deliveryIndex);
                     }
                 },
 
@@ -751,7 +766,12 @@
             }
         }).mount('#VueApp');
 
-        function receiveStoreForm(deliveryID, deliveryIndex){
+        $('#scanRawMaterialModal').on('hidden.bs.modal', function () {
+            setTimeout(function () {
+                location.reload();
+            }, 100);
+        })
+        function scanStoreForm(deliveryID, deliveryIndex){
             var self = $("#deliverStoreForm" + deliveryID);
             var formData = new FormData($(self)[0]);
             var url = $(self).attr('action');

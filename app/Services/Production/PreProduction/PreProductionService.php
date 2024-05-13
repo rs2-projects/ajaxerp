@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 
 class PreProductionService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');

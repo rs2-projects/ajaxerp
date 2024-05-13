@@ -40,7 +40,7 @@
                                 <div class="pms-item flex-15">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">QTY </label>
-                                        <input name="quantity[]" class="form-control" type="number" placeholder="">
+                                        <input name="quantity[]" class="form-control" type="number" min="0" placeholder="">
                                     </div>
                                 </div>
                                 {{-- <div class="pms-item flex-10">
