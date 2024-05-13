@@ -35,5 +35,13 @@ jobs:
       - name: Install Dependencies On Server
         run: composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+      - name: Print Environment Variables
+        run: |
+          echo "DB_HOST: $DB_HOST"
+          echo "DB_PORT: $DB_PORT"
+          echo "DB_DATABASE: $DB_DATABASE"
+          echo "DB_USERNAME: $DB_USERNAME"
+          echo "DB_PASSWORD: $DB_PASSWORD"
+
       - name: Migrate Database
         run: php artisan migrate --force
