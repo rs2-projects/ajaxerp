@@ -2,6 +2,8 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\Country;
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,5 +82,35 @@ class Supplier extends Model
     public function supplierAssets()
     {
         return $this->hasMany(SupplierAssetProduct::class, 'supplier_id', 'id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'id');
+    }
+
+    public function getFullAddressText()
+    {
+        $address = "";
+        if($this->address != '') {
+            $address = $this->address;
+        }
+        if($this->city != '') {
+            $address .= ($address != '' ? ', ' : '').$this->city;
+        }
+        if($this->state != null) {
+            $address .= ($address != '' ? ', ' : '').$this->state->name;
+        }
+        if($this->country != null) {
+            $address .= ($address != '' ? ', ' : '').$this->country->name;
+        }
+        if($this->zip_code != '') {
+            $address .= ($address != '' ? ', ' : '').$this->zip_code;
+        }
+        return $address;
     }
 }

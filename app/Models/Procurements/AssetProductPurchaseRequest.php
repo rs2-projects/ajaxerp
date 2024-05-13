@@ -26,6 +26,19 @@ class AssetProductPurchaseRequest extends Model
         self::DELETED_YES => 'Yes',
     ];
 
+    const REQUEST_STATUS_NEW = 0;
+    const REQUEST_STATUS_APPROVED = 1;
+    const REQUEST_STATUS_DECLINED = 2;
+    const REQUEST_STATUS_ADDITIONAL_INFO = 3;
+    const REQUEST_STATUS_INFO_SUBMITTED = 4;
+    const REQUEST_STATUSES = [
+        self::REQUEST_STATUS_NEW => 'New',
+        self::REQUEST_STATUS_APPROVED => 'Approved',
+        self::REQUEST_STATUS_DECLINED => 'Declined',
+        self::REQUEST_STATUS_ADDITIONAL_INFO => 'Pending',
+        self::REQUEST_STATUS_INFO_SUBMITTED => 'Info Submitted',
+    ];
+
     protected $fillable = [
         'title',
         'description',
@@ -41,4 +54,9 @@ class AssetProductPurchaseRequest extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function purchase_request_details()
+    {
+        return $this->hasMany(AssetProductPurchaseRequestDetails::class, 'asset_product_purchase_request_id', 'id');
+    }
 }

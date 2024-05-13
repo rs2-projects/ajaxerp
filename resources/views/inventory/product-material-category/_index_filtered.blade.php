@@ -8,13 +8,14 @@
     <div class="table-header-item dep-list text-center">
         <h4>Description</h4>
     </div>
-    <div class="table-header-item dep-list text-end pe-2">
-        <h4>Action</h4>
-    </div>
+    @if(hasPermission( 'manage-product-material-category'))
+        <div class="table-header-item dep-list text-end pe-2">
+            <h4>Action</h4>
+        </div>
+    @endif
 </div>
 <div class="table-body-wrapper">
-    @if(count($categories) > 0)
-        @foreach($categories as $key=>$category)
+        @forelse($categories as $key=>$category)
             <div class="table-body-item-wrapper d-flex flex-wrap">
                 <div class="table-body-item dep-list">
                     <h4>{{ $categories->firstItem() + $loop->iteration - 1 }}</h4>
@@ -27,21 +28,26 @@
                     <h4 class="text-center erp-t-email">{{ $category->description??'N/A' }}</h4>
                 </div>
 
-
-                <div class="table-body-item dep-list pe-2 justify-content-end">
-                    <div class="erp-action-t">
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$category->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material-category.delete',$category->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                @if(hasPermission( 'manage-product-material-category'))
+                    <div class="table-body-item dep-list pe-2 justify-content-end">
+                        <div class="erp-action-t">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$category->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material-category.delete',$category->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
+                @endif
             </div>
-        @endforeach
-    @endif
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="4">
+                    Data not found..!
+                </td>
+            </tr>
+        @endforelse
 </div>
 {{ $categories->links('vendor.pagination.common_ajax_pagination') }}

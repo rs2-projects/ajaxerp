@@ -1,6 +1,5 @@
 <div class="wlm-item-wrapper row">
-    @if(count($warehouses) > 0)
-        @foreach($warehouses as $key=>$item)
+        @forelse($warehouses as $key=>$item)
             <div class="wrl-item col-md-3  bg-card attd-table">
                 <div class="wrl-item-img">
                     <img src="{{asset('assets/img/profiles/office-building.png')}}" alt="Warehouse Image">
@@ -8,11 +7,11 @@
                         <div class="dropdown dropdown-action">
                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                             <div class="dropdown-menu dropdown-menu-right">
-
                                 <a class="dropdown-item" href="{{ route('inventory.warehouse.show',$item->id) }}" ><i class="fa-solid fa-eye m-r-5"></i> View</a>
-                                <a class="dropdown-item" href="{{ route('inventory.warehouse.edit',$item->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.warehouse.delete',$item->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                @if(hasPermission('manage-warehouse'))
+                                    <a class="dropdown-item" href="{{ route('inventory.warehouse.edit',$item->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.warehouse.delete',$item->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -33,7 +32,10 @@
 
                 </div>
             </div>
-        @endforeach
-    @endif
+    @empty
+        <div class="wrl-item col-md-3 text-primary text-center bg-card attd-table">
+           Data not found..!
+        </div>
+    @endforelse
 </div>
 {{ $warehouses->links('vendor.pagination.common_ajax_pagination') }}

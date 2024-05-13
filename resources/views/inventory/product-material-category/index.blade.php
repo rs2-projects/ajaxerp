@@ -2,12 +2,14 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i> Add Category</a>
+        @if(hasPermission( 'manage-product-material-category'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addCategoryModal"><i class="fa-solid fa-plus"></i> Add Category</a>
 
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
@@ -15,13 +17,13 @@
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-filter-box d-flex align-items-center justify-content-start flex-100">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-100">
-                                    <div class="erp-filter-item flex-5">
+                                    <div class="erp-filter-item flex-10">
                                         <h6 class="me-2">Search By: </h6>
                                     </div>
 
                                     <div class="erp-filter-item flex-30">
                                         <div class="search-box table-search position-relative">
-                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="category">
+                                            <input class="form-control" type="text" id="keyword_filtered" placeholder="Name/Description">
                                             <button class="btn position-absolute search-btn" type="button" onclick="getData()"><i class="fa-solid fa-magnifying-glass"></i></button>
                                         </div>
                                     </div>

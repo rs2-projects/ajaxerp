@@ -36,6 +36,10 @@ class AssetProduct extends Model
         'total_returned_qty',
         'total_damage_qty',
         'available_qty',
+        'assigned_qty',
+        'maintenance_qty',
+        'sold_qty',
+        'disposed_qty',
         'status',
         'created_by',
         'created_at',
@@ -53,9 +57,16 @@ class AssetProduct extends Model
         }
         return asset('assets/img/placeholder.jpg');
     }
-    
+
     public function category()
     {
         return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');
+    }
+    
+    public function asset_product_assigns(){
+        return $this->hasMany(AssetProductAssign::class, 'asset_product_id', 'id')
+            ->where('deleted', AssetProductAssign::DELETED_NO)
+            ->where('status', AssetProductAssign::STATUS_ACTIVE)
+            ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_ASSIGNED);
     }
 }

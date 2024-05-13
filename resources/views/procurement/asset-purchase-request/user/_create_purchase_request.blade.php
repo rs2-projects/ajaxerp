@@ -18,7 +18,7 @@
                                                     <input class="form-control" name="title" id="purchase_title" type="text" placeholder="Enter a Title Here" required="">
                                                 </div>
                                             </div>
-                                            <div class="table-responsive">
+                                            <div class="#table-responsive">
                                                 <table class="table mb-0 erp-table">
                                                     <thead class="erp-thead">
                                                         <tr class="erp-tr">
@@ -54,8 +54,7 @@
                         </div>
                         <div class="col-12">
                             <div class="nw-warehouse-add-btn-2 text-center">
-                                {{-- <a href="javascript:void(0);" type="submit" id="generatePuchaseRequest" class=" erp-search-btn text-center"></a> --}}
-                                <button class="erp-search-btn text-center" type="submit">Generate Purchase Request</button>
+                               <button class="erp-search-btn text-center" type="submit">Generate Purchase Request</button>
                             </div>
                         </div>
                     </div>
@@ -72,6 +71,7 @@
 
 @section('modals')
     @include('procurement.asset-purchase-request.user._add_purchase_request_modal')
+    @include('procurement.asset-purchase-request.user._purchase_request_edit_modal')
 @endsection
 
 @section('css')
@@ -99,24 +99,31 @@
 
         function categoryChangeHandler(select){
             let category_id = $(select).val();
+            getCatWiseProducts(category_id);
+        }
+
+        function getCatWiseProducts(id, selectedProductId){
+            let category_id = id;
             let url = "{{route('procurement.asset-purchase-request.products-by-category')}}";
             ajaxGet(url, {category_id:category_id}, function (response) {
                 if (response.status == 200) {
                     $(".product_id").html(response.view);
+                    if (selectedProductId) {
+                        $('#product_edit').val(selectedProductId).trigger('change');
+                    }
                 } else {
-                    toastr.error(response.message);
+                    showErrorAlert('Error', response.message);
                 }
             });
         }
 
         function resetRequestModal(){
-            $('#category').val('');
-            $('#product').val('');
-            $('#item_qty').val('');
-            $('#item_desc').val('');
-            $('#category').prop('selectedIndex', 0).trigger('change');
-            $('#product').prop('selectedIndex', 0).trigger('change');
-            $('.file_attachment').val('');
+            $('.category').val('');
+            $('.product_id').val('');
+            $('.item_qty').val('');
+            $('.item_desc').val('');
+            $('.category').prop('selectedIndex', 0).trigger('change');
+            $('.product_id').prop('selectedIndex', 0).trigger('change');
         }
 
         function addPurchaseRequestBtn() {
@@ -145,10 +152,10 @@
                     <input type="hidden" name="asset_product_id[]" value="${product_id}">
                     <input type="hidden" name="qty[]" value="${qty}">
                     <input type="hidden" name="description[]" value="${description}">
-                    <td class="erp-tbody-td text-start">${category_name}</td>
-                    <td class="erp-tbody-td text-center">${product_name}</td>
-                    <td class="erp-tbody-td text-center">${qty}</td>
-                    <td class="erp-tbody-td text-center">${description}</td>
+                    <td class="erp-tbody-td text-start cat_name">${category_name}</td>
+                    <td class="erp-tbody-td text-center p_name">${product_name}</td>
+                    <td class="erp-tbody-td text-center qtty">${qty}</td>
+                    <td class="erp-tbody-td text-center descs">${description}</td>
                     <td class="erp-tbody-td text-center">
                         <input name="image[]" class="form-control file_attachment" type="file">
                     </td>
@@ -157,7 +164,7 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <button class="dropdown-item edit-row" type="button" onclick="editRowData(this)"><i class="fa-solid fa-pencil m-r-5"></i> Edit</button>
                                     <a class="dropdown-item delete-row" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                 </div>
                             </div>
@@ -169,6 +176,72 @@
             resetRequestModal();
             $("#addPurchaseRequestModal").modal('hide');
         }
+
+        // edit row data start
+        function editRowData(button) {
+            var row = $(button).closest('tr');
+            var rowIndex = row.index();
+            var category_id = row.data('category-id');
+            var product_id = row.data('product-id');
+            var qty = row.data('qty');
+            var description = row.data('description');
+
+            $('#category_edit').val(category_id).trigger('change');
+            getCatWiseProducts(category_id, product_id);
+            $('#item_qty_edit').val(qty);
+            $('#item_desc_edit').val(description);
+            
+            $("#editPurchaseRequestModal").data('rowIndex', rowIndex);
+            $("#editPurchaseRequestModal").modal('show');
+        }
+
+        function editRowPurchaseRequest() {
+            var rowIndex = $("#editPurchaseRequestModal").data('rowIndex');
+            var row = $('#purchaseRequestTableBody').find('tr').eq(rowIndex);
+
+            var updatedCategory = $('#category_edit').val();
+            var updatedProduct = $('#product_edit').val();
+
+            if (checkDuplicate(row, updatedCategory, updatedProduct)) {
+                showErrorAlert('Error', 'Same product is already added.');
+                return;
+            }
+            $("#editPurchaseRequestModal").modal('hide');
+        }
+
+        $(document).on('hidden.bs.modal', '#editPurchaseRequestModal', function () {
+            var rowIndex = $(this).data('rowIndex');
+            var row = $('#purchaseRequestTableBody').find('tr').eq(rowIndex);
+            updateRowData(row);
+        });
+
+        function updateRowData(row) {
+            console.log("Row:", row);
+            var updatedCategory = $('#category_edit').val();
+            var updatedProduct = $('#product_edit').val();
+            var updatedQty = $('#item_qty_edit').val();
+            var updatedDescription = $('#item_desc_edit').val();
+
+            row.attr('data-category-id', updatedCategory);
+            row.attr('data-product-id', updatedProduct);
+            row.attr('data-qty', updatedQty);
+            row.attr('data-description', updatedDescription);
+            
+            row.find('.cat_name').text($('#category_edit option:selected').text());
+            row.find('.p_name').text($('#product_edit option:selected').text());
+            row.find('.qtty').text(updatedQty);
+            row.find('.descs').text(updatedDescription);
+        }
+
+        function checkDuplicate(row, category_id, product_id) {
+            var duplicateRow = $('#purchaseRequestTableBody').find('tr').filter(function() {
+                return $(this).data('category-id') == category_id &&
+                    $(this).data('product-id') == product_id &&
+                    $(this).index() !== row.index();
+            });
+            return duplicateRow.length > 0;
+        }
+        // edit row data end
 
         $(document).on('click', '.delete-row', function() {
             $(this).closest('tr').remove();
@@ -186,8 +259,10 @@
                     if(res.status == 200){
                         $(self)[0].reset();
                         $('#purchaseRequestTableBody').empty();
-                        showSuccessAlert('Success',res.message)
-                        getData();
+                        showSuccessAlert('Success',res.message);
+                        setTimeout(function() {
+                            window.location.href = '{{ route("procurement.user.asset-purchase-request.index") }}';
+                        }, 1000);
                     }else{
                         showErrorAlert('Error',res.message)
                     }

@@ -50,11 +50,19 @@ class ProductMaterialPurchaseDetails extends Model
     ];
 
     protected $fillable = [
+        'barcode',
         'product_material_purchase_id',
         'product_material_id',
+        'product_type',
         'description',
         'color',
         'qty',
+        'used_qty',
+        'available_qty',
+        'unit_price_php',
+        'total_price_php',
+        'tax_amount_php',
+        'net_total_php',
         'unit_price',
         'total_price',
         'tax_id',
@@ -78,9 +86,23 @@ class ProductMaterialPurchaseDetails extends Model
         'deleted_at',
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::created(function ($purchaseDetails) {
+            $purchaseDetails->barcode = $purchaseDetails->id + 10000000;
+            $purchaseDetails->save();
+        });
+    }
+
     public function productMaterial()
     {
         return $this->belongsTo(ProductMaterial::class, 'product_material_id', 'id');
+    }
+
+    public function materialPurchase()
+    {
+        return $this->belongsTo(ProductMaterialPurchase::class, 'product_material_purchase_id', 'id');
     }
 
     public function tax()

@@ -32,6 +32,20 @@
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48">
+                                                <div class="input-block erp-step-input-block mb-0 two">
+                                                    <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                                    <select class="select select-step" name="type" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
+                                                        <option value="">Select Type</option>
+                                                        @foreach($material_types as $key=>$type)
+                                                            <option {{ ($key == $product_material->type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @if($product_material->countPurchaseDetails() > 0)
+                                                        <small class="text-red">Can't change due to having purchase</small>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="erp-filter-item flex-100">
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Product Image </label>
                                                     <input type="file" class="form-control " name="image" accept="image/*">
@@ -99,12 +113,29 @@
 
                                     </div>
                                     <div class="tab-pane fade " id="address" role="tabpanel" aria-labelledby="address-tab">
-                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
+                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center1 justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-48">
-                                                <div class="input-block mb-0 erp-step-input-block ">
+                                                <div class="input-block mb-0 erp-step-input-block  single-color-wrapper" style="display: {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_YES)?'none':'' }};" >
                                                     <label class="col-form-label">Color </label>
                                                     <input type="text" class="form-control " value="{{ $product_material->color }}" name="color">
                                                 </div>
+                                                <div class="row multiple-color-wrapper"  style="display: {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_NO)?'none':'' }};">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Upside Color</label>
+                                                            <input type="text" class="form-control " name="upside_color" value="{{ $product_material->color }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Downside Color</label>
+                                                            <input type="text" class="form-control " name="downside_color" value="{{ $product_material->downside_color }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label>
+                                                    Both Side Color? <input type="checkbox" onchange="changeBothSideColor(this, '#productMaterialUpdateForm')" {{ ($product_material->both_side_color == \App\Models\Products\ProductMaterial::BOTH_SIDE_COLOR_YES)?'checked':'' }} name="both_side_color" value="1">
+                                                </label>
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
@@ -171,7 +202,7 @@
                                             </div>
                                             <div class="erp-filter-item flex-100">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Select Rack <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
                                                         @foreach($racks as $rack)
                                                             <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->name }}</option>
@@ -198,7 +229,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Save</button>
+                                        <button class=" erp-search-btn text-center" id="editProductMaterialSubmitBtn" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -234,7 +265,7 @@
 
 @section('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             initSectionMultipleSelect();
             initRackMultipleSelect();
@@ -247,21 +278,48 @@
                 var url = $(self).attr('action');
 
                 formPost(url, formData, function (res) {
-                    if(res.status == 200){
-                        showSuccessAlert('Success',res.message)
+                    if (res.status == 200) {
+                        showSuccessAlert('Success', res.message)
                         window.location.href = "{{ route('inventory.product-material.index') }}";
-                    }else{
-                        showErrorAlert('Error',res.message)
+                    } else {
+                        showErrorAlert('Error', res.message)
                     }
                 }, 'show_input_error');
             });
 
+            $("#editProductMaterialSubmitBtn").on('click', function () {
+                validateCustomForm("#productMaterialStoreForm");
+            });
+
         });
 
-        function changeWarehouse(select){
+        function validateCustomForm(form) {
+            var tab1Fields = $(form).find(':input[required]');
+            tab1Fields.each(function () {
+                if (!$(this).val()) {
+                    let inputName = $(this).attr('name');
+                    inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    inputName = inputName.replace(" Id", '');
+                    showInfoAlert(inputName, 'required');
+                }
+            });
+
+            let sections = $("#sections_id").val();
+            if (sections.length < 1) {
+                showInfoAlert('Sections', 'required');
+            }
+
+            let racks = $("#racks_id").val();
+            if (racks.length < 1) {
+                showInfoAlert('Racks', 'required');
+
+            }
+        }
+
+        function changeWarehouse(select) {
             let warehouse_id = $(select).val();
             let url = "{{ route('inventory.product-material.get-sections-by-warehouse') }}";
-            ajaxGet(url, {warehouse_id:warehouse_id}, function (response) {
+            ajaxGet(url, {warehouse_id: warehouse_id}, function (response) {
                 if (response.status == 200) {
                     $("#sections_id").html(response.view);
                     initSectionMultipleSelect();
@@ -271,11 +329,12 @@
             });
 
         }
-        function changeSections(select){
+
+        function changeSections(select) {
 
             let section_ids = $(select).val();
             let url = "{{ route('inventory.product-material.get-racks-by-sections') }}";
-            ajaxGet(url, {section_ids:section_ids}, function (response) {
+            ajaxGet(url, {section_ids: section_ids}, function (response) {
                 if (response.status == 200) {
                     $("#racks_id").html(response.view);
                     initRackMultipleSelect();
@@ -285,7 +344,7 @@
             });
         }
 
-        function initSectionMultipleSelect(){
+        function initSectionMultipleSelect() {
             $('#sections_id').multipleSelect({
                 filter: true,
                 placeholder: 'Select Sections',
@@ -293,27 +352,37 @@
                 filterPlaceholder: 'Search Sections',
                 selectAll: true,
                 onOpen: function () {
-                    $(".section-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                    $(".section-multiselect .ms-drop ul>li:first-child label").contents().filter(function () {
                         return this.nodeType === 3;
                     }).replaceWith("Select All Sections");
                 },
             });
         }
-        function initRackMultipleSelect(){
+
+        function initRackMultipleSelect() {
             $('#racks_id').multipleSelect({
                 filter: true,
-                placeholder: 'Select Racks',
+                placeholder: 'Select Subsection',
                 minimumCountSelected: 6,
                 filterPlaceholder: 'Search Racks',
                 selectAll: true,
                 onOpen: function () {
-                    $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+                    $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function () {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Racks");
+                    }).replaceWith("Select All Subsections");
                 },
             });
         }
 
+        function changeBothSideColor(checkbox, parent_element) {
+            if($(checkbox).is(':checked')) {
+                $(parent_element + ' .single-color-wrapper').slideUp();
+                $(parent_element + ' .multiple-color-wrapper').slideDown();
+            } else {
+                $(parent_element + ' .single-color-wrapper').slideDown();
+                $(parent_element + ' .multiple-color-wrapper').slideUp();
+            }
+        }
     </script>
 @endsection
 

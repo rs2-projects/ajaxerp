@@ -2,12 +2,14 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addSupplierModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
+        @if(hasPermission( 'manage-suppliers'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addSupplierModal"><i class="fa-solid fa-plus"></i> New Suppliers</a>
 
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
@@ -45,6 +47,7 @@
             <div class="delete-btn-box bank-info-remove" onclick="removeAdditionalBankInfo(this)" id="removeAdditionalBankInfo">
                 <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
             </div>
+            {{-- <input type="hidden" name="bank_info_id[]" value=""> --}}
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Bank Name </label>
@@ -68,7 +71,7 @@
             </div>
             <div class="erp-filter-item flex-48"> 
                 <div class="input-block mb-0 erp-step-input-block ">
-                    <label class="col-form-label">Branch Name </label>
+                    <label class="col-form-label">Branch Name & Address </label>
                     <input name="branch[]" type="text" class="form-control " placeholder="">
                 </div>
             </div>
@@ -88,6 +91,17 @@
                 <div class="input-block mb-0 erp-step-input-block ">
                     <label class="col-form-label">Note</label>
                     <input name="notes[]" type="text" class="form-control " placeholder="">
+                </div>
+            </div>
+            <div class="erp-filter-item flex-48">
+                <div class="input-block erp-step-input-block mb-0 two">
+                    <label class="col-form-label">Country</label>
+                    <select class="bank_country country_id"  name="bank_country_id[]">
+                        <option value="">Select Country</option>
+                        @foreach($countries as $country)
+                            <option value="{{$country->id}}">{{$country->name}}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
         </div>
@@ -234,6 +248,13 @@
         function addAdditionalBankInfo(){
             var item = $('#additionalBankInfo').html();
             $('.additionalBankInfoContainer').append(item);
+
+            $('.additionalBankInfoContainer .bank_country').select2({
+                closeOnSelect: true,
+                containerCssClass: "select2-box-container",
+                dropdownCssClass: "select2-box-dropdown",
+                width: '100%'
+            });
         }
         
         // $(document).on("click", "#removeAdditionalBankInfo" , function (){
@@ -281,7 +302,7 @@
                 onOpen: function () {
                     $(".asset-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Products");
+                    }).replaceWith("Select All Productsteps");
                 },
             });
         }

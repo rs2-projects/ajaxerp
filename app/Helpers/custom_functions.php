@@ -88,16 +88,12 @@ if (!function_exists('showAmount')) {
 
 // get currency symbol
 if (!function_exists('getCurrencySymbol')) {
-    function getCurrencySymbol()
+    function getCurrencySymbol($type = null)
     {
+        if(($type == 'USD') || ($type == 'usd')) {
+            return "$";
+        }
         return "₱";
-    }
-}
-
-if (!function_exists('hasUserPermission')) {
-    function hasUserPermission(...$permissions)
-    {
-        return in_array(auth()->user()->type, $permissions);
     }
 }
 
@@ -122,4 +118,20 @@ if (!function_exists('hoursToMinutes')) {
         $totalMinutes = (intval($hour) * 60) + intval($minute);
         return $totalMinutes;
     }
+}
+
+if (!function_exists('getExactFilePath')) {
+    function getExactFilePath($path)
+    {
+        if($path == '') {
+            return '';
+        }
+        $path = substr($path, 8);
+        return storage_path('app/public/'.$path);
+    }
+}
+
+function ____($string)
+{
+    return strlen($string);
 }

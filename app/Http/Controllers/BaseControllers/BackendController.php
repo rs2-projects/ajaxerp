@@ -69,7 +69,7 @@ class BackendController extends Controller
     protected function returnAjaxException($exception)
     {
         return response()->json([
-            'status' => 500,
+            'status' => $exception->getCode(),
             'message' => $exception->getMessage(),
         ]);
     }

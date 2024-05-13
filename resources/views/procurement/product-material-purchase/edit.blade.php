@@ -44,7 +44,7 @@
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-start address-invoice">
                                                     <h4 class="mb-0">Address</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.address }}</p>
+                                                    <p class="mb-0">@{{ selected_supplier.full_address }}</p>
                                                 </div>
                                             </div>
                                             <div class="invoice-info-bx" v-else>
@@ -73,8 +73,14 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
+                                                    <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
+                                                    <div ><input class="form-control " required  name="php_rate" value="{{ $purchase->php_rate }}" type="number"></div>
+                                                </div>
+                                            </div>
+                                            <div class="supplier-invoice-input-box">
+                                                <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
-                                                    <div ><input class="form-control " name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
+                                                    <div ><input class="form-control " required name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
@@ -170,7 +176,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                                {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                                {{ getCurrencySymbol('usd') }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
@@ -208,8 +214,8 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
-                                                                    <option value="" >Select Tax</option>
+                                                                <select class="select select-step vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                    <option value="0" >Select Tax</option>
                                                                     <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ stItem.tax_rate }}%
                                                                     </option>
@@ -219,7 +225,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                    {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                    {{getCurrencySymbol('usd')}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                                 {{--<div class="po-product-delete-icon-box two">
                                                                     <a href="#"><i class="fa fa-times"></i></a>
@@ -286,7 +292,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol()}}
+                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol('usd')}}
                                                                 <span class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
                                                             </h4>
 
@@ -299,7 +305,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol()}}
+                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol('usd')}}
                                                                 <span class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
                                                             </h4>
 
@@ -315,7 +321,7 @@
                                                                     <label for="discount-fixed" :class="{checked:(discount_type == 1)}">
                                                                         <input class="radio-input instagram" type="radio" id="discount-fixed" name="discount_type" value="1" style="display: none;"  v-model="discount_type" v-on:change="changeDiscountType" :checked="discount_type == 1" />
                                                                         <span class="radio-tile instagram">
-                                                                            <span class="radio-icon"> {{getCurrencySymbol()}}</span>
+                                                                            <span class="radio-icon"> {{getCurrencySymbol('usd')}}</span>
                                                                        </span>
                                                                     </label>
 
@@ -335,7 +341,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end sub-total-amount pe-2">
-                                                                {{getCurrencySymbol()}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
+                                                                {{getCurrencySymbol('usd')}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
                                                             </h4>
 
                                                         </div>
@@ -348,7 +354,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                                {{getCurrencySymbol()}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
+                                                                {{getCurrencySymbol('usd')}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
                                                             </h4>
                                                         </div>
                                                     </div>
@@ -528,9 +534,22 @@
         $(document).ready(function () {
             initializeDatepicker();
         });
+        $(document).ready(function () {
+            let auto_grow_elements = $(".auto-grow-input");
+            auto_grow_elements.each( function () {
+                let element = this;
+                element.style.height = "5px";
+                element.style.height = (element.scrollHeight)+"px";
+            });
+        });
+        $(document).on('input', '.auto-grow-input', function () {
+            let element = this;
+            element.style.height = "5px";
+            element.style.height = (element.scrollHeight)+"px";
+        });
 
         function initTaxSelect2() {
-            $('.select-step').select2({
+            $('.vat-tax-select2').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
@@ -660,7 +679,6 @@
                 addItemToCart(item) {
 
                     let exists = this.cartItems.findIndex(o => o.id === item.id);
-                    console.log(exists);
                     if (exists >= 0) {
                         // exists.qty++;
                         this.incrementQty(exists);
@@ -674,7 +692,7 @@
                     }
                     setTimeout(function () {
                         initTaxSelect2();
-                    }, 1000);
+                    }, 100);
                     this.open_select_item = !this.open_select_item;
                 },
                 incrementQty(index) {
@@ -686,7 +704,6 @@
                     if(qty <= 0) {
                         this.cartItems[index].qty = 0;
                     } else {
-                        // console.log(qty);
                         this.cartItems[index].qty = parseInt(qty);
                     }
                     this.updateCartItemPrice(index);
@@ -708,7 +725,11 @@
                 updateCartItemPrice(index) {
                     let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
-                    this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                    if(this.cartItems[index].tax == null) {
+                        this.cartItems[index].vat_amount = 0;
+                    } else {
+                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                    }
                     this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
                 },
 
@@ -720,9 +741,15 @@
                     $("#addSupplierModal").modal('hide');
                 },
                 changeTax(cartItemIndex, new_tax_id) {
-                    let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
-                    this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
-                    this.updateCartItemPrice(cartItemIndex);
+
+                    if(new_tax_id == 0) {
+                        this.cartItems[cartItemIndex].tax = null;
+                        this.updateCartItemPrice(cartItemIndex);
+                    } else {
+                        let taxIndex = this.system_tax_items.findIndex(o => o.id === parseInt(new_tax_id));
+                        this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
+                        this.updateCartItemPrice(cartItemIndex);
+                    }
                 },
                 getPurchaseData() {
                     axios
@@ -734,6 +761,9 @@
                             for (let i in this.cartItems) {
                                 this.updateCartItemPrice(i);
                             }
+                            setTimeout(function () {
+                                initTaxSelect2();
+                            }, 100);
                         });
                 },
             },
@@ -748,7 +778,6 @@
 
         function taxChangeOutside(select) {
             let new_tax_id = $(select).val();
-            console.log(new_tax_id);
             let cartItemIndex = $(select).attr('data-cartItemIndex');
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }

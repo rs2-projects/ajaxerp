@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Requests\Production\PreProduction;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdatePreProductionRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'pre_production_batch_no' => 'required',
+            'order_details' => 'required',
+            'finished_goods_id' => 'required',
+            'estimated_production_qty' => 'required'
+        ];
+    }
+}

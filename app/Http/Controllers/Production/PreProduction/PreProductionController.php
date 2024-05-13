@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Http\Controllers\Production\PreProduction;
+
+use App\Http\Controllers\BaseControllers\BackendController;
+use App\Http\Controllers\Controller;
+use App\Services\Production\PreProduction\PreProductionService;
+use App\Http\Requests\Production\PreProduction\StorePreProductionRequest;
+use App\Http\Requests\Production\PreProduction\UpdatePreProductionRequest;
+use Illuminate\Http\Request;
+
+class PreProductionController extends BackendController
+{
+    private PreProductionService $service;
+
+    public function __construct()
+    {
+        $this->addBreadcrumbs('Dashboard', route('dashboard'), 'fa fa-home');
+        $this->addBreadcrumbs('Pre-Production');
+
+        $this->service = new PreProductionService();
+    }
+
+    public function index()
+    {
+        $this->setPageTitle("Pre-Production");
+        $this->setActiveMenu('production.pre-production.index');
+        return  $this->view('production.pre-production.index');
+    }
+
+    public function indexFiltered(Request $request)
+    {
+        $data = $this->service->indexFilteredData($request);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+
+    public function getDocument($id)
+    {
+        try {
+            $data = $this->service->getDocument($id);
+            $view = $this->view('production.pre-production.__document_modal_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+    public function details($id){
+        $this->setPageTitle("Pre Production Details");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->detailsData($id);
+        return $this->view('production.pre-production._details')->with($data);
+    }
+    public function create()
+    {
+        $this->setPageTitle("Create New Pre-Production");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->createData();
+        return  $this->view('production.pre-production.create')->with($data);
+    }
+
+    public function store(StorePreProductionRequest $request)
+    {
+        try {
+            $this->service->store($request);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Pre Prodcution created successfully');
+    }
+
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Pre-Production");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->editData($id);
+        return  $this->view('production.pre-production.edit')->with($data);
+    }
+
+    public function update(UpdatePreProductionRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Pre Production updated successfully');
+    }
+
+    public function getProducts($id){
+        return $this->service->getProducts($id);
+    }
+
+    public function getBoardProducts($id){
+        return $this->service->getBoardProducts($id);
+    }
+
+    public function getProcess($id){
+        $data = $this->service->getProcessData($id);
+        return $this->returnAjaxSuccess($data);
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->service->delete($id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Pre Production deleted successfully');
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $data = $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+}

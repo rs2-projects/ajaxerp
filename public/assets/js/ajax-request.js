@@ -74,7 +74,7 @@ function ajaxGet(url, data, successCallback='default', errorCallback='default') 
           showLoader('Please Wait', 'Loading...');
         },
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             hideLoader();
             if (successCallback == 'default') {
                 if (response.status == 200) {
@@ -131,6 +131,7 @@ function getPaginatedListData(form_route, placement_area, extra_data={}, scrollT
     /*{
         _token : _token
     };*/
+    /*console.log('from get data to getPaginatedListData');*/
     req_data._token = _token;
 
     $.ajax({
@@ -186,7 +187,7 @@ function deleteAjax(uri, successCallback='default', errorCallback='default', dat
 
 function updateStatus(button, callbacka=null){
     let url = $(button).attr('data-href');
-    console.log(callbacka);
+    // console.log(callbacka);
     ajaxGet(url, {}, function (response) {
         if (response.status == 200) {
             showSuccessAlert('Success',response.message)
@@ -197,4 +198,16 @@ function updateStatus(button, callbacka=null){
             toastr.error(response.message);
         }
     }, 'default');
+}
+
+function validateHtmlForm(form) {
+    var tab1Fields = $(form).find(':input[required]');
+    tab1Fields.each(function() {
+        if (!$(this).val()) {
+            let inputName = $(this).attr('name');
+            inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            inputName = inputName.replace(" Id", '');
+            showInfoAlert('Error',inputName+' is required');
+        }
+    });
 }

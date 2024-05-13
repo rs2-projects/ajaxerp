@@ -84,13 +84,27 @@
 
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">Role <span class="text-danger">*</span></label>
+                                                <select class="select select-step" name="role_id" id="role_id"  required>
+                                                    <option value="">Select Role</option>
+                                                    @foreach($roles as $key=>$role)
+                                                        <option value="{{ $role->id }}" {{$role->id == $employee->role_id ? 'selected' : ''}}>{{ $role->title }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <span class="role_id_error ie-span"></span>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
                                                 <div class="checkbox">
                                                     <label class="col-form-label"><input type="checkbox" onclick="isContracted()" value="1" name="is_contracted" {{ ($employee->is_contracted == \App\Models\User::CONTRACTED_YES) ? 'checked' : '' }} class="me-1"> Is Contracted?  </label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="erp-em-reg-step-item flex-48 is-contracted" style="display: {{ ($employee->is_contracted == \App\Models\User::CONTRACTED_NO) ? 'none' : ''  }}">
-                                            <div class="input-block erp-step-input-block ">
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block is-contracted" style="display: {{ ($employee->is_contracted == \App\Models\User::CONTRACTED_NO) ? 'none' : ''  }}">
                                                 <label class="col-form-label">Contractor <span class="text-danger">*</span></label>
                                                 <select class="select select-step" name="contractor_id" id="contractor_id"  required>
                                                     <option value="">Select Contractor</option>
@@ -163,7 +177,7 @@
 
                                             <div class="erp-em-reg-step-item flex-31">
                                                 <div class="input-block erp-step-input-block ">
-                                                    <label class="col-form-label">Religion: <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Religion: </label>
                                                     <select class="select no-search-select-step" name="religion">
                                                         <option value="">Select Religion</option>
                                                         <option value="islam" {{ ($employee->religion == 'islam') ? 'selected' : '' }}>Islam</option>
@@ -298,6 +312,7 @@
                                                         <input class="form-control " value="{{ $bank->note }}" name="note[]" type="text" >
                                                     </div>
                                                 </div>
+                                                <div class="erp-em-reg-step-item flex-48"></div>
                                             </div>
                                         @endforeach
                                     @endif
@@ -620,6 +635,7 @@
                             let joining_date = $('input[name="joining_date"]').val();
                             let department_id = $('select[name="department_id"]').val();
                             let designation_id = $('select[name="designation_id"]').val();
+                            let role_id = $('select[name="role_id"]').val();
                             let is_contracted = $('input[name="is_contracted"]').is(':checked');
                             let contractor_id = $('select[name="contractor_id"]').val();
                             if (!email) {
@@ -682,6 +698,15 @@
                             } else {
                                 $("select[name='designation_id']").removeClass("is-invalid");
                                 $('.designation_id_error').hide();
+                            }
+
+                            if (!role_id) {
+                                $("select[name='role_id']").addClass("is-invalid");
+                                $('.role_id_error').html('Role is required').show();
+                                form_valid = false;
+                            } else {
+                                $("select[name='role_id']").removeClass("is-invalid");
+                                $('.role_id_error').hide();
                             }
 
                             if (is_contracted) {

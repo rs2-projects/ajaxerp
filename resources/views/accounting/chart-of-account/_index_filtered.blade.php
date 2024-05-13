@@ -33,7 +33,7 @@
                                                         <div class="accounting-list-item d-flex flex-wrap align-items-center justify-content-start">
                                                             <div class="accounting-list-item-first-box">
                                                                 <div class="accounting-list-item-title">
-                                                                    <h5>{{ $coa_account->name }} <span data-bs-toggle="tooltip" title="Available Balance">{{ ($coa_account->available_balance != 0)?'( '.$global_currency_info['sign'].' '.showAmount($coa_account->available_balance).' )':'' }}</span></h5>
+                                                                    <h5>{{ $coa_account->name }} <span data-bs-toggle="tooltip" title="Available Balance">{{ ($coa_account->available_balance != 0)?'( '.getCurrencySymbol().' '.showAmount($coa_account->available_balance).' )':'' }}</span></h5>
                                                                 </div>
                                                                 <div class="accounting-list-item-last-transction">
                                                                     <p>Last transaction on Jan 15, 2024</p>
@@ -45,10 +45,12 @@
                                                                     {{ $coa_account->description }}
                                                                 </p>
                                                             </div>
-                                                            @if($coa_account->can_edit == $coa_account::CAN_EDIT_YES)
-                                                            <div class="accounting-list-item-action">
-                                                                <a href="javascript:void(0)" class="btn erp-action-btn erp-action-btn-sm" onclick="editAccountItem({{$coa_account->id}})"><i class="fa-regular fa-edit"></i></a>
-                                                            </div>
+                                                            @if(hasPermission('manage-chart-of-accounts'))
+                                                                @if($coa_account->can_edit == $coa_account::CAN_EDIT_YES)
+                                                                    <div class="accounting-list-item-action">
+                                                                        <a href="javascript:void(0)" class="btn erp-action-btn erp-action-btn-sm" onclick="editAccountItem({{$coa_account->id}})"><i class="fa-regular fa-edit"></i></a>
+                                                                    </div>
+                                                                @endif
                                                             @endif
                                                         </div>
                                                     @endforeach
@@ -59,12 +61,14 @@
                                                         </p>
                                                     </div>
                                                 @endif
-                                                @if($coa_sub_category->can_create_account == $coa_sub_category::CAN_CREATE_ACCOUNT_YES)
-                                                    <div class="accounting-list-item d-flex flex-wrap align-items-center justify-content-start">
-                                                        <div class="accounting-new-account-wrapper">
-                                                            <a href="javascript:void(0)" class="btn erp-action-btn erp-action-btn-sm" onclick="addNewAccount({{ $coa_sub_category->id }})"><i class="fa-regular fa-plus"></i> Add a New Account</a>
+                                                @if(hasPermission('manage-chart-of-accounts'))
+                                                    @if($coa_sub_category->can_create_account == $coa_sub_category::CAN_CREATE_ACCOUNT_YES)
+                                                        <div class="accounting-list-item d-flex flex-wrap align-items-center justify-content-start">
+                                                            <div class="accounting-new-account-wrapper">
+                                                                <a href="javascript:void(0)" class="btn erp-action-btn erp-action-btn-sm" onclick="addNewAccount({{ $coa_sub_category->id }})"><i class="fa-regular fa-plus"></i> Add a New Account</a>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>

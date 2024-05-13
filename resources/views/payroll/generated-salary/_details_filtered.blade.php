@@ -63,7 +63,9 @@
                     <div class="dropdown dropdown-action">
                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" onclick="editItem({{$item->id}})" href="javascript:void(0)"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                            @if(hasPermission('manage-salary'))
+                                <a class="dropdown-item" onclick="editItem({{$item->id}})" href="javascript:void(0)"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                            @endif
                             <a class="dropdown-item" onclick="showItem({{$item->id}})" href="javascript:void(0)"><i class="fa-solid fa-eye m-r-5"></i> Show</a>
                         </div>
                     </div>

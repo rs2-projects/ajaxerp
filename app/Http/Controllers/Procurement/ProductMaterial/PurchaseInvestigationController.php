@@ -35,4 +35,15 @@ class PurchaseInvestigationController extends BackendController
         return $this->view('procurement.product-material-purchase.purchase-investigation.index')->with($data);
 
     }
+
+    public function update(Request $request, $purchase_id)
+    {
+        try {
+            $this->service->updateData($request, $purchase_id);
+
+            return $this->returnAjaxSuccess([], 'Purchase Investigation Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
 }

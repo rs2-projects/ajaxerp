@@ -93,3 +93,36 @@
     font-size: 16px;
     border: none;
 }
+
+.erp-box-header .total-material-product {
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+}
+/*invoice design edit in invoice edit page*/
+.designWrapMain{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.designWrapMain .multiple-design-item{
+    position: relative;
+}
+.designWrapMain .multiple-design-item span{
+    position: absolute;
+    top: -7px;
+    left: 40px;
+    cursor: pointer;
+}
+.form-control::placeholder {
+    color: #bbbbbb !important;
+}
+
+.pp-add-more-btn{
+    font-size: 14px;
+    padding: 5px 10px;
+}
+.pp-add-board-btn{
+    background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
+}

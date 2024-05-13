@@ -2,13 +2,15 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="#" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#add_bulk_attendance_modal"><i class="fa-solid fa-plus"></i> Add Bulk Attendance</a>
-                <a href="#" class="btn add-btn erp-add-employee mx-2" data-bs-toggle="modal" data-bs-target="#add_attendance_modal"><i class="fa-solid fa-plus"></i> Add Attendance</a>
+        @if(hasPermission('manage-employee-attendance'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="#" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#add_bulk_attendance_modal"><i class="fa-solid fa-plus"></i> Add Bulk Attendance</a>
+                    <a href="#" class="btn add-btn erp-add-employee mx-2" data-bs-toggle="modal" data-bs-target="#add_attendance_modal"><i class="fa-solid fa-plus"></i> Add Attendance</a>
 
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
@@ -98,8 +100,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="erp-tbody">
-                                        @if(!empty($getEmployees))
-                                            @foreach($getEmployees as  $employee)
+                                            @forelse($getEmployees as  $employee)
                                                 <tr class="erp-tbody-tr">
 
                                                     <td class="erp-tbody-td table-employee-name">
@@ -128,8 +129,13 @@
                                                     @endif
 
                                                 </tr>
-                                            @endforeach
-                                        @endif
+                                            @empty
+                                                <tr class="erp-tbody-tr">
+                                                    <td class="erp-tbody-td text-center text-primary" colspan="4">
+                                                        Data not found..!
+                                                    </td>
+                                                </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>

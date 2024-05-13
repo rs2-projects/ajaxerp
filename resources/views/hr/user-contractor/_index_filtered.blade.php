@@ -9,12 +9,13 @@
             <th class="erp-th text-center">Contract Value </th>
             <th class="erp-th text-center">Phone 2 </th>
             <th class="erp-th text-center">Address </th>
-
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission('manage-contractors'))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($userContractors as $userContractor)
+        @forelse($userContractors as $userContractor)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
                     <h4 class="d-table-title">{{ $userContractors->firstItem() + $loop->iteration -1 }}</h4>
@@ -49,22 +50,29 @@
                     <h4 class="text-center d-table-title">{{ $userContractor->company_address??'N/A' }}</h4>
                 </td>
 
+                @if(hasPermission('manage-contractors'))
+                    <td class="text-end erp-tbody-td">
+                        <div class="erp-action-t">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
 
-                <td class="text-end erp-tbody-td">
-                    <div class="erp-action-t">
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userContractor->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-contractor.delete',$userContractor->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userContractor->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-contractor.delete',$userContractor->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </td>
+                @endif
+            </tr>
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="8">
+                    Data not found..!
                 </td>
             </tr>
-        @endforeach
+        @endforelse
         </tbody>
     </table>
 </div>

@@ -2,19 +2,29 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addProductMaterial"><i class="fa-solid fa-plus"></i> New Product</a>
+        @if(hasPermission( 'manage-product-material'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addProductMaterial"><i class="fa-solid fa-plus"></i> New Product</a>
+                    <div class="dropdown float-end">
+                        <button class="btn add-btn erp-add-employee ms-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-file-import"></i> Import Products
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#boardProductImportModal">Board Products</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#paperProductImportModal">Paper Products</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-box-header">
-                                <h4>Total Product : 108 </h4>
+                                <h4>Total Product : <span class="total-material-product" id="total_product">{{ $total_product }}</span> </h4>
                             </div>
                             <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
 
@@ -64,6 +74,9 @@
 @section('modals')
     @include('inventory.product-material._add_product_material')
     @include('inventory.product-material._edit_product_material')
+    @include('inventory.product-material._purchase_history_modal')
+    @include('inventory.product-material.__board_product_import_modal')
+    @include('inventory.product-material.__paper_product_import_modal')
 @endsection
 
 @section('css')
@@ -99,7 +112,6 @@
             $("#category_filtered").on('change', function () {
                 filterData.category_filtered = $(this).val();
             });
-
             $("#productMaterialStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -113,15 +125,41 @@
                         $(self)[0].reset();
                         showSuccessAlert('Success',res.message)
                         getData();
+                        let total_product = parseInt($("#total_product").text());
+                        $("#total_product").text(total_product+1);
                     }else{
                         showErrorAlert('Error',res.message)
                     }
                 }, 'show_input_error');
             });
 
-
-
+            $("#addProductMaterialSubmitBtn").on('click', function () {
+                validateCustomForm("#productMaterialStoreForm");
+            });
         });
+
+        function validateCustomForm(form) {
+            var tab1Fields = $(form).find(':input[required]');
+            tab1Fields.each(function() {
+                if (!$(this).val()) {
+                    let inputName = $(this).attr('name');
+                    inputName = inputName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    inputName = inputName.replace(" Id", '');
+                    showInfoAlert(inputName,'required');
+                }
+            });
+
+            let sections = $("#sections_id").val();
+            if(sections.length < 1) {
+                showInfoAlert('Sections','required');
+            }
+
+            let racks = $("#racks_id").val();
+            if(racks.length < 1) {
+                showInfoAlert('Racks','required');
+            }
+
+        }
 
         function getData(){
             getPaginatedListData("{{ route('inventory.product-material.filtered') }}", "#ajax-data-load", filterData);
@@ -158,13 +196,26 @@
             });
         }
 
-        function editItem(id){
+        /*function editItem(id){
             let url = "{{route('inventory.product-material.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {
                     $("#edit_product_material_modal_body").html(response.view);
                     $("#editProductMaterialModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }*/
+
+        function purchaseHistory(id){
+            let url = "{{route('inventory.product-material.purchase-history', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#purchase_history_modal_body").html(response.view);
+                    $("#purchaseHistoryModal").modal('show');
                 } else {
                     toastr.error(response.message);
                 }
@@ -188,18 +239,27 @@
         function initRackMultipleSelect(){
             $('#racks_id').multipleSelect({
                 filter: true,
-                placeholder: 'Select Racks',
+                placeholder: 'Select Subsections',
                 minimumCountSelected: 6,
                 filterPlaceholder: 'Search Racks',
                 selectAll: true,
                 onOpen: function () {
                     $(".racks-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Racks");
+                    }).replaceWith("Select All Subsections");
                 },
             });
         }
 
+        function changeBothSideColor(checkbox, parent_element) {
+            if($(checkbox).is(':checked')) {
+                $(parent_element + ' .single-color-wrapper').slideUp();
+                $(parent_element + ' .multiple-color-wrapper').slideDown();
+            } else {
+                $(parent_element + ' .single-color-wrapper').slideDown();
+                $(parent_element + ' .multiple-color-wrapper').slideUp();
+            }
+        }
     </script>
 @endsection
 

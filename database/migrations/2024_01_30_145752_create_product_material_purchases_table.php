@@ -38,10 +38,10 @@ return new class extends Migration
 
             $table->unsignedTinyInteger('is_revised')->default(0)->comment('0=no,1=yes');
             $table->unsignedBigInteger('revised_by')->nullable();
-            $table->unsignedBigInteger('revised_at')->nullable();
+            $table->timestamp('revised_at')->nullable();
             $table->unsignedTinyInteger('is_backed')->default(0)->comment('0=no,1=yes');
             $table->unsignedBigInteger('backed_by')->nullable();
-            $table->unsignedBigInteger('backed_at')->nullable();
+            $table->timestamp('backed_at')->nullable();
 
             $table->text('notes')->nullable();
             $table->text('invoice_footer')->nullable();

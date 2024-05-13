@@ -8,11 +8,13 @@
                 <th class="erp-th text-center">Last Calculated Price </th>
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
-                <th class="erp-th text-center">Action </th>
+                @if(hasPermission( 'manage-product-material'))
+                    <th class="erp-th text-center">Action </th>
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($product_materials as $product_material)
+            @forelse($product_materials as $product_material)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $product_materials->firstItem() + $loop->iteration - 1 }}</h4>
@@ -30,24 +32,23 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="text-center d-table-title" data-bs-toggle="modal" data-bs-target="#check_status">4234343</a>
+                        <a href="javascript:void(0)" class="text-center d-table-title" >{{ $product_material->available_qty??0 }}</a>
                     </td>
 
                     <td class="erp-tbody-td text-center">
-                        <a href="#" class="last-cal-status-btn" data-bs-toggle="modal" data-bs-target="#check_status">Check Status</a>
+                        <a href="javascript:void(0)" class="last-cal-status-btn" onclick="purchaseHistory({{$product_material->id}})">Check Status</a>
                     </td>
 
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($product_material->status == $product_material::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>Active</span></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
-
-
-                                </div>
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $product_material::STATUSES[$product_material->status] }}</span></a>
+                                @if(hasPermission( 'manage-product-material'))
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.product-material.change-status',[$product_material->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -58,8 +59,15 @@
                                 <h4 class="text-start d-table-title">
                                     {{ $warehouseSection->warehouseSection->name??'N/A' }} (<span>
                                         @if(count($warehouseSection->productMaterialRacks) > 0)
-                                            @foreach($warehouseSection->productMaterialRacks as $rack)
-                                                {{ $rack->warehouseSectionRack->name??''}} <span class="text-red">,</span>
+                                            @foreach($warehouseSection->productMaterialRacks as $rackKey=>$rack)
+                                                @if($rackKey == 2)
+                                                    ...
+                                                    @break
+                                                @endif
+                                                {{ $rack->warehouseSectionRack->name??''}}
+                                                    @if(!$loop->last)
+                                                        <span class="text-red">,</span>
+                                                    @endif
                                             @endforeach
                                         @endif
                                     </span>)
@@ -67,22 +75,30 @@
                             @endforeach
                         @endif
                     </td>
+                    @if(hasPermission( 'manage-product-material'))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
 
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-
-                                    <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                        <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        @if($product_material->countPurchaseDetails() == 0)
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </td>
+                    @endif
+                </tr>
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="7">
+                        Data not found..!
                     </td>
                 </tr>
-            @endforeach
+            @endforelse
         </tbody>
     </table>
 </div>

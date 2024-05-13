@@ -4,6 +4,7 @@ namespace App\Models\Products;
 
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Inventory\Warehouse;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,16 @@ class ProductMaterial extends Model
     use HasFactory;
     protected $table = 'product_materials';
     public $timestamps = false;
+
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
+    const TYPE_PAPER = 2;
+    const TYPES = [
+        self::TYPE_BOARD => 'Board',
+        self::TYPE_OTHERS => 'Others',
+        self::TYPE_PAPER => 'Paper'
+    ];
+
     const UNIT_TYPE_BOX = 1;
     const UNIT_TYPE_CM = 2;
     const UNIT_TYPE_DZ = 3;
@@ -45,6 +56,9 @@ class ProductMaterial extends Model
         self::UNIT_TYPE_YD => 'YD',
     ];
 
+    const BOTH_SIDE_COLOR_NO = 0;
+    const BOTH_SIDE_COLOR_YES = 1;
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -60,6 +74,7 @@ class ProductMaterial extends Model
     ];
 
     protected $fillable = [
+        'type',
         'product_material_category_id',
         'tax_id',
         'unit_type',
@@ -74,7 +89,9 @@ class ProductMaterial extends Model
         'total_returned_qty',
         'total_damage_qty',
         'available_qty',
+        'both_side_color',
         'color',
+        'downside_color',
         'working_temperature',
         'length',
         'width',
@@ -110,4 +127,11 @@ class ProductMaterial extends Model
         return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
+    public function countPurchaseDetails()
+    {
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_id', 'id')
+            ->where('deleted', self::DELETED_NO)
+            ->where('status', self::STATUS_ACTIVE)
+            ->count();
+    }
 }

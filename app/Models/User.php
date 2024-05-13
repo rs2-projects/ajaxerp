@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Permission\Role;
+use App\Traits\HasPermission;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasPermission;
 
     protected $table = 'users';
     public $timestamps = false;
@@ -92,6 +95,7 @@ class User extends Authenticatable
         'employee_id',
         'type',
         'role',
+        'role_id',
         'department_id',
         'designation_id',
         'is_contracted',
@@ -120,6 +124,7 @@ class User extends Authenticatable
         'resign_date',
         'terminated',
         'terminate_date',
+        'reset_permission',
         'status',
         'created_at',
         'created_by',
@@ -206,6 +211,11 @@ class User extends Authenticatable
     public function designation()
     {
         return $this->belongsTo(Designation::class, 'designation_id');
+    }
+
+    public function user_role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
     }
 
     public function userEmergencyContacts(){

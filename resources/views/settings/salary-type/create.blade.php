@@ -97,7 +97,10 @@
     <!--End::row-1 -->
 
     <div id="salaryTypeDetailWrap" style="display: none">
-        <div class="erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mt-3">
+        <div class="salary-type-details-parent position-relative erp-deduction-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between flex-100 mt-3">
+            <div class="delete-btn-box bank-info-remove" onclick="removeTypeDetails(this)">
+                <a href="javascript:void(0);" class="delete-btn"><i class="fa-solid fa-trash-can"></i></a>
+            </div>
             <div class="erp-filter-item flex-30">
                 <div class="input-block erp-step-input-block mb-0 two">
                     <label class="col-form-label">Type <span class="text-danger">*</span> </label>
@@ -135,7 +138,11 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .delete-btn-box.bank-info-remove {
+            top: 10px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -182,6 +189,10 @@
                 minimumResultsForSearch: -1,
                 width: '100%'
             });
+        }
+
+        function removeTypeDetails(element){
+            $(element).closest('.salary-type-details-parent').remove();
         }
 
     </script>

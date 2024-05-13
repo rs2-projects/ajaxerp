@@ -3007,6 +3007,9 @@ input[type=file].form-control {
     position: absolute;
     width: 100%;
   }
+    .header .header-left img {
+        width: 150px;
+    }
 }
 
 @media (min-width: 992px) {
@@ -12535,6 +12538,13 @@ th.width-64 {
   flex-basis: 5% !important;
 }
 
+.flex-2 {
+  flex-basis: 2% !important;
+}
+.flex-1 {
+  flex-basis: 1% !important;
+}
+
 .checkin-wrapper {
   padding-top: 20px;
 }
@@ -13875,3 +13885,15 @@ a.em-profile-wrap:hover {
 
 }
 /* Media QUERY end*/
+.edit--modal-data-img-src{
+  margin-left: 5px;
+  border-radius: 5px;
+}
+.back-to-admin-btn a {
+  font-size: 15px;
+  color: #0d6efd;
+  background: #0d6efd1c;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+}

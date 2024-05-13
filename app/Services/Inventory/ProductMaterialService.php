@@ -2,11 +2,16 @@
 
 namespace App\Services\Inventory;
 
+use App\Imports\Inventory\BoardProductsImport;
+use App\Imports\Inventory\PaperProductsImport;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Inventory\Warehouse;
 use App\Models\Inventory\WarehouseSection;
 use App\Models\Inventory\WarehouseSectionRack;
+use App\Models\Procurements\ProductMaterialPurchase;
+use App\Models\Procurements\ProductMaterialPurchaseCalculatedPrice;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use App\Models\Products\ProductMaterialRack;
@@ -14,6 +19,7 @@ use App\Models\Products\ProductMaterialSection;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductMaterialService
 {
@@ -25,6 +31,7 @@ class ProductMaterialService
     public function indexData()
     {
         $data['material_categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+            ->where('type', ProductMaterialCategory::TYPE_OTHERS)
             ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
@@ -48,6 +55,10 @@ class ProductMaterialService
             ->where('status', Warehouse::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
+
+        $data['material_types'] = ProductMaterial::TYPES;
+
+        $data['total_product'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)->count();
 
         return $data;
     }
@@ -97,6 +108,7 @@ class ProductMaterialService
             }
 
             $product_material = new ProductMaterial();
+            $product_material->type = $request->type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->name = $request->name;
             $product_material->image = $image_path??null;
             $product_material->product_material_category_id = $request->product_material_category_id;
@@ -106,7 +118,15 @@ class ProductMaterialService
             $product_material->low_stock_at_least = $request->low_stock_at_least;
             $product_material->tax_id = $request->tax_id;
             $product_material->description = $request->description;
-            $product_material->color = $request->color;
+
+            if($request->both_side_color == 1) {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_YES;
+                $product_material->color = $request->upside_color;
+                $product_material->downside_color = $request->downside_color;
+            } else {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_NO;
+                $product_material->color = $request->color;
+            }
             $product_material->working_temperature = $request->working_temperature;
             $product_material->length = $request->length;
             $product_material->width = $request->width;
@@ -178,6 +198,7 @@ class ProductMaterialService
             }
 
             $data['material_categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+                ->where('type', ProductMaterialCategory::TYPE_OTHERS)
                 ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
                 ->get();
@@ -226,6 +247,8 @@ class ProductMaterialService
                 ->orderBy('name', 'asc')
                 ->get();
 
+            $data['material_types'] = ProductMaterial::TYPES;
+
             return $data;
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
@@ -261,6 +284,7 @@ class ProductMaterialService
             }
 
             $product_material->name = $request->name;
+            $product_material->type = $request->type ?? $product_material->type;
             $product_material->image = $image_path??$product_material->image;
             $product_material->product_material_category_id = $request->product_material_category_id;
             $product_material->warehouse_id = $request->warehouse_id;
@@ -270,7 +294,16 @@ class ProductMaterialService
             $product_material->low_stock_at_least = $request->low_stock_at_least;
             $product_material->tax_id = $request->tax_id;
             $product_material->description = $request->description;
-            $product_material->color = $request->color;
+
+            if($request->both_side_color == 1) {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_YES;
+                $product_material->color = $request->upside_color;
+                $product_material->downside_color = $request->downside_color;
+            } else {
+                $product_material->both_side_color = ProductMaterial::BOTH_SIDE_COLOR_NO;
+                $product_material->color = $request->color;
+            }
+
             $product_material->working_temperature = $request->working_temperature;
             $product_material->length = $request->length;
             $product_material->width = $request->width;
@@ -344,6 +377,50 @@ class ProductMaterialService
         return $product_material;
     }
 
+    public function purchaseHistory($id)
+    {
+        try {
+         $data['productMaterial'] = ProductMaterial::where('id', $id)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->first();
+            if (!$data['productMaterial']) {
+                throw new \Exception('Product Material not found');
+            }
+
+            // $data['purchase_history'] = ProductMaterialPurchaseDetails::where('product_material_id', $id)
+            //     ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+            //     ->where('available_qty', '>', 0)
+            //     ->orderBy('id', 'desc')
+            //     ->get();
+
+            $details = ProductMaterialPurchaseDetails::where('product_material_id', $id)
+                ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                ->get();
+
+            $purchaseIds = $details->pluck('product_material_purchase_id')->toArray();
+
+            $purchase = ProductMaterialPurchase::where('deleted', ProductMaterialPurchase::DELETED_NO)
+                ->where('status', ProductMaterialPurchase::STATUS_ACTIVE)
+                ->where('price_calculated', 1)
+                ->whereIn('id', $purchaseIds)
+                ->get();
+
+            $calculated = ProductMaterialPurchaseCalculatedPrice::where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
+                ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
+                ->whereIn('product_material_purchase_id', $purchase->pluck('id')->toArray())
+                ->orderBy('id', 'desc')
+                ->take(5)
+                ->get();
+            $data['purchase_history'] = $calculated;
+
+
+            return $data;
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
+
     public function deleteData($id)
     {
         try {
@@ -401,5 +478,28 @@ class ProductMaterialService
             ->get();
 
         return $data;
+    }
+
+    public function importProducts($request, $type)
+    {
+        switch ($type) {
+            case 'boards':
+                $this->importBoardProducts($request);
+                break;
+            case 'papers':
+                $this->importPaperProducts($request);
+                break;
+            default:
+                throw new \Exception('Invalid type');
+        }
+    }
+
+    public function importBoardProducts($request)
+    {
+        Excel::import(new BoardProductsImport(), $request->product_file);
+    }
+    public function importPaperProducts($request)
+    {
+        Excel::import(new PaperProductsImport(), $request->product_file);
     }
 }

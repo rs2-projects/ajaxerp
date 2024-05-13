@@ -3,15 +3,15 @@
         <thead class="erp-thead">
         <tr class="erp-tr">
             <th class="erp-th">SL</th>
-            <th class="erp-th">Tax Type </th>
-            <th class="erp-th">Decription </th>
-            <th class="erp-th text-center">Tax Rate(%) </th>
-            <th class="erp-th text-center">Vat Number </th>
+            <th class="erp-th">Name </th>
+            <th class="erp-th">Description </th>
+            <th class="erp-th text-center">Rate(%) </th>
+            <th class="erp-th text-center">Number </th>
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($vats as $vat)
+        @forelse($vats as $vat)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
                     <h4 class="d-table-title">{{ $vats->firstItem() + $loop->iteration -1 }}</h4>
@@ -43,7 +43,13 @@
                     </div>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="6">
+                    No data found...!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

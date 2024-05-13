@@ -12,24 +12,27 @@ use App\Http\Requests\Hr\Employee\UpdateExperienceInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdatePersonalInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdateProfileInfoRequest;
 use App\Services\Hr\EmployeeService;
+use App\Services\Hr\UserLeavesService;
+use App\Services\User\LeavesService;
 use Illuminate\Http\Request;
 
 class EmployeeController extends BackendController
 {
+    private EmployeeService $service;
     public function __construct()
     {
         $this->addBreadcrumbs('HR', route('dashboard'), 'fa fa-home');
         $this->addBreadcrumbs('Employee', route('hr.employee'));
+        $this->service = new EmployeeService();
     }
 
-    public function index(Request $request, EmployeeService $employeeService)
+    public function index(EmployeeService $employeeService)
     {
         $this->setPageTitle("Employee");
         $this->setActiveMenu('hr.employee');
+        $data = $employeeService->indexData();
 
-        /*$data = $employeeService->indexData($request);*/
-
-        return  $this->view('hr.employee.index');
+        return  $this->view('hr.employee.index')->with($data);
     }
 
     public function indexFiltered(Request $request, EmployeeService $employeeService)
@@ -96,7 +99,7 @@ class EmployeeController extends BackendController
         }catch (\Exception $exception) {
             return redirect()->route('hr.employee')->with('error', $exception->getMessage());
         }
-
+        // return $data;
         return $this->view('hr.employee.details')->with($data);
     }
 
@@ -190,5 +193,74 @@ class EmployeeController extends BackendController
         }
 
         return $this->returnAjaxSuccess([], "Delete Success");
+    }
+
+    // public function editRole()
+    // {
+    //     try {
+    //         $this->addBreadcrumbs('Edit');
+    //         $this->setPageTitle("Edit Employee");
+    //         $this->setActiveMenu('hr.employee.edit');
+    //         $data = $employeeService->getEditData($id);
+    //     }catch (\Exception $exception) {
+    //         return redirect()->route('hr.employee')->with('error', $exception->getMessage());
+    //     }
+
+    //     return $this->view('hr.employee.edit')->with($data);
+    // }
+
+    // public function updateRole()
+    // {
+    //     try {
+    //         $employeeService->updateEmployee($request, $id);
+    //     }catch (\Exception $exception) {
+    //         return $this->returnAjaxException($exception);
+    //     }
+
+    //     return $this->returnAjaxSuccess([], "Update Success");
+    // }
+
+    public function changeRole($id)
+    {
+        try {
+            $data = $this->service->changeRoleData($id);
+            $view = $this->view('hr.employee._change_role_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        try {
+            $this->service->updateRole($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'User Role updated successfully');
+    }
+
+    public function getUserLeaveNumberOfDays(Request $request, LeavesService $leavesService)
+    {
+        try {
+            $data = $leavesService->getUserLeaveNumberOfDays($request);
+            return $this->returnAjaxSuccess($data);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+    }
+
+    public function storeEmpLeave(Request $request)
+    {
+        try {
+            $this->service->storeEmpLeave($request);
+
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess([], 'Leave has been created successfully.');
     }
 }

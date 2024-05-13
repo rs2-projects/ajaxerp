@@ -1,0 +1,15 @@
+<div id="sendToProductionModal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header erp-modal-header">
+                <h5 class="modal-title">Send To Production</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body erp-modal-body" id="edit_data_modal_body">
+
+            </div>
+        </div>
+    </div>
+</div>

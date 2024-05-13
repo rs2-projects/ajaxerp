@@ -9,12 +9,11 @@
             <th class="erp-th text-center">Termination Type </th>
             <th class="erp-th text-center">Reason </th>
             <th class="erp-th text-center">Termination Date </th>
-
             <th class="text-end erp-th">Action</th>
         </tr>
         </thead>
         <tbody class="erp-tbody">
-        @foreach($userTerminations as $userTermination)
+        @forelse($userTerminations as $userTermination)
             <tr class="erp-tbody-tr">
                 <td class="erp-tbody-td">
                     <h4 class="d-table-title">{{ $userTerminations->firstItem() + $loop->iteration -1 }}</h4>
@@ -52,20 +51,28 @@
 
 
                 <td class="text-end erp-tbody-td">
-                    <div class="erp-action-t">
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
+                    @if(hasPermission('manage-employee-termination'))
+                        <div class="erp-action-t">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
 
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userTermination->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-termination.delete',$userTermination->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userTermination->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-termination.delete',$userTermination->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr class="erp-tbody-tr">
+                <td class="erp-tbody-td text-center text-primary" colspan="8">
+                    Data not found..!
+                </td>
+            </tr>
+        @endforelse
         </tbody>
     </table>
 </div>

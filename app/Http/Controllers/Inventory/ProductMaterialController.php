@@ -73,6 +73,18 @@ class ProductMaterialController extends BackendController
         }
     }
 
+    public function purchaseHistory($id)
+    {
+        try {
+            $data = $this->service->purchaseHistory($id);
+            $view = $this->view('inventory.product-material._purchase_history_data')->with($data)
+                ->render();
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
     public function delete($id)
     {
         try {
@@ -111,5 +123,29 @@ class ProductMaterialController extends BackendController
             ->render();
 
         return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+    }
+
+    public function importBoards(Request $request)
+    {
+        try {
+            $this->service->importProducts($request, 'boards');
+            return redirect()->back()->with(['success' => 'Boards Imported Successfully!']);
+//            return $this->returnAjaxSuccess([], 'Boards Imported Successfully!');
+        }catch (\Exception $e) {
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+//            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function importPapers(Request $request)
+    {
+        try {
+            $this->service->importProducts($request, 'papers');
+            return redirect()->back()->with(['success' => 'Papers Imported Successfully!']);
+//            return $this->returnAjaxSuccess([], 'Papers Imported Successfully');
+        }catch (\Exception $e) {
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+//            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

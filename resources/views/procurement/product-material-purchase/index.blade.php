@@ -2,11 +2,13 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="{{ route('procurement.product-material-purchase.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Order</a>
+        @if(hasPermission( 'manage-product-material-purchase-orders'))
+            <div class="erp-add-employee-wrapper mb-3">
+                <div class="erp-add-employee">
+                    <a href="{{ route('procurement.product-material-purchase.create') }}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> New Purchase Order</a>
+                </div>
             </div>
-        </div>
+        @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
@@ -21,38 +23,25 @@
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" class="form-control search-product-in" placeholder="Purchase Order">
+                                            <input type="text" class="form-control search-product-in" id="keyword_filtered" placeholder="Purchase Order">
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box" name="month" id="month">
-                                                <option value="">Select Month</option>
-                                                @foreach($months as $key=>$month)
-                                                    <option value="{{$key}}">{{ ucfirst($month) }}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control search-product-in datetimepicker" id="start_date_filtered" placeholder="Start Date">
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <select class="select floating select2-box">
-                                                <option>Select Year</option>
-                                                <option>2023</option>
-                                                <option>2022</option>
-                                                <option>2021</option>
-                                                <option>Last Year</option>
-                                                <option>Last Two Years</option>
-
-                                            </select>
+                                            <input type="text" class="form-control search-product-in datetimepicker" id="end_date_filtered" placeholder="End Date">
 
                                         </div>
                                     </div>
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
-                                            <button class=" erp-search-btn">Search</button>
+                                            <button class="erp-search-btn" type="button" onclick="getData()">Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -79,6 +68,12 @@
                                 <li class="nav-item erp-nav-item" role="presentation">
                                     <button class="nav-link erp-nav-link" data="back_purchase" id="back-purchase-tab" data-bs-toggle="tab" data-bs-target="#back-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Back P.O</button>
                                 </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" data="has_revised_purchase" id="has-revised-purchase-tab" data-bs-toggle="tab" data-bs-target="#has-revised-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Has Revised P.O</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" data="has_backed_purchase" id="has-backed-purchase-tab" data-bs-toggle="tab" data-bs-target="#has-backed-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">Has Backed P.O</button>
+                                </li>
                             </ul>
 
                             <div class="tab-content" id="myTabContent">
@@ -91,1423 +86,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{--<div class="tab-pane fade" id="new-purchase" role="tabpanel" aria-labelledby="new-purchase-tab">
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table pt-4">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                        <tr class="erp-tr">
-                                                            <th class="erp-th">SL</th>
-                                                            <th class="erp-th">P.O No </th>
-                                                            <th class="erp-th text-center">Estimate Delivery Date </th>
-                                                            <th class="erp-th text-center">Supplier </th>
-                                                            <th class="erp-th text-center">Product </th>
-                                                            <th class="erp-th text-center">Total Amount </th>
-                                                            <th class="erp-th text-center">Due Amount </th>
-                                                            <th class="erp-th text-center">Payment Status </th>
-                                                            <th class="erp-th text-center">Record Payment </th>
-                                                            <th class="text-end erp-th">Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">1</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Revised P.O</a>
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Back P.O</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">2</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Revised P.O</a>
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Back P.O</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">3</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Revised P.O</a>
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Back P.O</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">4</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Revised P.O</a>
-                                                                            <a class="dropdown-item" href="#" ><i class="fa-solid fa-circle-info m-r-5"></i> Create Back P.O</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                                            <div class="erp-pagi-item">
-                                                <div class="showing-date-box">
-                                                    <p>Showing 1 to 7 of 7 entries
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="erp-pagi-item">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item active">
-                                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="process-purchase" role="tabpanel" aria-labelledby="process-purchase-tab">
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table pt-4">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                        <tr class="erp-tr">
-                                                            <th class="erp-th">SL</th>
-                                                            <th class="erp-th">P.O No </th>
-                                                            <th class="erp-th text-center">Estimate Delivery Date </th>
-                                                            <th class="erp-th text-center">Supplier </th>
-                                                            <th class="erp-th text-center">Product </th>
-                                                            <th class="erp-th text-center">Total Amount </th>
-                                                            <th class="erp-th text-center">Due Amount </th>
-                                                            <th class="erp-th text-center">Payment Status </th>
-                                                            <th class="erp-th text-center">Record Payment </th>
-                                                            <th class="text-end erp-th">Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">1</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title paid-status">Paid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="investigation.html" class="make-payment-btn">Investigation</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">2</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title patial-status">Partial</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">N/A</h4>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">3</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title paid-status">Paid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="investigation.html" class="make-payment-btn">Investigation</a>
-                                                            </td>
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">4</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title paid-status">Paid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="investigation.html" class="make-payment-btn">Investigation</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                                            <div class="erp-pagi-item">
-                                                <div class="showing-date-box">
-                                                    <p>Showing 1 to 7 of 7 entries
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="erp-pagi-item">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item active">
-                                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="deliver-purchase" role="tabpanel" aria-labelledby="deliver-purchase-tab">
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table pt-4">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                        <tr class="erp-tr">
-                                                            <th class="erp-th">SL</th>
-                                                            <th class="erp-th">P.O No </th>
-                                                            <th class="erp-th text-center">Supplier </th>
-                                                            <th class="erp-th text-center">Product </th>
-                                                            <th class="erp-th text-center">Total Amount </th>
-                                                            <th class="erp-th text-center">Due Amount </th>
-                                                            <th class="erp-th text-center">Investigation Status </th>
-                                                            <th class="erp-th text-center">Payment Status </th>
-                                                            <th class="text-end erp-th">Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">1</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title missing-status">Missing</h4>
-                                                                <h4 class="text-center d-table-title damage-status">Damage</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title pending-status">Pending</h4>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                            <a class="dropdown-item" href="investigation.html" ><i class="fa-solid fa-circle-info m-r-5"></i> Received  (Damage / Missing)</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">2</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title damage-status">Damage Issue</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title pending-status">Pending</h4>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">3</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title perfect-status">Perfect</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title complete-status">Complete</h4>
-                                                            </td>
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">4</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>PO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                            </td>
-
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title perfect-status">Perfect</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title complete-status">Complete</h4>
-
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                                            <div class="erp-pagi-item">
-                                                <div class="showing-date-box">
-                                                    <p>Showing 1 to 7 of 7 entries
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="erp-pagi-item">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item active">
-                                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="revised-purchase" role="tabpanel" aria-labelledby="revised-purchase-tab">
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table pt-4">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                        <tr class="erp-tr">
-                                                            <th class="erp-th">SL</th>
-                                                            <th class="erp-th">RPO No </th>
-                                                            <th class="erp-th text-center">Estimate Delivery Date </th>
-                                                            <th class="erp-th text-center">Supplier </th>
-                                                            <th class="erp-th text-center">Product </th>
-                                                            <th class="erp-th text-center">Total Amount </th>
-                                                            <th class="erp-th text-center">Due Amount </th>
-                                                            <th class="erp-th text-center">Payment Status </th>
-                                                            <th class="erp-th text-center">Record Payment </th>
-                                                            <th class="text-end erp-th">Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">1</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>RPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="revised-status">
-                                                                    <span class="revised-status-text">Revised Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">2</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>RPO1 -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="revised-status">
-                                                                    <span class="revised-status-text">Revised Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">3</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>RPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="revised-status">
-                                                                    <span class="revised-status-text">Revised Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">4</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>RPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="revised-status">
-                                                                    <span class="revised-status-text">Revised Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                                            <div class="erp-pagi-item">
-                                                <div class="showing-date-box">
-                                                    <p>Showing 1 to 7 of 7 entries
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="erp-pagi-item">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item active">
-                                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade" id="back-purchase" role="tabpanel" aria-labelledby="back-purchase-tab">
-                                    <div class="my-attendance-report-wrapper">
-                                        <div class="big-table pt-4">
-                                            <div class="de-table-wrapper">
-                                                <div class="table-responsive">
-                                                    <table class="table mb-0 erp-table">
-                                                        <thead class="erp-thead">
-                                                        <tr class="erp-tr">
-                                                            <th class="erp-th">SL</th>
-                                                            <th class="erp-th">BPO No </th>
-                                                            <th class="erp-th text-center">Estimate Delivery Date </th>
-                                                            <th class="erp-th text-center">Supplier </th>
-                                                            <th class="erp-th text-center">Product </th>
-                                                            <th class="erp-th text-center">Total Amount </th>
-                                                            <th class="erp-th text-center">Due Amount </th>
-                                                            <th class="erp-th text-center">Payment Status </th>
-                                                            <th class="erp-th text-center">Record Payment </th>
-                                                            <th class="text-end erp-th">Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody class="erp-tbody">
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">1</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>BPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="back-order-status">
-                                                                    <span>Back Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">2</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>BPO1 -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="back-order-status">
-                                                                    <span>Back Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title patial-status">Partial</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">3</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>BPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="back-order-status">
-                                                                    <span>Back Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title unpaid-status">Unpaid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn">Make Payment</a>
-                                                            </td>
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="erp-tbody-tr">
-                                                            <td class="erp-tbody-td">
-                                                                <h4 class="d-table-title">4</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-start">
-                                                                <h4 class="text-start d-table-title"><strong>BPO -</strong> <span>10010032</span></h4>
-                                                                <small class="text-center d-table-title">1 Nov, 2023</small>
-                                                                <div class="back-order-status">
-                                                                    <span>Back Order</span>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">1 Nov, 2023</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img src="assets/img/profiles/office-building.png" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box">
-                                                                        <h5>Jamuna Group</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">5</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$3223232</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">$45343</h4>
-
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-
-                                                                <h4 class="text-center d-table-title paid-status">Paid</h4>
-                                                            </td>
-                                                            <td class="erp-tbody-td text-center">
-                                                                <a href="#" class="make-payment-btn">Make Payment</a>
-                                                            </td>
-
-
-                                                            <td class="text-end erp-tbody-td">
-                                                                <div class="erp-action-t">
-                                                                    <div class="dropdown dropdown-action">
-                                                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#edit_employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="erp-pagination-wrapper d-flex justify-content-between align-items-center">
-                                            <div class="erp-pagi-item">
-                                                <div class="showing-date-box">
-                                                    <p>Showing 1 to 7 of 7 entries
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div class="erp-pagi-item">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item active">
-                                                        <a class="page-link" href="#">2 <span class="visually-hidden">(current)</span></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>--}}
                             </div>
 
                         </div>
@@ -1521,32 +99,55 @@
 
     </div>
     <!--End::row-1 -->
+    <div id="receiptItemWrap" style="display: none;">
+        <div class="multiple-receipt-item flex-100">
+            <div class="input-block erp-step-input-block mb-0">
+                <label class="col-form-label">Upload Receipt <span class="text-danger" onclick="removeReceipt(this)"><i class="fa fa-times-circle"></i></span></label>
+                <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('modals')
-
+    @include('common.modals._make_payment_modal')
+    @include('procurement.product-material-purchase.print-barcode._print_barcode_modal')
 @endsection
 
 @section('css')
-
+    <style>
+        #php_amount{
+            font-size: 11px;
+            padding-top: 2px;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
-
+    <!-- Datetimepicker JS -->
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 @endsection
 
 @section('js')
     <script>
         var filterData = {
             keyword_filtered: '',
-            status_filtered: 'all_purchase'
+            status_filtered: 'all_purchase',
+            start_date_filtered: '',
+            end_date_filtered: ''
         };
         $(document).ready(function() {
             getData();
+            initializeDatepicker();
 
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
@@ -1558,6 +159,58 @@
 
                 getData();
             });
+            $('#start_date_filtered').on('dp.change', function(e){
+
+                filterData.start_date_filtered = $(this).val();
+
+            });
+
+            $('#end_date_filtered').on('dp.change', function(e){
+                filterData.end_date_filtered = $(this).val();
+            });
+
+            $(document).on("keyup", "#amount", function(e) {
+              let amount = $(this).val();
+              let php_rate = $("#php_rate").val();
+              let amount_in_php = amount * php_rate;
+              if(amount_in_php > 0){
+                $("#php_amount_val").text(amount_in_php);
+              }else{
+                $("#php_amount_val").text(0);
+              }
+            })
+
+            $(document).on("submit", "#makePaymentFormSubmit", function(e) {
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#make-payment-modal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            // $(document).on("submit", "#printBarcodeModalForm", function(e) {
+            //     var self = this;
+            //     e.preventDefault();
+            //     var formData = new FormData($(self)[0]);
+            //     var url = $(self).attr('action');
+
+            //     if ($(".purchase_details_checkbox:checked").length === 0) {
+            //         showErrorAlert('Error', 'Please select at least one product.');
+            //         return;
+            //     }
+            // });
+
         });
 
 
@@ -1567,6 +220,73 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function makePayment(id){
+            let url = "{{route('procurement.product-material-purchase.make-payment', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#make-payment-modal-data").html(response.view);
+                    $("#make-payment-modal").modal('show');
+
+                    initializeDatepicker();
+                    initPaymentMethodSelect2();
+                    initPaymentAccountSelect2();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function addReceipt(){
+            let receiptItemWrap = $("#receiptItemWrap").html();
+            $("#receiptItemMain").append(receiptItemWrap);
+        }
+
+        function removeReceipt(element){
+            $(element).closest('.multiple-receipt-item').remove();
+        }
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                //format: 'DD/MM/YYYY',
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
+        }
+
+        function initPaymentMethodSelect2() {
+            $('.select-step.payment-method').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+        function initPaymentAccountSelect2() {
+            $('.select-step.payment-account').select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+
+        function printBarcodeData(id, type){
+            console.log(id, type)
+            let url = "{{ route('procurement.product-material-purchase.print-barcode-data', ['id' => ':id', 'type' => ':type']) }}";
+            url = url.replace(':id', id);
+            url = url.replace(':type', type);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#print_barcode_modal_body").html(response.view);
+                    $("#printBarcodeModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
     </script>

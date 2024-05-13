@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('asset_product_purchase_requests', function (Blueprint $table) {
+            $table->string('purchase_request_id', 64)->after('id')->comment('auto generate');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('asset_product_purchase_requests', function (Blueprint $table) {
+            $table->dropColumn('purchase_request_id');
+        });
+    }
+};

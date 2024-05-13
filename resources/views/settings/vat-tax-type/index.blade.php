@@ -4,7 +4,7 @@
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
             <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addVatTaxTypeModal"><i class="fa-solid fa-plus"></i> Add Tax Type</a>
+                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addVatTaxTypeModal"><i class="fa-solid fa-plus"></i> Add Vat/Tax Type</a>
 
             </div>
         </div>

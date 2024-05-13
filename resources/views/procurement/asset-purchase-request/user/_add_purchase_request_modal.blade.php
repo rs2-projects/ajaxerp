@@ -10,13 +10,13 @@
             <div class="modal-body erp-modal-body p-0">
                 <div class="warehouse-basic-info bg-card ">
                     <div class="wbi-item">
-                        <h2>Purchase Request #</h2>
+                        {{-- <h2>Purchase Request #{{$request_id}}</h2> --}}
                     </div>
                     <div class="new-purchase-request-form-wrapper mt-3 d-flex flex-wrap gap-2">
                         <div class="nprf-item flex-100">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">Category <span class="text-danger">*</span></label>
-                                <select class="select select-step" id="category" name="" onchange="categoryChangeHandler(this)" required>
+                                <select class="select select-step category" id="category" name="" onchange="categoryChangeHandler(this)" required>
                                     <option value="">Select Category</option>
                                         @foreach ($asset_categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -37,13 +37,13 @@
                         <div class="nprf-item flex-23">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">QTY <span class="text-red">*</span></label>
-                                <input class="form-control" id="item_qty" type="text" placeholder="" required>
+                                <input class="form-control item_qty" id="item_qty" type="text" placeholder="" required>
                             </div>
                         </div>
                         <div class="nprf-item flex-100">
                             <div class="input-block erp-step-input-block ">
                                 <label class="col-form-label">Description</label>
-                                <textarea rows="1" id="item_desc" class="form-control"></textarea>
+                                <textarea rows="1" id="item_desc" class="form-control item_desc"></textarea>
                             </div>
                         </div>
                         {{-- <div class="nprf-item flex-100">

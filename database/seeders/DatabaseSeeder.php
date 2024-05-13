@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ChartOfAccountSeeder::class);
         $this->call(CountryTableSeeder::class);
         $this->call(StateTableSeeder::class);
+        $this->call(PermissionsTableSeeder::class);
     }
 }

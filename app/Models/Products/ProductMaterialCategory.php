@@ -11,6 +11,15 @@ class ProductMaterialCategory extends Model
     protected $table = 'product_material_categories';
     public $timestamps = false;
 
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
+    const TYPE_PAPER = 2;
+    const TYPES = [
+        self::TYPE_BOARD => 'Board',
+        self::TYPE_OTHERS => 'Others',
+        self::TYPE_PAPER => 'Paper'
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -26,6 +35,7 @@ class ProductMaterialCategory extends Model
     ];
 
     protected $fillable = [
+        'type',
         'name',
         'description',
         'status',
@@ -37,4 +47,9 @@ class ProductMaterialCategory extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(ProductMaterial::class, 'product_material_category_id', 'id');
+    }
 }

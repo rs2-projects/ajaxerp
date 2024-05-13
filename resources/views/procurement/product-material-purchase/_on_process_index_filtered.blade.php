@@ -10,18 +10,24 @@
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
-            <th class="erp-th text-center">Record Payment </th>
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission( 'manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
+                <th class="erp-th text-center">Record Payment </th>
+            @endif
+            @if(hasPermission('product-material-purchase-print-barcode' ))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($purchase_orders as $purchase_order)
+            @forelse($purchase_orders as $purchase_order)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title">
+                            <a href="{{ route('procurement.product-material-purchase.details', $purchase_order->id) }}"><strong>{{ $purchase_order->purchase_id }}</strong></a>
+                        </h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                         @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
                             <div class="revised-status">
@@ -52,11 +58,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
@@ -65,26 +71,38 @@
                     </td>
                     <td class="erp-tbody-td text-center">
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
-                            <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
+                            @if(hasPermission( 'manage-product-material-purchase-orders' ))
+                                <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
+                            @endif
                         @else
-                            <a href="javascript:void(0)" class="make-payment-btn" data-bs-toggle="modal" data-bs-target="#make-payment">Make Payment</a>
+                            @if(hasPermission( 'product-material-purchase-order-payment' ))
+                                <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
+                            @endif
                         @endif
                     </td>
-
-
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_resignation"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                    @if(hasPermission('product-material-purchase-print-barcode' ))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        @if(hasPermission('product-material-purchase-print-barcode' ))
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </td>
+                    @endif
+                </tr>
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="10">
+                        Data not found..!
                     </td>
                 </tr>
-            @endforeach
+            @endforelse
         </tbody>
     </table>
 </div>

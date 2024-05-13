@@ -38,6 +38,17 @@
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48">
+                                                <div class="input-block erp-step-input-block mb-0 two">
+                                                    <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                                    <select class="select select-step" name="type" required>
+                                                        <option value="">Select Type</option>
+                                                        @foreach($material_types as $key=>$type)
+                                                            <option value="{{ $key }}">{{ $type }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="erp-filter-item flex-100">
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Product Image </label>
                                                     <input type="file" class="form-control " name="image" accept="image/*">
@@ -101,16 +112,44 @@
                                                     <textarea class="form-control" rows="3" name="description"></textarea>
                                                 </div>
                                             </div>
+                                            {{--<div class="erp-filter-item flex-48">
+                                                <div class="input-block erp-step-input-block mb-0 two">
+                                                    <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Unit"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                                    <select class="select select-step" name="type" required>
+                                                        <option value="">Select Type</option>
+                                                        @foreach($material_types as $key=>$type)
+                                                            <option value="{{ $key }}">{{ $type }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>--}}
                                         </div>
 
                                     </div>
                                     <div class="tab-pane fade " id="address" role="tabpanel" aria-labelledby="address-tab">
-                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between mb-3 ">
+                                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center1 justify-content-between mb-3 ">
                                             <div class="erp-filter-item flex-48">
-                                                <div class="input-block mb-0 erp-step-input-block ">
+                                                <div class="input-block mb-0 erp-step-input-block single-color-wrapper">
                                                     <label class="col-form-label">Color </label>
                                                     <input type="text" class="form-control " name="color">
                                                 </div>
+                                                <div class="row multiple-color-wrapper" style="display: none;">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Upside Color</label>
+                                                            <input type="text" class="form-control " name="upside_color">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label class="col-form-label">Downside Color</label>
+                                                            <input type="text" class="form-control " name="downside_color">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <label>
+                                                    Both Side Color? <input type="checkbox" onchange="changeBothSideColor(this, '#addProductMaterial')" name="both_side_color" value="1">
+                                                </label>
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block mb-0 erp-step-input-block ">
@@ -158,7 +197,7 @@
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Warehouse <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Warehouse"><i class="fa-duotone fa-exclamation"></i></span></label>
                                                     <select class="select select-step" name="warehouse_id" id="warehouse_id" onchange="changeWarehouse(this)" required>
-                                                        <option name="">Select Warehouse</option>
+                                                        <option value="">Select Warehouse</option>
                                                         @foreach($warehouses as $warehouse)
                                                             <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                                                         @endforeach
@@ -175,7 +214,7 @@
                                             </div>
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Select Rack <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
 
                                                     </select>
@@ -200,7 +239,7 @@
 
                                 <div class="erp-filter-item flex-100 mt-4">
                                     <div class="erp-search-btn-wrap text-center">
-                                        <button class=" erp-search-btn text-center" type="submit">Save</button>
+                                        <button class=" erp-search-btn text-center" id="addProductMaterialSubmitBtn" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>

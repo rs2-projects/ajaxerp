@@ -9,7 +9,7 @@
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($terminationTypes as $item)
+            @forelse($terminationTypes as $item)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{$terminationTypes->firstItem() + $loop->iteration -1}}</h4>
@@ -35,7 +35,13 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="4">
+                        No data found...!
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

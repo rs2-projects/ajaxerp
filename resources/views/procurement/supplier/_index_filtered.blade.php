@@ -10,11 +10,13 @@
                 <th class="erp-th text-center">Total Bill</th>
                 <th class="erp-th text-center">Due</th>
                 <th class="erp-th text-center">Lead Time</th>
-                <th class="erp-th text-center">Action </th>
+                @if(hasPermission( 'manage-suppliers'))
+                    <th class="erp-th text-center">Action </th>
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
-            @foreach($suppliers as $supplier)
+            @forelse($suppliers as $supplier)
                 <tr class="erp-tbody-tr">
                     <td class="erp-tbody-td">
                         <h4 class="d-table-title">{{ $suppliers->firstItem() + $loop->iteration - 1 }}</h4>
@@ -34,21 +36,29 @@
                     <td class="erp-tbody-td text-center">0</td>
                     <td class="erp-tbody-td text-center">{{getCurrencySymbol()}} 0</td>
                     <td class="erp-tbody-td text-center">{{$supplier->lead_time_status}}</td>
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
+                    @if(hasPermission( 'manage-suppliers'))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
 
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$supplier->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.supplier.delete',$supplier->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$supplier->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.supplier.delete',$supplier->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
 
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </td>
+                    @endif
+                </tr>
+            @empty
+                <tr class="erp-tbody-tr">
+                    <td class="erp-tbody-td text-center text-primary" colspan="8">
+                        Data not found..!
                     </td>
                 </tr>
-            @endforeach
+            @endforelse
         </tbody>
     </table>
 </div>
