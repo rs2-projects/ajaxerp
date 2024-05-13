@@ -2,15 +2,22 @@
 
 namespace App\Services\ProductionStaff;
 use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionBoard;
+use App\Models\Production\PreProductionBoardDelivery;
+use App\Models\Production\PreProductionBoardDeliveryDetails;
+use App\Models\Production\PreProductionBoardDeliveryDetailsItem;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
 use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
+use App\Models\Production\PreProductionProcessBoard;
 use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProductionProcessMachine;
 use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionDispatch;
+use App\Models\Products\FinishedGoods;
+use App\Models\Products\FinishedGoodsCategory;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Barryvdh\DomPDF\PDF;
@@ -21,6 +28,7 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductionService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -213,6 +221,11 @@ class ProductionService
             ->orderBy('id', 'desc')
             ->get();
 
+        $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $data['p_machine'] = PreProductionProcessMachine::where('pre_production_id', $pre_production->id)
             ->first();
         $data['board_process'] = PreProductionProcess::where('pre_production_id', $pre_production->id)
@@ -299,6 +312,8 @@ class ProductionService
     public function receiveData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('id', $id)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
@@ -307,6 +322,7 @@ class ProductionService
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->get();
+
         $data['pre_production'] = $pre_production;
         return $data;
     }
@@ -320,12 +336,21 @@ class ProductionService
             throw new \Exception('Pre Production not found');
         }
 
-        $valid_code = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
-            ->where('pre_production_id', $id)
-            ->where('pre_production_material_delivery_id', $request->delivery_id)
-            ->where('pre_production_material_delivery_details_id', $request->delivery_details_id)
-            ->where('barcode', $request->barcode)
-            ->get();
+        if($request->type == 'other'){
+            $valid_code = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+                ->where('pre_production_id', $id)
+                ->where('pre_production_material_delivery_id', $request->delivery_id)
+                ->where('pre_production_material_delivery_details_id', $request->delivery_details_id)
+                ->where('barcode', $request->barcode)
+                ->get();
+        }else{
+            $valid_code = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_NO)
+                ->where('pre_production_id', $id)
+                ->where('pre_production_board_delivery_id', $request->delivery_id)
+                ->where('pre_production_board_delivery_details_id', $request->delivery_details_id)
+                ->where('barcode', $request->barcode)
+                ->get();
+        }
 
         $data['is_valid_code'] = 0;
         $data['code_quantity'] = 0;
@@ -338,11 +363,136 @@ class ProductionService
         return $data;
     }
 
+    // public function receiveStoreData($request, $id){
+    //     DB::beginTransaction();
+    //     try {
+    //         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+    //             ->where('status', PreProduction::STATUS_ACTIVE)
+    //             ->where('id', $id)
+    //             ->first();
+    //         if(!$pre_production){
+    //             throw new \Exception('Pre Production not found');
+    //         }
+
+    //         $delivery_id = $request->pre_production_material_delivery_id;
+    //         $delivery = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+    //             ->where('id', $delivery_id)
+    //             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+    //             ->first();
+    //         if(!$delivery){
+    //             throw new \Exception('Pre Production Delivery not found');
+    //         }
+
+    //         if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
+
+    //             foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
+    //                 if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
+
+    //                     foreach($request->code[$detailsKey] as $itemKey => $itemCode){
+    //                         $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+    //                             ->where('pre_production_id', $id)
+    //                             ->where('pre_production_material_delivery_id', $delivery_id)
+    //                             ->where('pre_production_material_delivery_details_id', $detailsId)
+    //                             ->where('barcode', $itemCode)
+    //                             ->first();
+    //                         if($item){
+    //                             $item->received = PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES;
+    //                             $item->save();
+
+    //                             $material = PreProductionMaterial::find($item->pre_production_material_id);
+    //                             $material->received_qty = $material->received_qty + 1;
+    //                             $material->save();
+
+    //                             $item_details = PreProductionMaterialDeliveryDetails::find($item->pre_production_material_delivery_details_id);
+    //                             $item_details->received_qty = $item_details->received_qty + 1;
+    //                             $item_details->save();
+
+    //                             if($material->received_qty == 0){
+    //                                 $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PENDING;
+    //                                 $material->save();
+    //                             }else if($material->received_qty != $material->quantity){
+    //                                 $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
+    //                                 $material->save();
+    //                             }else{
+    //                                 $material->received_status = PreProductionMaterial::RECEIVED_STATUS_DELIVERED;
+    //                                 $material->save();
+    //                             }
+    //                         }
+    //                     }
+
+    //                     $item_count= PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+    //                         ->where('pre_production_id', $id)
+    //                         ->where('pre_production_material_delivery_id', $delivery_id)
+    //                         ->where('pre_production_material_delivery_details_id', $detailsId)
+    //                         ->count();
+    //                     $details = PreProductionMaterialDeliveryDetails::find($detailsId);
+
+    //                     if($item_count > 0){
+    //                         $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PARTIAL;
+    //                         $details->save();
+    //                     }else{
+    //                         $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED;
+    //                         $details->save();
+    //                     }
+    //                 }
+    //             }
+
+    //             $details_count = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+    //                 ->where('status', PreProductionMaterialDeliveryDetails::STATUS_ACTIVE)
+    //                 ->where('received_status','!=',PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED)
+    //                 ->where('pre_production_material_delivery_id', $delivery_id)
+    //                 ->count();
+    //             $delivery = PreProductionMaterialDelivery::find($delivery_id);
+
+    //             if($details_count > 0){
+    //                 $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_PARTIAL;
+    //                 $delivery->save();
+    //             }else{
+    //                 $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED;
+    //                 $delivery->save();
+    //             }
+    //         }
+
+    //         $delivery_count= PreProductionMaterialDelivery::where('received_status', '!=' , PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
+    //             ->where('pre_production_id', $id)
+    //             ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+    //             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+    //             ->count();
+
+    //         if($delivery_count > 0){
+    //             $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
+    //             $pre_production->save();
+    //         }else{
+    //             $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
+    //             $pre_production->save();
+    //         }
+
+    //         // $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+    //         //     ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+    //         //     ->where('pre_production_id', $id)
+    //         //     ->with(
+    //         //         'delivery_details',
+    //         //         'delivery_details.material',
+    //         //         'delivery_details.material.category',
+    //         //         'delivery_details.material.product',
+    //         //         'delivery_details.pending_items',
+    //         //     )
+    //         //     ->get();
+    //         // return $data;
+
+    //     }catch (\Exception $e) {
+    //         DB::rollBack();
+    //         throw new \Exception($e->getMessage());
+    //     }
+    //     DB::commit();
+    // }
+
     public function receiveStoreData($request, $id){
         DB::beginTransaction();
         try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
+                ->where('type', PreProduction::TYPE_OTHERS)
                 ->where('id', $id)
                 ->first();
             if(!$pre_production){
@@ -350,110 +500,178 @@ class ProductionService
             }
 
             $delivery_id = $request->pre_production_material_delivery_id;
-            $delivery = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            $type = $request->type;
+            $item_model = ($type === 'board') ? PreProductionBoardDeliveryDetailsItem::class : PreProductionMaterialDeliveryDetailsItems::class;
+            $material_model = ($type === 'board') ? PreProductionBoard::class : PreProductionMaterial::class;
+            $details_model = ($type === 'board') ? PreProductionBoardDeliveryDetails::class : PreProductionMaterialDeliveryDetails::class;
+            $delivery_model = ($type === 'board') ? PreProductionBoardDelivery::class : PreProductionMaterialDelivery::class;
+
+            $delivery = $delivery_model::where('deleted', $delivery_model::DELETED_NO)
+                ->where('pre_production_id', $id)
                 ->where('id', $delivery_id)
-                ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+                ->where('status', $delivery_model::STATUS_ACTIVE)
                 ->first();
+
             if(!$delivery){
                 throw new \Exception('Pre Production Delivery not found');
             }
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
-
+                
                 foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
                     if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
-
+                        
                         foreach($request->code[$detailsKey] as $itemKey => $itemCode){
-                            $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
-                                ->where('pre_production_id', $id)
-                                ->where('pre_production_material_delivery_id', $delivery_id)
-                                ->where('pre_production_material_delivery_details_id', $detailsId)
-                                ->where('barcode', $itemCode)
-                                ->first();
+                            if($type == 'board'){
+                                $item = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_NO)
+                                    ->where('pre_production_id', $id)
+                                    ->where('pre_production_board_delivery_id', $delivery_id)
+                                    ->where('pre_production_board_delivery_details_id', $detailsId)
+                                    ->where('barcode', $itemCode)
+                                    ->first();
+                            }else{
+                                $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+                                    ->where('pre_production_id', $id)
+                                    ->where('pre_production_material_delivery_id', $delivery_id)
+                                    ->where('pre_production_material_delivery_details_id', $detailsId)
+                                    ->where('barcode', $itemCode)
+                                    ->first();
+                            }
                             if($item){
-                                $item->received = PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES;
+                                $item->received = $item_model::RECEIVED_YES;
                                 $item->save();
-
-                                $material = PreProductionMaterial::find($item->pre_production_material_id);
+                                if($type == 'board'){
+                                    $material = $material_model::find($item->pre_production_board_id);
+                                }else{
+                                    $material = $material_model::find($item->pre_production_material_id);
+                                }
                                 $material->received_qty = $material->received_qty + 1;
                                 $material->save();
 
-                                $item_details = PreProductionMaterialDeliveryDetails::find($item->pre_production_material_delivery_details_id);
+                                // update details table
+                                if($type == 'board'){
+                                    $item_details = $details_model::find($item->pre_production_board_delivery_details_id);
+                                }else{
+                                    $item_details = $details_model::find($item->pre_production_material_delivery_details_id);
+                                }
                                 $item_details->received_qty = $item_details->received_qty + 1;
                                 $item_details->save();
 
                                 if($material->received_qty == 0){
-                                    $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PENDING;
+                                    $material->received_status = $material_model::RECEIVED_STATUS_PENDING;
                                     $material->save();
                                 }else if($material->received_qty != $material->quantity){
-                                    $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
+                                    $material->received_status = $material_model::RECEIVED_STATUS_PARTIAL;
                                     $material->save();
                                 }else{
-                                    $material->received_status = PreProductionMaterial::RECEIVED_STATUS_DELIVERED;
+                                    $material->received_status = $material_model::RECEIVED_STATUS_DELIVERED;
                                     $material->save();
                                 }
                             }
                         }
 
-                        $item_count= PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
-                            ->where('pre_production_id', $id)
-                            ->where('pre_production_material_delivery_id', $delivery_id)
-                            ->where('pre_production_material_delivery_details_id', $detailsId)
-                            ->count();
-                        $details = PreProductionMaterialDeliveryDetails::find($detailsId);
+                        if($type == 'board'){
+                            $item_count = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_NO)
+                                ->where('pre_production_id', $id)
+                                ->where('pre_production_board_delivery_id', $delivery_id)
+                                ->where('pre_production_board_delivery_details_id', $detailsId)
+                                ->where('barcode', $itemCode)
+                                ->count();
+                        }else{
+                            $item_count = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
+                                ->where('pre_production_id', $id)
+                                ->where('pre_production_material_delivery_id', $delivery_id)
+                                ->where('pre_production_material_delivery_details_id', $detailsId)
+                                ->where('barcode', $itemCode)
+                                ->count();
+                        }
+                        
+                        $details = $details_model::find($detailsId);
 
                         if($item_count > 0){
-                            $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PARTIAL;
+                            $details->received_status = $details_model::RECEIVED_STATUS_PARTIAL;
                             $details->save();
                         }else{
-                            $details->received_status = PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED;
+                            $details->received_status = $details_model::RECEIVED_STATUS_DELIVERED;
                             $details->save();
                         }
                     }
                 }
 
-                $details_count = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
-                    ->where('status', PreProductionMaterialDeliveryDetails::STATUS_ACTIVE)
-                    ->where('received_status','!=',PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_DELIVERED)
-                    ->where('pre_production_material_delivery_id', $delivery_id)
-                    ->count();
-                $delivery = PreProductionMaterialDelivery::find($delivery_id);
-
-                if($details_count > 0){
-                    $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_PARTIAL;
-                    $delivery->save();
+                if($type == 'board'){
+                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
+                        ->where('status', $details_model::STATUS_ACTIVE)
+                        ->where('received_status','!=',$details_model::RECEIVED_STATUS_DELIVERED)
+                        ->where('pre_production_id', $id)
+                        ->where('pre_production_board_delivery_id', $delivery_id)
+                        ->count();
+                    
+                    // $processing_count = $details_model::where('pre_production_board_delivery_id', $delivery_id)
+                    //     ->where('pre_production_id', $id)
+                    //     ->where('received_status', $details_model::RECEIVED_STATUS_PARTIAL)
+                    //     ->exists();
+                    
                 }else{
-                    $delivery->received_status = PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED;
-                    $delivery->save();
+                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
+                        ->where('status', $details_model::STATUS_ACTIVE)
+                        ->where('received_status','!=',$details_model::RECEIVED_STATUS_DELIVERED)
+                        ->where('pre_production_id', $id)
+                        ->where('pre_production_material_delivery_id', $delivery_id)
+                        ->count();
+
+                    // $processing_count = $details_model::where('pre_production_material_delivery_id', $delivery_id)
+                    //     ->where('received_status', $details_model::RECEIVED_STATUS_PARTIAL)
+                    //     ->where('pre_production_id', $id)
+                    //     ->exists();
                 }
+                $delivery = $delivery_model::find($delivery_id);
+
+                if($details_count == 0){
+                    $delivery->received_status = $delivery_model::RECEIVED_STATUS_DELIVERED;
+                }else{
+                    $delivery->received_status = $delivery_model::RECEIVED_STATUS_PARTIAL;
+                }
+
+                $delivery->save();
             }
 
-            $delivery_count= PreProductionMaterialDelivery::where('received_status', '!=' , PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
+            $other_delivery_count= PreProductionMaterialDelivery::where('received_status', '!=' , PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
                 ->where('pre_production_id', $id)
                 ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
                 ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
                 ->count();
 
-            if($delivery_count > 0){
-                $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
-                $pre_production->save();
-            }else{
+            // $other_delivery_processing = PreProductionMaterialDelivery::where('pre_production_id', $id)
+            //     ->where('received_status', PreProductionMaterialDelivery::RECEIVED_STATUS_PARTIAL)
+            //     ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            //     ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            //     ->exists();
+
+            $board_delivery_count= PreProductionBoardDelivery::where('received_status', '!=' , PreProductionBoardDelivery::RECEIVED_STATUS_DELIVERED)
+                ->where('pre_production_id', $id)
+                ->where('deleted', PreProductionBoardDelivery::DELETED_NO)
+                ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+                ->count();
+
+            // $board_delivery_processing = PreProductionBoardDelivery::where('pre_production_id', $id)
+            //     ->where('received_status', PreProductionBoardDelivery::RECEIVED_STATUS_PARTIAL)
+            //     ->where('deleted', PreProductionBoardDelivery::DELETED_NO)
+            //     ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+            //     ->exists();
+
+            // if($other_delivery_count == 0 && $board_delivery_count){
+            //     $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
+            // }else if($other_delivery_processing || $board_delivery_processing){
+            //     $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
+            // }
+            
+            if ($other_delivery_count == 0 && $board_delivery_count == 0) {
                 $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
-                $pre_production->save();
+            } else {
+                $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
             }
 
-            // $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
-            //     ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
-            //     ->where('pre_production_id', $id)
-            //     ->with(
-            //         'delivery_details',
-            //         'delivery_details.material',
-            //         'delivery_details.material.category',
-            //         'delivery_details.material.product',
-            //         'delivery_details.pending_items',
-            //     )
-            //     ->get();
-            // return $data;
+            $pre_production->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -464,23 +682,53 @@ class ProductionService
 
     public function getDeliveryData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
         }
-        $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+
+        $material_deliveries= PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'delivery_details',
+                'delivery_details', 
                 'delivery_details.material',
                 'delivery_details.material.category',
                 'delivery_details.material.product',
                 'delivery_details.pending_items',
             )
             ->get();
-        //$data['pre_production'] = $pre_production;
+
+        $board_deliveries= PreProductionBoardDelivery::where('deleted', PreProductionBoardDelivery::DELETED_NO)
+            ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+            ->where('pre_production_id', $id)
+            ->with(
+                'board_delivery_details', 
+                'board_delivery_details.board',
+                'board_delivery_details.board.category',
+                'board_delivery_details.board.product',
+                'board_delivery_details.pending_items',
+            )
+            ->get();
+
+        $deliveredMaterials = $material_deliveries->map(function ($delivery) {
+            return [
+                'type' => 'other',
+                'delivery' => $delivery
+            ];
+        });
+
+        $deliveredBoards = $board_deliveries->map(function ($board_delivery) {
+            return [
+                'type' => 'board',
+                'delivery' => $board_delivery
+            ];
+        });
+
+        $data['deliveries'] = $deliveredMaterials->concat($deliveredBoards)->toArray();
         return $data;
     }
 
@@ -493,14 +741,24 @@ class ProductionService
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
         }
-
-        $valid_code = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
-            ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-            ->where('pre_production_id', $id)
-            ->where('pre_production_material_delivery_id', $request->delivery_id)
-            ->where('pre_production_material_delivery_details_id', $request->delivery_details_id)
-            ->where('barcode', $request->barcode)
-            ->get();
+        
+        if($request->type == 'other'){
+            $valid_code = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
+                ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
+                ->where('pre_production_id', $id)
+                ->where('pre_production_material_delivery_id', $request->delivery_id)
+                ->where('pre_production_material_delivery_details_id', $request->delivery_details_id)
+                ->where('barcode', $request->barcode)
+                ->get();
+        }else{
+            $valid_code = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_YES)
+                ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
+                ->where('pre_production_id', $id)
+                ->where('pre_production_board_delivery_id', $request->delivery_id)
+                ->where('pre_production_board_delivery_details_id', $request->delivery_details_id)
+                ->where('barcode', $request->barcode)
+                ->get();
+        }
 
         $data['is_valid_code'] = 0;
         $data['code_quantity'] = 0;
@@ -514,24 +772,45 @@ class ProductionService
     }
 
     public function getDeliveryScanData($id){
-        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
-            ->where('id', $id)
-            ->first();
-        if(!$pre_production){
-            throw new \Exception('Pre Production not found');
-        }
-        $data['deliveries'] = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+        $material_deliveries= PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'delivery_details',
+                'delivery_details', 
                 'delivery_details.material',
                 'delivery_details.material.category',
                 'delivery_details.material.product',
                 'delivery_details.pending_scans',
             )
             ->get();
-        //$data['pre_production'] = $pre_production;
+
+        $board_deliveries= PreProductionBoardDelivery::where('deleted', PreProductionBoardDelivery::DELETED_NO)
+            ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+            ->where('pre_production_id', $id)
+            ->with(
+                'board_delivery_details', 
+                'board_delivery_details.board',
+                'board_delivery_details.board.category',
+                'board_delivery_details.board.product',
+                'board_delivery_details.pending_scans',
+            )
+            ->get();
+
+        $deliveredMaterials = $material_deliveries->map(function ($delivery) {
+            return [
+                'type' => 'other',
+                'delivery' => $delivery
+            ];
+        });
+
+        $deliveredBoards = $board_deliveries->map(function ($board_delivery) {
+            return [
+                'type' => 'board',
+                'delivery' => $board_delivery
+            ];
+        });
+
+        $data['deliveries'] = $deliveredMaterials->concat($deliveredBoards)->toArray();
         return $data;
     }
 
@@ -547,10 +826,18 @@ class ProductionService
             }
 
             $delivery_id = $request->pre_production_material_delivery_id;
-            $delivery = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            $type = $request->type;
+            $item_model = ($type === 'board') ? PreProductionBoardDeliveryDetailsItem::class : PreProductionMaterialDeliveryDetailsItems::class;
+            $material_model = ($type === 'board') ? PreProductionBoard::class : PreProductionMaterial::class;
+            $details_model = ($type === 'board') ? PreProductionBoardDeliveryDetails::class : PreProductionMaterialDeliveryDetails::class;
+            $delivery_model = ($type === 'board') ? PreProductionBoardDelivery::class : PreProductionMaterialDelivery::class;
+
+            $delivery = $delivery_model::where('deleted', $delivery_model::DELETED_NO)
+                ->where('pre_production_id', $id)
                 ->where('id', $delivery_id)
-                ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+                ->where('status', $delivery_model::STATUS_ACTIVE)
                 ->first();
+
             if(!$delivery){
                 throw new \Exception('Pre Production Delivery not found');
             }
@@ -561,24 +848,51 @@ class ProductionService
                     if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
 
                         foreach($request->code[$detailsKey] as $itemKey => $itemCode){
-                            $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
-                                ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-                                ->where('pre_production_id', $id)
-                                ->where('pre_production_material_delivery_id', $delivery_id)
-                                ->where('pre_production_material_delivery_details_id', $detailsId)
-                                ->where('barcode', $itemCode)
-                                ->first();
+                            if($type == 'board'){
+                                $item = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_YES)
+                                    ->where('pre_production_id', $id)
+                                    ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
+                                    ->where('pre_production_board_delivery_id', $delivery_id)
+                                    ->where('pre_production_board_delivery_details_id', $detailsId)
+                                    ->where('barcode', $itemCode)
+                                    ->first();
+                            }else{
+                                $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
+                                    ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)    
+                                    ->where('pre_production_id', $id)
+                                    ->where('pre_production_material_delivery_id', $delivery_id)
+                                    ->where('pre_production_material_delivery_details_id', $detailsId)
+                                    ->where('barcode', $itemCode)
+                                    ->first();
+                                }
                             if($item){
-                                $item->scanned = PreProductionMaterialDeliveryDetailsItems::SCANNED_YES;
+                                $item->scanned = $item_model::SCANNED_YES;
                                 $item->save();
 
-                                $material = PreProductionMaterial::find($item->pre_production_material_id);
+                                if($type == 'board'){
+                                    $material = $material_model::find($item->pre_production_board_id);
+                                }else{
+                                    $material = $material_model::find($item->pre_production_material_id);
+                                }
                                 $material->scanned_qty = $material->scanned_qty + 1;
                                 $material->save();
 
-                                $item_details = PreProductionMaterialDeliveryDetails::find($item->pre_production_material_delivery_details_id);
+                                if($type == 'board'){
+                                    $item_details = $details_model::find($item->pre_production_board_delivery_details_id);
+                                }else{
+                                    $item_details = $details_model::find($item->pre_production_material_delivery_details_id);
+                                }
                                 $item_details->scanned_qty = $item_details->scanned_qty + 1;
                                 $item_details->save();
+
+                                if($material->scanned_qty == 0){
+                                    $material->scan_status = $material_model::RECEIVED_STATUS_PENDING;
+                                }else if($material->received_qty != $material->quantity){
+                                    $material->scan_status = $material_model::RECEIVED_STATUS_PARTIAL;
+                                }else{
+                                    $material->scan_status = $material_model::SCAN_STATUS_SCANNED;
+                                }
+                                $material->save();
 
                                 if($material->scanned_qty == 0){
                                     $material->scan_status = PreProductionMaterial::SCAN_STATUS_PENDING;
@@ -593,21 +907,32 @@ class ProductionService
                             }
                         }
 
-                        $item_count= PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
-                            ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-                            ->where('pre_production_id', $id)
-                            ->where('pre_production_material_delivery_id', $delivery_id)
-                            ->where('pre_production_material_delivery_details_id', $detailsId)
-                            ->count();
-                        $details = PreProductionMaterialDeliveryDetails::find($detailsId);
+                        if($type == 'board'){
+                            $item_count = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_YES)
+                                ->where('pre_production_id', $id)
+                                ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
+                                ->where('pre_production_board_delivery_id', $delivery_id)
+                                ->where('pre_production_board_delivery_details_id', $detailsId)
+                                ->where('barcode', $itemCode)
+                                ->count();
+                        }else{
+                            $item_count = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
+                                ->where('pre_production_id', $id)
+                                ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
+                                ->where('pre_production_material_delivery_id', $delivery_id)
+                                ->where('pre_production_material_delivery_details_id', $detailsId)
+                                ->where('barcode', $itemCode)
+                                ->count();
+                        }
+                        
+                        $details = $details_model::find($detailsId);
 
                         if($item_count > 0){
-                            $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PARTIAL;
-                            $details->save();
+                            $details->scan_status = $details_model::SCAN_STATUS_PARTIAL;
                         }else{
-                            $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED;
-                            $details->save();
+                            $details->scan_status = $details_model::SCAN_STATUS_SCANNED;
                         }
+                        $details->save();
 
                         // if ($item_count > 0 && ($details->total_quantity - $details->scanned_qty) > 0) {
                         //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PARTIAL;
@@ -620,35 +945,51 @@ class ProductionService
                     }
                 }
 
-                $details_count = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
-                    ->where('status', PreProductionMaterialDeliveryDetails::STATUS_ACTIVE)
-                    ->where('scan_status','!=',PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED)
-                    ->where('pre_production_material_delivery_id', $delivery_id)
-                    ->count();
-                $delivery = PreProductionMaterialDelivery::find($delivery_id);
-
-                if($details_count > 0){
-                    $delivery->scan_status = PreProductionMaterialDelivery::SCAN_STATUS_PARTIAL;
-                    $delivery->save();
+                if($type == 'board'){
+                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
+                        ->where('status', $details_model::STATUS_ACTIVE)
+                        ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
+                        ->where('pre_production_id', $id)
+                        ->where('pre_production_board_delivery_id', $delivery_id)
+                        ->count();
                 }else{
-                    $delivery->scan_status = PreProductionMaterialDelivery::SCAN_STATUS_SCANNED;
-                    $delivery->save();
+                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
+                        ->where('status', $details_model::STATUS_ACTIVE)
+                        ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
+                        ->where('pre_production_id', $id)
+                        ->where('pre_production_material_delivery_id', $delivery_id)
+                        ->count();
                 }
+                $delivery = $delivery_model::find($delivery_id);
+
+                if($details_count == 0){
+                    $delivery->scan_status = $delivery_model::SCAN_STATUS_SCANNED;
+                }else{
+                    $delivery->scan_status = $delivery_model::SCAN_STATUS_PARTIAL;
+                }
+
+                $delivery->save();
             }
 
-            $delivery_count= PreProductionMaterialDelivery::where('scan_status', '!=' , PreProductionMaterialDelivery::SCAN_STATUS_SCANNED)
+            $other_delivery_count= PreProductionMaterialDelivery::where('scan_status', '!=' , PreProductionMaterialDelivery::SCAN_STATUS_SCANNED)
                 ->where('pre_production_id', $id)
                 ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
                 ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
                 ->count();
 
-            if($delivery_count > 0){
-                $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
-                $pre_production->save();
-            }else{
+            $board_delivery_count= PreProductionBoardDelivery::where('scan_status', '!=' , PreProductionBoardDelivery::SCAN_STATUS_SCANNED)
+                ->where('pre_production_id', $id)
+                ->where('deleted', PreProductionBoardDelivery::DELETED_NO)
+                ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+                ->count();
+
+            if ($other_delivery_count == 0 && $board_delivery_count == 0) {
                 $pre_production->scan_status = PreProduction::SCAN_STATUS_SCANNED;
-                $pre_production->save();
+            } else {
+                $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
             }
+
+            $pre_production->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -656,6 +997,128 @@ class ProductionService
         }
         DB::commit();
     }
+
+    // public function scanStoreData($request, $id){
+    //     DB::beginTransaction();
+    //     try {
+    //         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+    //             ->where('status', PreProduction::STATUS_ACTIVE)
+    //             ->where('id', $id)
+    //             ->first();
+    //         if(!$pre_production){
+    //             throw new \Exception('Pre Production not found');
+    //         }
+
+    //         $delivery_id = $request->pre_production_material_delivery_id;
+    //         $delivery = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+    //             ->where('id', $delivery_id)
+    //             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+    //             ->first();
+    //         if(!$delivery){
+    //             throw new \Exception('Pre Production Delivery not found');
+    //         }
+
+    //         if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
+
+    //             foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
+    //                 if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
+
+    //                     foreach($request->code[$detailsKey] as $itemKey => $itemCode){
+    //                         $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
+    //                             ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
+    //                             ->where('pre_production_id', $id)
+    //                             ->where('pre_production_material_delivery_id', $delivery_id)
+    //                             ->where('pre_production_material_delivery_details_id', $detailsId)
+    //                             ->where('barcode', $itemCode)
+    //                             ->first();
+    //                         if($item){
+    //                             $item->scanned = PreProductionMaterialDeliveryDetailsItems::SCANNED_YES;
+    //                             $item->save();
+
+    //                             $material = PreProductionMaterial::find($item->pre_production_material_id);
+    //                             $material->scanned_qty = $material->scanned_qty + 1;
+    //                             $material->save();
+
+    //                             $item_details = PreProductionMaterialDeliveryDetails::find($item->pre_production_material_delivery_details_id);
+    //                             $item_details->scanned_qty = $item_details->scanned_qty + 1;
+    //                             $item_details->save();
+
+    //                             if($material->scanned_qty == 0){
+    //                                 $material->scan_status = PreProductionMaterial::SCAN_STATUS_PENDING;
+    //                                 $material->save();
+    //                             }else if($material->scanned_qty != $material->quantity){
+    //                                 $material->scan_status = PreProductionMaterial::SCAN_STATUS_PARTIAL;
+    //                                 $material->save();
+    //                             }else{
+    //                                 $material->scan_status = PreProductionMaterial::SCAN_STATUS_SCANNED;
+    //                                 $material->save();
+    //                             }
+    //                         }
+    //                     }
+
+    //                     $item_count= PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
+    //                         ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
+    //                         ->where('pre_production_id', $id)
+    //                         ->where('pre_production_material_delivery_id', $delivery_id)
+    //                         ->where('pre_production_material_delivery_details_id', $detailsId)
+    //                         ->count();
+    //                     $details = PreProductionMaterialDeliveryDetails::find($detailsId);
+
+    //                     if($item_count > 0){
+    //                         $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PARTIAL;
+    //                         $details->save();
+    //                     }else{
+    //                         $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED;
+    //                         $details->save();
+    //                     }
+
+    //                     // if ($item_count > 0 && ($details->total_quantity - $details->scanned_qty) > 0) {
+    //                     //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PARTIAL;
+    //                     // } elseif ($item_count == 0 && ($details->total_quantity - $details->scanned_qty) == 0) {
+    //                     //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED;
+    //                     // } else {
+    //                     //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PENDING;
+    //                     // }
+    //                     // $details->save();
+    //                 }
+    //             }
+
+    //             $details_count = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+    //                 ->where('status', PreProductionMaterialDeliveryDetails::STATUS_ACTIVE)
+    //                 ->where('scan_status','!=',PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED)
+    //                 ->where('pre_production_material_delivery_id', $delivery_id)
+    //                 ->count();
+    //             $delivery = PreProductionMaterialDelivery::find($delivery_id);
+
+    //             if($details_count > 0){
+    //                 $delivery->scan_status = PreProductionMaterialDelivery::SCAN_STATUS_PARTIAL;
+    //                 $delivery->save();
+    //             }else{
+    //                 $delivery->scan_status = PreProductionMaterialDelivery::SCAN_STATUS_SCANNED;
+    //                 $delivery->save();
+    //             }
+    //         }
+
+    //         $delivery_count= PreProductionMaterialDelivery::where('scan_status', '!=' , PreProductionMaterialDelivery::SCAN_STATUS_SCANNED)
+    //             ->where('pre_production_id', $id)
+    //             ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+    //             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+    //             ->count();
+
+    //         if($delivery_count > 0){
+    //             $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
+    //             $pre_production->save();
+    //         }else{
+    //             $pre_production->scan_status = PreProduction::SCAN_STATUS_SCANNED;
+    //             $pre_production->save();
+    //         }
+
+    //     }catch (\Exception $e) {
+    //         DB::rollBack();
+    //         throw new \Exception($e->getMessage());
+    //     }
+    //     DB::commit();
+    // }
 
 
     // dispatch
@@ -836,12 +1299,22 @@ class ProductionService
 
     public function getMaterialByCategory($request)
     {
-        $data['materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
-            ->where('status', ProductMaterial::STATUS_ACTIVE)
-            ->where('product_material_category_id', $request->category_id)
-            ->orderBy('name', 'asc')
-            ->get();
+        if($request->type == 'other'){
+            $data['materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+                ->where('status', ProductMaterial::STATUS_ACTIVE)
+                ->where('product_material_category_id', $request->category_id)
+                ->orderBy('name', 'asc')
+                ->get();
+        }else{
+            $data['materials'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+                ->where('status', FinishedGoods::STATUS_ACTIVE)
+                ->where('type', FinishedGoods::TYPE_BOARD)
+                ->where('finished_goods_category_id', $request->category_id)
+                ->orderBy('id', 'desc')
+                ->get();
+        }
 
+        $data['type'] = $request->type;
         return $data;
 
     }
@@ -859,58 +1332,108 @@ class ProductionService
                 throw new \Exception("Process not found");
             }
             $uniqueProductMaterials = [];
-
+            $uniqueBoards = [];
             if (isset($request->product_material_category_id) && is_array($request->product_material_category_id) && (count($request->product_material_category_id) > 0)) {
                 foreach ($request->product_material_category_id as $key=>$category_id) {
                     if(($request->product_material_category_id[$key] != '') &&
                         ($request->product_material_id[$key] != '') &&
                         ($request->quantity[$key] != '')
                     ){
-                        $material = PreProductionProcessMaterial::where('pre_production_process_id', $request->process_id)
-                            ->where('pre_production_id', $request->pre_production_id)
-                            ->where('product_material_category_id', $request->product_material_category_id[$key])
-                            ->where('product_material_id', $request->product_material_id[$key])
-                            ->first();
-                        if(!$material){
-                            $material = new PreProductionProcessMaterial();
-                            $material->pre_production_id = $request->pre_production_id;
-                            $material->pre_production_process_id = $process->id;
-                            $material->product_material_category_id = $request->product_material_category_id[$key];
-                            $material->product_material_id = $request->product_material_id[$key];
-                            $material->quantity = $request->quantity[$key];
-                            $material->extra_quantity = $request->quantity[$key];
-                            $material->save();
+                        if($request->material_type[$key] == 'other'){
+                            $material = PreProductionProcessMaterial::where('pre_production_process_id', $request->process_id)
+                                ->where('pre_production_id', $request->pre_production_id)
+                                ->where('product_material_category_id', $request->product_material_category_id[$key])
+                                ->where('product_material_id', $request->product_material_id[$key])
+                                ->first();
+                            if(!$material){
+                                $material = new PreProductionProcessMaterial();
+                                $material->pre_production_id = $request->pre_production_id;
+                                $material->pre_production_process_id = $process->id;
+                                $material->product_material_category_id = $request->product_material_category_id[$key];
+                                $material->product_material_id = $request->product_material_id[$key];
+                                $material->quantity = $request->quantity[$key];
+                                $material->extra_quantity = $request->quantity[$key];
+                                $material->save();
 
-                            $material_id = $request->product_material_id[$key];
-                            $quantity = $request->quantity[$key];
-                            $category_id = $request->product_material_category_id[$key];
-                            if(isset($uniqueProductMaterials[$material_id])) {
-                                $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                            } else {
-                                $uniqueProductMaterials[$material_id] = [
-                                    'material_id' => $material_id,
-                                    'category_id' => $category_id,
-                                    'quantity' => $quantity,
-                                ];
+                                $material_id = $request->product_material_id[$key];
+                                $quantity = $request->quantity[$key];
+                                $category_id = $request->product_material_category_id[$key];
+                                if(isset($uniqueProductMaterials[$material_id])) {
+                                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                } else {
+                                    $uniqueProductMaterials[$material_id] = [
+                                        'material_id' => $material_id,
+                                        'category_id' => $category_id,
+                                        'quantity' => $quantity,
+                                    ];
+                                }
+                            }else{
+                                $material->product_material_category_id = $request->product_material_category_id[$key];
+                                $material->product_material_id = $request->product_material_id[$key];
+                                $material->quantity += $request->quantity[$key];
+                                $material->extra_quantity += $request->quantity[$key];
+                                $material->save();
+
+                                $material_id = $request->product_material_id[$key];
+                                $quantity = $request->quantity[$key];
+                                $category_id = $request->product_material_category_id[$key];
+                                if(isset($uniqueProductMaterials[$material_id])) {
+                                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                } else {
+                                    $uniqueProductMaterials[$material_id] = [
+                                        'material_id' => $material_id,
+                                        'category_id' => $category_id,
+                                        'quantity' => $quantity,
+                                    ];
+                                }
                             }
                         }else{
-                            $material->product_material_category_id = $request->product_material_category_id[$key];
-                            $material->product_material_id = $request->product_material_id[$key];
-                            $material->quantity += $request->quantity[$key];
-                            $material->extra_quantity += $request->quantity[$key];
-                            $material->save();
+                            $board = PreProductionProcessBoard::where('pre_production_process_id', $request->process_id)
+                                ->where('pre_production_id', $request->pre_production_id)
+                                ->where('finished_board_category_id', $request->product_material_category_id[$key])
+                                ->where('finished_board_id', $request->product_material_id[$key])
+                                ->first();
+                            if(!$board){
+                                $board = new PreProductionProcessBoard();
+                                $board->pre_production_id = $request->pre_production_id;
+                                $board->pre_production_process_id = $process->id;
+                                $board->finished_board_category_id = $request->product_material_category_id[$key];
+                                $board->finished_board_id = $request->product_material_id[$key];
+                                $board->quantity = $request->quantity[$key];
+                                $board->extra_quantity = $request->quantity[$key];
+                                $board->save();
 
-                            $material_id = $request->product_material_id[$key];
-                            $quantity = $request->quantity[$key];
-                            $category_id = $request->product_material_category_id[$key];
-                            if(isset($uniqueProductMaterials[$material_id])) {
-                                $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                            } else {
-                                $uniqueProductMaterials[$material_id] = [
-                                    'material_id' => $material_id,
-                                    'category_id' => $category_id,
-                                    'quantity' => $quantity,
-                                ];
+                                $board_id = $request->product_material_id[$key];
+                                $quantity = $request->quantity[$key];
+                                $category_id = $request->product_material_category_id[$key];
+                                if(isset($uniqueBoards[$board_id])) {
+                                    $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                } else {
+                                    $uniqueBoards[$board_id] = [
+                                        'board_id' => $board_id,
+                                        'category_id' => $category_id,
+                                        'quantity' => $quantity,
+                                    ];
+                                }
+                            }else{
+                                $board->finished_board_category_id = $request->product_material_category_id[$key];
+                                $board->finished_board_id = $request->product_material_id[$key];
+                                $board->quantity += $request->quantity[$key];
+                                $board->extra_quantity += $request->quantity[$key];
+                                $board->save();
+
+                                $board_id = $request->product_material_id[$key];
+                                $quantity = $request->quantity[$key];
+                                $category_id = $request->product_material_category_id[$key];
+                                if(isset($uniqueBoards[$board_id])) {
+                                    $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                } else {
+                                    $uniqueBoards[$board_id] = [
+                                        'board_id' => $board_id,
+                                        'category_id' => $category_id,
+                                        'quantity' => $quantity,
+                                    ];
+                                }
                             }
                         }
                     }
@@ -926,37 +1449,76 @@ class ProductionService
             }
             $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_PARTIAL;
             $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
+            $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
             $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
             $pre_production->updated_at = now();
             $pre_production->save();
 
             foreach ($uniqueProductMaterials as $materialData) {
-                $material = PreProductionMaterial::where('pre_production_id', $request->pre_production_id)
-                    ->where('product_material_category_id', $materialData['category_id'])
-                    ->where('product_material_id', $materialData['material_id'])
-                    ->where('deleted', PreProductionMaterial::DELETED_NO)
-                    ->where('status', PreProductionMaterial::STATUS_ACTIVE)
-                    ->first();
-                if($material){
-                    $material->quantity += $materialData['quantity'];
-                    $material->extra_quantity += $request->quantity[$key];
-                    $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_PARTIAL;
-                    $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
-                    $material->updated_by = auth()->guard('production-staff')->user()->id;
-                    $material->updated_at = Carbon::now();
-                    $material->save();
-                }else{
-                    $material = new PreProductionMaterial();
-                    $material->pre_production_id = $request->pre_production_id;
-                    $material->product_material_category_id = $materialData['category_id'];
-                    $material->product_material_id = $materialData['material_id'];
-                    $material->quantity = $materialData['quantity'];
-                    $material->extra_quantity = $materialData['quantity'];
-                    $material->created_by = auth()->guard('production-staff')->user()->id;
-                    $material->created_at = Carbon::now();
-                    $material->updated_by = auth()->guard('production-staff')->user()->id;
-                    $material->updated_at = Carbon::now();
-                    $material->save();
+                if($materialData['category_id'] !="" && $materialData['material_id'] !="" && $materialData['quantity'] !=""){
+                    $material = PreProductionMaterial::where('pre_production_id', $request->pre_production_id)
+                        ->where('product_material_category_id', $materialData['category_id'])
+                        ->where('product_material_id', $materialData['material_id'])
+                        ->where('deleted', PreProductionMaterial::DELETED_NO)
+                        ->where('status', PreProductionMaterial::STATUS_ACTIVE)
+                        ->first();
+
+                    if($material){
+                        $material->quantity += $materialData['quantity'];
+                        $material->extra_quantity += $materialData['quantity'];
+                        $material->delivery_status = PreProductionMaterial::DELIVERY_STATUS_PARTIAL;
+                        $material->received_status = PreProductionMaterial::RECEIVED_STATUS_PARTIAL;
+                        $material->scan_status = PreProductionMaterial::SCAN_STATUS_PARTIAL;
+                        $material->updated_by = auth()->guard('production-staff')->user()->id;
+                        $material->updated_at = Carbon::now();
+                        $material->save();
+                    }else{
+                        $material = new PreProductionMaterial();
+                        $material->pre_production_id = $request->pre_production_id;
+                        $material->product_material_category_id = $materialData['category_id'];
+                        $material->product_material_id = $materialData['material_id'];
+                        $material->quantity = $materialData['quantity'];
+                        $material->extra_quantity = $materialData['quantity'];
+                        $material->created_by = auth()->guard('production-staff')->user()->id;
+                        $material->created_at = Carbon::now();
+                        $material->updated_by = auth()->guard('production-staff')->user()->id;
+                        $material->updated_at = Carbon::now();
+                        $material->save();
+                    }
+                }
+            }
+
+            foreach ($uniqueBoards as $boardData) {
+                if($boardData['category_id'] !="" && $boardData['board_id'] !="" && $boardData['quantity'] !=""){
+                    $board = PreProductionBoard::where('pre_production_id', $request->pre_production_id)
+                        ->where('finished_board_category_id', $boardData['category_id'])
+                        ->where('finished_board_id', $boardData['board_id'])
+                        ->where('deleted', PreProductionBoard::DELETED_NO)
+                        ->where('status', PreProductionBoard::STATUS_ACTIVE)
+                        ->first();
+                        
+                    if($board){
+                        $board->quantity += $boardData['quantity'];
+                        $board->extra_quantity += $boardData['quantity'];
+                        $board->delivery_status = PreProductionBoard::DELIVERY_STATUS_PARTIAL;
+                        $board->received_status = PreProductionBoard::RECEIVED_STATUS_PARTIAL;
+                        $board->scan_status = PreProductionBoard::SCAN_STATUS_PARTIAL;
+                        $board->updated_by = auth()->guard('production-staff')->user()->id;
+                        $board->updated_at = Carbon::now();
+                        $board->save();
+                    }else{
+                        $board = new PreProductionBoard();
+                        $board->pre_production_id = $request->pre_production_id;
+                        $board->finished_board_category_id = $boardData['category_id'];
+                        $board->finished_board_id = $boardData['board_id'];
+                        $board->quantity = $boardData['quantity'];
+                        $board->extra_quantity = $boardData['quantity'];
+                        $board->created_by = auth()->guard('production-staff')->user()->id;
+                        $board->created_at = Carbon::now();
+                        $board->updated_by = auth()->guard('production-staff')->user()->id;
+                        $board->updated_at = Carbon::now();
+                        $board->save();
+                    }
                 }
             }
 

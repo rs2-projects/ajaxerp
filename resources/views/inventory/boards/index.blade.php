@@ -3,11 +3,11 @@
     <!-- Start::row-1 -->
     <div class="row">
         {{-- @if(hasPermission('manage-finished-goods')) --}}
-            <div class="erp-add-employee-wrapper mb-3">
+            {{--<div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addBoardsModal"><i class="fa-solid fa-plus"></i> New Boards</a>
                 </div>
-            </div>
+            </div>--}}
         {{-- @endif --}}
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -25,7 +25,7 @@
 
                                         </div>
                                     </div>
-                                    <div class="erp-filter-item flex-20">
+                                    {{--<div class="erp-filter-item flex-20">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <select class="select floating select2-box" id="category_filtered">
                                                 <option value="">Select Category</option>
@@ -35,7 +35,7 @@
                                             </select>
 
                                         </div>
-                                    </div>
+                                    </div>--}}
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
                                             <button class=" erp-search-btn" type="button" onclick="getData()">Search</button>
@@ -59,8 +59,8 @@
 @endsection
 
 @section('modals')
-    @include('inventory.boards._add_boards_modal')
-    @include('inventory.boards._edit_boards_modal')
+{{--    @include('inventory.boards._add_boards_modal')--}}
+{{--    @include('inventory.boards._edit_boards_modal')--}}
 @endsection
 
 @section('css')
@@ -137,7 +137,7 @@
                 }, 'show_input_error');
             });
         });
-        
+
         function getData(){
             getPaginatedListData("{{ route('inventory.boards.filtered') }}", "#ajax-data-load", filterData);
         }

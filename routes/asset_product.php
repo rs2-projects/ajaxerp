@@ -45,7 +45,7 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/update', [AssetProductController::class, 'update'])->name('inventory.asset-product.update')->middleware('permission:manage-asset-product');
         Route::get('/{id}/delete', [AssetProductController::class, 'delete'])->name('inventory.asset-product.delete')->middleware('permission:manage-asset-product');
         Route::get('/{id}/change-status/{status}', [AssetProductController::class, 'statusUpdate'])->name('inventory.asset-product.change-status')->middleware('permission:manage-asset-product');
-        
+
         Route::post('/{id}/assign-product', [AssetProductController::class, 'assignProduct'])->name('inventory.asset-product.assign-asset-product');
         Route::post('/{id}/maintenance-product', [AssetProductController::class, 'maintenanceProduct'])->name('inventory.asset-product.maintenance-asset-product');
         Route::post('/{id}/sell-product', [AssetProductController::class, 'sellProduct'])->name('inventory.asset-product.sell-asset-product');
@@ -198,6 +198,7 @@ Route::group(['prefix' => 'production'], function () {
         Route::post('/{id}/update', [PreProductionController::class, 'update'])->name('production.pre-production.update')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/delete', [PreProductionController::class, 'delete'])->name('production.pre-production.delete')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-material-products', [PreProductionController::class, 'getProducts'])->name('production.pre-production.get-material-products')->middleware('permission:manage-pre-productions');
+        Route::get('/{id}/get-board-products', [PreProductionController::class, 'getBoardProducts'])->name('production.pre-production.get-board-products')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
@@ -252,7 +253,7 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver')->middleware('permission:deliver-requested-materials');
     Route::post('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverStore'])->name('inventory.material-request.deliver.store')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials')->middleware('permission:deliver-requested-materials');
-    Route::get('/{id}/deliver/{barcode}/{count}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
+    Route::get('/{id}/deliver/{barcode}/{count}/{type}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document')->middleware('permission:view-material-requests');
 });
 
@@ -278,6 +279,8 @@ Route::group(['prefix' => 'settings'], function () {
         Route::get('/{id}/edit', [BoardEmbossedController::class, 'edit'])->name('settings.board-embossed.edit');
         Route::post('/{id}/update', [BoardEmbossedController::class, 'update'])->name('settings.board-embossed.update');
         Route::get('/{id}/delete', [BoardEmbossedController::class, 'delete'])->name('settings.board-embossed.delete');
+
+        Route::post('bulk-import', [BoardEmbossedController::class, 'importPlates'])->name('settings.board-embossed.bulk-import');
     });
     // board embossed route end
 });

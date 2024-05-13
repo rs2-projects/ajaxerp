@@ -87,6 +87,7 @@ class PreProduction extends Model
 
     protected $fillable = [
         'type',
+        'date',
         'pre_production_no',
         'pre_production_batch_no',
         'order_details',
@@ -106,6 +107,7 @@ class PreProduction extends Model
         'damage_qty',
         'received_qty',
         'sale_qty',
+        'used_qty',
         'available_qty',
         'created_by',
         'created_at',
@@ -152,6 +154,13 @@ class PreProduction extends Model
             ->where('status', PreProductionMaterial::STATUS_ACTIVE);
     }
 
+    public function board_material()
+    {
+        return $this->hasMany(PreProductionBoard::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionBoard::DELETED_NO)
+            ->where('status', PreProductionBoard::STATUS_ACTIVE);
+    }
+
     public function pendingPreProductionMaterialDeliveries()
     {
         return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
@@ -166,6 +175,12 @@ class PreProduction extends Model
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
             ->count();
+    }
+
+    public function countRawMaterials(){
+        $materialCount = $this->production_material()->count();
+        $boardCount = $this->board_material()->count();
+        return $materialCount + $boardCount;
     }
     
 }

@@ -131,3 +131,7 @@ if (!function_exists('getExactFilePath')) {
     }
 }
 
+function ____($string)
+{
+    return strlen($string);
+}

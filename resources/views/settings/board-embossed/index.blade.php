@@ -1,12 +1,14 @@
-@extends('layouts.settings-layout')
+@extends('layouts.layout')
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
         @if(hasPermission('manage-asset-product-category'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
-                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addBoardEmbossedModal"><i class="fa-solid fa-plus"></i> Add Board Embossed</a>
-
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addBoardEmbossedModal"><i class="fa-solid fa-plus"></i> Add Plate</a>
+                    <a class="btn add-btn erp-add-employee me-2" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#plateImportModal">
+                        <i class="fa-solid fa-file-import"></i> Import Plates
+                    </a>
                 </div>
             </div>
         @endif
@@ -46,6 +48,7 @@
 @section('modals')
     @include('settings.board-embossed._add_board_embossed_modal')
     @include('settings.board-embossed._edit_board_embossed_modal')
+    @include('settings.board-embossed.__plate_import_modal')
 @endsection
 
 @section('css')

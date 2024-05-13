@@ -11,9 +11,12 @@ use App\Models\Production\PreProductionProcessMachine;
 use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\PreProductionProcessEstimatedOutput;
 use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionBoard;
 use App\Models\Production\PreProductionMaterial;
+use App\Models\Production\PreProductionProcessBoard;
 use App\Models\Production\PreProductionProcessPreviousProcess;
 use App\Models\Production\ProductionStaff;
+use App\Models\Products\FinishedGoodsCategory;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -21,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 
 class PreProductionService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -149,6 +153,11 @@ class PreProductionService
             ->where('type', FinishedGoods::TYPE_OTHERS)
             ->orderBy('id', 'desc')
             ->get();
+        
+        $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
 
         $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
             ->where('status', ProductionStaff::STATUS_ACTIVE)
@@ -162,6 +171,16 @@ class PreProductionService
         $data['products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
             ->where('product_material_category_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
+        return $data;
+    }
+
+    public function getBoardProducts($id){
+        $data['products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_BOARD)
+            ->where('finished_goods_category_id', $id)
             ->orderBy('id', 'desc')
             ->get();
         return $data;
@@ -201,6 +220,7 @@ class PreProductionService
             }
 
             $pre_production = new PreProduction();
+            $pre_production->date = $request->date;
             $pre_production->order_details = $request->order_details;
             $pre_production->pre_production_no = '';
             $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
@@ -223,6 +243,7 @@ class PreProductionService
             $quantity = $request->quantity;
 
             $uniqueProductMaterials = [];
+            $uniqueBoards = [];
             $processes = [];
 
             if (isset($request->process_id) && is_array($request->process_id) && count($request->process_id) > 0) {
@@ -266,35 +287,59 @@ class PreProductionService
                         }
                     }
 
+                    // process materials
                     if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
-
                         foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                             if (
                                 ($request->product_material_category_id[$key][$categoryKey] != '') &&
                                 ($request->product_material_id[$key][$categoryKey] != '') &&
                                 ($request->quantity[$key][$categoryKey] != '')
                                 ) {
-                                $material = new PreProductionProcessMaterial();
-                                $material->pre_production_id = $pre_production->id;
-                                $material->pre_production_process_id = $process->id;
-                                $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
-                                $material->product_material_id = $request->product_material_id[$key][$categoryKey];
-                                $material->quantity = $request->quantity[$key][$categoryKey];
-                                $material->base_quantity = $request->quantity[$key][$categoryKey];
-                                $material->save();
+                                    if($request->material_type[$key][$categoryKey] == 'other'){
+                                        $material = new PreProductionProcessMaterial();
+                                        $material->pre_production_id = $pre_production->id;
+                                        $material->pre_production_process_id = $process->id;
+                                        $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        $material->product_material_id = $request->product_material_id[$key][$categoryKey];
+                                        $material->quantity = $request->quantity[$key][$categoryKey];
+                                        $material->base_quantity = $request->quantity[$key][$categoryKey];
+                                        $material->save();
 
-                                $material_id = $request->product_material_id[$key][$categoryKey];
-                                $quantity = $request->quantity[$key][$categoryKey];
-                                $category_id = $request->product_material_category_id[$key][$categoryKey];
-                                if(isset($uniqueProductMaterials[$material_id])) {
-                                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                                } else {
-                                    $uniqueProductMaterials[$material_id] = [
-                                        'material_id' => $material_id,
-                                        'category_id' => $category_id,
-                                        'quantity' => $quantity,
-                                    ];
-                                }
+                                        $material_id = $request->product_material_id[$key][$categoryKey];
+                                        $quantity = $request->quantity[$key][$categoryKey];
+                                        $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        if(isset($uniqueProductMaterials[$material_id])) {
+                                            $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                        } else {
+                                            $uniqueProductMaterials[$material_id] = [
+                                                'material_id' => $material_id,
+                                                'category_id' => $category_id,
+                                                'quantity' => $quantity,
+                                            ];
+                                        }
+                                    }else if($request->material_type[$key][$categoryKey] == 'board'){
+                                        $board = new PreProductionProcessBoard();
+                                        $board->pre_production_id = $pre_production->id;
+                                        $board->pre_production_process_id = $process->id;
+                                        $board->finished_board_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        $board->finished_board_id = $request->product_material_id[$key][$categoryKey];
+                                        $board->quantity = $request->quantity[$key][$categoryKey];
+                                        $board->base_quantity = $request->quantity[$key][$categoryKey];
+                                        $board->save();
+
+                                        $board_id = $request->product_material_id[$key][$categoryKey];
+                                        $quantity = $request->quantity[$key][$categoryKey];
+                                        $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        if(isset($uniqueBoards[$board_id])) {
+                                            $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                        } else {
+                                            $uniqueBoards[$board_id] = [
+                                                'board_id' => $board_id,
+                                                'category_id' => $category_id,
+                                                'quantity' => $quantity,
+                                            ];
+                                        }
+                                    }
                             }
                         }
                     }
@@ -319,20 +364,39 @@ class PreProductionService
                 }
             }
 
+            // pre production materials
             foreach ($uniqueProductMaterials as $materialData) {
-                $material = new PreProductionMaterial();
-                $material->pre_production_id = $pre_production->id;
-                $material->product_material_category_id = $materialData['category_id'];
-                $material->product_material_id = $materialData['material_id'];
-                $material->quantity = $materialData['quantity'];
-                $material->base_quantity = $materialData['quantity'];
-                $material->created_by = auth()->user()->id;
-                $material->created_at = Carbon::now();
-                $material->updated_by = auth()->user()->id;
-                $material->updated_at = Carbon::now();
-                $material->save();
+                if($materialData['category_id'] !="" && $materialData['material_id'] !="" && $materialData['quantity'] !=""){
+                    $material = new PreProductionMaterial();
+                    $material->pre_production_id = $pre_production->id;
+                    $material->product_material_category_id = $materialData['category_id'];
+                    $material->product_material_id = $materialData['material_id'];
+                    $material->quantity = $materialData['quantity'];
+                    $material->base_quantity = $materialData['quantity'];
+                    $material->created_by = auth()->user()->id;
+                    $material->created_at = Carbon::now();
+                    $material->updated_by = auth()->user()->id;
+                    $material->updated_at = Carbon::now();
+                    $material->save();
+                }
             }
 
+            // pre production boards
+            foreach ($uniqueBoards as $boardData) {
+                if($boardData['category_id']!= "" && $boardData['board_id'] !="" && $boardData['quantity'] !=""){
+                    $board = new PreProductionBoard();
+                    $board->pre_production_id = $pre_production->id;
+                    $board->finished_board_category_id = $boardData['category_id'];
+                    $board->finished_board_id = $boardData['board_id'];
+                    $board->quantity = $boardData['quantity'];
+                    $board->base_quantity = $boardData['quantity'];
+                    $board->created_by = auth()->user()->id;
+                    $board->created_at = Carbon::now();
+                    $board->updated_by = auth()->user()->id;
+                    $board->updated_at = Carbon::now();
+                    $board->save();
+                }
+            }
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -364,7 +428,7 @@ class PreProductionService
     }
 
     public function getProcessData($id){
-        $data['processes'] = PreProductionProcess::with('materials', 'estimated_output', 'processMachines', 'previousProcess')
+        $data['processes'] = PreProductionProcess::with('materials', 'board_materials', 'estimated_output', 'processMachines', 'previousProcess')
             ->where('deleted', PreProductionProcess::DELETED_NO)
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
@@ -372,6 +436,11 @@ class PreProductionService
 
         $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
             ->where('status', ProductMaterialCategory::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -428,6 +497,7 @@ class PreProductionService
                 $document_path = $document_path['path'];
             }
 
+            $pre_production->date = $request->date;
             $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
             $pre_production->order_details = $request->order_details;
             $pre_production->image = $image_path??$pre_production->image;
@@ -441,6 +511,7 @@ class PreProductionService
             $pre_production->save();
 
             $uniqueProductMaterials = [];
+            $uniqueBoards = [];
             $processes = [];
 
             if (isset($request->pre_production_process_id) && is_array($request->pre_production_process_id) && count($request->pre_production_process_id) > 0) {
@@ -512,10 +583,17 @@ class PreProductionService
                             // update process materials
                             if (isset($request->product_material_category_id[$key]) && is_array($request->product_material_category_id[$key]) && count($request->product_material_category_id[$key]) > 0) {
                                 $material_ids = $request->process_material_id[$key]??[];
+                                
                                 PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
                                     ->where('pre_production_process_id', $process_id)
                                     ->whereNotIn('id', $material_ids)
                                     ->delete();
+
+                                PreProductionProcessBoard::where('pre_production_id', $pre_production->id)
+                                    ->where('pre_production_process_id', $process_id)
+                                    ->whereNotIn('id', $material_ids)
+                                    ->delete();
+
                                 foreach ($request->product_material_category_id[$key] as $categoryKey => $category_id) {
                                     if (
                                         $request->process_material_id[$key][$categoryKey] != "" &&
@@ -523,11 +601,63 @@ class PreProductionService
                                         $request->product_material_id[$key][$categoryKey] != '' &&
                                         $request->quantity[$key][$categoryKey] != ''
                                     ){
-                                        $material = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
-                                            ->where('pre_production_process_id', $process_id)
-                                            ->where('id', $request->process_material_id[$key][$categoryKey])
-                                            ->first();
-                                        if($material){
+                                        if($request->material_type[$key][$categoryKey] == 'other'){
+
+                                            $material = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
+                                                ->where('pre_production_process_id', $process_id)
+                                                ->where('id', $request->process_material_id[$key][$categoryKey])
+                                                ->first();
+                                            if($material){
+                                                $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                                $material->product_material_id = $request->product_material_id[$key][$categoryKey];
+                                                $material->quantity = $request->quantity[$key][$categoryKey];
+                                                $material->base_quantity = $request->quantity[$key][$categoryKey];
+                                                $material->save();
+
+                                                $material_id = $request->product_material_id[$key][$categoryKey];
+                                                $quantity = $request->quantity[$key][$categoryKey];
+                                                $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                                if(isset($uniqueProductMaterials[$material_id])) {
+                                                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                                } else {
+                                                    $uniqueProductMaterials[$material_id] = [
+                                                        'material_id' => $material_id,
+                                                        'category_id' => $category_id,
+                                                        'quantity' => $quantity,
+                                                    ];
+                                                }
+                                            }
+                                        }else if($request->material_type[$key][$categoryKey] == 'board'){
+                                            $board = PreProductionProcessBoard::where('pre_production_id', $pre_production->id)
+                                                ->where('pre_production_process_id', $process_id)
+                                                ->where('id', $request->process_material_id[$key][$categoryKey])
+                                                ->first();
+                                            if($board){
+                                                $board->finished_board_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                                $board->finished_board_id = $request->product_material_id[$key][$categoryKey];
+                                                $board->quantity = $request->quantity[$key][$categoryKey];
+                                                $board->base_quantity = $request->quantity[$key][$categoryKey];
+                                                $board->save();
+
+                                                $board_id = $request->product_material_id[$key][$categoryKey];
+                                                $quantity = $request->quantity[$key][$categoryKey];
+                                                $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                                if(isset($uniqueBoards[$board_id])) {
+                                                    $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                                } else {
+                                                    $uniqueBoards[$board_id] = [
+                                                        'board_id' => $board_id,
+                                                        'category_id' => $category_id,
+                                                        'quantity' => $quantity,
+                                                    ];
+                                                }
+                                            }
+                                        }
+                                    }else{
+                                        if($request->material_type[$key][$categoryKey] == 'other'){
+                                            $material = new PreProductionProcessMaterial();
+                                            $material->pre_production_id = $pre_production->id;
+                                            $material->pre_production_process_id = $process->id;
                                             $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
                                             $material->product_material_id = $request->product_material_id[$key][$categoryKey];
                                             $material->quantity = $request->quantity[$key][$categoryKey];
@@ -546,28 +676,28 @@ class PreProductionService
                                                     'quantity' => $quantity,
                                                 ];
                                             }
-                                        }
-                                    }else{
-                                        $material = new PreProductionProcessMaterial();
-                                        $material->pre_production_id = $pre_production->id;
-                                        $material->pre_production_process_id = $process->id;
-                                        $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
-                                        $material->product_material_id = $request->product_material_id[$key][$categoryKey];
-                                        $material->quantity = $request->quantity[$key][$categoryKey];
-                                        $material->base_quantity = $request->quantity[$key][$categoryKey];
-                                        $material->save();
-
-                                        $material_id = $request->product_material_id[$key][$categoryKey];
-                                        $quantity = $request->quantity[$key][$categoryKey];
-                                        $category_id = $request->product_material_category_id[$key][$categoryKey];
-                                        if(isset($uniqueProductMaterials[$material_id])) {
-                                            $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                                        } else {
-                                            $uniqueProductMaterials[$material_id] = [
-                                                'material_id' => $material_id,
-                                                'category_id' => $category_id,
-                                                'quantity' => $quantity,
-                                            ];
+                                        }else if($request->material_type[$key][$categoryKey] == 'board'){
+                                            $board = new PreProductionProcessBoard();
+                                            $board->pre_production_id = $pre_production->id;
+                                            $board->pre_production_process_id = $process->id;
+                                            $board->finished_board_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                            $board->finished_board_id = $request->product_material_id[$key][$categoryKey];
+                                            $board->quantity = $request->quantity[$key][$categoryKey];
+                                            $board->base_quantity = $request->quantity[$key][$categoryKey];
+                                            $board->save();
+    
+                                            $board_id = $request->product_material_id[$key][$categoryKey];
+                                            $quantity = $request->quantity[$key][$categoryKey];
+                                            $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                            if(isset($uniqueBoards[$board_id])) {
+                                                $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                            } else {
+                                                $uniqueBoards[$board_id] = [
+                                                    'board_id' => $board_id,
+                                                    'category_id' => $category_id,
+                                                    'quantity' => $quantity,
+                                                ];
+                                            }
                                         }
                                     }
                                 }
@@ -660,27 +790,52 @@ class PreProductionService
                                     ($request->product_material_category_id[$key][$categoryKey] != '') &&
                                     ($request->product_material_id[$key][$categoryKey] != '') &&
                                     ($request->quantity[$key][$categoryKey] != '')
-                                    ) {
-                                    $material = new PreProductionProcessMaterial();
-                                    $material->pre_production_id = $pre_production->id;
-                                    $material->pre_production_process_id = $process->id;
-                                    $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
-                                    $material->product_material_id = $request->product_material_id[$key][$categoryKey];
-                                    $material->quantity = $request->quantity[$key][$categoryKey];
-                                    $material->base_quantity = $request->quantity[$key][$categoryKey];
-                                    $material->save();
+                                    ){
 
-                                    $material_id = $request->product_material_id[$key][$categoryKey];
-                                    $quantity = $request->quantity[$key][$categoryKey];
-                                    $category_id = $request->product_material_category_id[$key][$categoryKey];
-                                    if(isset($uniqueProductMaterials[$material_id])) {
-                                        $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                                    } else {
-                                        $uniqueProductMaterials[$material_id] = [
-                                            'material_id' => $material_id,
-                                            'category_id' => $category_id,
-                                            'quantity' => $quantity,
-                                        ];
+                                    if($request->material_type[$key][$categoryKey] == 'other'){
+                                        $material = new PreProductionProcessMaterial();
+                                        $material->pre_production_id = $pre_production->id;
+                                        $material->pre_production_process_id = $process->id;
+                                        $material->product_material_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        $material->product_material_id = $request->product_material_id[$key][$categoryKey];
+                                        $material->quantity = $request->quantity[$key][$categoryKey];
+                                        $material->base_quantity = $request->quantity[$key][$categoryKey];
+                                        $material->save();
+
+                                        $material_id = $request->product_material_id[$key][$categoryKey];
+                                        $quantity = $request->quantity[$key][$categoryKey];
+                                        $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        if(isset($uniqueProductMaterials[$material_id])) {
+                                            $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                                        } else {
+                                            $uniqueProductMaterials[$material_id] = [
+                                                'material_id' => $material_id,
+                                                'category_id' => $category_id,
+                                                'quantity' => $quantity,
+                                            ];
+                                        }
+                                    }else if($request->material_type[$key][$categoryKey] == 'board'){
+                                        $board = new PreProductionProcessBoard();
+                                        $board->pre_production_id = $pre_production->id;
+                                        $board->pre_production_process_id = $process->id;
+                                        $board->finished_board_category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        $board->finished_board_id = $request->product_material_id[$key][$categoryKey];
+                                        $board->quantity = $request->quantity[$key][$categoryKey];
+                                        $board->base_quantity = $request->quantity[$key][$categoryKey];
+                                        $board->save();
+
+                                        $board_id = $request->product_material_id[$key][$categoryKey];
+                                        $quantity = $request->quantity[$key][$categoryKey];
+                                        $category_id = $request->product_material_category_id[$key][$categoryKey];
+                                        if(isset($uniqueBoards[$board_id])) {
+                                            $uniqueBoards[$board_id]['quantity'] += $quantity;
+                                        } else {
+                                            $uniqueBoards[$board_id] = [
+                                                'board_id' => $board_id,
+                                                'category_id' => $category_id,
+                                                'quantity' => $quantity,
+                                            ];
+                                        }
                                     }
                                 }
                             }
@@ -709,19 +864,12 @@ class PreProductionService
                 }
             }
 
+            PreProductionMaterial::where('pre_production_id', $pre_production->id)->delete();
+            PreProductionBoard::where('pre_production_id', $pre_production->id)->delete();
+                
+            // pre production materials
             foreach ($uniqueProductMaterials as $materialData) {
-                $material = PreProductionMaterial::where('pre_production_id', $pre_production->id)
-                    ->where('product_material_category_id', $materialData['category_id'])
-                    ->where('product_material_id', $materialData['material_id'])
-                    ->where('deleted', PreProductionMaterial::DELETED_NO)
-                    ->where('status', PreProductionMaterial::STATUS_ACTIVE)
-                    ->first();
-                if($material){
-                    $material->quantity = $materialData['quantity'];
-                    $material->updated_by = auth()->user()->id;
-                    $material->updated_at = Carbon::now();
-                    $material->save();
-                }else{
+                if($materialData['category_id'] !="" && $materialData['material_id'] !="" && $materialData['quantity'] !=""){
                     $material = new PreProductionMaterial();
                     $material->pre_production_id = $pre_production->id;
                     $material->product_material_category_id = $materialData['category_id'];
@@ -735,6 +883,51 @@ class PreProductionService
                     $material->save();
                 }
             }
+
+            // pre production boards
+            foreach ($uniqueBoards as $boardData) {
+                if($boardData['category_id']!= "" && $boardData['board_id'] !="" && $boardData['quantity'] !=""){
+                    $board = new PreProductionBoard();
+                    $board->pre_production_id = $pre_production->id;
+                    $board->finished_board_category_id = $boardData['category_id'];
+                    $board->finished_board_id = $boardData['board_id'];
+                    $board->quantity = $boardData['quantity'];
+                    $board->base_quantity = $boardData['quantity'];
+                    $board->created_by = auth()->user()->id;
+                    $board->created_at = Carbon::now();
+                    $board->updated_by = auth()->user()->id;
+                    $board->updated_at = Carbon::now();
+                    $board->save();
+                }
+            }
+
+            // foreach ($uniqueProductMaterials as $materialData) {
+            //     $material = PreProductionMaterial::where('pre_production_id', $pre_production->id)
+            //         ->where('product_material_category_id', $materialData['category_id'])
+            //         ->where('product_material_id', $materialData['material_id'])
+            //         ->where('deleted', PreProductionMaterial::DELETED_NO)
+            //         ->where('status', PreProductionMaterial::STATUS_ACTIVE)
+            //         ->first();
+            //     if($material){
+            //         $material->quantity = $materialData['quantity'];
+            //         $material->updated_by = auth()->user()->id;
+            //         $material->updated_at = Carbon::now();
+            //         $material->save();
+            //     }else{
+            //         $material = new PreProductionMaterial();
+            //         $material->pre_production_id = $pre_production->id;
+            //         $material->product_material_category_id = $materialData['category_id'];
+            //         $material->product_material_id = $materialData['material_id'];
+            //         $material->quantity = $materialData['quantity'];
+            //         $material->base_quantity = $materialData['quantity'];
+            //         $material->created_by = auth()->user()->id;
+            //         $material->created_at = Carbon::now();
+            //         $material->updated_by = auth()->user()->id;
+            //         $material->updated_at = Carbon::now();
+            //         $material->save();
+            //     }
+            // }
+            
 
         }catch (\Exception $e) {
             DB::rollBack();

@@ -2,8 +2,10 @@
 
 namespace App\Services\Settings;
 
+use App\Imports\Inventory\PlateImport;
 use App\Models\Products\BoardEmbossed;
 use App\Services\Common\ImageUploadService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BoardEmbossedService
 {
@@ -31,7 +33,7 @@ class BoardEmbossedService
                 ->where('deleted', BoardEmbossed::DELETED_NO)
                 ->first();
         if (!empty($check_duplicate)) {
-            throw new \Exception("Board Embossed already exists");
+            throw new \Exception("Plate already exists");
         }
 
         $image_path = null;
@@ -59,7 +61,7 @@ class BoardEmbossedService
             ->where('deleted', BoardEmbossed::DELETED_NO)
             ->first();
         if (!$data['item']) {
-            throw new \Exception('Board Embossed not found');
+            throw new \Exception('Plate not found');
         }
         return $data;
     }
@@ -70,7 +72,7 @@ class BoardEmbossedService
             ->where('deleted', BoardEmbossed::DELETED_NO)
             ->first();
         if (!$board_embossed) {
-            throw new \Exception('Board Embossed not found');
+            throw new \Exception('Plate not found');
         }
 
         $check_duplicate = BoardEmbossed::where('name', $request->name)
@@ -78,7 +80,7 @@ class BoardEmbossedService
                 ->where('id', '!=', $id)
                 ->first();
         if (!empty($check_duplicate)) {
-            throw new \Exception("Board Embossed already exists");
+            throw new \Exception("Plate already exists");
         }
 
         $image_path = null;
@@ -103,11 +105,16 @@ class BoardEmbossedService
             ->where('deleted', BoardEmbossed::DELETED_NO)
             ->first();
         if (!$board_embossed) {
-            throw new \Exception('Board Embossed not found');
+            throw new \Exception('Plate not found');
         }
         $board_embossed->deleted = BoardEmbossed::DELETED_YES;
         $board_embossed->deleted_by = auth()->user()->id;
         $board_embossed->deleted_at = now();
         $board_embossed->save();
+    }
+
+    public function importPlates($request)
+    {
+        Excel::import(new PlateImport(), $request->product_file);
     }
 }

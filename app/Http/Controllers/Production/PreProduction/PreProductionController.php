@@ -92,6 +92,10 @@ class PreProductionController extends BackendController
         return $this->service->getProducts($id);
     }
 
+    public function getBoardProducts($id){
+        return $this->service->getBoardProducts($id);
+    }
+
     public function getProcess($id){
         $data = $this->service->getProcessData($id);
         return $this->returnAjaxSuccess($data);
