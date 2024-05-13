@@ -11,8 +11,8 @@ class ProductMaterialCategory extends Model
     protected $table = 'product_material_categories';
     public $timestamps = false;
 
-    const TYPE_BOARD = 0;
-    const TYPE_OTHERS = 1;
+    const TYPE_OTHERS = 0;
+    const TYPE_BOARD = 1;
     const TYPE_PAPER = 2;
     const TYPES = [
         self::TYPE_BOARD => 'Board',

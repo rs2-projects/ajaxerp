@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product_material_categories', function (Blueprint $table) {
-            $table->unsignedTinyInteger('type')->default(1)->comment('0=Boards,1=Others,2=Paper')->after('id');
+            $table->unsignedTinyInteger('type')->default(0)->comment('0=Others,1=Boards,2=Paper')->after('id');
 
         });
         \Illuminate\Support\Facades\DB::table('product_material_categories')->insert([

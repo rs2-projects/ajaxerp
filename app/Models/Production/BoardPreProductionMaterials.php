@@ -13,6 +13,10 @@ class BoardPreProductionMaterials extends Model
     protected $table = 'board_pre_production_materials';
     public $timestamps = false;
 
+    const TYPE_RAW_BOARD = 0;
+    const TYPE_PAPER_UP = 1;
+    const TYPE_PAPER_DOWN = 2;
+
     // status const
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -30,6 +34,7 @@ class BoardPreProductionMaterials extends Model
     ];
 
     protected $fillable = [
+        'type',
         'board_pre_production_id',
         'product_material_category_id',
         'product_material_id',
