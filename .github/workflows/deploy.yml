@@ -1,4 +1,4 @@
-name: Deploy Staging Server
+name: Deploy Staging Server by ${{ github.actor }}
 
 on:
     push:
