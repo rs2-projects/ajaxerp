@@ -95,12 +95,25 @@
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-15">
+                                            <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">QTY </label>
-                                                    <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
+                                                    <h4 class="input-box-title">{{$processMaterial->base_quantity}}</h4>
                                                 </div>
                                             </div>
+                                            @if($processMaterial->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processMaterial->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
 
@@ -119,12 +132,25 @@
                                                     <h4 class="input-box-title">{{$processBoard->product->name}}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-15">
+                                            <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">QTY </label>
-                                                    <h4 class="input-box-title">{{$processBoard->quantity}}</h4>
+                                                    <h4 class="input-box-title">{{$processBoard->base_quantity}}</h4>
                                                 </div>
                                             </div>
+                                            @if($processBoard->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processBoard->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>

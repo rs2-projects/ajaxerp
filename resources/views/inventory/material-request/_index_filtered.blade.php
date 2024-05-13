@@ -23,7 +23,7 @@
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-start">
-                                    <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                    <a href="{{ route('inventory.material-request.details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                         <div class="em-pro-img-box">
                                             <img src="{{ $data->finishedGoods->show_image }}" alt="">
                                         </div>

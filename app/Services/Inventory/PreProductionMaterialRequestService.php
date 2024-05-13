@@ -321,6 +321,11 @@ class PreProductionMaterialRequestService
                 if ($processing_material_count || $processing_board_count) {
                     $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_PARTIAL;
                 }
+
+                if($pre_production->scan_status == PreProduction::SCAN_STATUS_SCANNED){
+                    $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
+                }
+
                 $pre_production->save();
             }
         }catch (\Exception $e) {
