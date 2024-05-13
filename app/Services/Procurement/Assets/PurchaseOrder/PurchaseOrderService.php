@@ -5,6 +5,7 @@ namespace App\Services\Procurement\Assets\PurchaseOrder;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
+use App\Models\Accounting\TransactionVat;
 use App\Models\Inventory\InventoryAssetProduct;
 use App\Models\Procurements\AssetProductPurchaseOrder;
 use App\Models\Procurements\AssetProductPurchaseOrderDamageFile;
@@ -614,18 +615,21 @@ class PurchaseOrderService
                     $account = AccCoaAccount::where('slug', 'purchase-products')
                         ->where('deleted', AccCoaAccount::DELETED_NO)
                         ->first();
+                    $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                        ->where('deleted', AccCoaAccount::DELETED_NO)
+                        ->first();
 
                     $transaction = new Transaction();
                     $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
                     $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
                     $transaction->transaction_date = $purchase->purchase_date;
                     $transaction->account_id = $account->id;
-                    $transaction->category_id = $account->acc_coa_category_id;
+                    $transaction->category_id = $purchaseAccountCategory->id;
                     $transaction->reference_type = Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE;
                     $transaction->reference_id = $id;
                     $transaction->reference_description = "Asset Product Purchase ".$purchase->purchase_order_id;
-                    $transaction->net_amount = $purchase->payable_amount;
-                    $transaction->total_vat_amount = 0;
+                    $transaction->net_amount = $purchase->subtotal_amount;
+                    $transaction->total_vat_amount = $purchase->total_vat_amount;
                     $transaction->total_amount = $purchase->payable_amount;
                     $transaction->description = "Asset Product Purchase ".$purchase->purchase_order_id;
                     $transaction->note = "Asset Product Purchase ".$purchase->purchase_order_id;
@@ -634,6 +638,31 @@ class PurchaseOrderService
                     $transaction->updated_at = Carbon::now();
                     $transaction->updated_by = auth()->user()->id;
                     $transaction->save();
+
+                    $purchase_details = AssetProductPurchaseOrderDetails::where('deleted', AssetProductPurchaseOrderDetails::DELETED_NO)
+                        ->where('asset_product_purchase_order_id', $purchase->id)
+                        ->where('status', AssetProductPurchaseOrderDetails::STATUS_ACTIVE)
+                        ->select('tax_id',
+                                DB::raw('SUM(total_price) as total_price_sum'),
+                                DB::raw('SUM(tax_amount) as tax_amount_sum'),
+                                DB::raw('MAX(tax_rate) as tax_rate'))
+                        ->groupBy('tax_id')
+                        ->get();
+
+
+                    foreach ($purchase_details as $details){
+                        $trns_vat = new TransactionVat();
+                        $trns_vat->transaction_id = $transaction->id;
+                        $trns_vat->tax_id = $details->tax_id;
+                        $trns_vat->main_amount = $details->total_price_sum;
+                        $trns_vat->vat_percent = $details->tax_rate;
+                        $trns_vat->vat_amount = $details->tax_amount_sum;
+                        $trns_vat->created_at = Carbon::now();
+                        $trns_vat->created_by = auth()->user()->id;
+                        $trns_vat->updated_at = Carbon::now();
+                        $trns_vat->updated_by = auth()->user()->id;
+                        $trns_vat->save();
+                    }
                 }
             }
 

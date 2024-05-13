@@ -5,6 +5,7 @@ namespace App\Services\Procurement\ProductMaterial;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
+use App\Models\Accounting\TransactionVat;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\Supplier;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class ProductMaterialPurchaseService
 {
-
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -347,6 +348,7 @@ class ProductMaterialPurchaseService
             $purchase->discount_type = $request->discount_type;
             $purchase->discount_value = $request->discount_value;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
+            $purchase->php_rate = $request->php_rate;
             $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_UNPAID;
             $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
             $purchase->is_revised = ProductMaterialPurchase::IS_REVISED_NO;
@@ -365,6 +367,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -374,6 +379,11 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    } else {
+                        $has_others = 1;
                     }
 
                     $qty = $request->qty[$key];
@@ -403,15 +413,21 @@ class ProductMaterialPurchaseService
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
                     $purchaseDetails->product_material_purchase_id = $purchase->id;
                     $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
-                    $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->unit_price_php = $price * $request->php_rate;
+                    $total_price = $qty * $price;
+                    $purchaseDetails->total_price = $total_price;
+                    $purchaseDetails->total_price_php = $total_price * $request->php_rate;
                     $purchaseDetails->tax_id = $tax_id;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $request->php_rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $request->php_rate;
                     $purchaseDetails->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
                     $purchaseDetails->has_damage = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
                     $purchaseDetails->has_missing = ProductMaterialPurchaseDetails::HAS_MISSING_NO;
@@ -427,10 +443,16 @@ class ProductMaterialPurchaseService
                 }
             }
             $total_discount_amount = 0;
+            $total_discount_amount_php = 0;
+            $php_rate = $request->php_rate;
+
             if($purchase->discount_type == ProductMaterialPurchase::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $total_amt = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($total_amt * $purchase->discount_value) / 100;
+                $total_discount_amount_php = $total_discount_amount * $php_rate;
             }else{
                 $total_discount_amount = $purchase->discount_value;
+                $total_discount_amount_php = $purchase->discount_value * $php_rate;
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
@@ -438,6 +460,18 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+
+            $subtotal_amount_php = $subtotal_amount * $php_rate;
+            $total_vat_amount_php = $total_vat_amount * $php_rate;
+
+            $purchase->subtotal_amount_php = $subtotal_amount_php;
+            $purchase->total_vat_amount_php = $total_vat_amount_php;
+            $purchase->total_discount_amount_php = $total_discount_amount_php;
+            $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
             $purchase->save();
 
 
@@ -544,6 +578,7 @@ class ProductMaterialPurchaseService
             }
 
             $purchase->supplier_id = $request->supplier_id;
+            $purchase->php_rate = $request->php_rate;
             $purchase->batch_number = $request->batch_number;
             $purchase->purchase_date = $request->purchase_date;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
@@ -618,11 +653,16 @@ class ProductMaterialPurchaseService
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
-                    $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->unit_price_php = $price * $request->php_rate;
+                    $total_price = $qty * $price;
+                    $purchaseDetails->total_price = $total_price;
+                    $purchaseDetails->total_price_php = $total_price * $request->php_rate;
                     $purchaseDetails->tax_id = $tax_id;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $request->php_rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $request->php_rate;
                     /*$purchaseDetails->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
                     $purchaseDetails->has_damage = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
                     $purchaseDetails->has_missing = ProductMaterialPurchaseDetails::HAS_MISSING_NO;*/
@@ -635,11 +675,18 @@ class ProductMaterialPurchaseService
 
                 }
             }
+
             $total_discount_amount = 0;
+            $total_discount_amount_php = 0;
+            $php_rate = $request->php_rate;
+
             if($purchase->discount_type == ProductMaterialPurchase::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $total_amt = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($total_amt * $purchase->discount_value) / 100;
+                $total_discount_amount_php = $total_discount_amount * $php_rate;
             }else{
                 $total_discount_amount = $purchase->discount_value;
+                $total_discount_amount_php = $purchase->discount_value * $php_rate;
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
@@ -647,6 +694,15 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+
+            $subtotal_amount_php = $subtotal_amount * $php_rate;
+            $total_vat_amount_php = $total_vat_amount * $php_rate;
+
+            $purchase->subtotal_amount_php = $subtotal_amount_php;
+            $purchase->total_vat_amount_php = $total_vat_amount_php;
+            $purchase->total_discount_amount_php = $total_discount_amount_php;
+            $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->save();
 
 
@@ -691,6 +747,7 @@ class ProductMaterialPurchaseService
 
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_REVISED;
+            $purchase->php_rate = $request->php_rate;
             $purchase->purchase_create_prev_id = $parentPurchase->id;
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
@@ -758,11 +815,16 @@ class ProductMaterialPurchaseService
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
-                    $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->unit_price_php = $price * $request->php_rate;
+                    $total_price = $qty * $price;
+                    $purchaseDetails->total_price = $total_price;
+                    $purchaseDetails->total_price_php = $total_price * $request->php_rate;
                     $purchaseDetails->tax_id = $tax_id;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $request->php_rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $request->php_rate;
                     $purchaseDetails->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
                     $purchaseDetails->has_damage = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
                     $purchaseDetails->has_missing = ProductMaterialPurchaseDetails::HAS_MISSING_NO;
@@ -777,11 +839,18 @@ class ProductMaterialPurchaseService
 
                 }
             }
+
             $total_discount_amount = 0;
+            $total_discount_amount_php = 0;
+            $php_rate = $request->php_rate;
+
             if($purchase->discount_type == ProductMaterialPurchase::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $total_amt = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($total_amt * $purchase->discount_value) / 100;
+                $total_discount_amount_php = $total_discount_amount * $php_rate;
             }else{
                 $total_discount_amount = $purchase->discount_value;
+                $total_discount_amount_php = $purchase->discount_value * $php_rate;
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
@@ -789,6 +858,15 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            
+            $subtotal_amount_php = $subtotal_amount * $php_rate;
+            $total_vat_amount_php = $total_vat_amount * $php_rate;
+
+            $purchase->subtotal_amount_php = $subtotal_amount_php;
+            $purchase->total_vat_amount_php = $total_vat_amount_php;
+            $purchase->total_discount_amount_php = $total_discount_amount_php;
+            $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->save();
 
             $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
@@ -841,6 +919,7 @@ class ProductMaterialPurchaseService
 
             $purchase = new ProductMaterialPurchase();
             $purchase->purchase_create_type = ProductMaterialPurchase::PURCHASE_CREATE_TYPE_BACKED;
+            $purchase->php_rate = $request->php_rate;
             $purchase->purchase_create_prev_id = $parentPurchase->id;
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
@@ -908,11 +987,16 @@ class ProductMaterialPurchaseService
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
-                    $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->unit_price_php = $price * $request->php_rate;
+                    $total_price = $qty * $price;
+                    $purchaseDetails->total_price = $total_price;
+                    $purchaseDetails->total_price_php = $total_price * $request->php_rate;
                     $purchaseDetails->tax_id = $tax_id;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $request->php_rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $request->php_rate;
                     $purchaseDetails->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
                     $purchaseDetails->has_damage = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
                     $purchaseDetails->has_missing = ProductMaterialPurchaseDetails::HAS_MISSING_NO;
@@ -928,10 +1012,16 @@ class ProductMaterialPurchaseService
                 }
             }
             $total_discount_amount = 0;
+            $total_discount_amount_php = 0;
+            $php_rate = $request->php_rate;
+
             if($purchase->discount_type == ProductMaterialPurchase::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $total_amt = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($total_amt * $purchase->discount_value) / 100;
+                $total_discount_amount_php = $total_discount_amount * $php_rate;
             }else{
                 $total_discount_amount = $purchase->discount_value;
+                $total_discount_amount_php = $purchase->discount_value * $php_rate;
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
@@ -939,6 +1029,15 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount = $total_discount_amount;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            
+            $subtotal_amount_php = $subtotal_amount * $php_rate;
+            $total_vat_amount_php = $total_vat_amount * $php_rate;
+
+            $purchase->subtotal_amount_php = $subtotal_amount_php;
+            $purchase->total_vat_amount_php = $total_vat_amount_php;
+            $purchase->total_discount_amount_php = $total_discount_amount_php;
+            $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->save();
 
             $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
@@ -1003,35 +1102,7 @@ class ProductMaterialPurchaseService
             $purchase->save();
 
             if ($status == $purchase::PURCHASE_STATUS_ON_PROCESS){
-                $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
-                    ->where('reference_id', $id)
-                    ->where('deleted', Transaction::DELETED_NO)
-                    ->first();
-                if(empty($transaction)){
-                    $account = AccCoaAccount::where('slug', 'purchase-products')
-                        ->where('deleted', AccCoaAccount::DELETED_NO)
-                        ->first();
-
-                    $transaction = new Transaction();
-                    $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
-                    $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
-                    $transaction->transaction_date = $purchase->purchase_date;
-                    $transaction->account_id = $account->id;
-                    $transaction->category_id = $account->acc_coa_category_id;
-                    $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
-                    $transaction->reference_id = $id;
-                    $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->net_amount = $purchase->payable_amount;
-                    $transaction->total_vat_amount = 0;
-                    $transaction->total_amount = $purchase->payable_amount;
-                    $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
-                    $transaction->created_at = Carbon::now();
-                    $transaction->created_by = auth()->user()->id;
-                    $transaction->updated_at = Carbon::now();
-                    $transaction->updated_by = auth()->user()->id;
-                    $transaction->save();
-                }
+                $this->storeUnpaidTransactionIfEmpty($purchase);
             }
 
         }catch (\Exception $e) {
@@ -1040,6 +1111,69 @@ class ProductMaterialPurchaseService
         }
 
         DB::commit();
+    }
+
+    public function storeUnpaidTransactionIfEmpty($purchase)
+    {
+        $transaction = Transaction::where('reference_type', Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE)
+            ->where('paid_type', Transaction::PAID_TYPE_UNPAID)
+            ->where('reference_id', $purchase->id)
+            ->where('deleted', Transaction::DELETED_NO)
+            ->first();
+        if(empty($transaction)){
+            $account = AccCoaAccount::where('slug', 'purchase-products')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
+            $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
+            $transaction = new Transaction();
+            $transaction->paid_type = Transaction::PAID_TYPE_UNPAID;
+            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
+            $transaction->transaction_date = $purchase->purchase_date;
+            $transaction->account_id = $account->id;
+            $transaction->category_id = $purchaseAccountCategory->id;
+            $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE;
+            $transaction->reference_id = $purchase->id;
+            $transaction->reference_description = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->net_amount = $purchase->subtotal_amount_php;
+            $transaction->total_vat_amount = $purchase->total_vat_amount_php;
+            $transaction->total_amount = $purchase->payable_amount_php;
+            $transaction->description = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->note = "Product Material Purchase ".$purchase->purchase_id;
+            $transaction->created_at = Carbon::now();
+            $transaction->created_by = auth()->user()->id;
+            $transaction->updated_at = Carbon::now();
+            $transaction->updated_by = auth()->user()->id;
+            $transaction->save();
+
+            $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                ->where('product_material_purchase_id', $purchase->id)
+                ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                ->select('tax_id',
+                    DB::raw('SUM(total_price_php) as total_price_sum'),
+                    DB::raw('SUM(tax_amount_php) as tax_amount_sum'),
+                    DB::raw('MAX(tax_rate) as tax_rate'))
+                ->groupBy('tax_id')
+                ->get();
+
+
+            foreach ($purchase_details as $details){
+                if($details->tax_id){
+                    $trns_vat = new TransactionVat();
+                    $trns_vat->transaction_id = $transaction->id;
+                    $trns_vat->tax_id = $details->tax_id;
+                    $trns_vat->main_amount = $details->total_price_sum;
+                    $trns_vat->vat_percent = $details->tax_rate;
+                    $trns_vat->vat_amount = $details->tax_amount_sum;
+                    $trns_vat->created_at = Carbon::now();
+                    $trns_vat->created_by = auth()->user()->id;
+                    $trns_vat->updated_at = Carbon::now();
+                    $trns_vat->updated_by = auth()->user()->id;
+                    $trns_vat->save();
+                }
+            }
+        }
     }
 
     public function getAllProductMaterials($request)
@@ -1138,7 +1272,7 @@ class ProductMaterialPurchaseService
             ->where('deleted', ProductMaterialPurchase::DELETED_NO)
             ->with('purchaseDetails', 'purchaseDetails.productMaterial')
             ->first();
-        
+
         $data['type'] = $type;
         return $data;
     }

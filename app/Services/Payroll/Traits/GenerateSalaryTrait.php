@@ -205,6 +205,10 @@ trait GenerateSalaryTrait
 
             $attendanceReport = $this->getAttendanceReport($employee->employee_id, $startDate->format('Y-m-d'));
 
+            //$attendanceReport->salary_generated
+            $attendanceReport->salary_generated = AttendanceReport::SALARY_GENERATED_YES;
+            $attendanceReport->save();
+
             if (empty($attendanceReport)) {
                 throw new \Exception("Attendance Report Not Found!");
             }

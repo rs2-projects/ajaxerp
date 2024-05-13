@@ -11,7 +11,7 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
-            @if(hasPermission( 'manage-product-material-purchase-orders'))
+            @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                 <th class="text-end erp-th">Action</th>
             @endif
         </tr>
@@ -23,7 +23,9 @@
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title">
+                            <a href="{{ route('procurement.product-material-purchase.details', $purchase_order->id) }}"><strong>{{ $purchase_order->purchase_id }}</strong></a>
+                        </h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                         @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
                             <div class="revised-status">
@@ -85,14 +87,16 @@
                         @endif
                     </td>
 
-                    @if(hasPermission( 'manage-product-material-purchase-orders'))
+                    @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                        <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @if(hasPermission('product-material-purchase-print-barcode' ))
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @endif
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('procurement.product-material-purchase.change-status',[$purchase_order->id,1]) }}"><i class="fa-solid fa-circle-info m-r-5"></i>Make On Process</a>
                                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
                                             <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>

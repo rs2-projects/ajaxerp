@@ -19,7 +19,9 @@ class PreProductionProcessMaterial extends Model
         'pre_production_process_id',
         'product_material_category_id',
         'product_material_id',
-        'quantity'
+        'quantity',
+        'base_quantity',
+        'extra_quantity'
     ];
 
     public function category()

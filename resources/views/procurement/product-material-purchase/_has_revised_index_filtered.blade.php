@@ -11,7 +11,7 @@
             <th class="erp-th text-center">Due Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             {{--<th class="erp-th text-center">Record Payment </th>--}}
-            @if(hasPermission( 'manage-product-material-purchase-orders'))
+            @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                 <th class="text-end erp-th">Action</th>
             @endif
         </tr>
@@ -23,7 +23,9 @@
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title">
+                            <a href="{{ route('procurement.product-material-purchase.details', $purchase_order->id) }}"><strong>{{ $purchase_order->purchase_id }}</strong></a>
+                        </h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                         @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES && $purchase_order->is_backed == $purchase_order::IS_BACKED_YES)
                             <div class="revised-status">
@@ -61,11 +63,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
@@ -75,14 +77,16 @@
                     {{--<td class="erp-tbody-td text-center">
                         <a href="javascript:void(0)" onclick="makePayment({{$purchase_order->id}})" class="make-payment-btn">Make Payment</a>
                     </td>--}}
-                    @if(hasPermission( 'manage-product-material-purchase-orders'))
+                    @if(hasPermission( 'manage-product-material-purchase-orders') || hasPermission('product-material-purchase-print-barcode' ))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">
                                     <a href="javascript:void(0)" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                        <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @if(hasPermission('product-material-purchase-print-barcode' ))
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @endif
                                         @if($purchase_order->is_backed == $purchase_order::IS_BACKED_NO)
                                             <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
                                         @endif

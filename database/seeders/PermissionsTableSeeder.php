@@ -61,6 +61,10 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Manage Employees'
                 ],
                 [
+                    'slug' => 'login-employye-account',
+                    'title' => 'Login Employee Account'
+                ],
+                [
                     'slug' => 'view-employee-termination',
                     'title' => 'View Employee Termination'
                 ],
@@ -233,6 +237,22 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'manage-chart-of-accounts',
                     'title' => 'Manage Chart of Accounts'
                 ],
+                [
+                    'slug' => 'view-transactions',
+                    'title' => 'View Transactions'
+                ],
+                [
+                    'slug' => 'manage-transactions',
+                    'title' => 'Manage Transactions'
+                ],
+                [
+                    'slug' => 'add-expenses',
+                    'title' => 'Add Expenses'
+                ],
+                [
+                    'slug' => 'verify-transactions',
+                    'title' => 'Verify Transactions'
+                ],
             ],
 
             //Procurement
@@ -256,6 +276,10 @@ class PermissionsTableSeeder extends Seeder
                 [
                     'slug' => 'product-material-purchase-order-payment',
                     'title' => 'Product Material Purchase Order Payment'
+                ],
+                [
+                    'slug' => 'product-material-purchase-print-barcode',
+                    'title' => 'Product Material Purchase Print Barcode'
                 ],
                 [
                     'slug' => 'view-asset-product-purchase-request',
@@ -302,6 +326,10 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Manage Pre Productions'
                 ],
                 [
+                    'slug' => 'verify-pre-productions',
+                    'title' => 'Verify Pre Productions'
+                ],
+                [
                     'slug' => 'view-material-requests',
                     'title' => 'View Material Requests'
                 ],
@@ -324,6 +352,11 @@ class PermissionsTableSeeder extends Seeder
                 [
                     'slug' => 'dispatch-production-materials',
                     'title' => 'Dispatch Production Materials'
+                ],
+
+                [
+                    'slug' => 'production-print-barcode',
+                    'title' => 'Production Print Barcode'
                 ],
             ],
         ];

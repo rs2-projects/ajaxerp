@@ -23,7 +23,7 @@
                                     </div>
                                     <div class="erp-filter-item flex-25"> 
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Product Search">
+                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Pre Production Search">
                                         </div>
                                     </div>
                                     <div class="erp-filter-item"> 
@@ -34,6 +34,22 @@
                                 </div>
                             </div>
                         </div>
+
+                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link active erp-nav-link" data="all" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="pending" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">New</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="verified" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Sent to Production</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="revision" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Revision</button>
+                            </li>
+                        </ul>
+
                         <div class="my-attendance-report-wrapper" id="ajax-data-load">
                             
                         </div>
@@ -171,7 +187,13 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .pp-batch-num{
+            font-size: 10px;
+            font-weight: normal;
+            margin-top: 0px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -185,13 +207,19 @@
 @section('js')
     <script>
         var filterData = {
-            keyword_filtered: ''
+            keyword_filtered: '',
+            status_filtered: 'all',
         };
         $(document).ready(function() {
             getData();
             filterData.keyword_filtered = $("#keyword_filtered").val()
             $("#keyword_filtered").on('input', function () {
                 filterData.keyword_filtered = $(this).val();
+            });
+
+            $('.status_type li').on('click', function () {
+                filterData.status_filtered = $('.status_type .active').attr('data');
+                getData();
             });
         });
 
@@ -203,7 +231,7 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
-        function getDocunent(id){
+        function getDocument(id){
             let url = "{{route('production.pre-production.get-design-document', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {

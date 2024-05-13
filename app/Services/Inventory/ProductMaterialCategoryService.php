@@ -14,6 +14,7 @@ class ProductMaterialCategoryService
     {
         $keyword_filtered = $request->keyword_filtered;
         $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
+            ->where('type', ProductMaterialCategory::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('name', 'like', '%'.$keyword_filtered.'%');

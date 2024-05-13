@@ -18,9 +18,10 @@
                     <!-- Account Form -->
                     <form action="{{ route('login') }}" id="loginForm">
                         @csrf
+                        <input type="hidden" name="redirectTo" value="{{ request()->redirectTo }}">
                         <div class="input-block mb-4">
-                            <label class="col-form-label">Email Address</label>
-                            <input class="form-control" type="email" name="email" value="" required>
+                            <label class="col-form-label">Email/Username Address</label>
+                            <input class="form-control" type="text" name="email" value="" required>
                             <span class="email_error ie-span"></span>
                         </div>
                         <div class="input-block mb-4">
@@ -39,6 +40,9 @@
                                 <span class="fa-solid fa-eye-slash" id="toggle-password"></span>
                             </div>
                             <span class="password_error ie-span"></span>
+                        </div>
+                        <div class="input-block mb-4 d-flex align-items-center">
+                            <label for="remember_me"> <input type="checkbox" name="remember_me" id="remember_me" class="me-1" value="1"> <span>Remember me?</span></label>
                         </div>
                         <div class="input-block mb-4 text-center">
                             <button class="btn btn-primary account-btn" type="submit">Login</button>

@@ -88,8 +88,11 @@ if (!function_exists('showAmount')) {
 
 // get currency symbol
 if (!function_exists('getCurrencySymbol')) {
-    function getCurrencySymbol()
+    function getCurrencySymbol($type = null)
     {
+        if(($type == 'USD') || ($type == 'usd')) {
+            return "$";
+        }
         return "₱";
     }
 }
@@ -128,3 +131,7 @@ if (!function_exists('getExactFilePath')) {
     }
 }
 
+function ____($string)
+{
+    return strlen($string);
+}

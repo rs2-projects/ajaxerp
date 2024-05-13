@@ -9,14 +9,26 @@
                     <div class="product-general-info-box d-flex flex-wrap">
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
-                                <input class="form-control" name="order_details" type="text" placeholder="" required="">
+                                <label class="col-form-label">Batch No <span class="text-red">*</span></label>
+                                <input class="form-control" value="{{$pre_production_batch_no}}" name="pre_production_batch_no" type="text" placeholder="" required="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Date <span class="text-red">*</span></label>
+                                <input class="form-control datetimepicker" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="date" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-25">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Image</label>
                                 <input class="form-control" name="image" type="file" placeholder="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
+                                <input class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-36">
@@ -36,8 +48,8 @@
                         <div class="psib-item flex-68">
                             <div class="input-block erp-step-input-block mb-0 two">
                                 <label class="col-form-label">Product<small>(Finished Product)</small> Selection <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                <select class="select select-step" name="finished_goods_id">
-                                    <option>Select Product</option>
+                                <select class="select select-step" name="finished_goods_id" required="">
+                                    <option value="">Select Product</option>
                                     @foreach ($finished_products as $f_product)
                                         <option value="{{$f_product->id}}">{{$f_product->name}}</option>
                                     @endforeach
@@ -47,7 +59,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" name="estimated_production_qty" type="number" placeholder="" required="">
+                                <input class="form-control" name="estimated_production_qty" type="number" min="0" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -55,7 +67,23 @@
                     <div>
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
                             <div class="production-process-status-wrapper">
-                                <h4>Process @{{ index + 1 }}</h4>
+                                {{-- <h4>Process @{{ index + 1 }}</h4> --}}
+                                <div class="production-machine-selection-wrapper d-flex flex-wrap">
+                                    <div class="pms-item flex-48">
+                                        <h4>Process @{{ index + 1 }}</h4>
+                                    </div>
+                                    <div class="pms-item flex-48 ">
+                                        <div class="input-block erp-step-input-block mb-0 d-flex">
+                                            <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
+                                            <select class="select select-step select2" name="production_staff_id[]" required>
+                                                <option value="">Select Production Staff</option>
+                                                @foreach ($staffs as $staff)
+                                                    <option value="{{$staff->id}}">{{$staff->user_name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <input type="hidden" name="process_id[]" :value="index">
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
@@ -64,14 +92,14 @@
                                         <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             @foreach ($machines as $machine)
-                                                <option value="{{$machine->id}}">{{$machine->name}}</option>  
+                                                <option value="{{$machine->id}}">{{$machine->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Previous Process</label>
                                         <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
                                             <option v-for="(process, idx) in processes.slice(0, index)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
@@ -82,20 +110,33 @@
                                 <h4 class="process-child-title">Material</h4>
                                 <div class="pms-item-main-wrapper">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
-                                        <div class="pms-item flex-32">
+                                        <input type="hidden" :name="'material_type['+index+'][]'" :value='materialSection.type'>
+                                        
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Material Category</label>
                                                 <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
-                                                    <option>Select Category</option>
+                                                    <option value="">Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="pms-item flex-32">
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Board Category </label>
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
+                                                    <option value="">Select Category</option>
+                                                    @foreach ($finished_categoris as $category)
+                                                        <option value="{{$category->id}}">{{$category->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Material </label>
                                                 <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
                                                     <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
@@ -104,22 +145,39 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Finished Board </label>
+                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
+                                                    <option value="">Select Board</option>
+                                                    <option v-for="product in processes[index].materialSections[materialIndex].products" :key="product.id" :value="product.id">
+                                                        @{{ product.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
+                                                <label class="col-form-label">QTY </label>
+                                                <input :name="'quantity['+index+'][]'" class="form-control " type="number" min="0" placeholder="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
                                             <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                                <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
+                                                {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
                                                 <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="pms-item flex-100">
+                                        <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                                            <a href="#" class="erp-search-btn text-center pp-add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
+                                            <a href="#" @click.prevent="addMaterialBoardSection(index)" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
+
                             <div class="production-estimate-output-selection-wrapper">
                                 <h4 class="process-child-title">Estimated Output</h4>
                                 <div class="pms-item-main-wrapper">
@@ -130,11 +188,11 @@
                                                 <input class="form-control" :name="'name['+index+'][]'" type="text" placeholder="" required="">
                                             </div>
                                         </div>
-                                        
+
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
+                                                <input class="form-control" :name="'output_quantity['+index+'][]'" type="number" min="0" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -144,14 +202,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Instruction</label>
                                     <textarea rows="1"  name="instruction[]" class="form-control"></textarea>
-                                </div>	
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -167,23 +225,23 @@
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
                             <textarea rows="3" class="form-control" name="notes"></textarea>
-                        </div>	
+                        </div>
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Product</button>
+                        <button class=" erp-search-btn text-center">Save Production</button>
                     </div>
                 <form>
             </div>
-        
+
         </div>
-        
+
 
     </div>
     <!--End::row-1 -->
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')
@@ -199,16 +257,22 @@
             font-weight: 700;
             font-weight: 800;
         }
+        .prod-p-staff{
+            width: 48%;
+        }
     </style>
 @endsection
 
 @section('css_plugins')
-
+    <!-- Datetimepicker CSS -->
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
     <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
-    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script> 
+    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -222,6 +286,7 @@
                 return {
                     processes: [{
                         materialSections: [{
+                            type: 'other',
                             products: []
                         }],
                         estimatedOutputs: [{}]
@@ -236,7 +301,10 @@
                     const newIndex = this.processes.length + 1;
                     this.processes.push({
                         index: newIndex,
-                        materialSections: [{}],
+                        materialSections: [{
+                            type: 'other',
+                            products: []
+                        }],
                         estimatedOutputs: [{}]
                     });
                     this.$nextTick(() => {
@@ -252,8 +320,19 @@
                     }
                 },
 
-                addMaterialSection(processIndex){
-                    this.processes[processIndex].materialSections.push({});
+                addMaterialOtherSection(processIndex){
+                    this.processes[processIndex].materialSections.push({
+                        type: 'other'
+                    });
+                    this.$nextTick(() => {
+                        initSelect2();
+                    });
+                },
+
+                addMaterialBoardSection(processIndex){
+                    this.processes[processIndex].materialSections.push({
+                        type: 'board'
+                    });
                     this.$nextTick(() => {
                         initSelect2();
                     });
@@ -261,6 +340,9 @@
 
                 removeMaterialSection(processIndex, materialIndex) {
                     this.processes[processIndex].materialSections.splice(materialIndex, 1);
+                    this.$nextTick(() => {
+                        initSelect2();
+                    });
                 },
 
                 addEstimatedOutputSection(processIndex){
@@ -286,6 +368,20 @@
                         .catch(error => {
                             console.error('Error fetching products:', error);
                         });
+                },
+
+                getBoardProducts(categoryId, processIndex, materialIndex){
+                    let url = "{{ route('production.pre-production.get-board-products', ':id') }}";
+                    url = url.replace(':id', categoryId);
+                    axios.get(url)
+                        .then(response => {
+                            const products = response.data.products;
+                            vueApp.processes[processIndex].materialSections[materialIndex].products = products;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching products:', error);
+                        });
+
                 },
 
                 checkValidation(e) {
@@ -314,6 +410,9 @@
 
         }).mount('#VueApp');
 
+        $(document).ready(function () {
+            initializeDatepicker();
+        });
 
         // other functions
         function initSelect2() {
@@ -359,6 +458,13 @@
             vueApp.getMaterialProducts(cat, index, materialIndex);
         }
 
+        function boardCategoryChangeOutside(select){
+            const index = select.dataset.index;
+            const materialIndex = select.dataset.materialIndex;
+            let cat = $(select).val();
+            vueApp.getBoardProducts(cat, index, materialIndex);
+        }
+
         function preProductionFormSubmit(){
             var self = $("#preProductionStoreForm");
             var formData = new FormData($(self)[0]);
@@ -375,6 +481,18 @@
                     showErrorAlert('Error',res.message)
                 }
             }, 'show_input_error');
+        }
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
         }
     </script>
 @endsection

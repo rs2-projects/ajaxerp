@@ -1,0 +1,76 @@
+<!-- Add Category Modal -->
+<div id="assign_product_modal" class="modal custom-modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <form action="" id="assignProductStoreForm" method="POST">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header erp-modal-header">
+                    <h5 class="modal-title">Assign Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body erp-modal-body">
+                    <div class="erp-modal-body-content">
+                        <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-start justify-content-between mb-3 ">
+                            <input type="hidden" name="asset_product_id" id="assign_id" value="">
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Date <span class="text-danger">*</span></label>
+                                <input class="form-control datetimepicker" type="text" name="date" value="{{ now()->format('Y-m-d') }}" required>
+                                <span class="name_error ie-span"></span>
+                            </div>
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Department <span class="text-danger">*</span></label>
+                                <select class="select floating select2-box" name="department_id" onchange="getDesignation(this)" id="department_id"  required>
+                                    <option value="">Select Department</option>
+                                    @foreach($departments as $key=>$department)
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="asset_product_category_id_error ie-span"></span>
+                            </div>
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                                <select class="select select-step" name="designation_id" id="designation_id" onchange="getEmployee(this)" required>
+                                    <option value="">Select Designation</option>
+                                </select>
+                            </div>
+
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Employee <span class="text-danger">*</span></label>
+                                <select class="select select-step" name="employee_id" id="employee_id" required>
+                                    <option value="">Select Employee</option>
+                                </select>
+                            </div>
+
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">SL No <span class="text-danger">*</span></label>
+                                <input class="form-control " name="sl_no" type="text" required >
+                            </div>
+
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Model <span class="text-danger">*</span></label>
+                                <input class="form-control " name="model" type="text" required >
+                            </div>
+
+                            <div class="input-block flex-48 mb-2">
+                                <label class="col-form-label">Warranty Date</label>
+                                <input class="form-control datetimepicker" type="text" name="warranty">
+                                <span class="name_error ie-span"></span>
+                            </div>
+
+                            <div class="input-block flex-48 mb-3">
+                                <label class="col-form-label">Remarks <span class="text-danger">*</span></label>
+                                <textarea cols="30" rows="3" class="form-control" name="remarks" required></textarea>
+                            </div>
+                            <div class="submit-section mt-2">
+                                <button class="btn btn-primary submit-btn" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Add Department Modal -->

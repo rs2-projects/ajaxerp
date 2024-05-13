@@ -10,8 +10,12 @@
                     <th class="erp-th text-center">Account  </th>
                     <th class="erp-th text-center">Category </th>
                     <th class="erp-th text-center">Amount </th>
-                    <th class="erp-th text-center">Verification </th>
-                    <th class="erp-th text-center">Action </th>
+                    @if(hasPermission('verify-transactions'))
+                        <th class="erp-th text-center">Verification </th>
+                    @endif
+                    @if(hasPermission('manage-transactions'))
+                        <th class="erp-th text-center">Action </th>
+                    @endif
                 </tr>
                 </thead>
                 <tbody class="erp-tbody">
@@ -67,40 +71,42 @@
                             <h4 class="text-center d-table-title">{{ getCurrencySymbol() }} {{ $transaction->total_amount }}</h4>
                         </td>
 
+                        @if(hasPermission('verify-transactions'))
+                            <td class="erp-tbody-td text-center">
+                                <div class="checkbox-wrapper">
+                                    <input id="terms-checkbox-{{ $loop->iteration }}" onchange="reviewTransaction(this, {{ $transaction->id }})" name="checkbox" type="checkbox" value="1" {{ ($transaction->is_reviewed == \App\Models\Accounting\Transaction::IS_REVIEWED_YES)?'checked':'' }}>
+                                    <label class="terms-label" for="terms-checkbox-{{ $loop->iteration }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
+                                            <mask fill="white" id="path-1-inside-1_476_5-37">
+                                                <rect height="200" width="200"></rect>
+                                            </mask>
+                                            <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
+                                            <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
+                                        </svg>
+                                        <span class="label-text">Check</span>
+                                    </label>
+                                </div>
+                            </td>
+                        @endif
 
-                        <td class="erp-tbody-td text-center">
-                            <div class="checkbox-wrapper">
-                                <input id="terms-checkbox-{{ $loop->iteration }}" onchange="reviewTransaction(this, {{ $transaction->id }})" name="checkbox" type="checkbox" value="1" {{ ($transaction->is_reviewed == \App\Models\Accounting\Transaction::IS_REVIEWED_YES)?'checked':'' }}>
-                                <label class="terms-label" for="terms-checkbox-{{ $loop->iteration }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 200 200" class="checkbox-svg">
-                                        <mask fill="white" id="path-1-inside-1_476_5-37">
-                                            <rect height="200" width="200"></rect>
-                                        </mask>
-                                        <rect mask="url(#path-1-inside-1_476_5-37)" stroke-width="40" class="checkbox-box" height="200" width="200"></rect>
-                                        <path stroke-width="15" d="M52 111.018L76.9867 136L149 64" class="checkbox-tick"></path>
-                                    </svg>
-                                    <span class="label-text">Check</span>
-                                </label>
-                            </div>
-                        </td>
-
-
-                        <td class="text-end erp-tbody-td">
-                            <div class="erp-action-t">
-                                <div class="dropdown dropdown-action">
-                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteExpense({{ $transaction->id }})"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                        @else
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                        @endif
+                        @if(hasPermission('manage-transactions'))
+                            <td class="text-end erp-tbody-td">
+                                <div class="erp-action-t">
+                                    <div class="dropdown dropdown-action">
+                                        <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="deleteExpense({{ $transaction->id }})"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            @else
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>

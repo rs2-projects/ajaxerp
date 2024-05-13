@@ -70,6 +70,7 @@ class PreProductionMaterialRequestController extends BackendController
         $this->setActiveMenu('inventory.material-request.deliver');
 
         $data = $this->service->detailsData($id);
+        // return $data;
         return $this->view('inventory.material-request.delivery_details')->with($data);
     }
 
@@ -78,8 +79,8 @@ class PreProductionMaterialRequestController extends BackendController
         return $this->returnAjaxSuccess($data);
     }
 
-    public function checkBarCode($material_id, $barcode, $count){
-        $data = $this->service->checkBarCode($material_id, $barcode, $count);
+    public function checkBarCode($material_id, $barcode, $count, $type){
+        $data = $this->service->checkBarCode($material_id, $barcode, $count, $type);
         return $data;
     }
 }

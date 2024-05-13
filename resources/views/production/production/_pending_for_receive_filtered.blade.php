@@ -46,7 +46,7 @@
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{count($data->production_material)}}</h4>
+                                    <h4 class="text-center d-table-title">{{$data->countRawMaterials()}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>

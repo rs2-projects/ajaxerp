@@ -118,3 +118,11 @@
 .form-control::placeholder {
     color: #bbbbbb !important;
 }
+
+.pp-add-more-btn{
+    font-size: 14px;
+    padding: 5px 10px;
+}
+.pp-add-board-btn{
+    background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
+}

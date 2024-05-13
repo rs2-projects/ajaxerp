@@ -43,7 +43,7 @@ class SupplierService
                     $q->where('business_name', 'like', '%'.$keyword_filtered.'%');
                 }
             })
-            ->orderBy('business_name', 'asc')->paginate($this->paginate_limit);
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
         return $data;
     }
 
@@ -85,6 +85,7 @@ class SupplierService
             $supplier->contact_first_name = $request->contact_first_name;
             $supplier->contact_last_name = $request->contact_last_name;
             $supplier->lead_time_status = $request->lead_time_status;
+            $supplier->vat_number = $request->vat_number ?? null;
             $supplier->address = $request->address;
             $supplier->city = $request->city;
             $supplier->zip_code = $request->zip_code;
@@ -117,6 +118,7 @@ class SupplierService
                     $supplier_bank->routing_number = $request->routing_number[$key];
                     $supplier_bank->swift_code = $request->swift_code[$key];
                     $supplier_bank->notes = $request->notes[$key];
+                    $supplier_bank->country_id = $request->bank_country_id[$key];
                     $supplier_bank->created_by = auth()->user()->id;
                     $supplier_bank->created_at = Carbon::now();
                     $supplier_bank->updated_by = auth()->user()->id;
@@ -224,6 +226,7 @@ class SupplierService
             $supplier->contact_first_name = $request->contact_first_name;
             $supplier->contact_last_name = $request->contact_last_name;
             $supplier->lead_time_status = $request->lead_time_status;
+            $supplier->vat_number = $request->vat_number ?? null;
             $supplier->address = $request->address;
             $supplier->city = $request->city;
             $supplier->zip_code = $request->zip_code;
@@ -247,7 +250,7 @@ class SupplierService
 
                 foreach ($request->bank_name as $key=>$value) {
                     if (isset($request->bank_info_id[$key]) &&  $request->bank_info_id[$key] != null){
-                        if(
+                       if(
                             ($value == null) || ($value == '') ||
                             ($request->account_name[$key] == null) || ($request->account_name[$key] == '') ||
                             ($request->account_no[$key] == null) || ($request->account_no[$key] == '')){
@@ -268,6 +271,7 @@ class SupplierService
                             $supplier_bank->routing_number = $request->routing_number[$key];
                             $supplier_bank->swift_code = $request->swift_code[$key];
                             $supplier_bank->notes = $request->notes[$key];
+                            $supplier_bank->country_id = $request->bank_country_id[$key];
                             $supplier_bank->updated_by = auth()->user()->id;
                             $supplier_bank->updated_at = Carbon::now();
                             $supplier_bank->save();
@@ -280,6 +284,7 @@ class SupplierService
                             continue;
                         }
                         // create
+                        
                         $supplier_bank = new SupplierBank();
                         $supplier_bank->supplier_id = $supplier->id;
                         $supplier_bank->bank_name = $value;
@@ -289,6 +294,7 @@ class SupplierService
                         $supplier_bank->routing_number = $request->routing_number[$key];
                         $supplier_bank->swift_code = $request->swift_code[$key];
                         $supplier_bank->notes = $request->notes[$key];
+                        $supplier_bank->country_id = $request->bank_country_id[$key];
                         $supplier_bank->created_by = auth()->user()->id;
                         $supplier_bank->created_at = Carbon::now();
                         $supplier_bank->updated_by = auth()->user()->id;

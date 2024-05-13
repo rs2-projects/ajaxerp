@@ -13,7 +13,9 @@
             @if(hasPermission( 'manage-product-material-purchase-orders','product-material-purchase-order-payment' ))
                 <th class="erp-th text-center">Record Payment </th>
             @endif
-            <th class="text-end erp-th">Action</th>
+            @if(hasPermission('product-material-purchase-print-barcode' ))
+                <th class="text-end erp-th">Action</th>
+            @endif
         </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -23,7 +25,9 @@
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title">
+                            <a href="{{ route('procurement.product-material-purchase.details', $purchase_order->id) }}"><strong>{{ $purchase_order->purchase_id }}</strong></a>
+                        </h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                         @if($purchase_order->is_revised == $purchase_order::IS_REVISED_YES)
                             <div class="revised-status">
@@ -54,11 +58,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol() }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
@@ -76,17 +80,21 @@
                             @endif
                         @endif
                     </td>
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                    <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                    @if(hasPermission('product-material-purchase-print-barcode' ))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        @if(hasPermission('product-material-purchase-print-barcode' ))
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr class="erp-tbody-tr">

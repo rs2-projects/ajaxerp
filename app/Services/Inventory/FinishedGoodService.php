@@ -23,8 +23,8 @@ class FinishedGoodService
     public function indexData()
     {
         //finished goods category
-        $data['finished_good_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoods::DELETED_NO)
-            ->where('status',FinishedGoods::STATUS_ACTIVE)
+        $data['finished_good_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('status',FinishedGoodsCategory::STATUS_ACTIVE)
             ->orderBy('name','asc')
             ->get();
         //Warehouses
@@ -44,6 +44,8 @@ class FinishedGoodService
         $category_filtered = $request->category_filtered;
 
         $data['finished_goods'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('name', 'like', '%'.$keyword_filtered.'%');

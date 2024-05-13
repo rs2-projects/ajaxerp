@@ -77,7 +77,9 @@ class PurchaseMakePaymentService
             if ($request->amount > $purchase->due_amount) {
                 throw new \Exception("Payment amount can't be greater than due amount");
             }
-
+            $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
+                ->where('deleted', AccCoaAccount::DELETED_NO)
+                ->first();
 
             // Create Transaction
             $transaction = new Transaction();
@@ -85,13 +87,13 @@ class PurchaseMakePaymentService
             $transaction->transaction_type = Transaction::TRANSACTION_TYPE_WITHDRAW;
             $transaction->transaction_date = $request->date;
             $transaction->account_id = $account->id;
-            $transaction->category_id = $account->acc_coa_category_id;
+            $transaction->category_id = $purchaseAccountCategory->id;
             $transaction->reference_type = Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT;
             $transaction->reference_id = null;
             $transaction->reference_description = "Product Material Purchase Payment ".$purchase->purchase_id;
-            $transaction->net_amount = $request->amount;
+            $transaction->net_amount = $request->amount * $request->php_rate;
             $transaction->total_vat_amount = 0;
-            $transaction->total_amount = $request->amount;
+            $transaction->total_amount = $request->amount * $request->php_rate;
             $transaction->description = "Product Material Purchase Payment ".$purchase->purchase_id;
             $transaction->note = $request->note;
             $transaction->created_at = Carbon::now();
@@ -106,6 +108,8 @@ class PurchaseMakePaymentService
 
             if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){
                 $purchase->purchase_status = $purchase::PURCHASE_STATUS_ON_PROCESS;
+                $productMaterialPurchaseService = new ProductMaterialPurchaseService();
+                $productMaterialPurchaseService->storeUnpaidTransactionIfEmpty($purchase);
             }
 
             $purchase->updated_at = Carbon::now();
@@ -125,6 +129,7 @@ class PurchaseMakePaymentService
             $purchase_payment->transaction_id = $transaction->id;
             $purchase_payment->account_id = $account->id;
             $purchase_payment->payment_method = $request->payment_method;
+            $purchase_payment->amount_php = $request->amount * $request->php_rate;
             $purchase_payment->amount = $request->amount;
             $purchase_payment->payment_date = $request->date;
             $purchase->note = $request->note;

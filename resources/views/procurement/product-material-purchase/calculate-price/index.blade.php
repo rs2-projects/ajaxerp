@@ -3,7 +3,7 @@
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
             <div class="erp-employee-list-wrapper purchase-order-in-main">
-                <form action="{{route('procurement.purchase-order.calulate-price.store', $purchase->id)}}" id="calculatePriceFormSubmit" method="POST" @submit="checkValidation">
+                <form action="{{route('procurement.purchase-order.calculate-price.store', $purchase->id)}}" id="calculatePriceFormSubmit" method="POST" @submit="checkValidation">
                     @csrf
                     <div class="erp-main-filter-wrapper bg-card attd-table">
                         <div class="rs-erp-calculated-price-wrapper">
@@ -33,7 +33,7 @@
                                                     </div>
                                                     <div class="em-pro-details-box">
                                                         <h5>{{$data->productMaterial->name}}</h5>
-                                                        <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>   
+                                                        <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -159,7 +159,15 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control" required>
+                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                            </div>
+                                        </div>
+                                        <div class="rs-ecp-bottom-box-item">
+                                            <div class="rs-ecp-std-item-title-box">
+                                                <h4>Price USD</h4>
+                                            </div>
+                                            <div class="rs-ecp-std-item-input-box">
+                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -167,7 +175,7 @@
                                                 <h4>CBM</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" name="cbm[]" class="form-control" required>
+                                                <input type="number" name="cbm[]" @input="cmbHandler($event)" step="0.01" min="0" class="form-control cbm" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -175,7 +183,7 @@
                                                 <h4>Total Pieces per Container </h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
+                                                <input type="number" step="0.01" min="0" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -183,7 +191,7 @@
                                                 <h4>Freight Cost USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
+                                                <input type="number" step="0.01" min="0" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -191,15 +199,15 @@
                                                 <h4>Exchange Rate  <span>After Import</span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
+                                                <input type="number" step="0.01" min="0" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
                                             <div class="rs-ecp-std-item-title-box">
-                                                <h4>Total Taxes Import Duties MNL</h4>
+                                                <h4>Total Taxes I.D. <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Product Category" data-bs-original-title="Total Taxes Import Duties MNL" style="color: #48b36e;border: 1px solid #48b36e;"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
+                                                <input type="number" step="0.01" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -207,7 +215,7 @@
                                                 <h4>Total Transport Cost to WH</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
+                                                <input type="number" step="0.01" min="0" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -215,7 +223,7 @@
                                                 <h4>Total Unloading Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
+                                                <input type="number" step="0.01" min="0" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -223,7 +231,7 @@
                                                 <h4>Handling Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
+                                                <input type="number" step="0.01" min="0" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
                                             </div>
                                         </div>
                                     </div>
@@ -264,24 +272,30 @@
         var { createApp } = Vue;
         var vueApp = createApp({
             data() {
-                
+                return{
+                    CONST_VALUE : 67
+                }
             },
             computed: {
-                
+
             },
             methods: {
                 exchangeRateHandler(event) {
-                    const exchangeRate = event.target.value;
-                    const priceElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.unit_price');
-                    const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
-
-                    if (priceElement && priceFOBPHPElement) {
-                        const price = parseFloat(priceElement.textContent);
-                        const priceFOBPHP = exchangeRate * price;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2); 
-                    }
+                    this.calculatePriceFOB(event);
                     this.calculatePriceExcludingVat(event);
                 },
+                priceUsdHandler(event){
+                    this.calculatePriceFOB(event);
+                    this.calculatePriceExcludingVat(event);
+                },
+                cmbHandler(event){
+                    this.calculateFreightCost(event);
+                    this.calculateTaxesImportDuties(event);
+                    this.calculateTransportCostToWH(event);
+                    this.calculateUnloadingCost(event);
+                    this.calculatePriceExcludingVat(event);
+                }, 
+
                 totalPcPerContainerHandler(event) {
                     this.calculateFreightCost(event);
                     this.calculateTaxesImportDuties(event);
@@ -324,25 +338,49 @@
                     this.calculateVat(vatPercentage);
                 },
 
+                calculatePriceFOB(event){
+                    const parentElement = event.target.closest('.rs-ecp-single-wrap');
+                    if (!parentElement) return;
+
+                    const exchangeRateInput = parentElement.querySelector('.exchange_rate');
+                    const priceUsdInput = parentElement.querySelector('.price_usd');
+                    const priceFOBPHPElement = event.target.closest('.rs-ecp-single-wrap').querySelector('.price_fob_php');
+
+                    if (!exchangeRateInput || !priceUsdInput) return;
+
+                    const exchangeRate = parseFloat(exchangeRateInput.value);
+                    const priceUsd = parseFloat(priceUsdInput.value);
+                    
+                    if (isNaN(exchangeRate) || isNaN(priceUsd)) {
+                        priceFOBPHPElement.textContent = 0;
+                    } else {
+                        const priceFOBPHP = exchangeRate * priceUsd;
+                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                    }
+                },
+
                 calculateFreightCost(event) {
                     const parentElement = event.target.closest('.rs-ecp-single-wrap');
                     if (!parentElement) return;
 
                     const totalPcPerContainerInput = parentElement.querySelector('.total_pieces_per_container');
                     const freightCostUsdInput = parentElement.querySelector('.freight_cost_usd');
+                    const cmbInput = parentElement.querySelector('.cbm');
                     const exchangeRateAfterImportInput = parentElement.querySelector('.exchange_rate_after_import');
                     const freightCostElement = parentElement.querySelector('.freight_cost');
 
-                    if (!totalPcPerContainerInput || !freightCostUsdInput || !exchangeRateAfterImportInput || !freightCostElement) return;
+                    if (!totalPcPerContainerInput || !freightCostUsdInput || !cmbInput || !exchangeRateAfterImportInput || !freightCostElement) return;
 
                     const totalPcPerContainer = parseFloat(totalPcPerContainerInput.value);
                     const freightCostUsd = parseFloat(freightCostUsdInput.value);
+                    const cbm = parseFloat(cmbInput.value);
                     const exchangeRateAfterImport = parseFloat(exchangeRateAfterImportInput.value);
 
-                    if (isNaN(totalPcPerContainer) || isNaN(freightCostUsd) || isNaN(exchangeRateAfterImport)) {
+                    if (isNaN(totalPcPerContainer) || isNaN(freightCostUsd) || isNaN(cbm) || isNaN(exchangeRateAfterImport)) {
                         freightCostElement.textContent = 0;
                     } else {
-                        const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
+                        // const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
+                        const freightCost = (((freightCostUsd / this.CONST_VALUE) * cbm) * exchangeRateAfterImport) / totalPcPerContainer;
                         freightCostElement.textContent = freightCost.toFixed(2);
                     }
                 },
@@ -354,16 +392,19 @@
                     const totalPcPerContainerInput = parentElement.querySelector('.total_pieces_per_container');
                     const totalTaxesImportDutiesInput = parentElement.querySelector('.total_taxes_import_duties');
                     const taxesImportDutiesElement = parentElement.querySelector('.taxes_import_duties');
+                    const cmbInput = parentElement.querySelector('.cbm');
 
-                    if (!totalPcPerContainerInput || !totalTaxesImportDutiesInput || !taxesImportDutiesElement) return;
+                    if (!totalPcPerContainerInput || !totalTaxesImportDutiesInput || !taxesImportDutiesElement || !cmbInput) return;
 
                     const totalPcPerContainer = parseFloat(totalPcPerContainerInput.value);
                     const totalTaxesImportDuties = parseFloat(totalTaxesImportDutiesInput.value);
+                    const cbm = parseFloat(cmbInput.value);
 
-                    if (isNaN(totalPcPerContainer) || isNaN(totalTaxesImportDuties)) {
+                    if (isNaN(totalPcPerContainer) || isNaN(totalTaxesImportDuties) || isNaN(cbm)) {
                         taxesImportDutiesElement.textContent = 0;
                     } else {
-                        const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
+                        // const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
+                        const taxesImportDuties = ((totalTaxesImportDuties / this.CONST_VALUE) * cbm) / totalPcPerContainer;
                         taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(2);
                     }
                 },
@@ -375,17 +416,20 @@
                     const totalPcPerContainerInput = parentElement.querySelector('.total_pieces_per_container');
                     const totalTransportCostToWhInput = parentElement.querySelector('.total_transport_cost_to_wh');
                     const transportCostToWhElement = parentElement.querySelector('.transport_cost_to_warehouse');
+                    const cmbInput = parentElement.querySelector('.cbm');
 
-                    if (!totalPcPerContainerInput || !totalTransportCostToWhInput || !transportCostToWhElement) return;
+                    if (!totalPcPerContainerInput || !totalTransportCostToWhInput || !transportCostToWhElement || !cmbInput) return;
 
                     const totalPcPerContainer = parseFloat(totalPcPerContainerInput.value);
                     const totalTransportCostToWh = parseFloat(totalTransportCostToWhInput.value);
+                    const cbm = parseFloat(cmbInput.value);
 
-                    if (isNaN(totalPcPerContainer) || isNaN(totalTransportCostToWh)) {
+                    if (isNaN(totalPcPerContainer) || isNaN(totalTransportCostToWh) || isNaN(cbm)) {
                         transportCostToWhElement.textContent = 0;
                     } else {
-                        const taxesImportDuties = totalTransportCostToWh / totalPcPerContainer;
-                        transportCostToWhElement.textContent = taxesImportDuties.toFixed(2);
+                        // const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
+                        const costToWareHouse = ((totalTransportCostToWh / this.CONST_VALUE) * cbm) / totalPcPerContainer;
+                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
                     }
                 },
 
@@ -396,16 +440,19 @@
                     const totalPcPerContainerInput = parentElement.querySelector('.total_pieces_per_container');
                     const totalUnloadingCostInput = parentElement.querySelector('.total_unloading_cost');
                     const unloadingCostElement = parentElement.querySelector('.unloading_cost');
+                    const cmbInput = parentElement.querySelector('.cbm');
 
-                    if (!totalPcPerContainerInput || !totalUnloadingCostInput || !unloadingCostElement) return;
+                    if (!totalPcPerContainerInput || !totalUnloadingCostInput || !unloadingCostElement || !cmbInput) return;
 
                     const totalPcPerContainer = parseFloat(totalPcPerContainerInput.value);
                     const totalUnloadingCost = parseFloat(totalUnloadingCostInput.value);
+                    const cbm = parseFloat(cmbInput.value);
 
-                    if (isNaN(totalPcPerContainer) || isNaN(totalUnloadingCost)) {
+                    if (isNaN(totalPcPerContainer) || isNaN(totalUnloadingCost) || isNaN(cbm)) {
                         unloadingCostElement.textContent = 0;
                     } else {
-                        const unloadingCost = totalUnloadingCost / totalPcPerContainer;
+                        // const unloadingCost = totalUnloadingCost / totalPcPerContainer;
+                        const unloadingCost = ((totalUnloadingCost / this.CONST_VALUE) * cbm) / totalPcPerContainer;
                         unloadingCostElement.textContent = unloadingCost.toFixed(2);
                     }
                 },
@@ -465,7 +512,7 @@
                             const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
                             finalPriceElement.textContent = final_price_amt;
                             totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
-                        } 
+                        }
                     }else{
                         const items = document.querySelectorAll('.rs-ecp-single-wrap');
                         items.forEach(item => {
@@ -514,7 +561,7 @@
                     }
                 },
 
-                
+
             },
             mounted () {
             }

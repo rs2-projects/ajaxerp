@@ -37,16 +37,16 @@
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Process {{ $processKey + 1 }}</h4>
-                                
-                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING)
-                                    @if(hasPermission('manage-processes'))
+                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
+                                    {{-- @if(hasPermission('manage-processes'))
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
-                                        {{-- <a href="{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}" class="start-process-btn">Start Process</a> --}}
-                                    @endif
+                                    @endif --}}
+                                    <p class="start-process-btn">Pending</p>
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    @if(hasPermission('manage-processes')) 
+                                    {{-- @if(hasPermission('manage-processes')) 
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
-                                    @endif
+                                    @endif --}}
+                                    <p class="complete-process-btn">Processing</p>
                                 @else
                                     <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif
@@ -57,7 +57,7 @@
                                         <label class="col-form-label">Machine Selection </label>
                                         <h4 class="input-box-title">
                                             @foreach ($processData?->processMachines as $machineData)
-                                                <span>{{$machineData->machine->name}}</span>
+                                               @if($machineData->machine?->name) <span>{{$machineData->machine?->name}}</span>@endif
                                             @endforeach
                                         </h4>
                                     </div>
@@ -84,23 +84,73 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Material Category</label>
                                                     <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">Matarial Selection <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Material</label>
                                                 
                                                     <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-15">
+                                            <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                    <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
+                                                    <label class="col-form-label">QTY </label>
+                                                    <h4 class="input-box-title">{{$processMaterial->base_quantity}}</h4>
                                                 </div>
                                             </div>
+                                            @if($processMaterial->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processMaterial->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+
+                                    @foreach ($processData->board_materials as $processBoard)
+                                        <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board Category </label>
+                                                    <h4 class="input-box-title">{{$processBoard->category->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-32">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Board </label>
+
+                                                    <h4 class="input-box-title">{{$processBoard->product->name}}</h4>
+                                                </div>
+                                            </div>
+                                            <div class="pms-item flex-10">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">QTY </label>
+                                                    <h4 class="input-box-title">{{$processBoard->base_quantity}}</h4>
+                                                </div>
+                                            </div>
+                                            @if($processBoard->extra_quantity)
+                                                <div class="pms-item flex-1">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <i class="fa fa-plus"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="pms-item flex-10">
+                                                    <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                        <label class="col-form-label"></label>
+                                                        <h4 class="input-box-title">{{$processBoard->extra_quantity}}</h4>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -112,13 +162,13 @@
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end">
                                             <div class="pms-item flex-60">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">Name</label>
                                                     <h4 class="input-box-title"> {{$outputData->name}}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-15">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-2">
-                                                    <label class="col-form-label">QTY <span class="text-danger">*</span></label>
+                                                    <label class="col-form-label">QTY</label>
                                                     <h4 class="input-box-title">{{$outputData->quantity}}</h4>
                                                 </div>
                                             </div>
@@ -128,7 +178,7 @@
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box-3">
-                                    <label class="col-form-label">Instruction<span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Instruction</label>
                                     <h4 class="input-box-title">{{$processData->instruction}}</h4>
                                 </div>	
                             </div>

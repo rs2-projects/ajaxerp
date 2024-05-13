@@ -22,6 +22,7 @@ class StorePreProductionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'pre_production_batch_no' => 'required',
             'order_details' => 'required',
             'finished_goods_id' => 'required',
             'estimated_production_qty' => 'required'

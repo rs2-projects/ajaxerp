@@ -22,7 +22,13 @@
 
     <!-- Header Title -->
     <div class="page-title-box">
-        <h3>RS ERP</h3>
+        @if(session()->has('is_admin_access') && (session()->get('is_admin_access') === true) && (session()->get('admin_user_id') != ''))
+            <div class="back-to-admin-btn">
+                <a href="{{ route('hr.employee.login.back-to-admin') }}"><i class="fa fa-arrow-left"></i> Back To Your Account</a>
+            </div>
+        @else
+            <h3>RS ERP</h3>
+        @endif
     </div>
     <!-- /Header Title -->
 

@@ -30,10 +30,13 @@
 
                         <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link active erp-nav-link" data="pre_production" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">Pre-Production</button>
+                                <button class="nav-link active erp-nav-link" data="all_pre_production" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="pending_for_receive" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending For Receive</button>
+                                <button class="nav-link erp-nav-link" data="pre_production" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Queue</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="pending_for_receive" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Receive Raw Materials</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
                                 <button class="nav-link erp-nav-link" data="on_process" id="process-purchase-tab" data-bs-toggle="tab" data-bs-target="#process-purchase" type="button" role="tab" aria-controls="contact" aria-selected="false">On-Process</button>
@@ -105,7 +108,7 @@
     <script>
         var filterData = {
             keyword_filtered: '',
-            status_filtered: 'pre_production',
+            status_filtered: 'all_pre_production',
         };
         $(document).ready(function() {
             getData();

@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        @if(hasPermission('manage-chart-of-accounts'))
+        @if(hasPermission('add-expenses'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
 {{--                    <a href="#" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#cofa_transfer"><i class="fa-solid fa-plus"></i> Transfer Balance </a>--}}

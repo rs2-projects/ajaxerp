@@ -6,6 +6,15 @@
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#addProductMaterial"><i class="fa-solid fa-plus"></i> New Product</a>
+                    <div class="dropdown float-end">
+                        <button class="btn add-btn erp-add-employee ms-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-file-import"></i> Import Products
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#boardProductImportModal">Board Products</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#paperProductImportModal">Paper Products</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         @endif
@@ -66,6 +75,8 @@
     @include('inventory.product-material._add_product_material')
     @include('inventory.product-material._edit_product_material')
     @include('inventory.product-material._purchase_history_modal')
+    @include('inventory.product-material.__board_product_import_modal')
+    @include('inventory.product-material.__paper_product_import_modal')
 @endsection
 
 @section('css')
@@ -240,6 +251,15 @@
             });
         }
 
+        function changeBothSideColor(checkbox, parent_element) {
+            if($(checkbox).is(':checked')) {
+                $(parent_element + ' .single-color-wrapper').slideUp();
+                $(parent_element + ' .multiple-color-wrapper').slideDown();
+            } else {
+                $(parent_element + ' .single-color-wrapper').slideDown();
+                $(parent_element + ' .multiple-color-wrapper').slideUp();
+            }
+        }
     </script>
 @endsection
 

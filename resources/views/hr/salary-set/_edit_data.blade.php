@@ -78,7 +78,7 @@
                 </div>
                 <div class="erp-em-reg-step-item flex-48">
                     <div class="input-block erp-step-input-block ">
-                        <label class="col-form-label">Salary Type : <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Pay Period : <span class="text-danger">*</span></label>
                         <select class="select2 no-search-select-step" name="salary_generate_type" required>
                             <option value="">--Select An Option--</option>
                             <option value="1" {{ ($item->salary_generate_type == 1) ? 'selected' : '' }}>Half Month</option>

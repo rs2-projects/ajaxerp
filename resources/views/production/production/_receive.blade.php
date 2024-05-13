@@ -37,15 +37,17 @@
                     <div v-if="deliveries.length > 0">
                         <div class="pd-table-box-item-wrapper" v-for="(deliverData, deliverIndex) in deliveries" :key="deliverIndex">
                             <form action="{{route('production.production.receive.store', $pre_production->id)}}" 
-                                :id="'deliverStoreForm'+deliverData.id" method="post" 
+                                :id="'deliverStoreForm'+deliverData.delivery.id" method="post" 
                                 @submit="checkValidation($event, deliverIndex)">
                                 @csrf
-                                <input type="hidden" name="pre_production_id" :value="deliverData.pre_production_id">
-                                <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.id">  
+                                <input type="hidden" name="type" :value="deliverData.type">
+                                <input type="hidden" name="pre_production_id" :value="deliverData.delivery.pre_production_id">
+                                <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.delivery.id">  
                                 {{-- <input type="hidden" id="pre_production_material_delivery_id" name="pre_production_id" value="{{$pre_production->id}}">  --}}
                                 <div class="pd-table-box-item">
                                     <div class="pd-deliver-date-box">
-                                        <p>Delivery: <span>@{{ formatDate(deliverData.delivery_date) }}</span></p>
+                                        <p v-if="deliverData.type == 'other'">Material Delivery: <span>@{{ formatDate(deliverData.delivery.delivery_date) }}</span></p>
+                                        <p v-if="deliverData.type == 'board'">Board Delivery: <span>@{{ formatDate(deliverData.delivery.delivery_date) }}</span></p>
                                     </div>
                                     <div class="my-attendance-report-wrapper">
                                         <div class="big-table">
@@ -68,10 +70,12 @@
                                                             <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
                                                                 <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                                 <td class="erp-tbody-td text-start">
-                                                                    <h4 class="text-start d-table-title">@{{detailsData.material.category.name}}</h4>
+                                                                    <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.category.name}}</h4>
+                                                                    <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.category.name}}</h4>
                                                                 </td>
                                                                 <td class="erp-tbody-td text-center">
-                                                                    <h4 class="text-center d-table-title">@{{detailsData.material.product.name}}</h4>
+                                                                    <h4 class="text-center d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
+                                                                    <h4 class="text-center d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
                                                                 </td>
                                                                 <td class="erp-tbody-td text-center">
                                                                     <h4 class="text-center d-table-title">@{{detailsData.total_quantity}}</h4>
@@ -106,7 +110,7 @@
                                                                             class="form-control text-center bar-code-input"
                                                                             type="text"
                                                                             placeholder="Scan QR / Bar Code"
-                                                                            @keydown.enter.prevent="handleBarcodeScan($event, deliverData.id, detailsData.id, deliverIndex, detailsIndex, detailsData.material.product.id)"
+                                                                            @keydown.enter.prevent="handleBarcodeScan($event, deliverData.delivery.id, detailsData.id, deliverIndex, detailsIndex)"
                                                                             />
                                                                     </div>
                                                                     {{-- otherwise show fully received text --}}
@@ -141,7 +145,7 @@
                                     </div>
                                 </div>
                                 <div class="production-instrucion-output-selection-wrapper my-2 p-2 text-center">
-                                    <button v-if="deliverData.received_status != 1" class=" erp-search-btn text-center" type="submit">Receive</button>
+                                    <button v-if="deliverData.delivery.received_status != 1" class=" erp-search-btn text-center" type="submit">Receive</button>
                                 </div>
                             </form>
                         </div>
@@ -187,9 +191,10 @@
                     };
                 },
                 methods: {
-                    handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                    handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
                         if (event.key === 'Enter') {
                             const barcodeValue = event.target.value;
+                            const delivery_type = this.deliveries[deliverIndex].type;
                             if(barcodeValue !=''){
                                 const id = document.getElementById('pre_production_id').value;
                                 let url = `{{ route('production.production.check-barcode', ':id') }}`;
@@ -199,6 +204,7 @@
                                     barcode: barcodeValue,
                                     delivery_id: deliverId,
                                     delivery_details_id: detailsId,
+                                    type: delivery_type
                                 }
 
                                 axios.get(url, { params: data })
@@ -227,20 +233,24 @@
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.splice(barcodeIndex, 1);
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts--;
                     },
+                    
                     getMaterials() {
-                        var currentUrl = window.location.href;
-                        var params = currentUrl.split('/');
-                        var idIndex = params.length - 2;
-                        var id = params[idIndex];
+                        let id = document.getElementById('pre_production_id').value;
                         let url = "{{ route('production.production.get-delivery-details', ':id') }}";
                         url = url.replace(':id', id);
                         
                         axios.get(url)
                         .then(response => {
-                            this.deliveries = response.data.deliveries.map(delivery => {
+                            this.deliveries = response.data.deliveries.map(delivery_data => {
+                                let details_data = [];
+                                if(delivery_data.type == 'other'){
+                                    details_data = delivery_data?.delivery.delivery_details;
+                                }else{
+                                    details_data = delivery_data?.delivery.board_delivery_details;
+                                }
                                 return {
-                                    ...delivery,
-                                    delivery_details: delivery.delivery_details.map(detail => {
+                                    ...delivery_data,
+                                    delivery_details: details_data.map(detail => {
                                         return {
                                             ...detail,
                                             scannedBarcodes: [],
@@ -261,7 +271,7 @@
                         if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
                             showErrorAlert('Oops!', 'Please add received items!');
                         } else {
-                            receiveStoreForm(delivery.id, deliveryIndex);
+                            receiveStoreForm(delivery.delivery.id, deliveryIndex);
                         }
                     },
 
@@ -284,12 +294,17 @@
                     //     // this.deliveries[deliverIndex].delivery_details[detailsIndex].pending_items.splice(0, 1);
                     // }
 
-                    updateDeliveries(res){
-                        console.log(res);
-                        this.deliveries = res?.map(delivery => {
+                    updateDeliveries(response){
+                        this.deliveries = response.map(delivery_data => {
+                            let details_data = [];
+                            if(delivery_data.type == 'other'){
+                                details_data = delivery_data?.delivery.delivery_details;
+                            }else{
+                                details_data = delivery_data?.delivery.board_delivery_details;
+                            }
                             return {
-                                ...delivery,
-                                delivery_details: delivery.delivery_details?.map(detail => {
+                                ...delivery_data,
+                                delivery_details: details_data.map(detail => {
                                     return {
                                         ...detail,
                                         scannedBarcodes: [],

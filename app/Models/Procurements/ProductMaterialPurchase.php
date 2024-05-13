@@ -12,6 +12,11 @@ class ProductMaterialPurchase extends Model
     protected $table = 'product_material_purchases';
     public $timestamps = false;
 
+    const HAS_BOARD_NO = 0;
+    const HAS_BOARD_YES = 1;
+    const HAS_OTHERS_NO = 0;
+    const HAS_OTHERS_YES = 1;
+
     const PURCHASE_CREATE_TYPE_NEW = 0;
     const PURCHASE_CREATE_TYPE_REVISED = 1;
     const PURCHASE_CREATE_TYPE_BACKED = 2;
@@ -79,6 +84,9 @@ class ProductMaterialPurchase extends Model
     const PRICE_CALCULATED_NO =0;
     const PRICE_CALCULATED_YES =1;
 
+    const BOARD_PRICE_CALCULATED_NO =0;
+    const BOARD_PRICE_CALCULATED_YES =1;
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -101,6 +109,13 @@ class ProductMaterialPurchase extends Model
         'batch_number',
         'purchase_date',
         'estimated_delivery_date',
+        'php_rate',
+        'subtotal_amount_php',
+        'total_vat_amount_php',
+        'total_discount_amount_php',
+        'payable_amount_php',
+        'paid_amount_php',
+        'due_amount_php',
         'subtotal_amount',
         'total_vat_amount',
         'discount_type',
@@ -121,6 +136,14 @@ class ProductMaterialPurchase extends Model
         'backed_at',
         'notes',
         'invoice_footer',
+        'price_calculated',
+        'price_calculated_at',
+        'price_calculated_by',
+        'board_price_calculated',
+        'board_price_calculated_at',
+        'board_price_calculated_by',
+        'has_boards',
+        'has_others',
         'status',
         'created_by',
         'created_at',

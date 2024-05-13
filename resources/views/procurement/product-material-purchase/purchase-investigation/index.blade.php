@@ -51,7 +51,7 @@
                                                         </td>
                                                         <td class="erp-tbody-td text-center">
                                                             <label class="col-form-label">
-                                                                <input type="checkbox" name="is_perfect[{{ $key }}]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">Is it Perfect</span>
+                                                                <input type="checkbox" name="is_perfect[{{ $key }}]" class="is_perfect" {{ ($purchaseDetail->is_perfect == $purchaseDetail::IS_PERFECT_YES) ? 'checked' : '' }} value="1"> <span class="ms-1">All Perfect</span>
                                                             </label>
                                                         </td>
                                                         <td class="erp-tbody-td text-center">

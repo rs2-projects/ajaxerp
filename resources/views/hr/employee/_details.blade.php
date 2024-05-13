@@ -15,8 +15,12 @@
                             <small class="text-muted">{{ $employee->department->name??'N/A' }} / {{ $employee->designation->name?? 'N/A' }}</small>
                             <div class="staff-id">Employee ID : {{ $employee->employee_id??'N/A' }}</div>
                             <div class="small doj text-muted">Date of Join : {{ getFormattedDate($employee->joining_date,'d M, Y') }}</div>
-                            <div class="staff-msg"><a class="btn btn-custom"
-                                                      href="javascript:void(0);">Send Message</a></div>
+                            <div class="staff-msg">
+                                <a class="btn btn-custom" href="javascript:void(0);">Send Message</a>
+                                @if(hasPermission('login-employye-account'))
+                                    <a class="btn btn-custom emp-login-btn" href="{{ route('hr.employee.login', $employee->id) }}" style="background: linear-gradient(to right, #0054cf 0%, #8b89ff 100%)">Login</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-7">
@@ -73,7 +77,7 @@
                 <div class="nav nav-tabs erp-nav-tabs" id="nav-tab" role="tablist">
 
                     <button class="nav-link erp-nav-link active" id="erp-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
-                    <button class="nav-link erp-nav-link" id="erp-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-bank" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Bank & Statutory <small>(Admin Only)</small>  </button>
+                    {{-- <button class="nav-link erp-nav-link" id="erp-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-erp-bank" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Bank & Statutory <small>(Admin Only)</small>  </button> --}}
                 </div>
             </div>
         </div>

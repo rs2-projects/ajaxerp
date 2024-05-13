@@ -37,6 +37,7 @@ class PreProductionProcess extends Model
 
     protected $fillable = [
         'pre_production_id',
+        'production_staff_id',
         'instruction',
         'process_status',
         'status',
@@ -59,6 +60,11 @@ class PreProductionProcess extends Model
         return $this->hasMany(PreProductionProcessMaterial::class, 'pre_production_process_id');
     }
 
+    public function board_materials()
+    {
+        return $this->hasMany(PreProductionProcessBoard::class, 'pre_production_process_id');
+    }
+
     public function estimated_output()
     {
         return $this->hasMany(PreProductionProcessEstimatedOutput::class, 'pre_production_process_id', 'id')
@@ -69,5 +75,23 @@ class PreProductionProcess extends Model
     public function previousProcess()
     {
         return $this->hasMany(PreProductionProcessPreviousProcess::class, 'pre_production_process_id');
+    }
+
+    public function process_staff(){
+
+        return $this->belongsTo(ProductionStaff::class, 'production_staff_id');
+    }
+
+    public function pre_production(){
+        
+        return $this->belongsTo(PreProduction::class, 'pre_production_id');
+    }
+
+    public function process_machine(){
+        
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_process_id');
+    }
+
+    public function process_material(){
     }
 }

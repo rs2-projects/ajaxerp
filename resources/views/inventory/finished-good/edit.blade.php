@@ -35,6 +35,7 @@
                                                 <div class="input-block mb-0 erp-step-input-block ">
                                                     <label class="col-form-label">Product Image </label>
                                                     <input type="file" class="form-control " name="image" accept="image/*">
+                                                    <img class="edit-img-src" src="{{ $finished_good->show_image }}" width="30">
                                                 </div>
                                             </div>
                                             <div class="erp-filter-item flex-48">

@@ -116,7 +116,14 @@
 @endsection
 
 @section('css')
-
+    <style>
+        #php_amount{
+            font-size: 11px;
+            padding-top: 2px;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -161,6 +168,18 @@
             $('#end_date_filtered').on('dp.change', function(e){
                 filterData.end_date_filtered = $(this).val();
             });
+
+            $(document).on("keyup", "#amount", function(e) {
+              let amount = $(this).val();
+              let php_rate = $("#php_rate").val();
+              let amount_in_php = amount * php_rate;
+              if(amount_in_php > 0){
+                $("#php_amount_val").text(amount_in_php);
+              }else{
+                $("#php_amount_val").text(0);
+              }
+            })
+
             $(document).on("submit", "#makePaymentFormSubmit", function(e) {
                 var self = this;
                 e.preventDefault();

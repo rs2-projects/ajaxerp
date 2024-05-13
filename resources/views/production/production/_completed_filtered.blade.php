@@ -45,7 +45,7 @@
                                     <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{count($data->production_material)}}</h4>
+                                    <h4 class="text-center d-table-title">{{$data->countRawMaterials()}}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
@@ -64,8 +64,10 @@
                                                     @endif
                                                 @endif
                                                 <a class="dropdown-item" href="{{ route('production.production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
-                                                <a class="dropdown-item" href="{{ route('production.production.print-barcode', [$data->id,'printer']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                                <a class="dropdown-item" href="{{ route('production.production.print-barcode', [$data->id,'pdf']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                                @if(hasPermission('production-print-barcode'))
+                                                    <a class="dropdown-item" href="{{ route('production.production.print-barcode', [$data->id,'printer']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
+                                                    <a class="dropdown-item" href="{{ route('production.production.print-barcode', [$data->id,'pdf']) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

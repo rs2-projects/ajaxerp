@@ -31,11 +31,7 @@ class PreProductionController extends BackendController
     public function indexFiltered(Request $request)
     {
         $data = $this->service->indexFilteredData($request);
-        $view = $this->view('production.pre-production._index_filtered')
-            ->with($data)
-            ->render();
-
-        return $this->returnAjaxSuccess(['view' => $view]);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
     }
 
     public function getDocument($id)
@@ -50,7 +46,12 @@ class PreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
-
+    public function details($id){
+        $this->setPageTitle("Pre Production Details");
+        $this->setActiveMenu('production.pre-production.index');
+        $data = $this->service->detailsData($id);
+        return $this->view('production.pre-production._details')->with($data);
+    }
     public function create()
     {
         $this->setPageTitle("Create New Pre-Production");
@@ -91,6 +92,10 @@ class PreProductionController extends BackendController
         return $this->service->getProducts($id);
     }
 
+    public function getBoardProducts($id){
+        return $this->service->getBoardProducts($id);
+    }
+
     public function getProcess($id){
         $data = $this->service->getProcessData($id);
         return $this->returnAjaxSuccess($data);
@@ -109,8 +114,8 @@ class PreProductionController extends BackendController
     public function statusUpdate($id, $status)
     {
         try {
-            $this->service->statusUpdateData($id, $status);
-            return $this->returnAjaxSuccess([], 'Status Update Successfully');
+            $data = $this->service->statusUpdateData($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }

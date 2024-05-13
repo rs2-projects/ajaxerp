@@ -12,6 +12,13 @@ class ProductMaterialPurchaseCalculatedPrice extends Model
     protected $table = 'product_material_purchase_calculated_prices';
     public $timestamps = false;
 
+    const PRODUCT_TYPE_BOARD = 0;
+    const PRODUCT_TYPE_OTHERS = 1;
+    const PRODUCT_TYPES = [
+        self::PRODUCT_TYPE_BOARD => 'Board',
+        self::PRODUCT_TYPE_OTHERS => 'Others'
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -27,6 +34,7 @@ class ProductMaterialPurchaseCalculatedPrice extends Model
     ];
 
     protected $fillable = [
+        'product_type',
         'product_material_purchase_id',
         'product_material_purchase_detail_id',
         'product_material_id',

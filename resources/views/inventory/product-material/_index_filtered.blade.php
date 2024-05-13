@@ -83,8 +83,9 @@
                                     <div class="dropdown-menu dropdown-menu-right">
 
                                         <a class="dropdown-item" href="{{ route('inventory.product-material.edit',$product_material->id) }}" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
+                                        @if($product_material->countPurchaseDetails() == 0)
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

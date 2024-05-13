@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\Production\ProductionStaff;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +19,10 @@ class LoginService
             ->where('deleted', User::DELETED_NO)
             ->first();
         if (empty($user)) {
+            if($this->loginProductionStaff($request) === true) {
+                // return route('production-staff.dashboard');
+                return route('production-staff.production.production.index');
+            }
             throw new \Exception('Invalid Credentials');
         }
 
@@ -44,6 +49,32 @@ class LoginService
         Auth::login($user, $request->remember_me ?? 0);
 
         $user->resetPermissionSession();
+        if (isset($request->redirectTo) && ($request->redirectTo != '')) {
+            return route('dashboard').'/'.$request->redirectTo;
+        }
+        return route('dashboard');
+    }
+
+    public function loginProductionStaff(Request $request) {
+        $user = ProductionStaff::where('user_name', $request->email)
+            ->where('deleted', ProductionStaff::DELETED_NO)
+            ->first();
+        if (empty($user)) {
+            throw new \Exception('Invalid Credentials');
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            throw new \Exception('Invalid Credentials');
+        }
+
+        //check status
+        if ($user->status != ProductionStaff::STATUS_ACTIVE) {
+            throw new \Exception('Your account is inactive');
+        }
+
+        Auth::guard('production-staff')->login($user, $request->remember_me ?? 0);
+
+        return true;
     }
 
 }

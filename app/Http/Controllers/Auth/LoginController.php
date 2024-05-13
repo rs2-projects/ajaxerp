@@ -17,14 +17,14 @@ class LoginController extends AuthController
     public function login(LoginRequest $request, LoginService $loginService)
     {
         try {
-            $loginService->login($request);
+            $redirectUri = $loginService->login($request);
 
         } catch (\Exception $exception) {
             return $this->returnAjaxException($exception);
         }
         return $this->returnAjaxSuccess([
             'login' => 'success',
-            'redirectUri' => route('dashboard')
+            'redirectUri' => $redirectUri,
         ], "Login Success");
     }
 }

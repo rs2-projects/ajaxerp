@@ -9,14 +9,26 @@
                     <div class="product-general-info-box d-flex flex-wrap">
                         <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
-                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
-                                <input value="{{$pre_production->order_details}}" class="form-control" name="order_details" type="text" placeholder="" required="">
+                                <label class="col-form-label">Batch No <span class="text-red">*</span></label>
+                                <input class="form-control" value="{{$pre_production->pre_production_batch_no}}" name="pre_production_batch_no" type="text" placeholder="" required="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Date <span class="text-red">*</span></label>
+                                <input class="form-control datetimepicker" value="{{$pre_production->date?? \Carbon\Carbon::now()->format('Y-m-d') }}" name="date" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-25">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Image</label>
                                 <input class="form-control" name="image" type="file" placeholder="">
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-35">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Order Details <span class="text-red">*</span></label>
+                                <input value="{{$pre_production->order_details}}" class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
                         <div class="pgib-item flex-36">
@@ -36,7 +48,7 @@
                         <div class="psib-item flex-68">
                             <div class="input-block erp-step-input-block mb-0 two">
                                 <label class="col-form-label">Product<small>(Finished Product)</small> Selection <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                <select class="select select-step" name="finished_goods_id">
+                                <select class="select select-step" name="finished_goods_id" required="">
                                     <option>Select Product</option>
                                     @foreach ($finished_products as $f_product)
                                         <option value="{{$f_product->id}}" {{$pre_production->finished_goods_id == $f_product->id? 'selected' : ''}}>{{$f_product->name}}</option>
@@ -47,7 +59,7 @@
                         <div class="psib-item flex-30">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Estimated Output QTY <span class="text-red">*</span></label>
-                                <input class="form-control" value="{{$pre_production->estimated_production_qty}}" name="estimated_production_qty" type="number" placeholder="" required="">
+                                <input class="form-control" value="{{$pre_production->estimated_production_qty}}" name="estimated_production_qty" type="number" min="0" placeholder="" required="">
                             </div>
                         </div>
                     </div>
@@ -56,7 +68,21 @@
                         <div class="production-process-wrapper process-wrapper" v-for="(process, index) in processes" :key="index">
                             <input type="hidden" name="pre_production_process_id[]" :value="process.process_id">
                             <div class="production-process-status-wrapper">
-                                <h4>Process @{{ index + 1 }}</h4>
+                                {{-- <h4>Process @{{ index + 1 }}</h4> --}}
+                                <div class="production-machine-selection-wrapper d-flex flex-wrap">
+                                    <div class="pms-item flex-48">
+                                        <h4>Process @{{ index + 1 }}</h4>
+                                    </div>
+                                    <div class="pms-item flex-48 ">
+                                        <div class="input-block erp-step-input-block mb-0 d-flex">
+                                            <label class="col-form-label prod-p-staff">Production Staff <span class="text-danger">*</span></label>
+                                            <select class="select select-step select2" name="production_staff_id[]" required>
+                                                <option>Select Production Staff</option>
+                                                <option v-for="staff in staffs"  :value="staff.id" :key="staff.id" :selected="staff.id == process.process_production_staff_id">@{{staff.user_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
@@ -69,7 +95,7 @@
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Previous Process <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Previous Process </label>
                                         <select class="process-multiselect" :name="'previous_process['+index+'][]'" multiple="multiple">
                                             <option v-for="(innerProcess, idx) in processes.slice(0, index)" :selected="processSelectedIndexes(process).includes(idx)" :value="idx" :key="idx">Process @{{ idx + 1 }}</option>
                                         </select>
@@ -78,21 +104,33 @@
                             </div>
                             <div class="production-matarial-selection-wrapper">
                                 <h4 class="process-child-title">Material</h4>
-                                <div class="pms-item-main-wrapper">
+                                <div class="pms-item-main-wrapper" v-if="process.materialSections.length > 0">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
                                         <input type="hidden" :name="'process_material_id['+index+'][]'" :value="materialSection.id"/>
-                                        <div class="pms-item flex-32">
+                                        <input type="hidden" :name="'material_type['+index+'][]'" :value='materialSection.type'>
+                                        
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Category Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Material Category </label>
                                                 <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
-                                                    <option>Select Category</option>
+                                                    <option value="">Select Category</option>
                                                     <option v-for="category in categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="pms-item flex-32">
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">Material Selection <span class="text-danger">*</span></label>
+                                                <label class="col-form-label">Board Category </label>
+                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
+                                                    <option value="">Select Category</option>
+                                                    <option v-for="category in board_categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Material </label>
                                                 <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
                                                     <option value="">Select Material</option>
                                                     <option v-for="product in processes[index].materialSections[materialIndex].products"
@@ -102,19 +140,42 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Finished Board </label>
+                                                <select :name="'product_material_id['+index+'][]'" class="select select-step material-product" v-if="processes && processes.length > 0">
+                                                    <option value="">Select Board</option>
+                                                    <option v-for="product in processes[index].materialSections[materialIndex].products"
+                                                        :selected="product.id == materialSection.product_material_id" :key="product.id" :value="product.id">
+                                                        @{{ product.name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
-                                                <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input v-model="materialSection.quantity" :name="'quantity['+index+'][]'" class="form-control " type="number" placeholder="" required="">
+                                                <label class="col-form-label">QTY </label>
+                                                <input v-model="materialSection.quantity" :name="'quantity['+index+'][]'" class="form-control " type="number" min="0" placeholder="" >
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
                                             <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                                <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
+                                                {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
                                                 <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    <div class="pms-item flex-100">
+                                        <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                                            <a href="#" class="erp-search-btn text-center pp-add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
+                                            <a href="#" @click.prevent="addMaterialBoardSection(index)" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="pms-item-main-wrapper d-flex justify-content-center"> 
+                                    <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
                                 </div>
                             </div>
                             
@@ -133,7 +194,7 @@
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
-                                                <input class="form-control" v-model="estimatedSection.quantity" :name="'output_quantity['+index+'][]'" type="number" placeholder="" required="">
+                                                <input class="form-control" v-model="estimatedSection.quantity" :name="'output_quantity['+index+'][]'" type="number" min="0" placeholder="" required="">
                                             </div>
                                         </div>
                                         <div class="pms-item flex-10">
@@ -169,7 +230,7 @@
                         </div>	
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Save Product</button>
+                        <button class=" erp-search-btn text-center">Update Production</button>
                     </div>
                 <form>
             </div>
@@ -198,16 +259,21 @@
             font-weight: 700;
             font-weight: 800;
         }
+        .prod-p-staff{
+            width: 48%;
+        }
     </style>
 @endsection
 
 @section('css_plugins')
-
+    <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
 @endsection
 
 @section('js_plugins')
     <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
     <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script> 
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -221,7 +287,9 @@
                 return {
                     processes: [],
                     categories: [],
+                    board_categories: [],
                     machines: [],
+                    staffs: [],
                     process_indexes: [],
                 };
             },
@@ -239,7 +307,9 @@
                         .then(response => {
                             const processes = response.data.processes;
                             const categories = response.data.categories;
+                            const board_categories = response.data.finished_categoris;
                             const machines = response.data.machines;
+                            const staffs = response.data.staffs;
                             this.process_indexes = response.data.process_indexes;
 
                             categories.forEach((category) => {
@@ -247,21 +317,36 @@
                                     ...category
                                 });
                             });
+
+                            board_categories.forEach((board_category) => {
+                                this.board_categories.push({
+                                    ...board_category
+                                });
+                            });
+
                             machines.forEach((machine) => {
                                 this.machines.push({
                                     ...machine
+                                });
+                            });
+
+                            staffs.forEach((staff) => {
+                                this.staffs.push({
+                                    ...staff
                                 });
                             });
                             processes.forEach((process) => {
                                 const materials = process.materials.map(material => {
                                     return {
                                         id: material.id,
+                                        type: 'other',
                                         pre_production_process_id: material.pre_production_process_id,
                                         product_material_category_id: material.product_material_category_id,
                                         product_material_id: material.product_material_id,
                                         quantity: material.quantity
                                     };
                                 });
+
                                 const estimated_output = process.estimated_output.map( output => {
                                     return {
                                         id: output.id,
@@ -274,23 +359,44 @@
 
                                 const previous_process_ids = process.previous_process.map(pp => pp.process_id);
 
-                                this.processes.push({
+                                const newProcess = {
                                     index: processes.length,
                                     process_id: process.id,
-                                    process_instruction:  process.instruction,
+                                    process_instruction: process.instruction,
+                                    process_production_staff_id: process.production_staff_id,
                                     materialSections: materials,
                                     estimatedOutputs: estimated_output,
                                     process_machine_ids: process_machine_ids,
                                     previous_process_ids: previous_process_ids
-                                });
+                                };
+
+                                if (process.board_materials.length > 0) {
+                                    process.board_materials.forEach(board => {
+                                        newProcess.materialSections.push({
+                                            id: board.id,
+                                            type: 'board',
+                                            pre_production_process_id: board.pre_production_process_id,
+                                            product_material_category_id: board.finished_board_category_id,
+                                            product_material_id: board.finished_board_id,
+                                            quantity: board.quantity
+                                        });
+                                    });
+                                }
+
+                                this.processes.push(newProcess);
                             });
 
                             if(initialLoad === true) {
                                 this.processes.forEach((process, processIndex) => {
                                     process.materialSections.forEach((materialSection, materialIndex) => {
                                         const categoryId = materialSection.product_material_category_id;
+                                        const type = materialSection.type;
                                         if (categoryId) {
-                                            this.getMaterialProducts(categoryId, processIndex, materialIndex);
+                                            if(type == 'other'){
+                                                this.getMaterialProducts(categoryId, processIndex, materialIndex);
+                                            }else if (type == 'board'){
+                                                this.getBoardProducts(categoryId, processIndex, materialIndex);
+                                            }
                                         }
                                     });
                                 });
@@ -309,7 +415,10 @@
                     const newIndex = this.processes.length + 1;
                     this.processes.push({
                         index: newIndex,
-                        materialSections: [{}],
+                        materialSections: [{
+                            type: 'other',
+                            products: []
+                        }],
                         estimatedOutputs: [{}]
                     });
                     this.$nextTick(() => {
@@ -325,8 +434,19 @@
                     }
                 },
 
-                addMaterialSection(processIndex){
-                    this.processes[processIndex].materialSections.push({});
+                addMaterialOtherSection(processIndex){
+                    this.processes[processIndex].materialSections.push({
+                        type: 'other'
+                    });
+                    this.$nextTick(() => {
+                        initSelect2();
+                    });
+                },
+
+                addMaterialBoardSection(processIndex){
+                    this.processes[processIndex].materialSections.push({
+                        type: 'board'
+                    });
                     this.$nextTick(() => {
                         initSelect2();
                     });
@@ -334,6 +454,9 @@
 
                 removeMaterialSection(processIndex, materialIndex) {
                     this.processes[processIndex].materialSections.splice(materialIndex, 1);
+                    this.$nextTick(() => {
+                        initSelect2();
+                    });
                 },
 
                 addEstimatedOutputSection(processIndex){
@@ -361,6 +484,20 @@
                         });
                 },
 
+                getBoardProducts(categoryId, processIndex, materialIndex){
+                    let url = "{{ route('production.pre-production.get-board-products', ':id') }}";
+                    url = url.replace(':id', categoryId);
+                    axios.get(url)
+                        .then(response => {
+                            const products = response.data.products;
+                            vueApp.processes[processIndex].materialSections[materialIndex].products = products;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching products:', error);
+                        });
+
+                },
+
                 checkValidation(e) {
                     e.preventDefault();
                     let allInputsFilled = true;
@@ -382,7 +519,7 @@
                     let previous_process_ids = process.previous_process_ids;
                     let indexes = [];
 
-                    previous_process_ids.forEach(id => {
+                    previous_process_ids?.forEach(id => {
                         if (id in process_ids) {
                             indexes.push(process_ids[id]);
                         }
@@ -407,6 +544,23 @@
 
 
         // other functions
+
+        $(document).ready(function () {
+            initializeDatepicker();
+        });
+
+        function initializeDatepicker() {
+            $('.datetimepicker').datetimepicker({
+                format: 'YYYY-MM-DD',
+                icons: {
+                    up: "fa fa-angle-up",
+                    down: "fa-solid fa-angle-down",
+                    next: 'fa-solid fa-angle-right',
+                    previous: 'fa-solid fa-angle-left'
+                }
+            });
+        }
+
         function initSelect2() {
             $('.select-step').select2({
                 minimumResultsForSearch: -1,
@@ -448,6 +602,13 @@
             const materialIndex = select.dataset.materialIndex;
             let cat = $(select).val();
             vueApp.getMaterialProducts(cat, index, materialIndex);
+        }
+
+        function boardCategoryChangeOutside(select){
+            const index = select.dataset.index;
+            const materialIndex = select.dataset.materialIndex;
+            let cat = $(select).val();
+            vueApp.getBoardProducts(cat, index, materialIndex);
         }
 
         function preProductionFormSubmit(){
