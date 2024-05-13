@@ -61,6 +61,7 @@
                                             </select>
                                         </div>
                                         <input type="hidden" name="quantity[]" value="1" class="form-control">
+                                        {{--TODO: why  use static type here and below and its showing error on controller--}}
                                         <input type="hidden" name="type[]" value="0" class="form-control">
                                     </div>
 
