@@ -18,7 +18,7 @@ jobs:
 
       - name: Deployment
 
-        uses: appleboy/ssh-action@main
+        uses: appleboy/ssh-action@master
 
         with:
 
@@ -30,9 +30,7 @@ jobs:
 
           script: |
 
-            cd /var/www/html/
-
-            git checkout -f
+            cd /var/www/staging.ajaxtradingcorp.com/
 
             git pull
 
