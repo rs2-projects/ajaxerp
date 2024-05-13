@@ -53,7 +53,7 @@
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Raw Boards <span class="text-danger">*</span> </label>
-                                            <select class="select select-step" name="raw_board" onchange="getMaterial(this)">
+                                            <select class="select select-step" name="raw_board">
                                                 <option value="">Select Board</option>
                                                 @foreach ($boards as $board)
                                                     <option value="{{ $board->id }}">{{ $board->name }}</option>
@@ -102,7 +102,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="color_up_ qty" class="form-control" required>
+                                                            <input type="number" name="color_up_ qty" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -123,7 +123,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="color_up_qty" class="form-control" required>
+                                                            <input type="number" name="color_up_qty" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
