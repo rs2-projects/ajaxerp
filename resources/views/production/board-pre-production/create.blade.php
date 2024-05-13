@@ -40,7 +40,7 @@
                         <div class="row w-100">
                             <div class="col-12">
                                 <label class="col-form-label">Product Description</label>
-                                <textarea rows="1"  name="product_description" class="form-control"></textarea>
+                                <textarea rows="1"  name="product_description" class="form-control" placeholder="Enter Product Description"></textarea>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required>
+                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -128,7 +128,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required>
+                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -143,7 +143,7 @@
                     <div class="row w-100 mt-3">
                         <div class="col-12">
                             <label class="col-form-label">Production Description</label>
-                            <textarea rows="1"  name="production_description" class="form-control"></textarea>
+                            <textarea rows="1"  name="production_description" class="form-control" placeholder="Enter Production Description"></textarea>
                         </div>
                     </div>
 
