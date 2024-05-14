@@ -160,7 +160,7 @@ class BoardPreProductionService
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = new BoardPreProductionMaterials();
-                        $material->type = $request->type;
+                        $material->type = $request->type[$key];
                         $material->board_pre_production_id = $pre_production->id;
                         $material->product_material_category_id =$product_material->product_material_category_id;
                         $material->product_material_id = $request->product_material_id[$key];
@@ -257,7 +257,6 @@ class BoardPreProductionService
         // dd($request->all());
         DB::beginTransaction();
         try {
-            
             $pre_production = BoardPreProduction::where('id', $id)
                 ->where('deleted', BoardPreProduction::DELETED_NO)
                 ->where('status', BoardPreProduction::STATUS_ACTIVE)
@@ -318,7 +317,8 @@ class BoardPreProductionService
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
-                            ->where('product_material_id', $material_id)
+                            ->where('product_material_category_id', $product_material->product_material_category_id)
+                            ->where('type', $request->type[$key])
                             ->first();
 
                         if (!empty($material)) {

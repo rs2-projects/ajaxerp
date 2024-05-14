@@ -61,8 +61,7 @@
                                             </select>
                                         </div>
                                         <input type="hidden" name="quantity[]" value="1" class="form-control">
-                                        {{--TODO: why  use static type here and below and its showing error on controller--}}
-                                        <input type="hidden" name="type[]" value="0" class="form-control">
+                                        <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_RAW_BOARD }}" class="form-control">
                                     </div>
 
                                     <div class="pms-item flex-32">
@@ -91,7 +90,7 @@
                                         <div class="d-flex">
                                             <div class="flex-50">
                                                 <div class="d-flex pe-3">
-                                                    <input type="hidden" name="type[]" value="1" class="form-control">
+                                                    <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_UP }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
@@ -113,7 +112,7 @@
                                             </div>
                                             <div class="flex-50">
                                                 <div class="d-flex ps-3">
-                                                    <input type="hidden" name="type[]" value="2" class="form-control">
+                                                    <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_DOWN }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Down <span class="text-danger">*</span> </label>
