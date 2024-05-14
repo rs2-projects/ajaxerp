@@ -191,13 +191,17 @@
                         <div class="d-flex justify-content-center">
                             <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
                                 <button class=" erp-search-btn text-center"  @if($pre_production->is_verified !=$pre_production::VERIFIED_YES) id="verifiedBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,1]) }}" @endif>
-                                    @if($pre_production->is_verified==$pre_production::VERIFIED_YES) Varified @else Verify @endif
+                                    @if($pre_production->is_verified==$pre_production::VERIFIED_YES) Verified @else Verify @endif
                                 </button>
                             </div>
                             @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
                                 <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                                    <button class=" erp-search-btn text-center" id="revisionBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,2]) }}">
-                                        @if($pre_production->is_verified==$pre_production::VERIFIED_REVISION) Revisioned @else Revision @endif</button>
+                                    @if($pre_production->is_verified ==$pre_production::VERIFIED_NO)
+                                        <button class=" erp-search-btn text-center" id="revisionBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id,2]) }}">
+                                            Revision</button>
+                                    @elseif($pre_production->is_verified ==$pre_production::VERIFIED_REVISION)
+                                        <h4 class="erp-search-btn" id="revisionBtn">Revisioned</h4>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -229,9 +233,6 @@
             background: #16b0ae;
             color: #fff;
             padding: 5px 20px;
-        }
-        #revisionBtn{
-            background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
         }
     </style>
 @endsection

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class BoardProductionService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -147,6 +148,33 @@ class BoardProductionService
         return $data;
     }
 
+    public function pendingVerificationData($request)
+    {
+        
+        $keyword_filtered = $request->keyword_filtered ?? null;
+        $verification_status = $request->status_filtered;
+        $query = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_BOARD);
+
+        if ($verification_status == 'pending') {
+            $query->where('is_verified', PreProduction::VERIFIED_NO);
+        } elseif ($verification_status == 'revision') {
+            $query->where('is_verified', PreProduction::VERIFIED_REVISION);
+        }
+
+        $query->where(function ($q) use ($keyword_filtered) {
+            if ($keyword_filtered != '') {
+                $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
+            }
+        });
+        $data['pre_productions'] = $query->orderBy('id', 'desc')->paginate($this->paginate_limit);
+        $data['view'] = view('production.pending-board-production._index_filtered', $data)->render();
+
+        return $data;
+    }
+
+
     public function detailsData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
@@ -164,6 +192,47 @@ class BoardProductionService
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->first();
         return $data;
+    }
+
+    public function pendingDetailsData($id){
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_BOARD)
+            ->where('id', $id)
+            ->first();
+        if(!$pre_production){
+            throw new \Exception('Pre Production not found');
+        }
+        $data['pre_production'] = $pre_production;
+        $data['p_machine'] = PreProductionProcessMachine::where('pre_production_id', $pre_production->id)
+            ->first();
+        $data['board_process'] = PreProductionProcess::where('pre_production_id', $pre_production->id)
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->first();
+        return $data;
+    }
+
+    public function verificationStatusUpdate($id, $status)
+    {
+        try {
+            $pre_production = PreProduction::where('id', $id)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->first();
+            if (!$pre_production) {
+                throw new \Exception('Pre Production not found');
+            }
+            $pre_production->is_verified = $status;
+            $pre_production->updated_by = auth()->user()->id;
+            $pre_production->updated_at = now();
+            $pre_production->save();
+            
+            $data['status'] = $status;
+            return $data;
+
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function statusUpdateData($id, $processId, $status)

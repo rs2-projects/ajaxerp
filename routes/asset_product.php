@@ -244,6 +244,12 @@ Route::group(['prefix' => 'board-production'], function () {
     Route::get('/{id}/dispatch', [BoardProductionController::class, 'dispatch'])->name('production.board-production.dispatch-data');
     Route::post('/{id}/dispatch', [BoardProductionController::class, 'dispatchStore'])->name('production.board-production.dispatch.store');
     Route::get('/{id}/print-barcode/{type}', [BoardProductionController::class, 'printBarcode'])->name('production.board-production.print-barcode');
+
+    // pending verification
+    Route::get('pending-verification', [BoardProductionController::class, 'pendingVerification'])->name('production.board-production.pending-verification');
+    Route::post('pending-verification-data', [BoardProductionController::class, 'pendingVerificationData'])->name('production.board-production.pending-verification-data');
+    Route::get('/{id}/pending-verification/details', [BoardProductionController::class, 'pendingDetails'])->name('production.board-production.pending-verification-details');
+    Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.board-production.pending-verification.change-status');
 });
 
 Route::group(['prefix' => 'material-request'], function () {

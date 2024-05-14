@@ -395,7 +395,7 @@ class BoardPreProductionService
             $pre_production->finished_goods_id = $board_pre_production->finished_goods_id;
             $pre_production->estimated_production_qty = $board_pre_production->estimated_quantity*$request->unit;
             $pre_production->notes = $board_pre_production->note;
-            $pre_production->is_verified = PreProduction::VERIFIED_YES;
+            $pre_production->is_verified = PreProduction::VERIFIED_NO;
             $pre_production->created_by = auth()->user()->id;
             $pre_production->created_at = Carbon::now();
             $pre_production->updated_by = auth()->user()->id;
@@ -445,6 +445,7 @@ class BoardPreProductionService
 
             foreach ($board_materials as $key => $data) {
                 $material = new PreProductionProcessMaterial();
+                $material->type = $data->type;
                 $material->pre_production_id = $pre_production->id;
                 $material->pre_production_process_id = $process->id;
                 $material->product_material_category_id = $data->product_material_category_id;

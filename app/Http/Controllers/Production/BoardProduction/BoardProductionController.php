@@ -44,6 +44,35 @@ class BoardProductionController extends BackendController
         return $this->view('production.board-production._details')->with($data);
     }
 
+    public function pendingVerification(){
+        $this->setPageTitle("Pending Verification");
+        $this->setActiveMenu('production.board-production.pending-verification');
+        return $this->view('production.pending-board-production.index');
+        
+    }
+
+    public function pendingVerificationData(Request $request){
+        $data = $this->service->pendingVerificationData($request);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+
+    public function pendingDetails($id){
+        $this->setPageTitle("Pending Verification Details");
+        $this->setActiveMenu('production.board-production.pending-verification');
+        $data = $this->service->pendingDetailsData($id);
+        return $this->view('production.pending-board-production._details')->with($data);
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $data = $this->service->verificationStatusUpdate($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
     public function changeProcessStatus($id,$processId, $status){
         try {
             $this->service->statusUpdateData($id, $processId, $status);

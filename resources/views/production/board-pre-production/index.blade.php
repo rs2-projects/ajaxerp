@@ -109,8 +109,8 @@
                 var quantity = parseInt($('.quantity-text').text());
                 if(unit){
                     $('.unit-input-text').text(unit);
-                    var output = unit * quantity;
-                    $('.output-text').text(output);
+                    // var output = unit * quantity;
+                    // $('.output-text').text(output);
                     $('.product-unit').text(unit);
                     
                     $('.product-total-qty').each(function() {
@@ -119,7 +119,7 @@
                     });
                 }else{
                     $('.unit-input-text').text(0); 
-                    $('.output-text').text(0);
+                    // $('.output-text').text(0);
                     $('.product-unit').text(0);
                     $('.product-total-qty').each(function() {
                         var productQty = parseInt($(this).closest('.erp-tbody-tr').find('.product-qty').text());

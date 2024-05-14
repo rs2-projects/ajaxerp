@@ -14,7 +14,13 @@ class PreProductionProcessMaterial extends Model
     protected $table = 'pre_production_process_materials';
     public $timestamps = false;
 
+    const TYPE_RAW_BOARD = 0;
+    const TYPE_PAPER_UP = 1;
+    const TYPE_PAPER_DOWN = 2;
+    const TYPE_OTHER = 3;
+
     protected $fillable = [
+        'type',
         'pre_production_id',
         'pre_production_process_id',
         'product_material_category_id',

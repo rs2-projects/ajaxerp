@@ -34,7 +34,7 @@
                 </div>
                 <div class="pd-table-box">
                     <div class="pd-table-box-item-wrapper">
-                        @if($deliveries->count() > 0 && $board_deliveries->count() > 0)
+                        @if($deliveries->count() > 0 || $board_deliveries->count() > 0)
                             @foreach ($deliveries as $data )
                                 <div class="pd-table-box-item">
                                     <div class="pd-deliver-date-box">

@@ -19,7 +19,7 @@
                                     <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
                                 </td>
                                 <td class="erp-tbody-td text-start">
-                                    <a href="{{ route('production.board-production.details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                    <a href="{{ route('production.board-production.pending-verification-details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                         <div class="em-pro-img-box">
                                             <img src="{{ $data->finishedGoods->show_image }}" alt="">
                                         </div>
@@ -41,7 +41,7 @@
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 {{-- <a class="dropdown-item" href="{{ route('production.production.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a> --}}
-                                                <a class="dropdown-item" href="{{ route('production.board-production.details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
+                                                <a class="dropdown-item" href="{{ route('production.board-production.pending-verification-details', $data->id) }}" ><i class="la la-hand-o-right m-r-5"></i> View Details</a>
 
                                             </div>
                                         </div>

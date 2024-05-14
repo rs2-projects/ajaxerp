@@ -51,6 +51,11 @@ class BoardPreProduction extends Model
         return $this->hasMany(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id');
     }
 
+    public function other_board_materials(){
+        return $this->hasMany(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', '!=', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+
     public function finishedGoods()
     {
         return $this->belongsTo(FinishedGoods::class, 'finished_goods_id', 'id');
