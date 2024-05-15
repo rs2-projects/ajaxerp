@@ -33,7 +33,7 @@
                                 <button class="nav-link active erp-nav-link" data="pending" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">Pending</button>
                             </li>
                             <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" data="revision" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Revision</button>
+                                <button class="nav-link erp-nav-link" data="rejected" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Rejected</button>
                             </li>
                         </ul>
                     

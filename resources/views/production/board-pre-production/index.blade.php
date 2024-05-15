@@ -6,6 +6,9 @@
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="{{route('production.board-pre-production.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Create Board Pre-Production </a>
+                    <a class="btn add-btn erp-add-employee me-2" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#preProductionImportModal">
+                        <i class="fa-solid fa-file-import"></i> Import
+                    </a>
                 </div>
             </div>
         {{-- @endif --}}
@@ -49,6 +52,7 @@
 
 @section('modals')
     @include('production.board-pre-production._send_to_production_modal')
+    @include('production.board-pre-production.__pre_production_import_modal')
 @endsection
 
 @section('css')
@@ -146,6 +150,26 @@
                     }
                 }, 'show_input_error');
             });
+
+            $("#preProductionImportForm").on('submit', function (e){
+                var self = this;
+                e.preventDefault();
+                var formData = new FormData($(self)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(self).attr('action');
+                
+                formPost(url, formData, function (res) {
+                    if(res.status == 200){
+                        $("#preProductionImportModal").modal('hide');
+                        $(self)[0].reset();
+                        showSuccessAlert('Success',res.message)
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');  
+
+            })
         });
         
         function getData(){
@@ -159,7 +183,7 @@
         function sendToProduction(id){
             let url = "{{route('production.board-pre-production.get-production-details', ':id')}}";
             url = url.replace(':id', id);
-            ajaxGet(url, {}, function (response) {
+            ajaxGet(url, {type: 2}, function (response) {
                 if (response.status == 200) {
                     $("#edit_data_modal_body").html(response.view);
                     $("#sendToProductionModal").modal('show');

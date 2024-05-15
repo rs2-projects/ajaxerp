@@ -2,6 +2,7 @@
 
 namespace App\Services\Production\BoardPreProduction;
 
+use App\Imports\Production\BoardPreProductionImport;
 use App\Models\Machine;
 use App\Models\Production\BoardPreProduction;
 use App\Models\Production\BoardPreProductionMaterials;
@@ -19,6 +20,7 @@ use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BoardPreProductionService
 {
@@ -488,5 +490,10 @@ class BoardPreProductionService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function bulkImport($request)
+    {
+        Excel::import(new BoardPreProductionImport(), $request->product_file);
     }
 }

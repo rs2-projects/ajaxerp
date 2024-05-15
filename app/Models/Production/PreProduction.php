@@ -20,10 +20,12 @@ class PreProduction extends Model
     const VERIFIED_NO = 0;
     const VERIFIED_YES = 1;
     const VERIFIED_REVISION = 2;
+    const VERIFIED_REJECTED = 3;
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
         self::VERIFIED_REVISION => 'Revision',
+        self::VERIFIED_REJECTED => 'Rejected',
     ];
 
     const PROCESS_STATUS_PENDING = 0;

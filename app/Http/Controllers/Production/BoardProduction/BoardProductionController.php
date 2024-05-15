@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Production\BoardProduction\StoreBoardProductionDispatchRequest;
 use App\Http\Requests\Production\BoardProduction\StoreBoardProductionReceiveRequest;
+use App\Http\Requests\Production\BoardProduction\UpdateBoardProductionRequest;
 use App\Models\Production\PreProduction;
 use App\Services\Production\BoardProduction\BoardProductionService;
 use Illuminate\Http\Request;
@@ -36,6 +37,25 @@ class BoardProductionController extends BackendController
         $data = $this->service->indexFilteredData($request);
         return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
     }
+
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Board Pre-Production");
+        $this->setActiveMenu('production.board-pre-production.index');
+        $data = $this->service->editData($id);
+        return  $this->view('production.pending-board-production.edit')->with($data);
+    }
+
+    public function update(UpdateBoardProductionRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Board Production updated successfully');
+    }
+
 
     public function details($id){
         $this->setPageTitle("Board Production Details");

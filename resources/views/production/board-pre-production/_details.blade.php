@@ -7,28 +7,22 @@
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Batch No</label>
-                            <h4>{{$pre_production->pre_production_batch_no}}</h4>
-                        </div>
-                    </div>
-                    <div class="pgib-item flex-32 pd-item">
-                        <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Product (Finished Product)</label>
-                            <h4>{{$pre_production->finishedGoods->name}}</h4>
+                            <h4>{{$item->finishedGoods->name}}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Estimated Output QTY </label>
-                            <h4>{{$pre_production->estimated_production_qty}}</h4>
+                            <h4>{{$item->estimated_quantity}}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Production Staff</label>
                             <h4>
-                                @if ($board_process->process_staff)
-                                    {{ $board_process->process_staff->title . ' (' . $board_process->process_staff->user_name . ')' }}
+                                @if ($item->staff->title)
+                                    {{ $item->staff->title . ' (' . $item->staff->user_name . ')' }}
                                 @else
                                     N/A
                                 @endif
@@ -38,73 +32,55 @@
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Machine </label>
-                            <h4>{{$p_machine->machine?->name ?? 'N/A'}}</h4>
+                            <h4>{{ $item->machine?->name??'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
-                            <p>{{$pre_production->notes ?? 'N/A'}}</p>
+                            <h4>{{$item->note ?? 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>
                 <div class="product-process-main-item-wrapper">
-                    @foreach ($pre_production->process as $processKey=> $processData)
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Material</h4>
                             </div>
                             <div class="production-matarial-selection-wrappers">
                                 <div class="pms-item-main-wrapper">
-                                    @foreach ($processData->materials as $processMaterial)
+                                    @foreach ($item->board_materials as $product)
                                         <div class="pms-item-wrapper d-flex flex-wrap align-items-end pre-d-item-wrapper">
+                                            <div class="pms-item flex-15">
+                                                <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
+                                                    <label class="col-form-label">Type </label>
+                                                    <h4 class="input-box-title">{{$product::TYPES[$product->type]}}</h4>
+                                                </div>
+                                            </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">Category</label>
-                                                    <h4 class="input-box-title">{{$processMaterial->category->name}}</h4>
+                                                    <h4 class="input-box-title">{{ $product->product_category?->name }}</h4>
                                                 </div>
                                             </div>
                                             <div class="pms-item flex-32">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">Matarial</label>
                                                 
-                                                    <h4 class="input-box-title">{{$processMaterial->product->name}}</h4>
+                                                    <h4 class="input-box-title">{{ $product->product_material?->name }}</h4>
                                                 </div>
                                             </div>
-                                            <div class="pms-item flex-15">
+                                            <div class="pms-item flex-10">
                                                 <div class="input-block erp-step-input-block mb-0 pre-d-item-input-box">
                                                     <label class="col-form-label">QTY </label>
-                                                    <h4 class="input-box-title">{{$processMaterial->quantity}}</h4>
+                                                    <h4 class="input-box-title">{{ $product->quantity }}</h4>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
-
-                                    {{-- @if(hasPermission('verify-pre-productions')) --}}
-                                        <div class="d-flex justify-content-center">
-                                            <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                                                @if ($pre_production->is_verified ==$pre_production::VERIFIED_NO)
-                                                    <button class=" erp-search-btn text-center" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_YES]) }}">Verify</button>
-                                                @elseif ($pre_production->is_verified ==$pre_production::VERIFIED_YES)
-                                                    <h4 class="erp-search-btn">Verified</h4>
-                                                @endif
-                                            </div>
-                                            @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
-                                                <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                                                    @if($pre_production->is_verified ==$pre_production::VERIFIED_NO)
-                                                        <button class=" erp-search-btn text-center rejectBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_REJECTED]) }}">
-                                                            Reject</button>
-                                                    @elseif($pre_production->is_verified ==$pre_production::VERIFIED_REJECTED)
-                                                        <h4 class="erp-search-btn rejectBtn">Rejected</h4>
-                                                    @endif
-                                                </div>
-                                            @endif
-                                        </div>
-                                    {{-- @endif --}}
                                 </div>
                             </div>
                         </div>
-                    @endforeach
                 </div>
             </div>
         </div>
