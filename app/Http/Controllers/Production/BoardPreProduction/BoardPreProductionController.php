@@ -92,13 +92,18 @@ class BoardPreProductionController extends BackendController
         return $this->returnAjaxSuccess([], 'Board Pre Production deleted successfully');
     }
 
-    public function details($id){
+    public function details(Request $request, $id){
         try {
             $data = $this->service->detailsData($id);
-            $view = $this->view('production.board-pre-production._send_to_production_data')
-                ->with($data)
-                ->render();
-            return $this->returnAjaxSuccess(['view' => $view]);
+            if(isset($request->type)){
+                $view = $this->view('production.board-pre-production._send_to_production_data')
+                    ->with($data)
+                    ->render();
+                return $this->returnAjaxSuccess(['view' => $view]);
+            }else{
+                return  $this->view('production.board-pre-production._details')->with($data);
+            }
+
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
@@ -111,5 +116,15 @@ class BoardPreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Sent to production successfully');
+    }
+
+    public function bulkImport(Request $request)
+    {
+        try {
+            $this->service->bulkImport($request);
+            return $this->returnAjaxSuccess([], 'Imported successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

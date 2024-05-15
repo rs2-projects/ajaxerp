@@ -52,18 +52,18 @@
                                 <div class=" pms-item-wrapper d-flex flex-wrap align-items-end">
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Raw Boards <span class="text-danger">*</span> </label>
+                                            <label class="col-form-label">Raw Boards<span class="text-danger">*</span> </label>
                                             <select class="select select-step" name="product_material_id[]" required>
                                                 <option value="">Select Board</option>
-                                                @foreach ($boards as $board)
-                                                    <option value="{{ $board->id }}" {{( $raw_board_id->product_material_id == $board->id) ? 'selected' : ''}}>{{ $board->name }}</option>
+                                                @foreach ($boards as $data)
+                                                    <option value="{{ $data->id }}" {{( $raw_board_id->product_material_id == $data->id) ? 'selected' : ''}}>{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <input type="hidden" name="quantity[]" value="1" class="form-control">
-                                        <input type="hidden" name="type[]" value="0" class="form-control">
+                                        <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_RAW_BOARD }}" class="form-control">
                                     </div>
-
+                                    
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
@@ -86,11 +86,12 @@
                                             </select>
                                         </div>
                                     </div>
+                                    
                                     <div class="pms-item flex-100 mt-3">
                                         <div class="d-flex">
                                             <div class="flex-50">
                                                 <div class="d-flex pe-3">
-                                                    <input type="hidden" name="type[]" value="1" class="form-control">
+                                                    <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_UP }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
@@ -112,7 +113,7 @@
                                             </div>
                                             <div class="flex-50">
                                                 <div class="d-flex ps-3">
-                                                    <input type="hidden" name="type[]" value="2" class="form-control">
+                                                    <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_DOWN }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Down <span class="text-danger">*</span> </label>

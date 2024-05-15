@@ -53,19 +53,6 @@
                         <div class="production-process-wrapper">
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Material</h4>
-                                @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                    {{-- @if(hasPermission('manage-processes'))
-                                        <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.board-production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
-                                    @endif --}}
-                                    <p class="start-process-btn">Pending</p>
-                                @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    {{-- @if(hasPermission('manage-processes')) 
-                                        <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.board-production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
-                                    @endif --}}
-                                    <p class="complete-process-btn">Processing</p>
-                                @else
-                                <p class="rs-pre-completed-process">Completed Process</p>
-                                @endif
                             </div>
                             <div class="production-matarial-selection-wrappers">
                                 <div class="pms-item-main-wrapper">
@@ -92,6 +79,28 @@
                                             </div>
                                         </div>
                                     @endforeach
+
+                                    {{-- @if(hasPermission('verify-pre-productions')) --}}
+                                        <div class="d-flex justify-content-center">
+                                            <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                                                @if ($pre_production->is_verified ==$pre_production::VERIFIED_NO)
+                                                    <button class=" erp-search-btn text-center" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_YES]) }}">Verify</button>
+                                                @elseif ($pre_production->is_verified ==$pre_production::VERIFIED_YES)
+                                                    <h4 class="erp-search-btn">Verified</h4>
+                                                @endif
+                                            </div>
+                                            @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
+                                                <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                                                    @if($pre_production->is_verified ==$pre_production::VERIFIED_NO)
+                                                        <button class=" erp-search-btn text-center rejectBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_REJECTED]) }}">
+                                                            Reject</button>
+                                                    @elseif($pre_production->is_verified ==$pre_production::VERIFIED_REJECTED)
+                                                        <h4 class="erp-search-btn rejectBtn">Rejected</h4>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </div>
+                                    {{-- @endif --}}
                                 </div>
                             </div>
                         </div>
@@ -137,30 +146,27 @@
 
 @section('js')
     <script>
-        function changeStatus(uri) {
-           console.log(uri);
+        function preProductionUpdateStatus(button){
+            let url = $(button).attr('data-href');
+            
             Swal.fire({
                 title: '',
-                html: 'Are you sure to update process status?',
+                html: 'Are you sure to update status?',
                 showDenyButton: true,
                 confirmButtonText: 'Yes',
                 denyButtonText: `No`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    ajaxGet(
-                        uri,
-                        {},
-                        function (response) {
-                          if (response.status == 200){
-                            toastr.success(response.message);
+                    ajaxGet(url, {}, function (response) {
+                        if (response.status == 200) {
                             setTimeout(function () {
                                 location.reload();
-                            }, 1000);
-                          }else{
+                            }, 100);
+                            showSuccessAlert('Success',response.message)
+                        } else {
                             toastr.error(response.message);
-                          }
                         }
-                    );
+                    }, 'default');
                 } else if (result.isDenied) {
 
                 }

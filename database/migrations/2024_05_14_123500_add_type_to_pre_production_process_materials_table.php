@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_material_purchase_details', function (Blueprint $table) {
-            $table->unsignedTinyInteger('product_type')->default(0)->comment('0=Others,1=Board,3=Paper')->after('product_material_id');
+        Schema::table('pre_production_process_materials', function (Blueprint $table) {
+            $table->unsignedTinyInteger('type')->default(3)->comment('0=Raw Board,1=Paper Up,2=Paper Down,3=Other')->after('id');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_material_purchase_details', function (Blueprint $table) {
-            $table->dropColumn('product_type');
+        Schema::table('pre_production_process_materials', function (Blueprint $table) {
+            $table->dropColumn('type');
         });
     }
 };

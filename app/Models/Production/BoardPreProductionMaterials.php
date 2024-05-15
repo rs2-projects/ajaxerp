@@ -3,6 +3,7 @@
 namespace App\Models\Production;
 
 use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +17,12 @@ class BoardPreProductionMaterials extends Model
     const TYPE_RAW_BOARD = 0;
     const TYPE_PAPER_UP = 1;
     const TYPE_PAPER_DOWN = 2;
+
+    const TYPES = [
+        self::TYPE_RAW_BOARD => 'Raw Board',
+        self::TYPE_PAPER_UP => 'Paper Up',
+        self::TYPE_PAPER_DOWN => 'Paper Down',
+    ];
 
     // status const
     const STATUS_INACTIVE = 0;
@@ -49,6 +56,11 @@ class BoardPreProductionMaterials extends Model
         'deleted_at',
     ];
 
+
+    public function product_category()
+    {
+        return $this->belongsTo(ProductMaterialCategory::class, 'product_material_category_id');
+    }
 
     public function product_material()
     {

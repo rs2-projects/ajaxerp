@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <div class="row estimated-output-wrapper m-0 gap-bottom">
+        {{-- <div class="row estimated-output-wrapper m-0 gap-bottom">
             <label class="col-form-label estimated-output-title">Estimated Output Quantity</label>
             <div class="pms-item-wrapper d-flexflex-wrap align-items-end pre-d-item-wrapper">
                 <div class="row mb-2">
@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="send_to_pp_table" >
             <table class=" table mb-2 erp-table table-responsive mt-2">
@@ -54,7 +54,7 @@
                 </thead>
                 <tbody class="erp-tbody">
                     @php $i = 1; @endphp
-                    @foreach ($item->board_materials as $product )
+                    @foreach ($item->other_board_materials as $product )
                         <tr class="erp-tbody-tr">
                             <td class="erp-tbody-td text-left">{{ $i++ }}</td>
                             <td class="erp-tbody-td text-left">{{ $product->product_material?->name }}</td>

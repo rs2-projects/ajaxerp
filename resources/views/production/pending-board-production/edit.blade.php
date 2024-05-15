@@ -4,23 +4,23 @@
     <div class="row">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
-                <form action="{{route('production.board-pre-production.store')}}" id="preProductionStoreForm" method="POST">
+                <form action="{{route('production.board-pre-production.update', $pre_production->id)}}" id="preProductionUpdateForm" method="POST">
                     @csrf
-                    <div class="product-selection-info-box d-flex flex-wrap" style="padding-right: 0">
+                    <div class="product-selection-info-box d-flex flex-wrap" style="padding-right: 0px">
                         <div class="row w-100">
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Code <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="code" placeholder="Enter Code" required>
+                                    <input type="text" class="form-control" name="code" value="{{$board->code}}" placeholder="Enter Code" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Machine <span class="text-danger">*</span></label>
                                     <select class="select select-step select2" name="machine_id">
                                         <option value="">Select Machine</option>
                                         @foreach ($machines as $machine)
-                                            <option value="{{$machine->id}}">{{$machine->name}}</option>
+                                            <option value="{{$machine->id}}" {{( $machine->id == $process_machine->machine_id) ? 'selected' : ''}}>{{$machine->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -31,7 +31,7 @@
                                     <select class="select select-step select2" name="staff_id">
                                         <option value="">Select Staff</option>
                                         @foreach ($staffs as $staff)
-                                            <option value="{{$staff->id}}">{{$staff->title}}</option>
+                                            <option value="{{$staff->id}}" {{( $staff->id == $process->production_staff_id) ? 'selected' : ''}}>{{$staff->title}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -40,7 +40,7 @@
                         <div class="row w-100">
                             <div class="col-12">
                                 <label class="col-form-label">Product Description</label>
-                                <textarea rows="1"  name="product_description" class="form-control" placeholder="Enter Product Description"></textarea>
+                                <textarea rows="1"  name="product_description"  class="form-control">{{$board->description}}</textarea>
                             </div>
                         </div>
                     </div>
@@ -52,25 +52,25 @@
                                 <div class=" pms-item-wrapper d-flex flex-wrap align-items-end">
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Raw Boards <span class="text-danger">*</span> </label>
+                                            <label class="col-form-label">Raw Boards<span class="text-danger">*</span> </label>
                                             <select class="select select-step" name="product_material_id[]" required>
                                                 <option value="">Select Board</option>
-                                                @foreach ($boards as $board)
-                                                    <option value="{{ $board->id }}">{{ $board->name }}</option>
+                                                @foreach ($boards as $data)
+                                                    <option value="{{ $data->id }}" {{( $raw_board_id->product_material_id == $data->id) ? 'selected' : ''}}>{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <input type="hidden" name="quantity[]" value="1" class="form-control">
                                         <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_RAW_BOARD }}" class="form-control">
                                     </div>
-
+                                    
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
                                             <select name="plate_up" class="select select-step material-product" required>
                                                 <option value="">Select Plate Up</option>
                                                 @foreach ($plates as $plate)
-                                                    <option value="{{ $plate->id }}">{{ $plate->name }}</option>
+                                                    <option value="{{ $plate->id }}" {{( $board->embossed_up == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -81,11 +81,12 @@
                                             <select name="plate_down" class="select select-step material-product" required>
                                                 <option value="">Select Plate Down</option>
                                                 @foreach ($plates as $plate)
-                                                    <option value="{{ $plate->id }}">{{ $plate->name }}</option>
+                                                    <option value="{{ $plate->id }}" {{( $board->embossed_down == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+                                    
                                     <div class="pms-item flex-100 mt-3">
                                         <div class="d-flex">
                                             <div class="flex-50">
@@ -97,7 +98,7 @@
                                                             <select name="product_material_id[]" class="select select-step material-product" required>
                                                                 <option value="">Select Paper Up</option>
                                                                 @foreach ($papers as $paper)
-                                                                    <option value="{{ $paper->id }}">{{ $paper->name }}</option>
+                                                                    <option value="{{ $paper->id }}" {{( $paper_up_id->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -105,7 +106,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
+                                                            <input type="number" name="quantity[]" value="{{$paper_up_id->quantity}}" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -119,7 +120,7 @@
                                                             <select name="product_material_id[]" class="select select-step material-product" required>
                                                                 <option value="">Select Paper Down</option>
                                                                 @foreach ($papers as $paper)
-                                                                    <option value="{{ $paper->id }}">{{ $paper->name }}</option>
+                                                                    <option value="{{ $paper->id }}" {{( $paper_down_id->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -127,7 +128,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
+                                                            <input type="number" name="quantity[]" value="{{$paper_down_id->quantity}}" min="1" class="form-control" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -142,18 +143,16 @@
                     <div class="row w-100 mt-3">
                         <div class="col-12">
                             <label class="col-form-label">Production Description</label>
-                            <textarea rows="1"  name="production_description" class="form-control" placeholder="Enter Production Description"></textarea>
+                            <textarea rows="1"  name="production_description" class="form-control">{{$pre_production->note}}</textarea>
                         </div>
                     </div>
-
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
                         <button class=" erp-search-btn text-center">Save Pre Production</button>
                     </div>
-                </form>
+                <form>
             </div>
         </div>
     </div>
-
 
 @endsection
 
@@ -162,7 +161,11 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .prod-p-staff{
+            width: 48%;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -170,8 +173,8 @@
 @endsection
 
 @section('js_plugins')
-    <script src="{{asset('assets/plugins/multipleselect/multiple-select.js')}}"></script>
-    <script src="{{asset('assets/plugins/multipleselect/multi-select.js')}}"></script>
+    <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
+    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -180,7 +183,8 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            $("#preProductionStoreForm").on('submit', function (e) {
+            initSelect2();
+            $("#preProductionUpdateForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
                 var formData = new FormData($(self)[0]);
@@ -201,39 +205,8 @@
             });
         });
 
-        // function getMaterial(select){
-        //     let category_id = $(select).val();
-        //     var materialSelect = $(select).closest('.pms-item-wrapper').find('.material-product');
-        //     console.log(materialSelect);
-
-        //     let url = "{{ route('production.board-pre-production.get-material-products') }}";
-        //     if(category_id > 0){
-        //         ajaxGet(url, {category_id:category_id}, function (response) {
-        //             if (response.status == 200) {
-        //                 materialSelect.html(response.view);
-        //             } else {
-        //                 materialSelect.html('');
-        //                 toastr.error(response.message);
-        //             }
-        //         });
-        //     } else {
-        //         materialSelect.html('');
-        //         return;
-        //     }
-        // }
-
-        // function addMaterialSection(){
-        //     var item = $('#newMaterialRow').html();
-        //     $('.materialWraper').append(item);
-        //     initSelect2();
-        // }
-
-        // function removeMaterialSection(element){
-        //     $(element).closest('.material-item-parent').remove();
-        // }
-
         function initSelect2() {
-            $('.process-wrapper .select-step1').select2({
+            $('.select-step').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });

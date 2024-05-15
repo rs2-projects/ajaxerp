@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Production\BoardProduction\StoreBoardProductionDispatchRequest;
 use App\Http\Requests\Production\BoardProduction\StoreBoardProductionReceiveRequest;
+use App\Http\Requests\Production\BoardProduction\UpdateBoardProductionRequest;
 use App\Models\Production\PreProduction;
 use App\Services\Production\BoardProduction\BoardProductionService;
 use Illuminate\Http\Request;
@@ -37,11 +38,59 @@ class BoardProductionController extends BackendController
         return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
     }
 
+    public function edit($id)
+    {
+        $this->setPageTitle("Edit Board Pre-Production");
+        $this->setActiveMenu('production.board-pre-production.index');
+        $data = $this->service->editData($id);
+        return  $this->view('production.pending-board-production.edit')->with($data);
+    }
+
+    public function update(UpdateBoardProductionRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Board Production updated successfully');
+    }
+
+
     public function details($id){
         $this->setPageTitle("Board Production Details");
         $this->setActiveMenu('production.board-production.index');
         $data = $this->service->detailsData($id);
         return $this->view('production.board-production._details')->with($data);
+    }
+
+    public function pendingVerification(){
+        $this->setPageTitle("Pending Verification");
+        $this->setActiveMenu('production.board-production.pending-verification');
+        return $this->view('production.pending-board-production.index');
+        
+    }
+
+    public function pendingVerificationData(Request $request){
+        $data = $this->service->pendingVerificationData($request);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
+    }
+
+    public function pendingDetails($id){
+        $this->setPageTitle("Pending Verification Details");
+        $this->setActiveMenu('production.board-production.pending-verification');
+        $data = $this->service->pendingDetailsData($id);
+        return $this->view('production.pending-board-production._details')->with($data);
+    }
+
+    public function statusUpdate($id, $status)
+    {
+        try {
+            $data = $this->service->verificationStatusUpdate($id, $status);
+            return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 
     public function changeProcessStatus($id,$processId, $status){

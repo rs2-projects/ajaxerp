@@ -1,0 +1,106 @@
+@extends('layouts.layout')
+@section('content')
+    <!-- Start::row-1 -->
+    <div class="row">
+        <div class="erp-employee-list-wrapper">
+            <div class="erp-main-filter-wrapper bg-card attd-table">
+                <div class="my-attendance-box-item flex-100 ">
+                    <div class="my-attendance-report-wrapper">
+                        <div class="erp-header-main-wrap d-flex justify-content-end align-items-center">
+                        
+                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
+                                
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
+                                    <div class="erp-filter-item">
+                                        <h6 class="me-2">Search By: </h6>
+                                    </div>
+                                    <div class="erp-filter-item flex-25"> 
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Product Search">
+                                        </div>
+                                    </div>
+                                    <div class="erp-filter-item"> 
+                                        <div class="erp-search-btn-wrap">
+                                            <button class=" erp-search-btn" onclick="getData()">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type" id="myTab" role="tablist">
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link active erp-nav-link" data="pending" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">Pending</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="rejected" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Rejected</button>
+                            </li>
+                        </ul>
+                    
+                        <div class="my-attendance-report-wrapper" id="ajax-data-load">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    <!--End::row-1 -->
+</div>
+@endsection
+
+@section('modals')
+    
+@endsection
+
+@section('css')
+    <style>
+        .erp-table-status.pre-delivered-s .action-icon {
+            background: #37b34a;
+        }
+        .pd-table-box-item {
+            margin-top: 24px;
+        }
+    </style>
+@endsection
+
+@section('css_plugins')
+
+@endsection
+
+@section('js_plugins')
+
+@endsection
+
+@section('js')
+    <script>
+        var filterData = {
+            keyword_filtered: '',
+            status_filtered: 'pending',
+        };
+        $(document).ready(function() {
+            getData();
+            filterData.keyword_filtered = $("#keyword_filtered").val()
+            $("#keyword_filtered").on('input', function () {
+                filterData.keyword_filtered = $(this).val();
+            });
+
+            $('.status_type li').on('click', function () {
+                filterData.status_filtered = $('.status_type .active').attr('data');
+                getData();
+            });
+        });
+
+        function getData(){
+            getPaginatedListData("{{ route('production.board-production.pending-verification-data') }}", "#ajax-data-load", filterData);
+        }
+
+        function getPaginatedData(button) {
+            getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+    </script>
+@endsection
+
+

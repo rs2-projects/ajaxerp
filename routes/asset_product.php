@@ -216,6 +216,9 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/delete', [BoardPreProductionController::class, 'delete'])->name('production.board-pre-production.delete');
         Route::get('/{id}/get-details', [BoardPreProductionController::class, 'details'])->name('production.board-pre-production.get-production-details');
         Route::post('/{id}/send-to-production', [BoardPreProductionController::class, 'sendToProduction'])->name('production.board-pre-production.send-to-production');
+
+        // bulk import
+        Route::post('bulk-import', [BoardPreProductionController::class, 'bulkImport'])->name('production.board-pre-production.bulk-import');
      });
 
     Route::group(['prefix' => 'production-staff'], function () {
@@ -244,6 +247,14 @@ Route::group(['prefix' => 'board-production'], function () {
     Route::get('/{id}/dispatch', [BoardProductionController::class, 'dispatch'])->name('production.board-production.dispatch-data');
     Route::post('/{id}/dispatch', [BoardProductionController::class, 'dispatchStore'])->name('production.board-production.dispatch.store');
     Route::get('/{id}/print-barcode/{type}', [BoardProductionController::class, 'printBarcode'])->name('production.board-production.print-barcode');
+
+    // pending verification
+    Route::get('pending-verification', [BoardProductionController::class, 'pendingVerification'])->name('production.board-production.pending-verification');
+    Route::post('pending-verification-data', [BoardProductionController::class, 'pendingVerificationData'])->name('production.board-production.pending-verification-data');
+    Route::get('/{id}/pending-verification/details', [BoardProductionController::class, 'pendingDetails'])->name('production.board-production.pending-verification-details');
+    Route::get('/{id}/change-status/{status}', [BoardProductionController::class, 'statusUpdate'])->name('production.board-production.pending-verification.change-status');
+    Route::get('/{id}/edit', [BoardProductionController::class, 'edit'])->name('production.board-production.edit');
+    Route::post('/{id}/update', [BoardProductionController::class, 'update'])->name('production.board-production.update');
 });
 
 Route::group(['prefix' => 'material-request'], function () {

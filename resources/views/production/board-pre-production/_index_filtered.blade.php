@@ -4,7 +4,6 @@
             <tr class="erp-tr">
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Items</th>
-                <th class="erp-th text-center">Estimated Quantity </th>
                 <th class="erp-th text-center">Machine </th>
                 <th class="erp-th text-center">Production Staff </th>
                 <th class="erp-th text-center">Note </th>
@@ -20,7 +19,7 @@
                         <h4 class="d-table-title">{{ $pre_productions->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                        <a href="{{ route('production.board-pre-production.get-production-details', $data->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                             <div class="em-pro-img-box">
                                 <img src="{{ $data->finishedGoods?->show_image }}" alt="">
                             </div>
@@ -30,7 +29,6 @@
                             </div>
                         </a>
                     </td>
-                    <td class="erp-tbody-td text-center">{{$data->estimated_quantity??'N/A'}}</td>
                     <td class="erp-tbody-td text-center">{{ $data->machine?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">
                         @if ($data->staff)
@@ -46,10 +44,11 @@
                                 <div class="dropdown dropdown-action">
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
-
-                                        <a class="dropdown-item" href="{{ route('production.board-pre-production.edit',$data->id) }}" onclick="editItem({{$data->id}})" ><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.board-pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="sendToProduction({{$data->id}})"><i class="la la-hand-o-right m-r-5"></i> Send to Production</a>
+                                        <a class="dropdown-item" href="{{ route('production.board-pre-production.get-production-details', $data->id) }}" ><i class="fa-solid fa-eye m-r-5"></i> View Details</a>
+                                        <a class="dropdown-item" href="{{ route('production.board-pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.board-pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        
                                     </div>
                                 </div>
                             </div>
