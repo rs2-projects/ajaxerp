@@ -443,7 +443,7 @@ class BoardPreProductionService
                 ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
                 ->get();
 
-            $uniqueProductMaterials = [];
+            // $uniqueProductMaterials = [];
 
             foreach ($board_materials as $key => $data) {
                 $material = new PreProductionProcessMaterial();
@@ -455,35 +455,48 @@ class BoardPreProductionService
                 $material->quantity = $data->quantity * $request->unit;
                 $material->base_quantity = $data->quantity * $request->unit;
                 $material->save();
-
-                $material_id = $data->product_material_id;
-                $quantity = $data->quantity * $request->unit;
-                $category_id = $data->product_material_category_id;
-
-                if(isset($uniqueProductMaterials[$material_id])) {
-                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                } else {
-                    $uniqueProductMaterials[$material_id] = [
-                        'material_id' => $material_id,
-                        'category_id' => $category_id,
-                        'quantity' => $quantity,
-                    ];
-                }
-            }
-
-            foreach ($uniqueProductMaterials as $materialData) {
+                
                 $material = new PreProductionMaterial();
                 $material->pre_production_id = $pre_production->id;
-                $material->product_material_category_id = $materialData['category_id'];
-                $material->product_material_id = $materialData['material_id'];
-                $material->quantity = $materialData['quantity'];
-                $material->base_quantity = $materialData['quantity'];
+                $material->product_material_category_id = $data->product_material_category_id;
+                $material->product_material_id = $data->product_material_id;
+                $material->quantity = $data->quantity * $request->unit;
+                $material->base_quantity = $data->quantity * $request->unit;
                 $material->created_by = auth()->user()->id;
                 $material->created_at = Carbon::now();
                 $material->updated_by = auth()->user()->id;
                 $material->updated_at = Carbon::now();
                 $material->save();
+
+                // $type = $data->type;
+                // $material_id = $data->product_material_id;
+                // $quantity = $data->quantity * $request->unit;
+                // $category_id = $data->product_material_category_id;
+
+                // if(isset($uniqueProductMaterials[$material_id])) {
+                //     $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                // } else {
+                //     $uniqueProductMaterials[$material_id] = [
+                //         'material_id' => $material_id,
+                //         'category_id' => $category_id,
+                //         'quantity' => $quantity,
+                //     ];
+                // }
             }
+
+            // foreach ($uniqueProductMaterials as $materialData) {
+            //     $material = new PreProductionMaterial();
+            //     $material->pre_production_id = $pre_production->id;
+            //     $material->product_material_category_id = $materialData['category_id'];
+            //     $material->product_material_id = $materialData['material_id'];
+            //     $material->quantity = $materialData['quantity'];
+            //     $material->base_quantity = $materialData['quantity'];
+            //     $material->created_by = auth()->user()->id;
+            //     $material->created_at = Carbon::now();
+            //     $material->updated_by = auth()->user()->id;
+            //     $material->updated_at = Carbon::now();
+            //     $material->save();
+            // }
 
         }catch (\Exception $e) {
             DB::rollBack();

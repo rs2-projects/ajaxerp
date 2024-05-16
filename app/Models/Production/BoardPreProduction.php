@@ -70,4 +70,20 @@ class BoardPreProduction extends Model
     {
         return $this->belongsTo(ProductionStaff::class, 'staff_id', 'id');
     }
+
+    public function raw_board(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+
+    public function paper_up(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP);
+    }
+
+    public function paper_down(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_DOWN);
+    }
+    
 }

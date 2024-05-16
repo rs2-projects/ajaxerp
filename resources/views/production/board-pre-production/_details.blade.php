@@ -5,6 +5,11 @@
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
+                    <div class="erp-add-employee-wrapper mb-3 flex-100">
+                        <div class="erp-add-employee">
+                            <a href="{{ route('production.board-pre-production.edit',$item->id) }}" class="btn add-btn erp-add-employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                        </div>
+                    </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Product (Finished Product)</label>
@@ -21,11 +26,7 @@
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Production Staff</label>
                             <h4>
-                                @if ($item->staff->title)
-                                    {{ $item->staff->title . ' (' . $item->staff->user_name . ')' }}
-                                @else
-                                    N/A
-                                @endif
+                                {{ !empty($item->staff->title) ?  $item->staff->title . ' (' . $item->staff->user_name . ')' : 'N/A'}}
                             </h4>
                         </div>
                     </div>
@@ -38,7 +39,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
-                            <h4>{{$item->note ?? 'N/A'}}</h4>
+                            <h4>{{ !empty($item->note)? $item->note : 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>

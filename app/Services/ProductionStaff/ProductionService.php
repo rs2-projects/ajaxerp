@@ -313,7 +313,6 @@ class ProductionService
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('id', $id)
             ->where('status', PreProduction::STATUS_ACTIVE)
-            ->where('type', PreProduction::TYPE_OTHERS)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
@@ -492,7 +491,6 @@ class ProductionService
         try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
-                ->where('type', PreProduction::TYPE_OTHERS)
                 ->where('id', $id)
                 ->first();
             if(!$pre_production){
@@ -683,7 +681,6 @@ class ProductionService
     public function getDeliveryData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
-            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){
@@ -775,24 +772,26 @@ class ProductionService
         $material_deliveries= PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_PENDING)
             ->with(
-                'delivery_details', 
-                'delivery_details.material',
-                'delivery_details.material.category',
-                'delivery_details.material.product',
-                'delivery_details.pending_scans',
+                'scan_details', 
+                'scan_details.material',
+                'scan_details.material.category',
+                'scan_details.material.product',
+                'scan_details.pending_scans',
             )
             ->get();
 
         $board_deliveries= PreProductionBoardDelivery::where('deleted', PreProductionBoardDelivery::DELETED_NO)
             ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
+            ->where('received_status', '!=', PreProductionBoardDelivery::RECEIVED_STATUS_PENDING)
             ->with(
-                'board_delivery_details', 
-                'board_delivery_details.board',
-                'board_delivery_details.board.category',
-                'board_delivery_details.board.product',
-                'board_delivery_details.pending_scans',
+                'board_scan_details', 
+                'board_scan_details.board',
+                'board_scan_details.board.category',
+                'board_scan_details.board.product',
+                'board_scan_details.pending_scans',
             )
             ->get();
 

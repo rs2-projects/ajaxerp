@@ -7,8 +7,14 @@
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">Date</label>
+                            <h4>{{ !empty($pre_production->date) ? getFormattedDate($pre_production->date, 'd M, Y') : 'N/A' }}</h4>
+                        </div>
+                    </div>
+                    <div class="pgib-item flex-32 pd-item">
+                        <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <h4>{{ !empty($pre_production->order_details) ? $pre_production->order_details : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">

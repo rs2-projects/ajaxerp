@@ -44,7 +44,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
-                            <p>{{$pre_production->notes ?? 'N/A'}}</p>
+                            <h4>{{ !empty($pre_production->notes) ? $pre_production->notes : 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>

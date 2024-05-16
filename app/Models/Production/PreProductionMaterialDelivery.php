@@ -64,4 +64,11 @@ class PreProductionMaterialDelivery extends Model
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetails::class, 'pre_production_material_delivery_id', 'id')->where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO);
     }
+
+    public function scan_details()
+    {
+        return $this->hasMany(PreProductionMaterialDeliveryDetails::class, 'pre_production_material_delivery_id', 'id')
+            ->where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+            ->where('received_status', '!=', PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PENDING);
+    }
 }
