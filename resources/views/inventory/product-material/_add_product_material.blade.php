@@ -40,7 +40,7 @@
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="type" required>
+                                                    <select class="select select-step" name="type" required onchange="changeProductType(this)">
                                                         <option value="">Select Type</option>
                                                         @foreach($material_types as $key=>$type)
                                                             <option value="{{ $key }}">{{ $type }}</option>
@@ -60,10 +60,10 @@
                                                     <input type="text" class="form-control " name="code" required>
                                                 </div>
                                             </div>
-                                            <div class="erp-filter-item flex-48">
+                                            <div class="erp-filter-item flex-48" id="category_section">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Category <span class="text-red">*</span> <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Category"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="product_material_category_id" required>
+                                                    <select class="select select-step" id="category_select" name="product_material_category_id" required>
                                                         <option value="">Select Category</option>
                                                         @foreach($material_categories as $category)
                                                             <option value="{{ $category->id }}">{{ $category->name }}</option>

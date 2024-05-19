@@ -696,9 +696,9 @@
                         this.deliveries = response.data.deliveries.map(delivery_data => {
                                 let details_data = [];
                                 if(delivery_data.type == 'other'){
-                                    details_data = delivery_data?.delivery.delivery_details;
+                                    details_data = delivery_data?.delivery.scan_details;
                                 }else{
-                                    details_data = delivery_data?.delivery.board_delivery_details;
+                                    details_data = delivery_data?.delivery.board_scan_details;
                                 }
                                 return {
                                     ...delivery_data,
@@ -743,9 +743,9 @@
                     this.deliveries = response.map(delivery_data => {
                         let details_data = [];
                         if(delivery_data.type == 'other'){
-                            details_data = delivery_data?.delivery.delivery_details;
+                            details_data = delivery_data?.delivery.scan_details;
                         }else{
-                            details_data = delivery_data?.delivery.board_delivery_details;
+                            details_data = delivery_data?.delivery.board_scan_details;
                         }
                         return {
                             ...delivery_data,

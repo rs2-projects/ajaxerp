@@ -5,6 +5,15 @@
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
+                    @if(hasPermission('manage-pre-productions'))
+                        @if($pre_production->is_verified ==$pre_production::VERIFIED_NO || $pre_production->is_verified ==$pre_production::VERIFIED_REVISION)
+                            <div class="erp-add-employee-wrapper mb-3 flex-100">
+                                <div class="erp-add-employee">
+                                    <a href="{{ route('production.pre-production.edit',$pre_production->id) }}" class="btn add-btn erp-add-employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Batch No</label>
@@ -14,13 +23,13 @@
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Date</label>
-                            <h4>{{ getFormattedDate($pre_production->date, 'd M, Y') }}</h4>
+                            <h4>{{ !empty($pre_production->date) ? getFormattedDate($pre_production->date, 'd M, Y') : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <h4>{{ !empty($pre_production->order_details) ? $pre_production->order_details : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
@@ -40,7 +49,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Description</label>
-                            <p>{{$pre_production->description ?? 'N/A'}}</p>
+                            <h4>{{$pre_production->description ?? 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>

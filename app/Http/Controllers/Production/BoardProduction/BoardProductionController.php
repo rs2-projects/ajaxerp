@@ -38,23 +38,23 @@ class BoardProductionController extends BackendController
         return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetch Successfully');
     }
 
-    public function edit($id)
-    {
-        $this->setPageTitle("Edit Board Pre-Production");
-        $this->setActiveMenu('production.board-pre-production.index');
-        $data = $this->service->editData($id);
-        return  $this->view('production.pending-board-production.edit')->with($data);
-    }
+    // public function edit($id)
+    // {
+    //     $this->setPageTitle("Edit Board Pre-Production");
+    //     $this->setActiveMenu('production.board-pre-production.index');
+    //     $data = $this->service->editData($id);
+    //     return  $this->view('production.pending-board-production.edit')->with($data);
+    // }
 
-    public function update(UpdateBoardProductionRequest $request, $id)
-    {
-        try {
-            $this->service->update($request, $id);
-        }catch (\Exception $e) {
-            return $this->returnAjaxError([],$e->getMessage());
-        }
-        return $this->returnAjaxSuccess([], 'Board Production updated successfully');
-    }
+    // public function update(UpdateBoardProductionRequest $request, $id)
+    // {
+    //     try {
+    //         $this->service->update($request, $id);
+    //     }catch (\Exception $e) {
+    //         return $this->returnAjaxError([],$e->getMessage());
+    //     }
+    //     return $this->returnAjaxSuccess([], 'Board Production updated successfully');
+    // }
 
 
     public function details($id){

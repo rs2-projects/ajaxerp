@@ -23,6 +23,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductMaterialService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -67,6 +68,22 @@ class ProductMaterialService
 
         $keyword_filtered = $request->keyword_filtered;
         $category_filtered = $request->category_filtered;
+        $status_filtered = $request->status_filtered;
+        
+        switch ($status_filtered){
+            case 'board':
+                $type = ProductMaterial::TYPE_BOARD;
+                break;
+            case 'paper':
+                $type = ProductMaterial::TYPE_PAPER;
+                break;
+            case 'other':
+                $type = ProductMaterial::TYPE_OTHERS;
+                break;
+            case 'all':
+                $type = "";
+                break;
+        }
 
         $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where(function ($q) use ($keyword_filtered){
@@ -79,6 +96,11 @@ class ProductMaterialService
             ->where(function ($q) use ($category_filtered){
                 if ($category_filtered !=''){
                     $q->where('product_material_category_id', $category_filtered);
+                }
+            })
+            ->where(function ($q) use ($type){
+                if ($type !=''){
+                    $q->where('type', $type);
                 }
             })
             ->orderBy('name', 'asc')
@@ -107,11 +129,24 @@ class ProductMaterialService
                 $image_path = $image_path['path'];
             }
 
+            $type = $request->type;
+            if($type == ProductMaterial::TYPE_BOARD){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_BOARD)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else if($type == ProductMaterial::TYPE_PAPER){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_PAPER)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else{
+                $product_material_category_id = $request->product_material_category_id;
+            }
+            
             $product_material = new ProductMaterial();
-            $product_material->type = $request->type ?? ProductMaterial::TYPE_OTHERS;
+            $product_material->type = $type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->name = $request->name;
             $product_material->image = $image_path??null;
-            $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->product_material_category_id = $product_material_category_id;
             $product_material->code = $request->code;
             $product_material->unit_type = $request->unit_type;
             $product_material->low_stock_warning = $request->low_stock_warning;
@@ -283,10 +318,23 @@ class ProductMaterialService
                 $image_path = $image_path['path'];
             }
 
+            $type = $request->type;
+            if($type == ProductMaterial::TYPE_BOARD){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_BOARD)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else if($type == ProductMaterial::TYPE_PAPER){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_PAPER)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else{
+                $product_material_category_id = $request->product_material_category_id;
+            }
+
             $product_material->name = $request->name;
-            $product_material->type = $request->type ?? $product_material->type;
+            $product_material->type = $type ?? $product_material->type;
             $product_material->image = $image_path??$product_material->image;
-            $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->product_material_category_id = $product_material_category_id;
             $product_material->warehouse_id = $request->warehouse_id;
             $product_material->code = $request->code;
             $product_material->unit_type = $request->unit_type;

@@ -78,13 +78,14 @@ class PreProductionBoardDeliveryDetails extends Model
     public function pending_items()
     {
         return $this->hasMany(PreProductionBoardDeliveryDetailsItem::class, 'pre_production_board_delivery_details_id', 'id')
-            ->where('received', 0);
+            ->where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_NO);
     }
 
     public function pending_scans()
     {
         return $this->hasMany(PreProductionBoardDeliveryDetailsItem::class, 'pre_production_board_delivery_details_id', 'id')
-            ->where('scanned', 0);
+            ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
+            ->where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_YES);
     }
 
 }

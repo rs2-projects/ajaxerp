@@ -34,7 +34,7 @@
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="type" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
+                                                    <select class="select select-step" name="type" onchange="changeProductType(this)" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
                                                         <option value="">Select Type</option>
                                                         @foreach($material_types as $key=>$type)
                                                             <option {{ ($key == $product_material->type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
@@ -57,10 +57,10 @@
                                                     <input type="text" class="form-control " value="{{ $product_material->code }}" name="code" required>
                                                 </div>
                                             </div>
-                                            <div class="erp-filter-item flex-48">
+                                            <div class="erp-filter-item flex-48 {{ $product_material->type != $product_material::TYPE_OTHERS ? 'd-none' : ''}}" id="category_section">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Category <span class="text-red">*</span> <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Category"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="product_material_category_id" required>
+                                                    <select class="select select-step" id="category_select" name="product_material_category_id" required>
                                                         <option value="">Select Category</option>
                                                         @foreach($material_categories as $category)
                                                             <option value="{{ $category->id }}" {{( $category->id == $product_material->product_material_category_id) ? 'selected' : ''}}>{{ $category->name }}</option>
@@ -342,6 +342,20 @@
                     toastr.error(response.message);
                 }
             });
+        }
+
+        function changeProductType(select){
+            let type = $(select).val();
+            if(type != 0){
+                $("#category_section").hide();
+                $("#category_select").removeAttr('required');
+                $("#category_select").val('');
+            }else{
+                $("#category_section").show();
+                $("#category_select").attr('required', 'true');
+                $("#category_section").removeClass('d-none');
+                
+            }
         }
 
         function initSectionMultipleSelect() {
