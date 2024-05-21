@@ -9,7 +9,7 @@
             </div>
             <div class="input-block">
                 <label class="col-form-label">Unit <span class="text-danger">*</span></label>
-                <input class="form-control" id="unit_input" name="unit" type="number" required>
+                <input class="form-control" id="unit_input" name="unit" value="1" type="number" required>
             </div>
         </div>
 
@@ -45,6 +45,22 @@
             <table class=" table mb-2 erp-table table-responsive mt-2">
                 <thead class="erp-thead">
                     <tr class="erp-tr">
+                        <th class="erp-th">Board QTY</th>
+                        <th class="erp-th">Paper up QTY</th>
+                        <th class="erp-th">Paper Down QTY</th>
+                    </tr>
+                </thead>
+                <tbody class="erp-tbody">
+                    <tr class="erp-tbody-tr calculated-qty">
+                        <td class="erp-tbody-td text-left raw-product-qty item-qty-show" data-qty="{{ $item->rawBoard?->quantity }}">{{ $item->rawBoard?->quantity }}</td>
+                        <td class="erp-tbody-td text-left paper-up-qty item-qty-show" data-qty="{{ $item->paperUp?->quantity }}">{{ $item->paperUp?->quantity }}</td>
+                        <td class="erp-tbody-td text-left paper-down-qty item-qty-show" data-qty="{{ $item->paperDown?->quantity }}">{{ $item->paperDown?->quantity }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {{--<table class=" table mb-2 erp-table table-responsive mt-2">
+                <thead class="erp-thead">
+                    <tr class="erp-tr">
                         <th class="erp-th">Sl.</th>
                         <th class="erp-th">Product</th>
                         <th class="erp-th">Qty</th>
@@ -64,7 +80,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table>--}}
         </div>
         <div class="submit-section mt-2">
             <button class="btn btn-primary submit-btn" type="submit">Send To Production</button>

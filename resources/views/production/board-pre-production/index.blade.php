@@ -112,21 +112,25 @@
                 var unit = $('#unit_input').val();
                 var quantity = parseInt($('.quantity-text').text());
                 if(unit){
-                    $('.unit-input-text').text(unit);
+                    /*$('.unit-input-text').text(unit);
                     // var output = unit * quantity;
                     // $('.output-text').text(output);
                     $('.product-unit').text(unit);
-                    
+
                     $('.product-total-qty').each(function() {
                         var productQty = parseInt($(this).closest('.erp-tbody-tr').find('.product-qty').text());
                         $(this).text(unit * productQty);
-                    });
+                    });*/
+                    $(".item-qty-show").each(function () {
+                        var productQty = parseInt($(this).attr('data-qty'));
+                        $(this).text(unit * productQty);
+                    })
                 }else{
-                    $('.unit-input-text').text(0); 
+                    /*$('.unit-input-text').text(0);
                     // $('.output-text').text(0);
-                    $('.product-unit').text(0);
-                    $('.product-total-qty').each(function() {
-                        var productQty = parseInt($(this).closest('.erp-tbody-tr').find('.product-qty').text());
+                    $('.product-unit').text(0);*/
+                    $('.item-qty-show').each(function() {
+                        var productQty = parseInt($(this).attr('data-qty'));
                         $(this).text(0);
                     });
                 }
@@ -157,7 +161,7 @@
                 var formData = new FormData($(self)[0]);
                 $(".ie-span").text("").hide();
                 var url = $(self).attr('action');
-                
+
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         $("#preProductionImportModal").modal('hide');
@@ -167,11 +171,11 @@
                     }else{
                         showErrorAlert('Error',res.message)
                     }
-                }, 'show_input_error');  
+                }, 'show_input_error');
 
             })
         });
-        
+
         function getData(){
             getPaginatedListData("{{ route('production.board-pre-production.filtered') }}", "#ajax-data-load", filterData);
         }
