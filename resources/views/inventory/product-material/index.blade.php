@@ -133,7 +133,7 @@
                 filterData.status_filtered = $('.status_type .active').attr('data');
                 getData();
             });
-            
+
             $("#productMaterialStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -144,7 +144,7 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         $("#addProductMaterial").modal('hide');
-                        $(self)[0].reset();
+                        resetStoreForm();
                         showSuccessAlert('Success',res.message)
                         getData();
                         let total_product = parseInt($("#total_product").text());
@@ -159,6 +159,17 @@
                 validateCustomForm("#productMaterialStoreForm");
             });
         });
+
+        function resetStoreForm() {
+            $("#productMaterialStoreForm")[0].reset()
+            $('.select').select2('destroy').val('').select2();
+            $("#sections_id").multipleSelect('destroy');
+            $("#sections_id").val('');
+            initSectionMultipleSelect();
+            $("#racks_id").multipleSelect('destroy');
+            $("#racks_id").val('');
+            initRackMultipleSelect();
+        }
 
         function validateCustomForm(form) {
             var tab1Fields = $(form).find(':input[required]');
@@ -227,7 +238,7 @@
             }else{
                 $("#category_section").show();
                 $("#category_select").attr('required', 'true');
-                
+
             }
         }
 

@@ -134,3 +134,6 @@
 .rejectBtn {
     background: linear-gradient(to right, #cf1100 0%, #fe6464 100%);
 }
+.select2-container {
+    width: 100% !important;
+}
