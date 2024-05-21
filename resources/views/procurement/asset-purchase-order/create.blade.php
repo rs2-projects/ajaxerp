@@ -9,6 +9,28 @@
                     <div class="erp-main-filter-wrapper bg-card attd-table">
                         <div class="purchase-order-invoice-wrapper">
                             <div class="purchase-order-invoice-header-box ">
+
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-between ">
+                                    <div class="supplier-invoice-input-box flex-48">
+                                        <div class="input-block erp-step-input-block mb-0">
+                                            <label class="col-form-label">Currency Type <span class="text-red">*</span></label>
+                                            <div>
+                                                <select class="form-control currency-type" onchange="currencyTypeChnage(this)" name="currency_type" required>
+                                                    <option value="0">PHP</option>
+                                                    <option value="1">USD</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="supplier-invoice-input-box flex-48 d-none" id="php_rate_container">
+                                        <div class="input-block erp-step-input-block mb-0">
+                                            <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
+                                            <div ><input class="form-control" required id="php_rate"  name="php_rate" type="number"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="purchase-supplier-select-box d-flex justify-content-between align-items-center">
                                     <div class="purchase-add-supplier-box">
                                         <div class="supplier-icon-box">
@@ -109,7 +131,7 @@
                                             <h4 class="text-center">QTY</h4>
                                         </div>
                                         <div class="po-product-header-item">
-                                            <h4 class="text-center">Price</h4>
+                                            <h4 class="text-center" id="currency_price">Price</h4>
                                         </div>
                                         <div class="po-product-header-item">
                                             <h4 class="text-center">Amount</h4>
@@ -479,6 +501,18 @@
                     previous: 'fa-solid fa-angle-left'
                 }
             });
+        }
+
+        function currencyTypeChnage(select){
+            let type = $(select).val();
+            if(type == 1){
+                $("#php_rate_container").removeClass('d-none');
+                $("#php_rate").attr('required', 'true');
+                // $("#currency_price").text("USD Price");
+            }else{
+                $("#php_rate_container").addClass('d-none');
+                $("#php_rate").removeAttr('required');
+            }
         }
 
         var { createApp } = Vue;
