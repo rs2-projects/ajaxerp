@@ -203,7 +203,7 @@ class ProductMaterialPurchaseController extends BackendController
     }
 
     public function printBarcode(Request $request){
-        try {
+//        try {
             $purchaseDetailsIdsWithQty = [];
             foreach ($request->purchase_details_id as $index => $purchaseDetailId) {
                 if (isset($request->qty[$index])) {
@@ -246,8 +246,8 @@ class ProductMaterialPurchaseController extends BackendController
             $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
             return $pdf->inline();
 
-        } catch (\Exception $exception) {
-            return redirect()->back()->with(['failed' => $exception->getMessage()]);
-        }
+//        } catch (\Exception $exception) {
+//            return redirect()->back()->with(['failed' => $exception->getMessage()]);
+//        }
     }
 }
