@@ -69,7 +69,7 @@ class ProductMaterialService
         $keyword_filtered = $request->keyword_filtered;
         $category_filtered = $request->category_filtered;
         $status_filtered = $request->status_filtered;
-        
+
         switch ($status_filtered){
             case 'board':
                 $type = ProductMaterial::TYPE_BOARD;
@@ -141,7 +141,7 @@ class ProductMaterialService
             }else{
                 $product_material_category_id = $request->product_material_category_id;
             }
-            
+
             $product_material = new ProductMaterial();
             $product_material->type = $type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->name = $request->name;
@@ -275,8 +275,9 @@ class ProductMaterialService
                 ->orderBy('name', 'asc')
                 ->get();
 
-            $data['racks'] = WarehouseSectionRack::where('warehouse_id', $data['product_material']->warehouse_id)
-                ->whereIn('id', $data['product_material_racks'])
+            $data['racks'] = WarehouseSectionRack::with('section')
+                ->where('warehouse_id', $data['product_material']->warehouse_id)
+                ->whereIn('warehouse_section_id', $data['product_material_sections'])
                 ->where('deleted', WarehouseSectionRack::DELETED_NO)
                 ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
@@ -519,7 +520,8 @@ class ProductMaterialService
     public function getRacksBySectionsData($request)
     {
         $section_ids = $request->section_ids??[];
-        $data['racks'] = WarehouseSectionRack::whereIn('warehouse_section_id', $section_ids)
+        $data['racks'] = WarehouseSectionRack::with('section')
+            ->whereIn('warehouse_section_id', $section_ids)
             ->where('deleted', WarehouseSectionRack::DELETED_NO)
             ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
             ->orderBy('name', 'asc')

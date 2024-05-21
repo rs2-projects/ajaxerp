@@ -205,7 +205,7 @@
                                                     <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
                                                         @foreach($racks as $rack)
-                                                            <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->name }}</option>
+                                                            <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->section->name .' -> '.$rack->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
