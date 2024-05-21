@@ -23,6 +23,7 @@ jobs:
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
                         cd /var/www/staging.ajaxtradingcorp.com/
+                        git stash
                         git pull
 
             -   name: Install Dependencies On Server
