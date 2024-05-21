@@ -493,6 +493,8 @@
                     discount_value: "{{ $purchase->discount_value }}",
                     discount_amount: "{{ $purchase->discount_amount }}",
                     paying_amount: 0,
+                    currency_type: null, 
+                    php_rate: null
 
                 }
             },
