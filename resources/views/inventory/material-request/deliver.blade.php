@@ -190,7 +190,7 @@
 							showErrorAlert('Error', error.response.data.message)
 						});
 					}else{
-						showErrorAlert('Error', 'No item available for delivery');
+						showErrorAlert('Error', 'Items Exceeding Required Quantity');
 						event.target.value = '';
 					}
                 }

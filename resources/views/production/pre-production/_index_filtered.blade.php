@@ -77,18 +77,18 @@
                                 </td>
                                 @if(hasPermission('manage-pre-productions'))
                                     <td class="text-end erp-tbody-td">
-                                        @if($data->is_verified ==$data::VERIFIED_NO || $data->is_verified ==$data::VERIFIED_REVISION)
-                                            <div class="erp-action-t">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="erp-action-t">
+                                            <div class="dropdown dropdown-action">
+                                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="{{ route('production.pre-production.details', $data->id) }}"><i class="fa-regular fa-eye m-r-5"></i> Details</a>
+                                                    @if($data->is_verified ==$data::VERIFIED_NO || $data->is_verified ==$data::VERIFIED_REVISION)
                                                         <a class="dropdown-item" href="{{ route('production.pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-
-                                                    </div>
+                                                    @endif
                                                 </div>
                                             </div>
-                                        @endif
+                                        </div>
                                     </td>
                                 @endif
                             </tr>

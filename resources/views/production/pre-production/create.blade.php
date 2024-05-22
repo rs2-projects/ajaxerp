@@ -78,7 +78,7 @@
                                             <select class="select select-step select2" name="production_staff_id[]" required>
                                                 <option value="">Select Production Staff</option>
                                                 @foreach ($staffs as $staff)
-                                                    <option value="{{$staff->id}}">{{$staff->user_name}}</option>
+                                                    <option value="{{$staff->id}}">{{$staff->title}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -111,7 +111,7 @@
                                 <div class="pms-item-main-wrapper">
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
                                         <input type="hidden" :name="'material_type['+index+'][]'" :value='materialSection.type'>
-                                        
+
                                         <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Material Category</label>
