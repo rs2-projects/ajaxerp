@@ -247,6 +247,7 @@ class PurchaseOrderService
             if (!empty($checkBatchNumber)) {
                 throw new \Exception("Batch Number already exists");
             }
+            $rate = $request->php_rate;
 
             $purchase = new AssetProductPurchaseOrder();
             $purchase->asset_product_purchase_request_id = $request->asset_product_purchase_request_id??null;
@@ -257,6 +258,8 @@ class PurchaseOrderService
             $purchase->discount_type = $request->discount_type;
             $purchase->discount_value = $request->discount_value;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
+            $purchase->currency_type = $request->currency_type;
+            $purchase->php_rate = $request->php_rate;
             $purchase->notes = $request->notes;
             $purchase->invoice_footer = $request->invoice_footer;
             $purchase->created_at = Carbon::now();
@@ -316,11 +319,15 @@ class PurchaseOrderService
                     $purchaseDetails->warranty = $request->warranty[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
+                    $purchaseDetails->unit_price_php = $price * $rate;
                     $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->total_price_php = $qty * $price * $rate;
                     $purchaseDetails->tax_id = $tax_id;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $rate;
                     $purchaseDetails->created_at = Carbon::now();
                     $purchaseDetails->created_by = auth()->user()->id;
                     $purchaseDetails->updated_at = Carbon::now();
@@ -342,10 +349,15 @@ class PurchaseOrderService
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
+            $purchase->subtotal_amount_php = $subtotal_amount * $rate;
             $purchase->total_vat_amount = $total_vat_amount;
+            $purchase->total_vat_amount_php = $total_vat_amount * $rate;
             $purchase->total_discount_amount = $total_discount_amount;
+            $purchase->total_discount_amount_php = $total_discount_amount * $rate;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->payable_amount_php = ($subtotal_amount + $total_vat_amount - $total_discount_amount) * $rate;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->due_amount_php = ($subtotal_amount + $total_vat_amount - $total_discount_amount) * $rate;
             $purchase->save();
 
 
@@ -412,6 +424,7 @@ class PurchaseOrderService
 
         $data['supplier'] = $supplier;
         $data['cartItems'] = $cartItems;
+        $data['purchase'] = $purchase;
 
         return $data;
     }
@@ -436,10 +449,13 @@ class PurchaseOrderService
                 throw new \Exception("Batch Number already exists");
             }
 
+            $rate = $request->php_rate;
             $purchase->supplier_id = $request->supplier_id;
             $purchase->batch_number = $request->batch_number;
             $purchase->purchase_date = $request->purchase_date;
             $purchase->estimated_delivery_date = $request->estimated_delivery_date;
+            $purchase->currency_type = $request->currency_type;
+            $purchase->php_rate = $rate;
             $purchase->discount_type = $request->discount_type;
             $purchase->discount_value = $request->discount_value;
             $purchase->notes = $request->notes;
@@ -509,11 +525,15 @@ class PurchaseOrderService
                     $purchaseDetails->warranty = $request->warranty[$key];
                     $purchaseDetails->qty = $qty;
                     $purchaseDetails->unit_price = $price;
+                    $purchaseDetails->unit_price_php = $price * $rate;
                     $purchaseDetails->total_price = $qty * $price;
+                    $purchaseDetails->total_price_php = $qty * $price * $rate;
                     $purchaseDetails->tax_id = $tax_id??null;
                     $purchaseDetails->tax_rate = $tax_rate;
                     $purchaseDetails->tax_amount = $tax_amount;
+                    $purchaseDetails->tax_amount_php = $tax_amount * $rate;
                     $purchaseDetails->net_total = $amount_with_tax;
+                    $purchaseDetails->net_total_php = $amount_with_tax * $rate;
                     $purchaseDetails->updated_at = Carbon::now();
                     $purchaseDetails->updated_by = auth()->user()->id;
                     $purchaseDetails->save();
@@ -532,10 +552,15 @@ class PurchaseOrderService
             }
 
             $purchase->subtotal_amount = $subtotal_amount;
+            $purchase->subtotal_amount_php = $subtotal_amount * $rate;
             $purchase->total_vat_amount = $total_vat_amount;
+            $purchase->total_vat_amount_php = $total_vat_amount * $rate;
             $purchase->total_discount_amount = $total_discount_amount;
+            $purchase->total_discount_amount_php = $total_discount_amount * $rate;
             $purchase->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->payable_amount_php = ($subtotal_amount + $total_vat_amount - $total_discount_amount) * $rate;
             $purchase->due_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $purchase->due_amount_php = ($subtotal_amount + $total_vat_amount - $total_discount_amount) * $rate;
             $purchase->save();
 
         }catch (\Exception $e) {

@@ -120,7 +120,7 @@ class BoardPreProductionService
             if (empty($board_category)) {
                 throw new \Exception("Category not found");
             }
-            
+
             $board = new FinishedGoods();
             $board->name = $request->code;
             $board->type = FinishedGoods::TYPE_BOARD;
@@ -188,7 +188,7 @@ class BoardPreProductionService
             ->where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
             ->first();
-              
+
         if(!$pre_production){
             throw new \Exception("Board Pre Production not found");
         }
@@ -199,7 +199,7 @@ class BoardPreProductionService
             ->where('type', FinishedGoods::TYPE_BOARD)
             ->where('id',$pre_production->finished_goods_id)
             ->first();
-            
+
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
@@ -244,7 +244,7 @@ class BoardPreProductionService
             ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
             ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP)
             ->first();
-            
+
         $data['paper_down_id'] = BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
             ->where('deleted', BoardPreProductionMaterials::DELETED_NO)
             ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
@@ -358,7 +358,8 @@ class BoardPreProductionService
 
     public function detailsData($id)
     {
-        $data['item'] = BoardPreProduction::where('id', $id)
+        $data['item'] = BoardPreProduction::with(['rawBoard', 'paperUp', 'paperDown'])
+            ->where('id', $id)
             ->where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
             ->first();
@@ -455,7 +456,7 @@ class BoardPreProductionService
                 $material->quantity = $data->quantity * $request->unit;
                 $material->base_quantity = $data->quantity * $request->unit;
                 $material->save();
-                
+
                 $material = new PreProductionMaterial();
                 $material->pre_production_id = $pre_production->id;
                 $material->product_material_category_id = $data->product_material_category_id;

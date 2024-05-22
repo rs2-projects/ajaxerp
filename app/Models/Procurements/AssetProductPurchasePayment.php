@@ -48,6 +48,7 @@ class AssetProductPurchasePayment extends Model
         'account_id',
         'payment_method',
         'amount',
+        'amount_php',
         'payment_date',
         'note',
         'status',

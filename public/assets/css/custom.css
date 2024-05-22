@@ -134,6 +134,11 @@
 .rejectBtn {
     background: linear-gradient(to right, #cf1100 0%, #fe6464 100%);
 }
+
+.currency-type{
+    line-height: 1.5 !important;
+}
+
 .select2-container {
     width: 100% !important;
 }

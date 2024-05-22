@@ -56,6 +56,22 @@ class BoardPreProduction extends Model
             ->where('type', '!=', BoardPreProductionMaterials::TYPE_RAW_BOARD);
     }
 
+    public function rawBoard()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+    public function paperUp()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP);
+    }
+    public function paperDown()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_DOWN);
+    }
+
     public function finishedGoods()
     {
         return $this->belongsTo(FinishedGoods::class, 'finished_goods_id', 'id');
@@ -85,5 +101,5 @@ class BoardPreProduction extends Model
         return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
             ->where('type', BoardPreProductionMaterials::TYPE_PAPER_DOWN);
     }
-    
+
 }
