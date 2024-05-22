@@ -16,8 +16,8 @@
                                             <label class="col-form-label">Currency Type <span class="text-red">*</span></label>
                                             <div>
                                                 <select class="form-control currency-type" v-model="currency_type" onchange="currencyTypeChnage(this)" name="currency_type" required>
-                                                    <option value="0">PHP</option>
-                                                    <option value="1">USD</option>
+                                                    <option value="{{\App\Models\Procurements\AssetProductPurchaseOrder::CURRENCY_TYPE_PHP}}">PHP</option>
+                                                    <option value="{{\App\Models\Procurements\AssetProductPurchaseOrder::CURRENCY_TYPE_USD}}">USD</option>
                                                 </select>
                                             </div>
                                         </div>

@@ -77,6 +77,12 @@ class PurchaseOrderPaymentService
             $purchaseAccountCategory = AccCoaAccount::where('slug', 'accounts-payable')
                 ->where('deleted', AccCoaAccount::DELETED_NO)
                 ->first();
+
+            if($request->currency_type == AssetProductPurchaseOrder::CURRENCY_TYPE_USD){
+                $amount = $request->amount * $request->php_rate;
+            }else{
+                $amount = $request->amount;
+            }
             // Create Transaction
             $transaction = new Transaction();
             $transaction->paid_type = Transaction::PAID_TYPE_PAID;
@@ -87,9 +93,9 @@ class PurchaseOrderPaymentService
             $transaction->reference_type = Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT;
             $transaction->reference_id = null;
             $transaction->reference_description = "Asset Product Purchase Payment ".$purchase->purchase_order_id;
-            $transaction->net_amount = $request->amount;
+            $transaction->net_amount = $amount;
             $transaction->total_vat_amount = 0;
-            $transaction->total_amount = $request->amount;
+            $transaction->total_amount = $amount;
             $transaction->description = "Asset Product Purchase Payment ".$purchase->purchase_order_id;
             $transaction->note = $request->note;
             $transaction->created_at = Carbon::now();
@@ -99,7 +105,9 @@ class PurchaseOrderPaymentService
             $transaction->save();
 
             $purchase->paid_amount = $purchase->paid_amount + $request->amount;
-            $purchase->due_amount = $purchase->payable_amount - $purchase->paid_amount;
+            $purchase->paid_amount_php = $purchase->paid_amount_php + $amount;
+            $purchase->due_amount = $purchase->due_amount - $request->amount;
+            $purchase->due_amount_php = $purchase->due_amount_php - $amount;
             $purchase->payment_status = AssetProductPurchaseOrder::PAYMENT_STATUS_PARTIAL_PAID;
 
             if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){
@@ -124,6 +132,7 @@ class PurchaseOrderPaymentService
             $purchase_payment->account_id = $account->id;
             $purchase_payment->payment_method = $request->payment_method;
             $purchase_payment->amount = $request->amount;
+            $purchase_payment->amount_php = $amount;
             $purchase_payment->payment_date = $request->date;
             $purchase_payment->note = $request->note;
             $purchase_payment->created_at = Carbon::now();
