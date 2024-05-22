@@ -146,7 +146,7 @@ class ProductionController extends BackendController
     }
 
     public function updateVerifyOutput($id, $type)
-    {   
+    {
         try {
             $data = $this->service->updateVerifyOutput($id, $type);
             return $this->returnAjaxSuccess([$data], 'Verified Successfully');

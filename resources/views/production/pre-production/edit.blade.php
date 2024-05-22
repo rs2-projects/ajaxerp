@@ -108,7 +108,7 @@
                                     <div class="pms-item-wrapper d-flex flex-wrap align-items-end" v-for="(materialSection, materialIndex) in process.materialSections" :key="materialIndex">
                                         <input type="hidden" :name="'process_material_id['+index+'][]'" :value="materialSection.id"/>
                                         <input type="hidden" :name="'material_type['+index+'][]'" :value='materialSection.type'>
-                                        
+
                                         <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Material Category </label>
@@ -166,7 +166,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="pms-item flex-100">
                                         <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                             <a href="#" class="erp-search-btn text-center pp-add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
@@ -174,11 +174,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class="pms-item-main-wrapper d-flex justify-content-center"> 
+                                <div v-else class="pms-item-main-wrapper d-flex justify-content-center">
                                     <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
                                 </div>
                             </div>
-                            
+
                             <div class="production-estimate-output-selection-wrapper">
                                 <h4 class="process-child-title">Estimated Output</h4>
                                 <div class="pms-item-main-wrapper">
@@ -190,7 +190,7 @@
                                                 <input class="form-control" v-model="estimatedSection.name" :name="'name['+index+'][]'" type="text" placeholder="" required="">
                                             </div>
                                         </div>
-                                        
+
                                         <div class="pms-item flex-15">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">QTY <span class="text-danger">*</span></label>
@@ -204,14 +204,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                             </div>
                             <div class="production-instrucion-output-selection-wrapper">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Instruction</label>
                                     <textarea rows="1" v-model="process.process_instruction"  name="instruction[]" class="form-control"></textarea>
-                                </div>	
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -227,23 +227,23 @@
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
                             <textarea rows="3" class="form-control" name="notes">{{$pre_production->notes}}</textarea>
-                        </div>	
+                        </div>
                     </div>
                     <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center">Update Production</button>
+                        <button class=" erp-search-btn text-center">Update Pre-production</button>
                     </div>
                 <form>
             </div>
-        
+
         </div>
-        
+
 
     </div>
     <!--End::row-1 -->
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')
@@ -271,7 +271,7 @@
 
 @section('js_plugins')
     <script src="{{asset('assets')}}/plugins/multipleselect/multiple-select.js"></script>
-    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script> 
+    <script src="{{asset('assets')}}/plugins/multipleselect/multi-select.js"></script>
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
 
@@ -354,7 +354,7 @@
                                         quantity: output.quantity,
                                     };
                                 });
-                                
+
                                 const process_machine_ids = process.process_machines.map(machine => machine.machine_id);
 
                                 const previous_process_ids = process.previous_process.map(pp => pp.process_id);
@@ -402,8 +402,8 @@
                                 });
 
                                 initMaterialProductMultipleSelect();
-                                initAssteProductMultipleSelect(); 
-                                initSelect2(); 
+                                initAssteProductMultipleSelect();
+                                initSelect2();
                             }
                         })
                         .catch(error => {
@@ -532,10 +532,10 @@
                 this.$nextTick(() => {
                     setTimeout(function() {
                         initMaterialProductMultipleSelect();
-                        initAssteProductMultipleSelect(); 
-                        initSelect2(); 
+                        initAssteProductMultipleSelect();
+                        initSelect2();
                     }, 100);
-                    
+
                 });
             }
 
