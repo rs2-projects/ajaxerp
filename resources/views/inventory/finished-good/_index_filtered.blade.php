@@ -64,7 +64,8 @@
                                                     ...
                                                     @break
                                                 @endif
-                                                {{ $rack->warehouseSectionRack->name??''}} <span class="text-red">,</span>
+                                            @if($rackKey > 0)<span class="text-red">,</span> @endif
+                                                {{ $rack->warehouseSectionRack->name??''}}
                                             @endforeach
                                         @endif
                                     </span>)
