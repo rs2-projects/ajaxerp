@@ -51,7 +51,7 @@
                                 </td>
                                 <td class="erp-tbody-td text-center pre-description-box-td">
                                     <p class="text-center d-table-title pre-description-box">
-                                        {{ $data->showStatus() }}
+                                        {{ $data->showStatus('receive_raw_materials') }}
                                     </p>
                                 </td>
                                 <td class="text-end erp-tbody-td">
