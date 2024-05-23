@@ -122,7 +122,7 @@
                                             <div class="erp-filter-item flex-100">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Select Section(Line) <span class="text-danger">*</span></label>
-                                                    <select class="section-multiselect sections" multiple="multiple" onchange="changeSections(this)" name="sections[]" id="sections_id" required>
+                                                    <select class="section-multiselect sections" multiple="multiple" name="sections[]" id="sections_id" required>
                                                         @foreach($sections as $section)
                                                             <option value="{{ $section->id }}" {{ in_array($section->id, $finished_goods_sections) ? 'selected' : '' }}>{{ $section->name }}</option>
                                                         @endforeach
@@ -199,6 +199,10 @@
             initSectionMultipleSelect();
             initRackMultipleSelect();
 
+            $("#sections_id").on('change', function () {
+                changeSections(this)
+            });
+
             $("#productMaterialUpdateForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -209,7 +213,7 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message)
-                        window.location.href = "{{ route('inventory.product-material.index') }}";
+                        window.location.href = "{{ route('inventory.finished-good.index') }}";
                     }else{
                         showErrorAlert('Error',res.message)
                     }

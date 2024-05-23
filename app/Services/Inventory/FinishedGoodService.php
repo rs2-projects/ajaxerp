@@ -210,7 +210,7 @@ class FinishedGoodService
                 ->get();
 
             $data['racks'] = WarehouseSectionRack::where('warehouse_id', $data['finished_good']->warehouse_id)
-                ->whereIn('id', $data['finished_goods_racks'])
+                ->whereIn('warehouse_section_id', $data['finished_goods_sections'])
                 ->where('deleted', WarehouseSectionRack::DELETED_NO)
                 ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
@@ -297,6 +297,7 @@ class FinishedGoodService
                 throw new \Exception("Please select at least one section");
             }
 
+
             if (count($request->racks) > 0) {
                 foreach ($request->racks as $key2=>$rack) {
                     $checkRack = WarehouseSectionRack::where('id', $rack)
@@ -304,6 +305,7 @@ class FinishedGoodService
                         ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
                         ->first();
                     if (!empty($checkRack)) {
+
 
                         $finished_good_rack = FinishedGoodsRack::where('finished_goods_id', $id)
                             ->where('warehouse_rack_id', $rack)
@@ -313,7 +315,7 @@ class FinishedGoodService
                         }
                         $finished_good_rack->warehouse_id = $checkRack->warehouse_id;
                         $finished_good_rack->finished_goods_id = $finished_good->id;
-                        $finished_good_rack->finished_goods_section_id = $finished_goods_section_ids[$checkRack->warehouse_section_id] ?? null;
+                        $finished_good_rack->finished_goods_section_id = $finished_good_section_ids[$checkRack->warehouse_section_id] ?? null;
                         $finished_good_rack->warehouse_section_id = $checkRack->warehouse_section_id;
                         $finished_good_rack->warehouse_rack_id = $checkRack->id;
                         $finished_good_rack->save();

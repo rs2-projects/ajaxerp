@@ -43,7 +43,7 @@
                         <div class="erp-action-t erp-table-status {{ ($finished_good->status == $finished_good::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span>{{ $finished_good::STATUSES[$finished_good->status] }}</span></a>
-                                    
+
                                     @if(hasPermission( 'manage-finished-goods'))
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('inventory.finished-good.change-status',[$finished_good->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
