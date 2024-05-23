@@ -68,7 +68,7 @@ class BoardProductionController extends BackendController
         $this->setPageTitle("Pending Verification");
         $this->setActiveMenu('production.board-production.pending-verification');
         return $this->view('production.pending-board-production.index');
-        
+
     }
 
     public function pendingVerificationData(Request $request){
@@ -113,6 +113,7 @@ class BoardProductionController extends BackendController
         try {
             $this->service->receiveStoreData($request, $id);
             $data = $this->service->getDeliveryData($id);
+            $data['redirectUri'] = route('production.board-production.index');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
