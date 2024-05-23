@@ -172,6 +172,15 @@ class BoardPreProductionService
                         $material->updated_by = auth()->user()->id;
                         $material->updated_at = now();
                         $material->save();
+
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
+                            $board->color_up = $request->product_material_id[$key];
+                            $board->save();
+                        }
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
+                            $board->color_down = $request->product_material_id[$key];
+                            $board->save();
+                        }
                     }
                 }
             }
@@ -330,7 +339,17 @@ class BoardPreProductionService
                             $material->updated_by = auth()->user()->id;
                             $material->updated_at = now();
                             $material->save();
+
+                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
+                                $board->color_up = $request->product_material_id[$key];
+                                $board->save();
+                            }
+                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
+                                $board->color_down = $request->product_material_id[$key];
+                                $board->save();
+                            }
                         }
+
                     }
                 }
             }

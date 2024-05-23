@@ -121,10 +121,10 @@ class FinishedGoods extends Model
     }
 
     public function color_ups(){
-        return $this->belongsTo(BoardColor::class, 'color_up', 'id');
+        return $this->belongsTo(ProductMaterial::class, 'color_up', 'id');
     }
     public function color_downs(){
-        return $this->belongsTo(BoardColor::class, 'color_down', 'id');
+        return $this->belongsTo(ProductMaterial::class, 'color_down', 'id');
     }
-    
+
 }

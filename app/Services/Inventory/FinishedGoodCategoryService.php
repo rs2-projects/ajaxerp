@@ -26,6 +26,7 @@ class FinishedGoodCategoryService
     {
         $keyword_filtered = $request->keyword_filtered;
         $data['categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
+            ->where('type', FinishedGoodsCategory::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('name', 'like', '%'.$keyword_filtered.'%');
