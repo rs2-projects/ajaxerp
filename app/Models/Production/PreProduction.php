@@ -186,8 +186,13 @@ class PreProduction extends Model
         return $materialCount + $boardCount;
     }
 
-    public function showStatus()
+    public function showStatus($type = 'default')
     {
+        if($type == 'process') {
+            if ($this->process_status == self::PROCESS_STATUS_PROCESSING) {
+                return "On Process";
+            }
+        }
         if ($this->delivery_status == self::DELIVERY_STATUS_PENDING) {
             return "Waiting for Items";
         }
@@ -208,9 +213,6 @@ class PreProduction extends Model
         }
         if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_DISPATCHED)) {
             return "Dispatched";
-        }
-        if ($this->process_status == self::PROCESS_STATUS_PROCESSING) {
-            return "On Process";
         }
         return "N/A";
     }
