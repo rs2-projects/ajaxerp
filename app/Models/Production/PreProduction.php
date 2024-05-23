@@ -199,11 +199,11 @@ class PreProduction extends Model
         if ($this->received_status == self::RECEIVED_STATUS_PENDING) {
             return "Pending Items";
         }
+        if(($this->delivery_status != self::DELIVERY_STATUS_DELIVERED) && ($this->received_status != self::RECEIVED_STATUS_PENDING)) {
+            return "Partial";
+        }
         if ($this->process_status == self::PROCESS_STATUS_PENDING) {
             return "Production Pending";
-        }
-        if(($this->delivery_status != self::DELIVERY_STATUS_DELIVERED) && ($this->received_status == self::RECEIVED_STATUS_PARTIAL)) {
-            return "Partial";
         }
         if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_PENDING)) {
             return "Completed";
