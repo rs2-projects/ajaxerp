@@ -21,7 +21,7 @@ class PreProduction extends Model
     const VERIFIED_YES = 1;
     const VERIFIED_REVISION = 2;
     const VERIFIED_REJECTED = 3;
-    
+
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
@@ -185,5 +185,34 @@ class PreProduction extends Model
         $boardCount = $this->board_material()->count();
         return $materialCount + $boardCount;
     }
-    
+
+    public function showStatus()
+    {
+        if ($this->delivery_status == self::DELIVERY_STATUS_PENDING) {
+            return "Waiting for Items";
+        }
+        if ($this->received_status == self::RECEIVED_STATUS_PENDING) {
+            return "Pending Items";
+        }
+        if ($this->process_status == self::PROCESS_STATUS_PENDING) {
+            return "Production Pending";
+        }
+        if(($this->delivery_status != self::DELIVERY_STATUS_DELIVERED) && ($this->received_status == self::RECEIVED_STATUS_PARTIAL)) {
+            return "Partial";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_PENDING)) {
+            return "Completed";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_PARTIAL)) {
+            return "Partial Dispatched";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_DISPATCHED)) {
+            return "Dispatched";
+        }
+        if ($this->process_status == self::PROCESS_STATUS_PROCESSING) {
+            return "On Process";
+        }
+        return "N/A";
+    }
+
 }
