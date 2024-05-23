@@ -8,10 +8,10 @@
                             <th class="erp-th">SL</th>
                             <th class="erp-th">Items </th>
                             <th class="erp-th text-center">Design Of Document <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Design"><i class="fa-duotone fa-exclamation"></i></span></th>
-                            <th class="erp-th text-center">Process <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Production Process"><i class="fa-duotone fa-exclamation"></i></span> </th>
-                            <th class="erp-th text-center">Raw Materials </th>
+                            <th class="erp-th text-center">Received Raw Materials</th>
                             <th class="erp-th text-center">Estimated QTY </th>
-                            <th class="erp-th text-center">Instruction </th>
+                            <th class="erp-th text-center">QTY Dispatched </th>
+                            <th class="erp-th text-center">Status </th>
                             <th class="erp-th text-center">Action </th>
                         </tr>
                     </thead>
@@ -40,18 +40,19 @@
                                     @else N/A
                                     @endif
                                 </td>
-
                                 <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{count($data->process)}}</h4>
-                                </td>
-                                <td class="erp-tbody-td text-center">
-                                    <h4 class="text-center d-table-title">{{count($data->production_material)}}</h4>
+                                    {{ $data->production_material->sum('received_qty') }} / {{ $data->production_material->sum('quantity') }}
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
+                                <td class="erp-tbody-td text-center">
+                                    <h4 class="text-center d-table-title">{{ $data->dispatched_qty }} / {{$data->estimated_production_qty}}</h4>
+                                </td>
                                 <td class="erp-tbody-td text-center pre-description-box-td">
-                                    <p class="text-center d-table-title pre-description-box">{{$data->description}}</p>
+                                    <p class="text-center d-table-title pre-description-box">
+                                        {{ $data->showStatus() }}
+                                    </p>
                                 </td>
                                 <td class="text-end erp-tbody-td">
                                     <div class="erp-action-t">
@@ -59,7 +60,7 @@
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 {{-- @if(hasPermission('dispatch-production-materials')) --}}
-                                                    @if($data->dispatched_status != $data::DISPATCH_STATUS_DISPATCHED)  
+                                                    @if($data->dispatched_status != $data::DISPATCH_STATUS_DISPATCHED)
                                                         <a class="dropdown-item" href="{{ route('production-staff.production.production.dispatch-data', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Dispatch</a>
                                                     @endif
                                                 {{-- @endif --}}

@@ -79,6 +79,8 @@ class ProductionController extends BackendController
         try {
             $this->service->receiveStoreData($request, $id);
             $data = $this->service->getDeliveryData($id);
+            session()->flash('success', "Received successfully");
+            $data['redirectUri'] = route('production.production.index');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
