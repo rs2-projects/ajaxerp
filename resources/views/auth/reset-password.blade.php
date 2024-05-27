@@ -12,27 +12,18 @@
 
             <div class="account-box">
                 <div class="account-wrapper">
-                    <h3 class="account-title">Login</h3>
-                    <p class="account-subtitle">Access to your dashboard</p>
+                    <h3 class="account-title">Reset Password</h3>
+                    <p class="account-subtitle">Reset your password.</p>
 
-                    <!-- Account Form -->
-                    <form action="{{ route('login') }}" id="loginForm">
+                    <!-- Forgot Password Form -->
+                    <form action="{{ route('reset-password') }}" id="loginForm">
                         @csrf
-                        <input type="hidden" name="redirectTo" value="{{ request()->redirectTo }}">
-                        <div class="input-block mb-4">
-                            <label class="col-form-label">Email/Username Address</label>
-                            <input class="form-control" type="text" name="email" value="{{ old('email') }}" required>
-                            <span class="email_error ie-span"></span>
-                        </div>
+                        <input type="hidden" name="email" value="{{ request()->email }}">
+                        <input type="hidden" name="token" value="{{ request()->token }}">
                         <div class="input-block mb-4">
                             <div class="row align-items-center">
                                 <div class="col">
                                     <label class="col-form-label">Password</label>
-                                </div>
-                                <div class="col-auto">
-                                    <a class="text-muted" href="{{ route('forgot-password') }}">
-                                        Forgot password?
-                                    </a>
                                 </div>
                             </div>
                             <div class="position-relative">
@@ -41,15 +32,16 @@
                             </div>
                             <span class="password_error ie-span"></span>
                         </div>
-                        <div class="input-block mb-4 d-flex align-items-center">
-                            <label for="remember_me"> <input type="checkbox" name="remember_me" id="remember_me" class="me-1" value="1"> <span>Remember me?</span></label>
-                        </div>
                         <div class="input-block mb-4 text-center">
-                            <button class="btn btn-primary account-btn" type="submit">Login</button>
+                            <button class="btn btn-primary account-btn" type="submit">Reset Password</button>
+                        </div>
+
+                        <div class="input-block mb-4 text-center">
+                            <a href="{{ route('login') }}"> <i class="fa fa-arrow-left"></i> Remember Password? Back to login</a>
                         </div>
 
                     </form>
-                    <!-- /Account Form -->
+                    <!-- /Forgot Password Form -->
 
                 </div>
             </div>
