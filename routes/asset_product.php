@@ -206,19 +206,19 @@ Route::group(['prefix' => 'production'], function () {
 
     // board pre production
     Route::group(['prefix' => 'board-pre-production'], function () {
-        Route::get('/', [BoardPreProductionController::class, 'index'])->name('production.board-pre-production.index');
-        Route::post('/filtered', [BoardPreProductionController::class, 'indexFiltered'])->name('production.board-pre-production.filtered');
-        Route::get('/create', [BoardPreProductionController::class, 'create'])->name('production.board-pre-production.create');
+        Route::get('/', [BoardPreProductionController::class, 'index'])->name('production.board-pre-production.index')->middleware('permission:view-board-pre-productions');
+        Route::post('/filtered', [BoardPreProductionController::class, 'indexFiltered'])->name('production.board-pre-production.filtered')->middleware('permission:view-board-pre-productions');
+        Route::get('/create', [BoardPreProductionController::class, 'create'])->name('production.board-pre-production.create')->middleware('permission:manage-board-pre-productions');
         Route::get('get-material-by-category', [BoardPreProductionController::class, 'getMaterialByCategory'])->name('production.board-pre-production.get-material-products');
-        Route::post('/create', [BoardPreProductionController::class, 'store'])->name('production.board-pre-production.store');
-        Route::get('/{id}/edit', [BoardPreProductionController::class, 'edit'])->name('production.board-pre-production.edit');
-        Route::post('/{id}/update', [BoardPreProductionController::class, 'update'])->name('production.board-pre-production.update');
-        Route::get('/{id}/delete', [BoardPreProductionController::class, 'delete'])->name('production.board-pre-production.delete');
-        Route::get('/{id}/get-details', [BoardPreProductionController::class, 'details'])->name('production.board-pre-production.get-production-details');
-        Route::post('/{id}/send-to-production', [BoardPreProductionController::class, 'sendToProduction'])->name('production.board-pre-production.send-to-production');
+        Route::post('/create', [BoardPreProductionController::class, 'store'])->name('production.board-pre-production.store')->middleware('permission:manage-board-pre-productions');
+        Route::get('/{id}/edit', [BoardPreProductionController::class, 'edit'])->name('production.board-pre-production.edit')->middleware('permission:manage-board-pre-productions');
+        Route::post('/{id}/update', [BoardPreProductionController::class, 'update'])->name('production.board-pre-production.update')->middleware('permission:manage-board-pre-productions');
+        Route::get('/{id}/delete', [BoardPreProductionController::class, 'delete'])->name('production.board-pre-production.delete')->middleware('permission:manage-board-pre-productions');
+        Route::get('/{id}/get-details', [BoardPreProductionController::class, 'details'])->name('production.board-pre-production.get-production-details')->middleware('permission:view-board-pre-productions');
+        Route::post('/{id}/send-to-production', [BoardPreProductionController::class, 'sendToProduction'])->name('production.board-pre-production.send-to-production')->middleware('permission:manage-board-pre-productions');
 
         // bulk import
-        Route::post('bulk-import', [BoardPreProductionController::class, 'bulkImport'])->name('production.board-pre-production.bulk-import');
+        Route::post('bulk-import', [BoardPreProductionController::class, 'bulkImport'])->name('production.board-pre-production.bulk-import')->middleware('permission:manage-board-pre-productions');
      });
 
     Route::group(['prefix' => 'production-staff'], function () {
@@ -235,26 +235,26 @@ Route::group(['prefix' => 'production'], function () {
 
 // board production
 Route::group(['prefix' => 'board-production'], function () {
-    Route::get('/', [BoardProductionController::class, 'index'])->name('production.board-production.index');
-    Route::post('/filtered', [BoardProductionController::class, 'indexFiltered'])->name('production.board-production.filtered');
-    Route::get('/{id}/get-document', [BoardProductionController::class, 'getDocument'])->name('production.board-production.get-design-document');
-    Route::get('/{id}/details', [BoardProductionController::class, 'details'])->name('production.board-production.details');
-    Route::get('/{id}/change/{processId}/process-status/{status}', [BoardProductionController::class, 'changeProcessStatus'])->name('production.board-production.update-process-status');
-    Route::get('/{id}/receive', [BoardProductionController::class, 'receive'])->name('production.board-production.receive');
-    Route::post('/{id}/receive', [BoardProductionController::class, 'receiveStore'])->name('production.board-production.receive.store');
-    Route::get('/{id}/get-deliveries', [BoardProductionController::class, 'getDeliveries'])->name('production.board-production.get-delivery-details');
-    Route::get('/{id}/check-barcode-validity', [BoardProductionController::class, 'checkBarCode'])->name('production.board-production.check-barcode');
-    Route::get('/{id}/dispatch', [BoardProductionController::class, 'dispatch'])->name('production.board-production.dispatch-data');
-    Route::post('/{id}/dispatch', [BoardProductionController::class, 'dispatchStore'])->name('production.board-production.dispatch.store');
-    Route::get('/{id}/print-barcode/{type}', [BoardProductionController::class, 'printBarcode'])->name('production.board-production.print-barcode');
+    Route::get('/', [BoardProductionController::class, 'index'])->name('production.board-production.index')->middleware('permission:view-board-production');
+    Route::post('/filtered', [BoardProductionController::class, 'indexFiltered'])->name('production.board-production.filtered')->middleware('permission:view-board-production');
+    Route::get('/{id}/get-document', [BoardProductionController::class, 'getDocument'])->name('production.board-production.get-design-document')->middleware('permission:view-board-production');
+    Route::get('/{id}/details', [BoardProductionController::class, 'details'])->name('production.board-production.details')->middleware('permission:view-board-production');
+    Route::get('/{id}/change/{processId}/process-status/{status}', [BoardProductionController::class, 'changeProcessStatus'])->name('production.board-production.update-process-status')->middleware('permission:view-board-production');
+    Route::get('/{id}/receive', [BoardProductionController::class, 'receive'])->name('production.board-production.receive')->middleware('permission:receive-board-production-materials');
+    Route::post('/{id}/receive', [BoardProductionController::class, 'receiveStore'])->name('production.board-production.receive.store')->middleware('permission:receive-board-production-materials');
+    Route::get('/{id}/get-deliveries', [BoardProductionController::class, 'getDeliveries'])->name('production.board-production.get-delivery-details')->middleware('permission:receive-board-production-materials');
+    Route::get('/{id}/check-barcode-validity', [BoardProductionController::class, 'checkBarCode'])->name('production.board-production.check-barcode')->middleware('permission:view-board-production');
+    Route::get('/{id}/dispatch', [BoardProductionController::class, 'dispatch'])->name('production.board-production.dispatch-data')->middleware('permission:dispatch-board-production-materials');
+    Route::post('/{id}/dispatch', [BoardProductionController::class, 'dispatchStore'])->name('production.board-production.dispatch.store')->middleware('permission:dispatch-board-production-materials');
+    Route::get('/{id}/print-barcode/{type}', [BoardProductionController::class, 'printBarcode'])->name('production.board-production.print-barcode')->middleware('permission:production-board-print-barcode');
 
     // pending verification
-    Route::get('pending-verification', [BoardProductionController::class, 'pendingVerification'])->name('production.board-production.pending-verification');
-    Route::post('pending-verification-data', [BoardProductionController::class, 'pendingVerificationData'])->name('production.board-production.pending-verification-data');
-    Route::get('/{id}/pending-verification/details', [BoardProductionController::class, 'pendingDetails'])->name('production.board-production.pending-verification-details');
-    Route::get('/{id}/change-status/{status}', [BoardProductionController::class, 'statusUpdate'])->name('production.board-production.pending-verification.change-status');
-    Route::get('/{id}/edit', [BoardProductionController::class, 'edit'])->name('production.board-production.edit');
-    Route::post('/{id}/update', [BoardProductionController::class, 'update'])->name('production.board-production.update');
+    Route::get('pending-verification', [BoardProductionController::class, 'pendingVerification'])->name('production.board-production.pending-verification')->middleware('permission:verify-board-pre-productions');
+    Route::post('pending-verification-data', [BoardProductionController::class, 'pendingVerificationData'])->name('production.board-production.pending-verification-data')->middleware('permission:verify-board-pre-productions');
+    Route::get('/{id}/pending-verification/details', [BoardProductionController::class, 'pendingDetails'])->name('production.board-production.pending-verification-details')->middleware('permission:verify-board-pre-productions');
+    Route::get('/{id}/change-status/{status}', [BoardProductionController::class, 'statusUpdate'])->name('production.board-production.pending-verification.change-status')->middleware('permission:verify-board-pre-productions');
+    Route::get('/{id}/edit', [BoardProductionController::class, 'edit'])->name('production.board-production.edit')->middleware('permission:view-board-production');
+    Route::post('/{id}/update', [BoardProductionController::class, 'update'])->name('production.board-production.update')->middleware('permission:view-board-production');
 });
 
 Route::group(['prefix' => 'material-request'], function () {

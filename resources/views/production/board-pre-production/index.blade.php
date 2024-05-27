@@ -2,7 +2,7 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
-        {{-- @if(hasPermission('manage-finished-goods')) --}}
+         @if(hasPermission('manage-board-pre-productions'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="{{route('production.board-pre-production.create')}}" class="btn add-btn erp-add-employee ms-2" ><i class="fa-solid fa-plus"></i> Create Board Pre-Production </a>
@@ -11,7 +11,7 @@
                     </a>
                 </div>
             </div>
-        {{-- @endif --}}
+         @endif
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
