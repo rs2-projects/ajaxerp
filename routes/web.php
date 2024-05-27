@@ -4,8 +4,10 @@ use App\Http\Controllers\Accounting\ChartOfAccountController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Accounting\TransactionExpenseController;
 use App\Http\Controllers\Ajax\AjaxController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\BotController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Hr\ContractorConroller;
@@ -60,6 +62,13 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => 'guest'], function () {
     Route::get('login', [LoginController::class, 'showLogin'])->name('login');
     Route::post('login', [LoginController::class, 'login'])->name('login');
+
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPassword'])->name('forgot-password');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'submitForgotPassword'])->name('forgot-password');
+    Route::get('verify-identity', [ForgotPasswordController::class, 'showForgotPasswordIdentity'])->name('verify-identity');
+    Route::post('verify-identity', [ForgotPasswordController::class, 'submitForgotPasswordIdentity'])->name('verify-identity');
+    Route::get('reset-password', [ResetPasswordController::class, 'showResetPassword'])->name('reset-password');
+    Route::post('reset-password', [ResetPasswordController::class, 'submitResetPassword'])->name('reset-password');
 });
 
 Route::group(['middleware' => 'auth'], function () {

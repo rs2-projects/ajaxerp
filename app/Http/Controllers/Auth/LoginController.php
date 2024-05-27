@@ -11,6 +11,7 @@ class LoginController extends AuthController
 {
     public function showLogin()
     {
+        $this->setPageTitle("Login");
         return $this->view('auth.login');
     }
 
