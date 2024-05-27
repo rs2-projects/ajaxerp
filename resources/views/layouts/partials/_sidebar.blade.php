@@ -243,7 +243,7 @@
                 @endif
 
                 {{-- production & pre production --}}
-                @if(hasPermission('view-machines','manage-machines','view-pre-productions', 'manage-pre-productions','verify-pre-productions','view-production','manage-processes','receive-production-materials','dispatch-production-materials'))
+                @if(hasPermission('view-machines','manage-machines','view-pre-productions', 'manage-pre-productions','verify-pre-productions','view-production','manage-processes','receive-production-materials','dispatch-production-materials','view-board-pre-productions','manage-board-pre-productions','verify-board-pre-productions','view-board-production','receive-board-production-materials','dispatch-board-production-materials','production-board-print-barcode'))
                     <li class="menu-title">
                         <span>Pre-Production & Production</span>
                     </li>
@@ -264,20 +264,28 @@
                             </ul>
                         </li>
                     @endif
-                    <li class="submenu">
-                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'production.board-pre-production.index' || $activeMenu == 'production.board-production.index' || $activeMenu == 'production.board-production.pending-verification') ? 'active' : '' }} noti-dot"><i class="la la-server"></i> <span> Board Production</span> <span class="menu-arrow"></span></a>
-                        <ul>
-                            <li>
-                                <a href="{{route('production.board-pre-production.index')}}" class="{{ ($activeMenu == 'production.board-pre-production.index') ? 'active' : '' }}"> <span>Pre Production</span></a>
-                            </li>
-                            <li>
-                                <a href="{{route('production.board-production.pending-verification')}}" class="{{ ($activeMenu == 'production.board-production.pending-verification') ? 'active' : '' }}"><span>Pending Verification</span></a>
-                            </li>
-                            <li>
-                                <a href="{{route('production.board-production.index')}}" class="{{ ($activeMenu == 'production.board-production.index') ? 'active' : '' }}"><span>Production</span></a>
-                            </li>
-                        </ul>
-                    </li>
+                    @if(hasPermission('view-board-pre-productions','manage-board-pre-productions','verify-board-pre-productions','view-board-production','receive-board-production-materials','dispatch-board-production-materials','production-board-print-barcode'))
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'production.board-pre-production.index' || $activeMenu == 'production.board-production.index' || $activeMenu == 'production.board-production.pending-verification') ? 'active' : '' }} noti-dot"><i class="la la-server"></i> <span> Board Production</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission('view-board-pre-productions','manage-board-pre-productions'))
+                                    <li>
+                                        <a href="{{route('production.board-pre-production.index')}}" class="{{ ($activeMenu == 'production.board-pre-production.index') ? 'active' : '' }}"> <span>Pre Production</span></a>
+                                    </li>
+                                @endif
+                                @if(hasPermission('verify-board-pre-productions'))
+                                    <li>
+                                        <a href="{{route('production.board-production.pending-verification')}}" class="{{ ($activeMenu == 'production.board-production.pending-verification') ? 'active' : '' }}"><span>Pending Verification</span></a>
+                                    </li>
+                                @endif
+                                @if(hasPermission('view-board-production','receive-board-production-materials','dispatch-board-production-materials','production-board-print-barcode'))
+                                    <li>
+                                        <a href="{{route('production.board-production.index')}}" class="{{ ($activeMenu == 'production.board-production.index') ? 'active' : '' }}"><span>Production</span></a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                    @endif
                     @if(hasPermission('view-machines','manage-machines'))
                         <li>
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>

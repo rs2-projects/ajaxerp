@@ -224,7 +224,15 @@ class PermissionsTableSeeder extends Seeder
                 [
                     'slug' => 'receive-products',
                     'title' => 'Receive Products'
-                ]
+                ],
+                [
+                    'slug' => 'view-material-requests',
+                    'title' => 'View Material Requests'
+                ],
+                [
+                    'slug' => 'deliver-requested-materials',
+                    'title' => 'Deliver Requested Materials'
+                ],
             ],
 
             //Accounting
@@ -305,7 +313,7 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'asset-product-purchase-order-payment',
                     'title' => 'Asset Product Purchase Order Payment'
                 ],
-            ], 
+            ],
 
             //Production
             'production' => [
@@ -330,14 +338,6 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Verify Pre Productions'
                 ],
                 [
-                    'slug' => 'view-material-requests',
-                    'title' => 'View Material Requests'
-                ],
-                [
-                    'slug' => 'deliver-requested-materials',
-                    'title' => 'Deliver Requested Materials'
-                ],
-                [
                     'slug' => 'view-production',
                     'title' => 'View Production'
                 ],
@@ -353,10 +353,41 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'dispatch-production-materials',
                     'title' => 'Dispatch Production Materials'
                 ],
-
                 [
                     'slug' => 'production-print-barcode',
                     'title' => 'Production Print Barcode'
+                ],
+            ],
+
+            //Production
+            'board-production' => [
+                [
+                    'slug' => 'view-board-pre-productions',
+                    'title' => 'View Board Pre Productions'
+                ],
+                [
+                    'slug' => 'manage-board-pre-productions',
+                    'title' => 'Manage Board Pre Productions'
+                ],
+                [
+                    'slug' => 'verify-board-pre-productions',
+                    'title' => 'Verify Board Pre Productions'
+                ],
+                [
+                    'slug' => 'view-board-production',
+                    'title' => 'View Board Production'
+                ],
+                [
+                    'slug' => 'receive-board-production-materials',
+                    'title' => 'Receive Board Production Materials'
+                ],
+                [
+                    'slug' => 'dispatch-board-production-materials',
+                    'title' => 'Dispatch Board Production Materials'
+                ],
+                [
+                    'slug' => 'production-board-print-barcode',
+                    'title' => 'Production Board Print Barcode'
                 ],
             ],
         ];
