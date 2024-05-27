@@ -67,7 +67,7 @@
                             <div class="erp-filter-item flex-100">
                                 <div class=" form-focus select-focus custom-form-focus">
                                     <label class="col-form-label">Select Department:</label>
-                                    {{-- <select class="select floating select2-box" multiple> 
+                                    {{-- <select class="select floating select2-box" multiple>
                                         <option>Web Development</option>
                                         <option>IT Management</option>
                                         <option>Marketing</option>
@@ -77,13 +77,13 @@
                                         @foreach($departments as $key=>$department)
                                             <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         @endforeach
-                                    </select>                                
+                                    </select>
                                 </div>
                             </div>
                             <div class="erp-filter-item flex-100">
                                 <div class=" form-focus select-focus custom-form-focus">
                                     <label class="col-form-label">Select Designation:</label>
-                                    {{-- <select class="select floating select2-box" multiple> 
+                                    {{-- <select class="select floating select2-box" multiple>
                                         <option>Web Designer</option>
                                         <option>Web Developer</option>
                                         <option>Android Developer</option>
@@ -91,7 +91,7 @@
                                     <select onchange="designationFilter(this)" class="select select-step select2 floating select2-box" name="designation_id[]" id="designation_id" multiple>
                                         <option value=""></option>
                                     </select>
-                                
+
                                 </div>
                             </div>
                             <div class="erp-filter-item flex-100 mt-3">
@@ -109,6 +109,7 @@
 
 @section('modals')
     @include('hr.employee._change_role')
+    @include('hr.employee._change_password')
     @include('hr.employee._add_user_leave_modal')
 @endsection
 
@@ -189,6 +190,23 @@
                 }, 'show_input_error');
             });
 
+            $(document).on("submit", "#employee_change_password_modal_form", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#editPasswordModal").modal('hide');
+                        showSuccessAlert('Success',res.message);
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
             $("#userLeavesStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -260,6 +278,12 @@
                     toastr.error(response.message);
                 }
             }, 'default');
+        }
+
+        function changePassword(button){
+            let url = $(button).attr('data-url');
+            $("#employee_change_password_modal_form").attr('action', url);
+            $("#editPasswordModal").modal('show');
         }
 
         function showUserLeaveModal(id){
