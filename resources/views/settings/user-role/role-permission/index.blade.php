@@ -1091,6 +1091,61 @@
                                 </div>
                             </div>
 
+                            {{-- miscellaneous --}}
+                            <div class="rs-erp-permission-item">
+                                <div class="rs-erp-permission-item-title-box">
+                                    <h4>Miscellaneous</h4>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Plate</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-plate" data-required-remove="manage-plate" class="check" name="permissions[]" value="view-plate"
+                                            {{ in_array('view-plate', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-plate" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Plate</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-plate" data-required-add="view-plate" class="check" name="permissions[]" value="manage-plate"
+                                            {{ in_array('manage-plate', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-plate" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Production Staff</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-production-staff" data-required-remove="manage-production-staff" class="check" name="permissions[]" value="view-production-staff"
+                                            {{ in_array('view-production-staff', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-production-staff" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Production Staff</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-production-staff" data-required-add="view-production-staff" class="check" name="permissions[]" value="manage-production-staff"
+                                            {{ in_array('manage-production-staff', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-production-staff" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="erp-filter-box d-flex align-items-center justify-content-center flex-100 pt-4">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-center flex-100">
                                     <div class="erp-filter-item">

@@ -222,14 +222,14 @@ Route::group(['prefix' => 'production'], function () {
      });
 
     Route::group(['prefix' => 'production-staff'], function () {
-        Route::get('/', [ProductionStaffController::class, 'index'])->name('production.production-staff.index');
-        Route::post('/filtered', [ProductionStaffController::class, 'indexFiltered'])->name('production.production-staff.filtered');
-        Route::get('/create', [ProductionStaffController::class, 'create'])->name('production.production-staff.create');
-        Route::post('/create', [ProductionStaffController::class, 'store'])->name('production.production-staff.store');
-        Route::get('/{id}/edit', [ProductionStaffController::class, 'edit'])->name('production.production-staff.edit');
-        Route::post('/{id}/update', [ProductionStaffController::class, 'update'])->name('production.production-staff.update');
-        Route::get('/{id}/delete', [ProductionStaffController::class, 'delete'])->name('production.production-staff.delete');
-        Route::get('/{id}/change-status/{status}', [ProductionStaffController::class, 'statusUpdate'])->name('production.production-staff.change-status');
+        Route::get('/', [ProductionStaffController::class, 'index'])->name('production.production-staff.index')->middleware('permission:view-production-staff');
+        Route::post('/filtered', [ProductionStaffController::class, 'indexFiltered'])->name('production.production-staff.filtered')->middleware('permission:view-production-staff');
+        Route::get('/create', [ProductionStaffController::class, 'create'])->name('production.production-staff.create')->middleware('permission:manage-production-staff');
+        Route::post('/create', [ProductionStaffController::class, 'store'])->name('production.production-staff.store')->middleware('permission:manage-production-staff');
+        Route::get('/{id}/edit', [ProductionStaffController::class, 'edit'])->name('production.production-staff.edit')->middleware('permission:manage-production-staff');
+        Route::post('/{id}/update', [ProductionStaffController::class, 'update'])->name('production.production-staff.update')->middleware('permission:manage-production-staff');
+        Route::get('/{id}/delete', [ProductionStaffController::class, 'delete'])->name('production.production-staff.delete')->middleware('permission:manage-production-staff');
+        Route::get('/{id}/change-status/{status}', [ProductionStaffController::class, 'statusUpdate'])->name('production.production-staff.change-status')->middleware('permission:manage-production-staff');
     });
 });
 
@@ -284,14 +284,14 @@ Route::group(['prefix' => 'settings'], function () {
 
     // board embossed route start
     Route::group(['prefix' => 'board-embossed'], function () {
-        Route::get('/', [BoardEmbossedController::class, 'index'])->name('settings.board-embossed.index');
-        Route::post('/filtered', [BoardEmbossedController::class, 'indexFiltered'])->name('settings.board-embossed.filtered');
-        Route::post('/create', [BoardEmbossedController::class, 'store'])->name('settings.board-embossed.store');
-        Route::get('/{id}/edit', [BoardEmbossedController::class, 'edit'])->name('settings.board-embossed.edit');
-        Route::post('/{id}/update', [BoardEmbossedController::class, 'update'])->name('settings.board-embossed.update');
-        Route::get('/{id}/delete', [BoardEmbossedController::class, 'delete'])->name('settings.board-embossed.delete');
+        Route::get('/', [BoardEmbossedController::class, 'index'])->name('settings.board-embossed.index')->middleware('permission:view-plate');
+        Route::post('/filtered', [BoardEmbossedController::class, 'indexFiltered'])->name('settings.board-embossed.filtered')->middleware('permission:view-plate');
+        Route::post('/create', [BoardEmbossedController::class, 'store'])->name('settings.board-embossed.store')->middleware('permission:manage-plate');
+        Route::get('/{id}/edit', [BoardEmbossedController::class, 'edit'])->name('settings.board-embossed.edit')->middleware('permission:manage-plate');
+        Route::post('/{id}/update', [BoardEmbossedController::class, 'update'])->name('settings.board-embossed.update')->middleware('permission:manage-plate');
+        Route::get('/{id}/delete', [BoardEmbossedController::class, 'delete'])->name('settings.board-embossed.delete')->middleware('permission:manage-plate');
 
-        Route::post('bulk-import', [BoardEmbossedController::class, 'importPlates'])->name('settings.board-embossed.bulk-import');
+        Route::post('bulk-import', [BoardEmbossedController::class, 'importPlates'])->name('settings.board-embossed.bulk-import')->middleware('permission:manage-plate');
     });
     // board embossed route end
 });

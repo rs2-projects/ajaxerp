@@ -8,7 +8,9 @@
                 <th class="erp-th">Name</th>
                 <th class="erp-th text-center">Code</th>
                 <th class="erp-th text-center">Note</th>
-                <th class="erp-th text-center">Action </th>
+                @if(hasPermission('manage-plate'))
+                    <th class="erp-th text-center">Action </th>
+                @endif
             </tr>
         </thead>
         <tbody class="erp-tbody">
@@ -31,17 +33,19 @@
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->code??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->note??'N/A' }}</td>
-                    <td class="text-end erp-tbody-td">
-                        <div class="erp-action-t">
-                            <div class="dropdown dropdown-action">
-                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$data->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('settings.board-embossed.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                    @if(hasPermission('manage-plate'))
+                        <td class="text-end erp-tbody-td">
+                            <div class="erp-action-t">
+                                <div class="dropdown dropdown-action">
+                                    <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$data->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('settings.board-embossed.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr class="erp-tbody-tr">

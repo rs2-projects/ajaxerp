@@ -390,6 +390,26 @@ class PermissionsTableSeeder extends Seeder
                     'title' => 'Production Board Print Barcode'
                 ],
             ],
+
+            //Miscellaneous
+            'miscellaneous' => [
+                [
+                    'slug' => 'view-plate',
+                    'title' => 'View Plate'
+                ],
+                [
+                    'slug' => 'manage-plate',
+                    'title' => 'Manage Plate'
+                ],
+                [
+                    'slug' => 'view-production-staff',
+                    'title' => 'View Production Staff'
+                ],
+                [
+                    'slug' => 'manage-production-staff',
+                    'title' => 'Manage Production Staff'
+                ],
+            ],
         ];
 
         foreach ($allPermissions as $group => $permissions) {
