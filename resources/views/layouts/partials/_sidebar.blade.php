@@ -291,12 +291,16 @@
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
                         </li>
                     @endif
-                    <li>
-                        <a href="{{ route('settings.board-embossed.index') }}" class="{{ ($activeMenu == 'settings.board-embossed.index') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Plate</span></a>
-                    </li>
-                    <li>
-                        <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
-                    </li>
+                    @if(hasPermission('view-plate','manage-plate'))
+                        <li>
+                            <a href="{{ route('settings.board-embossed.index') }}" class="{{ ($activeMenu == 'settings.board-embossed.index') ? 'active' : '' }}"><i class="la la-crosshairs"></i> <span>Plate</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission('view-production-staff','manage-production-staff'))
+                        <li>
+                            <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
+                        </li>
+                    @endif
                 @endif
 
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))
@@ -326,11 +330,10 @@
                     </li>
                 @endif
 
-                <li class="menu-title">
-                    <span>Administration</span>
-                </li>
-
                 @if(hasPermission( 'manage-administration-settings', 'manage-payroll-settings', 'manage-tax-settings', 'manage-role-permission-settings'))
+                    <li class="menu-title">
+                        <span>Administration</span>
+                    </li>
                     <li>
                         <a href="{{ route('settings.office-time') }}"><i class="la la-cog"></i> <span>Settings</span></a>
                     </li>
