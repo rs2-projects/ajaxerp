@@ -28,6 +28,7 @@ class Machine extends Model
 
     protected $fillable = [
         'name',
+        'production_cost',
         'image',
         'model',
         'color',

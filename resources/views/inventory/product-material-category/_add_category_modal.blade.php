@@ -16,6 +16,14 @@
                             <label class="col-form-label">Category Name <span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="name" required>
                         </div>
+                        <div class="input-block mb-2">
+                            <label class="col-form-label">SRP Markup Percent (%) <span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" min="0" name="srp_markup_percent" required>
+                        </div>
+                        <div class="input-block mb-2">
+                            <label class="col-form-label">Wholesale Discount Percent (%) <span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" min="0" name="wholesale_discount_percent" required>
+                        </div>
                         <div class="input-block mb-3">
                             <label class="col-form-label">Description </label>
 

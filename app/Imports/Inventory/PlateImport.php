@@ -34,6 +34,7 @@ class PlateImport implements ToCollection, WithStartRow
             //store board embossed
             BoardEmbossed::create([
                 'name' => $item[0],
+                'production_cost' => $item[1],
                 'code' => $item[0],
                 'created_at' => Carbon::now(),
                 'created_by' => Auth::id(),

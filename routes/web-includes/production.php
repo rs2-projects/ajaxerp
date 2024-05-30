@@ -4,6 +4,7 @@ use App\Http\Controllers\Production\Machine\MachineController;
 use App\Http\Controllers\Production\PreProduction\PreProductionController;
 use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Production\BoardPreProduction\BoardPreProductionController;
+use App\Http\Controllers\Production\BoardPreProduction\CalculateBoardPriceController;
 use App\Http\Controllers\Production\BoardProduction\BoardProductionController;
 use App\Http\Controllers\Production\Production\ProductionController;
 use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
@@ -65,7 +66,12 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/delete', [BoardPreProductionController::class, 'delete'])->name('production.board-pre-production.delete')->middleware('permission:manage-board-pre-productions');
         Route::get('/{id}/get-details', [BoardPreProductionController::class, 'details'])->name('production.board-pre-production.get-production-details')->middleware('permission:view-board-pre-productions');
         Route::post('/{id}/send-to-production', [BoardPreProductionController::class, 'sendToProduction'])->name('production.board-pre-production.send-to-production')->middleware('permission:manage-board-pre-productions');
+        
+        // calculate price 
+        Route::get('/{id}/calculate-price', [CalculateBoardPriceController::class, 'index'])->name('production.board-pre-production.calculate-price');
+        Route::post('/{id}/calculate-price/store', [CalculateBoardPriceController::class, 'store'])->name('production.board-pre-production..calculate-price.store');
 
+        
         // bulk import
         Route::post('bulk-import', [BoardPreProductionController::class, 'bulkImport'])->name('production.board-pre-production.bulk-import')->middleware('permission:manage-board-pre-productions');
     });
