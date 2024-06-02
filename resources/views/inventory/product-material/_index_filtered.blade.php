@@ -86,6 +86,7 @@
                                         @if($product_material->countPurchaseDetails() == 0)
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
+                                        <a class="dropdown-item" href="{{route('inventory.product-material.calculate-price', $product_material->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Price</a>
                                     </div>
                                 </div>
                             </div>

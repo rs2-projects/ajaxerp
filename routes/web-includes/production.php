@@ -69,7 +69,7 @@ Route::group(['prefix' => 'production'], function () {
         
         // calculate price 
         Route::get('/{id}/calculate-price', [CalculateBoardPriceController::class, 'index'])->name('production.board-pre-production.calculate-price');
-        Route::post('/{id}/calculate-price/store', [CalculateBoardPriceController::class, 'store'])->name('production.board-pre-production..calculate-price.store');
+        Route::post('/{id}/calculate-price/store', [CalculateBoardPriceController::class, 'store'])->name('production.board-pre-production.calculate-price.store');
 
         
         // bulk import
