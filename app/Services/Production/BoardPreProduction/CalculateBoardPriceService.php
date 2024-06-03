@@ -2,26 +2,16 @@
 
 namespace App\Services\Production\BoardPreProduction;
 
-use App\Models\Procurements\ProductMaterialPurchaseCalculatedPrice;
 use App\Models\Production\BoardPreProduction;
 use App\Models\Production\BoardPreProductionCalculatedPrice;
 use App\Models\Production\BoardPreProductionMaterials;
+use App\Traits\LatestCalculatedPurchaseCostTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CalculateBoardPriceService
 {
-    
-    public function getLatestCalculatedPurchaseCost($id){
-        $cost = ProductMaterialPurchaseCalculatedPrice::where('product_material_id', $id)
-            ->where('product_type', ProductMaterialPurchaseCalculatedPrice::PRODUCT_TYPE_BOARD)
-            ->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
-            ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
-            ->first();
-
-        return $cost->price_excluding_vat;
-    }
+    use LatestCalculatedPurchaseCostTrait;
 
     public function indexData($id)
     {

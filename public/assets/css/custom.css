@@ -150,3 +150,18 @@
 .board-pp-calc-price-input-wrapper .rs-ecp-bottom-box-item{
     flex-basis: 24% !important;
 }
+.product-material-set-item{
+    flex-basis: 13% !important;
+}
+.product-material-set-item:nth-child(1) {
+    flex-basis: 22% !important;
+}
+.product-material-set-item:nth-child(2) {
+    flex-basis: 16% !important;
+}
+.product-material-set-item:nth-child(3) {
+    flex-basis: 10% !important;
+}
+.product-material-set-item:nth-child(7) {
+    flex-basis: 5% !important;
+}

@@ -9,6 +9,7 @@ use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Inventory\BoardsController;
+use App\Http\Controllers\Inventory\ProductMaterialSetController;
 use Illuminate\Support\Facades\Route;
 
 // inventory route start
@@ -135,6 +136,18 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/edit', [BoardsController::class, 'edit'])->name('inventory.boards.edit');
         Route::post('/{id}/update', [BoardsController::class, 'update'])->name('inventory.boards.update');
         Route::get('/{id}/delete', [BoardsController::class, 'delete'])->name('inventory.boards.delete');
+    });
+
+    // product material sets
+    Route::group(['prefix' => 'product-material-set'], function () {
+        Route::get('/', [ProductMaterialSetController::class, 'index'])->name('inventory.product-material-set.index');
+        Route::post('/filtered', [ProductMaterialSetController::class, 'indexFiltered'])->name('inventory.product-material-set.filtered');
+        Route::get('/get-all-product-materials',[ProductMaterialSetController::class, 'getAllProductMaterials'])->name('inventory.product-material-set.get-all-product-materials');
+        Route::get('/create', [ProductMaterialSetController::class, 'create'])->name('inventory.product-material-set.create');
+        Route::post('/store', [ProductMaterialSetController::class, 'store'])->name('inventory.product-material-set.store');
+        Route::get('/{id}/edit', [ProductMaterialSetController::class, 'edit'])->name('inventory.product-material-set.edit');
+        Route::post('/{id}/update', [ProductMaterialSetController::class, 'update'])->name('inventory.product-material-set.update');
+        Route::get('/{id}/delete', [ProductMaterialSetController::class, 'delete'])->name('inventory.product-material-set.delete');
     });
 });
 // inventory route end

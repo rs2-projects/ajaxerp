@@ -42,6 +42,7 @@
                                                     </select>
                                                     @if($product_material->countPurchaseDetails() > 0)
                                                         <small class="text-red">Can't change due to having purchase</small>
+                                                        <input type="hidden" name="type" value="{{ $product_material->type }}">
                                                     @endif
                                                 </div>
                                             </div>
@@ -60,7 +61,7 @@
                                             <div class="erp-filter-item flex-48 {{ $product_material->type != $product_material::TYPE_OTHERS ? 'd-none' : ''}}" id="category_section">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Category <span class="text-red">*</span> <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Category"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" id="category_select" name="product_material_category_id" required>
+                                                    <select class="select select-step" id="category_select" name="product_material_category_id" {{ $product_material->type != $product_material::TYPE_OTHERS ? '' : 'required'}}>
                                                         <option value="">Select Category</option>
                                                         @foreach($material_categories as $category)
                                                             <option value="{{ $category->id }}" {{( $category->id == $product_material->product_material_category_id) ? 'selected' : ''}}>{{ $category->name }}</option>

@@ -240,6 +240,15 @@
                             </li>
                         </ul>
                     </li>
+
+                    <li class="submenu">
+                        <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material-set.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material Set</span> <span class="menu-arrow"></span></a>
+                        <ul>
+                            <li>
+                                <a href="{{ route('inventory.product-material-set.index') }}" class="{{ ($activeMenu == 'inventory.product-material-set.index') ? 'active' : '' }}"> <span>Product Material Set</span></a>
+                            </li>
+                        </ul>
+                    </li>
                 @endif
 
                 {{-- production & pre production --}}

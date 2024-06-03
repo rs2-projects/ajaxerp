@@ -17,6 +17,7 @@ use App\Models\Products\ProductMaterialCategory;
 use App\Models\Products\ProductMaterialRack;
 use App\Models\Products\ProductMaterialSection;
 use App\Services\Common\ImageUploadService;
+use App\Traits\LatestCalculatedPurchaseCostTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -24,6 +25,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class ProductMaterialService
 {
     private $paginate_limit;
+    use LatestCalculatedPurchaseCostTrait;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -331,7 +334,6 @@ class ProductMaterialService
             }else{
                 $product_material_category_id = $request->product_material_category_id;
             }
-
             $product_material->name = $request->name;
             $product_material->type = $type ?? $product_material->type;
             $product_material->image = $image_path??$product_material->image;
@@ -553,15 +555,15 @@ class ProductMaterialService
         Excel::import(new PaperProductsImport(), $request->product_file);
     }
 
-    public function getLatestCalculatedPurchaseCost($id){
-        $cost = ProductMaterialPurchaseCalculatedPrice::where('product_material_id', $id)
-            ->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
-            ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
-            ->first();
+    // public function getLatestCalculatedPurchaseCost($id){
+    //     $cost = ProductMaterialPurchaseCalculatedPrice::where('product_material_id', $id)
+    //         ->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
+    //         ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
+    //         ->orderBy('id', 'desc')
+    //         ->first();
 
-        return $cost->price_excluding_vat??0;
-    }
+    //     return $cost->price_excluding_vat??0;
+    // }
 
     public function calculateData($id){
         $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)

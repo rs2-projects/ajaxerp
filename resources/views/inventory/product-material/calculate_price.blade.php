@@ -148,7 +148,12 @@
 
         function calculateWholesalePrice(){
             const srp_with_discount = parseFloat($("#srp_with_discount").text());
-            const wholesale_discount_percent = parseFloat($("#wholesale_discount_percent").val());
+            let wholesale_discount_percent = parseFloat($("#wholesale_discount_percent").val());
+            if(isNaN(wholesale_discount_percent)){
+                wholesale_discount_percent = 0;
+            }
+
+            console.log(wholesale_discount_percent);
             if(srp_with_discount != "" && wholesale_discount_percent != ""){
                 const wholesale = srp_with_discount * (1 - (wholesale_discount_percent/100));
                 $("#wholesale").text(wholesale.toFixed(2));
@@ -162,6 +167,19 @@
             var self = $("#calculatePriceFormSubmit");
             var formData = new FormData($(self)[0]);
             var url = $(self).attr('action');
+
+            let cost = $("#rp_cost").val();
+            let srp_markup_percent = $("#srp_markup_percent").val();
+
+            if(cost == "" || cost == 0){
+                showErrorAlert('Error','Please enter RP cost');
+                return false;
+            }
+
+            if(srp_markup_percent == "" || srp_markup_percent == 0){
+                showErrorAlert('Error','Please enter SRP markup percent');
+                return false;
+            }
 
             formPost(url, formData, function (res) {
                 if(res.status == 200){

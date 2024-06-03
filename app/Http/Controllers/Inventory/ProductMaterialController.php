@@ -159,9 +159,9 @@ class ProductMaterialController extends BackendController
     public function calculatePriceStore(Request $request, $id){
         try {
             $this->service->calculatePriceStoreData($request, $id);
-            return redirect()->back()->with(['success' => 'Price Calculated Successfully!']);
+            return $this->returnAjaxSuccess([], 'Price Calculated Successfully');
         }catch (\Exception $e) {
-            return redirect()->back()->with(['failed' => $e->getMessage()]);
+            return $this->returnAjaxError([],$e->getMessage());
         }
     }
 }
