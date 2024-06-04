@@ -2,28 +2,40 @@
 @section('content')
     <!-- Start::row-1 -->
     <div class="row">
+        @if(empty($salary_set))
+            <div class="alert alert-danger" role="alert">
+                <h4>You have not been assigned any Salary Set. Please contact your HR or Admin.</h4>
+            </div>
+        @endif
         <div class="my-attendance-wrapper d-flex justify-content-start flex-wrap">
             <div class="my-attendance-box-item bg-card">
                 <div class="erp-box-header">
                     <h4>Timesheet <span> ({{ getFormattedDate(\Carbon\Carbon::now(),'d M, Y') }})</span></h4>
                 </div>
                 <div class="erp-box-body erp-punch-body">
-
-                    <div class="punch-in-out-box position-relative">
-                        <div class="pulse-css"></div>
-                        <label class="switch punch-switch ">
-
-                            <input type="checkbox" id="attendanceCheckbox" {{ ($new_punch_type == \App\Models\AttendanceHistoryToday::TYPE_OUT) ? 'checked' : '' }}>
-                            <div class="slider slider--0">Punch Out</div>
-                            <div class="slider slider--1">
-                                <div></div>
-                                <div></div>
-                            </div>
-                            <div class="slider slider--2"></div>
-                            <div class="slider slider--3">Punch In</div>
-                        </label>
-                        <h4 class="help-title">Press & Hold</h4>
-                    </div>
+                    @if(!empty($salary_set))
+                        <div class="punch-in-out-box position-relative">
+                            <div class="pulse-css"></div>
+                            <label class="switch punch-switch ">
+                                <input type="checkbox" id="attendanceCheckbox" {{ ($new_punch_type == \App\Models\AttendanceHistoryToday::TYPE_OUT) ? 'checked' : '' }}>
+                                <div class="slider slider--0">Punch Out</div>
+                                <div class="slider slider--1">
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                                <div class="slider slider--2"></div>
+                                <div class="slider slider--3">Punch In</div>
+                            </label>
+                            <h4 class="help-title">Press & Hold</h4>
+                        </div>
+                    @else
+                        <div class="punch-in-out-box position-relative">
+                            <div class="pulse-css"></div>
+                            <label class="switch punch-switch ">
+                                <div class="slider slider--0">No Access</div>
+                            </label>
+                        </div>
+                    @endif
                     <div
                         class="punch-child-box d-flex justify-content-between flex-wrap mt-3 align-items-center">
                         <div class="punch-hour-box">

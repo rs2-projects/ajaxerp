@@ -145,9 +145,11 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/get-all-product-materials',[ProductMaterialSetController::class, 'getAllProductMaterials'])->name('inventory.product-material-set.get-all-product-materials');
         Route::get('/create', [ProductMaterialSetController::class, 'create'])->name('inventory.product-material-set.create');
         Route::post('/store', [ProductMaterialSetController::class, 'store'])->name('inventory.product-material-set.store');
+        Route::get('/get-set-items/{id}',[ProductMaterialSetController::class, 'getSetItems'])->name('inventory.product-material-set.get-product-material-set-items');
         Route::get('/{id}/edit', [ProductMaterialSetController::class, 'edit'])->name('inventory.product-material-set.edit');
         Route::post('/{id}/update', [ProductMaterialSetController::class, 'update'])->name('inventory.product-material-set.update');
         Route::get('/{id}/delete', [ProductMaterialSetController::class, 'delete'])->name('inventory.product-material-set.delete');
+        Route::get('/{id}/details', [ProductMaterialSetController::class, 'details'])->name('inventory.product-material-set.details');
     });
 });
 // inventory route end

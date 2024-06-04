@@ -47,4 +47,10 @@ class ProductMaterialSet extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function set_items(){
+        return $this->hasMany(ProductMaterialSetItem::class, 'product_material_set_id', 'id')
+            ->where('deleted', ProductMaterialSetItem::DELETED_NO)
+            ->where('status', ProductMaterialSetItem::STATUS_ACTIVE);
+    }
 }

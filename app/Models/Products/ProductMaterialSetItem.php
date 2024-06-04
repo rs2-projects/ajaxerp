@@ -43,4 +43,9 @@ class ProductMaterialSetItem extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function productMaterial()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'product_material_id', 'id');
+    }
 }

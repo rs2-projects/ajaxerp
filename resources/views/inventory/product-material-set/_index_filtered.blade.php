@@ -35,6 +35,7 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="{{ route('inventory.product-material-set.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="{{ route('inventory.product-material-set.details',$data->id) }}"><i class="fa-solid fa-eye m-r-5"></i> Details</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material-set.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                 </div>
                                 </div>

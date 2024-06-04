@@ -6,6 +6,7 @@
                 <th class="erp-th">Product Name & Code </th>
                 <th class="erp-th text-center">Total QTY </th>
                 <th class="erp-th text-center">Last Calculated Price </th>
+                <th class="erp-th text-center">SRP </th>
                 <th class="erp-th text-center">Status </th>
                 <th class="erp-th text-center">Location </th>
                 @if(hasPermission( 'manage-product-material'))
@@ -32,11 +33,15 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <a href="javascript:void(0)" class="text-center d-table-title" >{{ $product_material->available_qty??0 }}</a>
+                        <h4 class="text-center d-table-title" >{{ $product_material->available_qty??0 }}</h4>
                     </td>
 
                     <td class="erp-tbody-td text-center">
                         <a href="javascript:void(0)" class="last-cal-status-btn" onclick="purchaseHistory({{$product_material->id}})">Check Status</a>
+                    </td>
+
+                    <td class="erp-tbody-td text-center">
+                        <h4 class="text-center d-table-title" >{{ getCurrencySymbol() }}{{ $product_material->rp_srp??0 }}</h4>
                     </td>
 
                     <td class="erp-tbody-td text-center">

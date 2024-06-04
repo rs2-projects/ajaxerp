@@ -77,7 +77,11 @@ class AttendanceService
 
         $data['months'] = config('commonData.month_names');
 
-//        dd($data);
+        $salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $auth_user->id)
+            ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
+            ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+            ->first();
+        $data['salary_set'] = $salary_set_employee;
 
         return $data;
     }

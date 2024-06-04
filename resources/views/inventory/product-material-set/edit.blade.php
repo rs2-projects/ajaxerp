@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('inventory.product-material-set.store') }}" id="productMaterialSetStoreForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('inventory.product-material-set.update', $material_set->id) }}" id="productMaterialSetStoreForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -15,7 +15,7 @@
                                             <div class="pgib-item flex-30">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Name<span class="text-red">*</span></label>
-                                                    <input class="form-control" name="name" type="text" placeholder="" required="">
+                                                    <input class="form-control" name="name" value="{{$material_set->name}}" type="text" placeholder="" required="">
                                                 </div>
                                             </div>
                                             <div class="pgib-item flex-30">
@@ -85,6 +85,7 @@
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item product-material-set-item">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
+                                                    <input type="hidden" name="product_material_set_item_id[]" v-bind:value="cartItem.product_material_set_item_id">
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
@@ -343,6 +344,19 @@
                         productMaterialSetStoreFormSubmit();
                     }
                 },
+                getCartItems(){
+                    const id = '{{ $material_set->id }}';
+                    axios
+                        .get(`{{ route('inventory.product-material-set.get-product-material-set-items', '') }}/${id}`)
+                        .then(response => {
+                            console.log(response.data.material_set)
+                            this.cartItems = response.data.cartItems;
+                            this.srp_markup_percent = response.data.material_set.srp_markup_percent;
+                            this.wholesale_discount_percent = response.data.material_set.wholesale_discount_percent;
+                            this.calculateProductMaterialSetCost();
+                        })
+                },
+
                 getSearchedItems() {
                     axios
                         .get('{{ route('inventory.product-material-set.get-all-product-materials') }}?q='+this.item_search)
@@ -353,6 +367,7 @@
                     if (exists >= 0) {
                         this.incrementQty(exists);
                     } else {
+                        item.product_material_set_item_id = "";
                         item.qty = 1;
                         item.cost = item.cost;
                         item.item_srp = 0;
@@ -363,16 +378,18 @@
                     }
                     this.open_select_item = !this.open_select_item;
                 },
-                incrementQty(index) {
-                    this.cartItems[index].qty++;
-                    this.calculateCartItemCost(index);
-                },
 
                 updateSrpMarkupOrWholesale(){
                     let items = this.cartItems;
                     items.map((item, index) => {
                         this.calculateCartItemCost(index);
                     })
+                },
+
+
+                incrementQty(index) {
+                    this.cartItems[index].qty++;
+                    this.calculateCartItemCost(index);
                 },
 
                 updateCost(index){
@@ -386,6 +403,8 @@
                 },
 
                 updateQty(index) {
+
+                    console.log(this.cartItems[index])
                     let qty = this.cartItems[index].qty;
                     if(qty <= 0) {
                         this.cartItems[index].qty = 0;
@@ -400,7 +419,7 @@
                     let item_srp_with_discount = (item.cost * (this.srp_markup_percent / 100)) * item.qty;
                     let item_srp = item_srp_with_discount / (1 - (this.FIXED_PERCENT / 100));
                     let item_wholesale = item_srp_with_discount * (1 - (this.wholesale_discount_percent/100));
-                    
+    
                     this.cartItems[index].item_srp = item_srp.toFixed(2);
                     this.cartItems[index].item_srp_with_discount = item_srp_with_discount.toFixed(2);
                     this.cartItems[index].item_wholesale = item_wholesale.toFixed(2);
@@ -441,6 +460,7 @@
             },
             mounted () {
                 this.getSearchedItems();
+                this.getCartItems();
             }
 
         }).mount('#VueApp');
