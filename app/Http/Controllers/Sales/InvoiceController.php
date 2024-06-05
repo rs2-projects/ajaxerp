@@ -55,11 +55,18 @@ class InvoiceController extends BackendController
 
     }
     //Get all finished goods
-    public function getAllFinishedGoods(Request $request)
+    // public function getAllFinishedGoods(Request $request)
+    // {
+    //     $data = $this->service->getAllFinishedGoods($request);
+    //     return response()->json($data['finished_goods']);
+    // }
+
+    public function getAllFinishedGoods()
     {
-        $data = $this->service->getAllFinishedGoods($request);
-        return response()->json($data['finished_goods']);
+        $data = $this->service->getAllFinishedGoods();
+        return response()->json($data);
     }
+    
     //Get all taxes
     public function getAllTaxes(Request $request)
     {

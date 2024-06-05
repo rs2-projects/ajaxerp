@@ -48,6 +48,11 @@ class ProductMaterialSet extends Model
         'deleted_at',
     ];
 
+    public function getShowImageAttribute()
+    {
+        return asset('assets/img/placeholder.jpg');
+    }
+
     public function set_items(){
         return $this->hasMany(ProductMaterialSetItem::class, 'product_material_set_id', 'id')
             ->where('deleted', ProductMaterialSetItem::DELETED_NO)

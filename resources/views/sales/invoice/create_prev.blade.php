@@ -106,7 +106,7 @@
                                         <div class="po-product-header-item">
                                             <h4 class="text-center">QTY</h4>
                                         </div>
-                                        <div class="po-product-header-item sales-po-product-header-item">
+                                        <div class="po-product-header-item">
                                             <h4 class="text-center">Price</h4>
                                         </div>
                                         <div class="po-product-header-item">
@@ -118,7 +118,6 @@
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
-                                                    <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
@@ -149,7 +148,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="purchase-order-product-body-item sales-po-product-header-item">
+                                                <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
@@ -161,49 +160,14 @@
                                                 <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-center total-amount-product pe-2">
+                                                            <h4 class="text-end total-amount-product pe-2">
                                                             {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="purchase-order-product-body-item sales-po-product-header-item-remove">
-                                                    <div class="purchase-order-product-body-item-inner">
-                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="purchase-order-product-body-mesurement flex-100">
-                                                    <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Type :</h4>
-                                                            <p class="sales-cartItems-type-chip">@{{ getItemType(cartItem.item_type)  }}</p>
-                                                        </div>
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Product Code :</h4>
-                                                            <p># @{{ cartItem.code  }}</p>
-                                                        </div>
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Unit :</h4>
-                                                            <p>@{{ cartItem.unit_type }}</p>
-                                                        </div>
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Length :</h4>
-                                                            <p>@{{ cartItem.length }}</p>
-                                                        </div>
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Width :</h4>
-                                                            <p>@{{ cartItem.width }}</p>
-                                                        </div>
-                                                        <div class="po-order-product-body-mesurement-item">
-                                                            <h4>Thickness :</h4>
-                                                            <p>@{{ cartItem.thickness }}</p>
-                                                        </div>
-                                                    </div>
-
                                                 </div>
                                                 <div class="purchase-order-product-body-vat-tax flex-100">
                                                     <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
@@ -212,7 +176,7 @@
                                                                 <label class="col-form-label">Vat </label>
                                                                 <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
-                                                                    <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
+                                                                    <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id">
                                                                         @{{ stItem.name }} @{{ stItem.tax_rate }}%
                                                                     </option>
                                                                 </select>
@@ -234,62 +198,41 @@
                                         </div>
 
                                         <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
-                                            {{-- <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a> --}}
-                                            
-                                            <div class="pms-item flex-100">
-                                                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                                    <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Raw Board</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('finished_goods')" class="erp-search-btn text-center pp-add-more-btn pp-add-goods-btn"><i class="la la-plus-circle"></i> Finished Goods</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('finished_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn"><i class="la la-plus-circle"></i> Finished Board</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('set_items')" class="erp-search-btn text-center pp-add-more-btn pp-add-set-item-btn"><i class="la la-plus-circle"></i> Set Item</a>
-                                                </div>
-                                            </div>
-
+                                            <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
                                             <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
                                                     <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                                 </div>
                                                 <div class="search-product-item-wrapper custom-card-scroll" >
-                                                    <div v-if="items.length > 0">
-                                                        <div class="search-product-item" v-for="singleItem in items" :key="singleItem.id" @click="addItemToCart(singleItem)">
-                                                            <div class="smi-left">
-                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
-                                                                    <div class="em-pro-img-box">
-                                                                        <img :src="singleItem.show_image" alt="">
-                                                                    </div>
-                                                                    <div class="em-pro-details-box po-product text-start">
-                                                                        <h5>@{{ singleItem.name }}</h5>
-                                                                    </div>
+                                                    <div class="search-product-item" v-for="singleItem in allItems" :key="singleItem.id" @click="addItemToCart(singleItem)">
+                                                        <div class="smi-left">
+                                                            <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
+                                                                <div class="em-pro-img-box">
+                                                                    <img :src="singleItem.show_image" alt="">
                                                                 </div>
-                                                                <div class="purchase-order-product-body-mesurement flex-100">
-                                                                    <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
-                                                                        <div class="po-order-product-body-mesurement-item">
-                                                                            <h4>Product Code :</h4>
-                                                                            <p>#@{{ singleItem.code }}</p>
-                                                                        </div>
-                                                                        <div class="po-order-product-body-mesurement-item">
-                                                                            <h4>Length :</h4>
-                                                                            <p>@{{ singleItem.length }}</p>
-                                                                        </div>
-                                                                        <div class="po-order-product-body-mesurement-item">
-                                                                            <h4>Width :</h4>
-                                                                            <p>@{{ singleItem.width }}</p>
-                                                                        </div>
-                                                                        <div class="po-order-product-body-mesurement-item">
-                                                                            <h4>Thickness :</h4>
-                                                                            <p> @{{ singleItem.thickness }}</p>
-                                                                        </div>
-                                                                    </div>
+                                                                <div class="em-pro-details-box po-product text-start">
+                                                                    <h5>@{{ singleItem.name }}</h5>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div v-else>
-                                                        <div class="search-product-item" style="background: #ff727230;">
-                                                            <div class="smi-left">
-                                                                <h4>No Item Found.</h4>
+                                                            <div class="purchase-order-product-body-mesurement flex-100">
+                                                                <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
+                                                                    <div class="po-order-product-body-mesurement-item">
+                                                                        <h4>Product Code :</h4>
+                                                                        <p>#@{{ singleItem.code }}</p>
+                                                                    </div>
+                                                                    <div class="po-order-product-body-mesurement-item">
+                                                                        <h4>Length :</h4>
+                                                                        <p>@{{ singleItem.length }}</p>
+                                                                    </div>
+                                                                    <div class="po-order-product-body-mesurement-item">
+                                                                        <h4>Width :</h4>
+                                                                        <p>@{{ singleItem.width }}</p>
+                                                                    </div>
+                                                                    <div class="po-order-product-body-mesurement-item">
+                                                                        <h4>Thickness :</h4>
+                                                                        <p> @{{ singleItem.thickness }}</p>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -636,9 +579,7 @@
             data() {
                 return {
                     allItems:[],
-                    items: [],
                     item_search: '',
-                    current_item_type: '',
                     cartItems:[],
                     system_tax_items:[],
                     customers:[],
@@ -703,11 +644,10 @@
                 },
             },
             methods: {
-                openSelectItemModal(type) {
+                openSelectItemModal() {
                     this.open_select_item = !this.open_select_item;
                     this.item_search = '';
-                    this.current_item_type = type;
-                    this.getItems(type);
+                    this.getSearchedItems();
                 },
                 checkValidation(e) {
                     e.preventDefault();
@@ -719,18 +659,10 @@
                         invoiceStoreFormSubmit();
                     }
                 },
-                // getSearchedItems() {
-                //     axios
-                //         .get('{{ route('sales.invoice.get-all-finished-goods') }}?q='+this.item_search)
-                //         .then(response => (this.allItems = response.data));
-                //     },
-
-                getAllProducts() {
+                getSearchedItems() {
                     axios
-                        .get('{{ route('sales.invoice.get-all-finished-goods') }}')
-                        .then(response => {
-                            this.allItems = response.data;
-                        });
+                        .get('{{ route('sales.invoice.get-all-finished-goods') }}?q='+this.item_search)
+                        .then(response => (this.allItems = response.data));
                     },
                 getTaxItems() {
                     axios
@@ -742,48 +674,15 @@
                         .get('{{ route('sales.invoice.get-all-customer') }}?q=' + this.customer_search)
                         .then(response => (this.customers = response.data));
                 },
-
-                getItems(type){
-                    if (this.allItems && this.allItems[type]) {
-                        this.items = this.allItems[type].products;
-                    } else {
-                        this.items = [];
-                    }
-                },
-
-                // getSearchedItems(){
-                //     if(this.item_search.length > 0){
-                //         if (this.items && this.items.products) {
-                //             this.items = this.items?.products.filter(item => 
-                //                 item.name.toLowerCase().includes(this.item_search.toLowerCase())) 
-                //         }
-                //     }else{
-                //         this.getItems(this.current_item_type);
-                //     }
-                // },
-
-                getSearchedItems() {
-                    if (this.item_search.length > 0) {
-                        if (this.allItems && this.allItems[this.current_item_type]) {
-                            this.items = this.allItems[this.current_item_type].products.filter(item =>
-                                item.name.toLowerCase().includes(this.item_search.toLowerCase())
-                            );
-                        }
-                    } else {
-                        this.getItems(this.current_item_type);
-                    }
-                },
-
                 addItemToCart(item) {
-                    // let exists = this.cartItems.findIndex(o => o.id === item.id);
-                    let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
-
+                    let exists = this.cartItems.findIndex(o => o.id === item.id);
 
                     if (exists >= 0) {
+                        // exists.qty++;
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = item.srp;
+                        item.price = 0;
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         let ab = this.cartItems.push(item);
@@ -795,11 +694,6 @@
                     }, 300);
                     this.open_select_item = !this.open_select_item;
                 },
-                getItemType(type){
-                    return type.replace(/_/g, ' ')
-                   .replace(/\b\w/g, char => char.toUpperCase());
-                },
-
                 incrementQty(index) {
                     this.cartItems[index].qty++;
                     this.updateCartItemPrice(index);
@@ -858,7 +752,7 @@
                 }
             },
             mounted () {
-                this.getAllProducts();
+                this.getSearchedItems();
                 this.getTaxItems();
                 this.getCustomers();
             }

@@ -554,16 +554,7 @@ class ProductMaterialService
     {
         Excel::import(new PaperProductsImport(), $request->product_file);
     }
-
-    // public function getLatestCalculatedPurchaseCost($id){
-    //     $cost = ProductMaterialPurchaseCalculatedPrice::where('product_material_id', $id)
-    //         ->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
-    //         ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
-    //         ->orderBy('id', 'desc')
-    //         ->first();
-
-    //     return $cost->price_excluding_vat??0;
-    // }
+    
 
     public function calculateData($id){
         $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)

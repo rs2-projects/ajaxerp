@@ -7,6 +7,8 @@ use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionReceipt;
 use App\Models\Products\FinishedGoods;
+use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialSet;
 use App\Models\Sales\Customer;
 use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDesigns;
@@ -15,13 +17,16 @@ use App\Models\Sales\InvoicePayment;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
+use App\Traits\LatestCalculatedPurchaseCostTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
-{
+{   
+    use LatestCalculatedPurchaseCostTrait;
     private InvoicePaymentService $invoicePaymentService;
     private InvoiceDesignService $invoiceDesignService;
+    private $paginate_limit;
 
     public function __construct()
     {
@@ -128,30 +133,306 @@ class InvoiceService
 
     }
 
-    public function getAllFinishedGoods($request)
+    // public function getAllFinishedGoods($request)
+    // {
+    //     if (isset($request->q) && ($request->q != '') && ($request->q != null)) {
+    //         $search_keyword = $request->q;
+    //     } else {
+    //         $search_keyword = null;
+    //     }
+    //     $data['finished_goods'] = FinishedGoods::where('status', FinishedGoods::STATUS_ACTIVE)
+    //         ->where('deleted', FinishedGoods::DELETED_NO)
+    //         ->when($search_keyword, function ($q) use ($search_keyword) {
+    //             return $q->where('name', 'LIKE', '%' . $search_keyword . '%');
+    //         })
+    //         ->get()
+    //         ->map(function ($item) {
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'show_image' => asset($item->show_image),
+    //             ];
+    //         });
+    //     return $data;
+    // }
+
+
+    // public function getAllFinishedGoods()
+    // {
+        
+    //     $finished_goods = FinishedGoods::where('status', FinishedGoods::STATUS_ACTIVE)
+    //         ->where('deleted', FinishedGoods::DELETED_NO)
+    //         ->where('type', FinishedGoods::TYPE_OTHERS)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             $itemTax = [
+    //                 'id' => null,
+    //                 'name' => null,
+    //                 'tax_rate' => 0,
+    //             ];
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'show_image' => asset($item->show_image),
+    //                 'tax' => $itemTax
+    //             ];
+    //         });
+        
+    //     $finished_boards = FinishedGoods::where('status', FinishedGoods::STATUS_ACTIVE)
+    //         ->where('deleted', FinishedGoods::DELETED_NO)
+    //         ->where('type', FinishedGoods::TYPE_BOARD)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             $itemTax = [
+    //                 'id' => null,
+    //                 'name' => null,
+    //                 'tax_rate' => 0,
+    //             ];
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'show_image' => asset($item->show_image),
+    //                 'tax' => $itemTax,
+    //                 'srp' => $this->getLatestCalculatedBoardCost($item->id)
+    //             ];
+    //         });
+
+    //     $raw_materials = ProductMaterial::with('tax')
+    //         ->where('status', ProductMaterial::STATUS_ACTIVE)
+    //         ->where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where('type', ProductMaterial::TYPE_OTHERS)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             if($item->tax == null) {
+    //                 $itemTax = (object) [
+    //                     'id' => null,
+    //                     'name' => null,
+    //                     'tax_rate' => 0,
+    //                 ];
+    //             } else {
+    //                 $itemTax = $item->tax;
+    //             }
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'show_image' => asset($item->show_image),
+    //                 'tax' => $itemTax,
+    //                 'unit_type' => $item::UNIT_TYPES[$item->unit_type],
+    //                 'description' => $item->description,
+    //                 'color' => $item->color,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'srp' => $this->getLatestCalculatedPurchaseCost($item->id)
+    //             ];
+    //         });
+
+    //     $raw_boards = ProductMaterial::with('tax')
+    //         ->where('status', ProductMaterial::STATUS_ACTIVE)
+    //         ->where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where('type', ProductMaterial::TYPE_BOARD)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             if($item->tax == null) {
+    //                 $itemTax = (object) [
+    //                     'id' => null,
+    //                     'name' => null,
+    //                     'tax_rate' => 0,
+    //                 ];
+    //             } else {
+    //                 $itemTax = $item->tax;
+    //             }
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'show_image' => asset($item->show_image),
+    //                 'tax' => $itemTax,
+    //                 'unit_type' => $item::UNIT_TYPES[$item->unit_type],
+    //                 'description' => $item->description,
+    //                 'color' => $item->color,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'srp' => $this->getLatestCalculatedPurchaseCost($item->id)
+    //             ];
+    //         });
+
+    //     $papers = ProductMaterial::with('tax')
+    //         ->where('status', ProductMaterial::STATUS_ACTIVE)
+    //         ->where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where('type', ProductMaterial::TYPE_PAPER)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             if($item->tax == null) {
+    //                 $itemTax = (object) [
+    //                     'id' => null,
+    //                     'name' => null,
+    //                     'tax_rate' => 0,
+    //                 ];
+    //             } else {
+    //                 $itemTax = $item->tax;
+    //             }
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => $item->code,
+    //                 'show_image' => asset($item->show_image),
+    //                 'tax' => $itemTax,
+    //                 'unit_type' => $item::UNIT_TYPES[$item->unit_type],
+    //                 'description' => $item->description,
+    //                 'color' => $item->color,
+    //                 'length' => $item->length,
+    //                 'width' => $item->width,
+    //                 'thickness' => $item->thickness,
+    //                 'srp' => $this->getLatestCalculatedPurchaseCost($item->id)
+    //             ];
+    //         });
+
+    //     $set_items = ProductMaterialSet::where('status', ProductMaterialSet::STATUS_ACTIVE)
+    //         ->where('deleted', ProductMaterialSet::DELETED_NO)
+    //         ->get()
+    //         ->map(function ($item) {
+    //             $itemTax = [
+    //                 'id' => null,
+    //                 'name' => null,
+    //                 'tax_rate' => 0,
+    //             ];
+    //             return [
+    //                 'id' => $item->id,
+    //                 'name' => $item->name,
+    //                 'code' => "",
+    //                 'length' => "",
+    //                 'width' => "",
+    //                 'thickness' => "",
+    //                 'show_image' => "",
+    //                 'tax' => $itemTax,
+    //                 'srp' => $item->rp_srp
+    //             ];
+    //         });
+
+    //     $data['finished_goods'] = [
+    //         'type' => 'finished_goods',
+    //         "products" => $finished_goods
+    //     ];
+
+    //     $data['finished_boards'] = [
+    //         'type' => 'finished_boards',
+    //         "products" => $finished_boards
+    //     ];
+
+    //     $data['raw_materials'] = [
+    //         'type' => 'raw_materials',
+    //         "products" => $raw_materials
+    //     ];
+
+    //     $data['raw_boards'] = [
+    //         'type' => 'raw_boards',
+    //         "products" => $raw_boards
+    //     ];
+
+    //     $data['papers'] = [
+    //         'type' => 'papers',
+    //         "products" => $papers
+    //     ];
+
+    //     $data['set_items'] = [
+    //         'type' => 'set_items',
+    //         "products" => $set_items
+    //     ];
+
+    //     return $data;
+    // }
+
+    public function getAllFinishedGoods()
     {
-        if (isset($request->q) && ($request->q != '') && ($request->q != null)) {
-            $search_keyword = $request->q;
-        } else {
-            $search_keyword = null;
-        }
-        $data['finished_goods'] = FinishedGoods::where('status', FinishedGoods::STATUS_ACTIVE)
-            ->where('deleted', FinishedGoods::DELETED_NO)
-            ->when($search_keyword, function ($q) use ($search_keyword) {
-                return $q->where('name', 'LIKE', '%' . $search_keyword . '%');
-            })
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'code' => $item->code,
-                    'length' => $item->length,
-                    'width' => $item->width,
-                    'thickness' => $item->thickness,
-                    'show_image' => asset($item->show_image),
+        $datTypes = [
+            ['model' => FinishedGoods::class, 'type' => 'finished_goods'],
+            ['model' => FinishedGoods::class, 'type' => 'finished_boards'],
+            ['model' => ProductMaterial::class, 'type' => 'raw_materials'],
+            ['model' => ProductMaterial::class, 'type' => 'raw_boards'],
+            ['model' => ProductMaterial::class, 'type' => 'papers'],
+            ['model' => ProductMaterialSet::class, 'type' => 'set_items'],
+        ];
+
+        $data = [];
+
+        foreach ($datTypes as $typeData) {
+            $products = $typeData['model']::where('status', $typeData['model']::STATUS_ACTIVE)
+                ->where('deleted', $typeData['model']::DELETED_NO);
+
+            if ($typeData['type'] != 'set_items') {
+                $type_value = [
+                    'finished_goods' => 0,
+                    'finished_boards' => 1,
+                    'raw_materials' => 0,
+                    'raw_boards' => 1,
+                    'papers' => 2,
                 ];
-            });
+                $type = $type_value[$typeData['type']] ?? null;
+            
+                if ($type !== null) {
+                    $products->where('type', $type);
+                }
+            }
+
+            $products = $products->get()
+                ->map(function ($item) use ($typeData) {
+                    $itemTax = null;
+
+                    if ($typeData['model'] == ProductMaterial::class && $item->tax != null) {
+                        $itemTax = $item->tax;
+                    } else {
+                        $itemTax = (object) [
+                            'id' => null,
+                            'name' => null,
+                            'tax_rate' => 0,
+                        ];
+                    }
+
+                    if($typeData['type'] == 'finished_boards'){
+                        $srp = $this->getLatestCalculatedBoardCost($item->id);
+                    }elseif($typeData['type'] == 'finished_goods'){
+                        $srp = 0;
+                    }else{
+                        $srp = $item->rp_srp;
+                    }
+
+                    $productData = [
+                        'id' => $item->id,
+                        'name' => $item?->name,
+                        'code' => $item?->code,
+                        'length' => $item?->length,
+                        'width' => $item?->width,
+                        'thickness' => $item?->thickness,
+                        'show_image' => asset($item->show_image)??null,
+                        'tax' => $itemTax,
+                        'srp' => $srp,
+                        'item_type' => $typeData['type'],
+                    ];
+
+                    return $productData;
+                });
+
+            $data[$typeData['type']] = [
+                'type' => $typeData['type'],
+                'products' => $products,
+            ];
+        }
+
         return $data;
     }
 
