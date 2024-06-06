@@ -30,6 +30,7 @@ class BoardEmbossed extends Model
 
     protected $fillable = [
         'name',
+        'production_cost',
         'image',
         'code',
         'note',

@@ -14,6 +14,9 @@ class BoardPreProduction extends Model
     protected $table = 'board_pre_productions';
     public $timestamps = false;
 
+    const PRICE_CALCULATED_NO = 0;
+    const PRICE_CALCULATED_YES = 1;
+
     // status const
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -37,6 +40,7 @@ class BoardPreProduction extends Model
         'machine_id',
         'staff_id',
         'note',
+        'price_calculated',
         'status',
         'created_by',
         'created_at',

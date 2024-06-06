@@ -14,6 +14,9 @@ class ProductMaterial extends Model
     protected $table = 'product_materials';
     public $timestamps = false;
 
+    const PRICE_CALCULATED_NO = 0;
+    const PRICE_CALCULATED_YES = 1;
+
     const TYPE_OTHERS = 0;
     const TYPE_BOARD = 1;
     const TYPE_PAPER = 2;
@@ -99,6 +102,13 @@ class ProductMaterial extends Model
         'remarks',
         'warehouse_id',
         'comments',
+        'price_calculated',
+        'rp_cost',
+        'srp_markup_percent',
+        'wholesale_discount_percent',
+        'rp_srp',
+        'srp_with_discount',
+        'wholesale',
         'status',
         'created_by',
         'created_at',
@@ -133,5 +143,22 @@ class ProductMaterial extends Model
             ->where('deleted', self::DELETED_NO)
             ->where('status', self::STATUS_ACTIVE)
             ->count();
+    }
+
+    public function category(){
+        return $this->hasOne(ProductMaterialCategory::class, 'id', 'product_material_category_id')
+            ->where('deleted', self::DELETED_NO)
+            ->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function unitType(){
+        return $this->hasOne(ProductMaterialUnitType::class, 'id', 'unit_type');
+    }
+
+    public function warehouse(){
+        return $this->hasOne(Warehouse::class, 'id', 'warehouse_id');
+    }
+
+    public function purchaseDetails(){
     }
 }

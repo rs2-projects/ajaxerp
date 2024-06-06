@@ -177,13 +177,18 @@
                     @endif
                     @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material'))
                         <li class="submenu">
-                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
                             <ul>
                                 @if(hasPermission( 'view-product-material','manage-product-material'))
                                     <li>
                                         <a href="{{ route('inventory.product-material.index') }}" class="{{ ($activeMenu == 'inventory.product-material.index') ? 'active' : ''}}"> <span>Material List</span></a>
                                     </li>
                                 @endif
+
+                                <li>
+                                    <a href="{{ route('inventory.product-material-set.index') }}" class="{{ ($activeMenu == 'inventory.product-material-set.index') ? 'active' : '' }}"> <span>Material Sets</span></a>
+                                </li>
+
                                 @if(hasPermission( 'view-product-material-category','manage-product-material-category'))
                                     <li>
                                         <a href="{{ route('inventory.product-material-category.index') }}" class="{{ ($activeMenu == 'inventory.product-material-category.index') ? 'active' : '' }}"> <span>Category</span></a>

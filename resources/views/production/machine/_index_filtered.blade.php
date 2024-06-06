@@ -8,6 +8,7 @@
                 <th class="erp-th">Machine Name </th>
                 <th class="erp-th text-center">Model</th>
                 <th class="erp-th text-center">Color</th>
+                <th class="erp-th text-center">Production Cost</th>
                 <th class="erp-th text-center">Description</th>
                 @if(hasPermission('manage-machines'))
                     <th class="erp-th text-center">Action </th>
@@ -32,6 +33,7 @@
                     </td>
                     <td class="erp-tbody-td text-center">{{ $machine->model??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->color??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $machine->production_cost??'0' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->description??'N/A' }}</td>
                     @if(hasPermission('manage-machines'))
                         <td class="text-end erp-tbody-td">

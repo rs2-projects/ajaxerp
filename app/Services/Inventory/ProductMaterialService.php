@@ -17,6 +17,7 @@ use App\Models\Products\ProductMaterialCategory;
 use App\Models\Products\ProductMaterialRack;
 use App\Models\Products\ProductMaterialSection;
 use App\Services\Common\ImageUploadService;
+use App\Traits\LatestCalculatedPurchaseCostTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -24,6 +25,8 @@ use Maatwebsite\Excel\Facades\Excel;
 class ProductMaterialService
 {
     private $paginate_limit;
+    use LatestCalculatedPurchaseCostTrait;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -331,7 +334,6 @@ class ProductMaterialService
             }else{
                 $product_material_category_id = $request->product_material_category_id;
             }
-
             $product_material->name = $request->name;
             $product_material->type = $type ?? $product_material->type;
             $product_material->image = $image_path??$product_material->image;
@@ -551,5 +553,45 @@ class ProductMaterialService
     public function importPaperProducts($request)
     {
         Excel::import(new PaperProductsImport(), $request->product_file);
+    }
+    
+
+    public function calculateData($id){
+        $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        if (!$material) {
+            throw new \Exception('Product Material Not Found');
+        }
+        $data['material'] = $material;
+
+        $material_cost = $this->getLatestCalculatedPurchaseCost($id);
+        $data['material_cost'] = $material_cost;
+
+        return $data; 
+    }
+
+    public function calculatePriceStoreData($request, $id){
+        $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        if (!$material) {
+            throw new \Exception('Product Material Not Found');
+        }
+
+        $fixed_percent = 20;
+        $material->rp_cost = $request->rp_cost;
+        $material->srp_markup_percent = $request->srp_markup_percent;
+        $material->wholesale_discount_percent = $request->wholesale_discount_percent;
+        $srp_with_discount = $request->rp_cost * ($request->srp_markup_percent / 100);
+        $material->srp_with_discount = $srp_with_discount;
+        $material->rp_srp = $srp_with_discount / (1 - ($fixed_percent / 100));
+        $material->wholesale = $srp_with_discount * (1 - ($request->wholesale_discount_percent/100));
+        $material->price_calculated = ProductMaterial::PRICE_CALCULATED_YES;
+        $material->save();
     }
 }

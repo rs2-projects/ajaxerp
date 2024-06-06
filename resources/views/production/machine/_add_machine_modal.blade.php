@@ -23,6 +23,11 @@
                             <span class="model_error ie-span"></span>
                         </div>
                         <div class="input-block mb-2">
+                            <label class="col-form-label">Production Cost <span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" name="production_cost" min="0" required>
+                            <span class="model_error ie-span"></span>
+                        </div>
+                        <div class="input-block mb-2">
                             <label class="col-form-label">Machine Image</label>
                             <input type="file" class="form-control " name="image" accept="image/*">
                         </div>

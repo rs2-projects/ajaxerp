@@ -89,17 +89,17 @@ class OvertimeHelper
             ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
             ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
             ->first();
-        $salary_set = SettingsSalarySet::where('id', $salary_set_employee->settings_salary_set_id)
+        $salary_set = SettingsSalarySet::where('id', $salary_set_employee?->settings_salary_set_id)
             ->where('status', SettingsSalarySet::STATUS_ACTIVE)
             ->where('deleted', SettingsSalarySet::DELETED_NO)
             ->first();
         $office_time_type = SettingsOfficeTimeType::with('officeTimes')
-            ->where('id', $salary_set->settings_office_time_type_id)
+            ->where('id', $salary_set?->settings_office_time_type_id)
             ->where('status', SettingsOfficeTimeType::STATUS_ACTIVE)
             ->where('deleted', SettingsOfficeTimeType::DELETED_NO)
             ->first();
 
-        $timing = SettingsOfficeTime::where('office_time_type_id', $office_time_type->id)
+        $timing = SettingsOfficeTime::where('office_time_type_id', $office_time_type?->id)
             ->where('day', $day)
             ->first();
 

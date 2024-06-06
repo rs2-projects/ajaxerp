@@ -142,3 +142,55 @@
 .select2-container {
     width: 100% !important;
 }
+
+.board-pp-calc-price-wrapper{
+    flex-basis: 100% !important;
+}
+
+.board-pp-calc-price-input-wrapper .rs-ecp-bottom-box-item{
+    flex-basis: 24% !important;
+}
+.product-material-set-item{
+    flex-basis: 13% !important;
+}
+.product-material-set-item:nth-child(1) {
+    flex-basis: 22% !important;
+}
+.product-material-set-item:nth-child(2) {
+    flex-basis: 16% !important;
+}
+.product-material-set-item:nth-child(3) {
+    flex-basis: 10% !important;
+}
+.product-material-set-item:nth-child(7) {
+    flex-basis: 5% !important;
+}
+
+.pp-add-paper-btn{
+    background: linear-gradient(to right, #af5408 0%, #e98260 100%);
+}
+.pp-add-goods-btn {
+    background: linear-gradient(to right, #ab0199 0%, #d434d8 100%);
+}
+.pp-add-finished-board-btn {
+    background: linear-gradient(to right, #067e70 0%, #5bd2d4 100%);
+}
+
+.pp-add-set-item-btn {
+    background: linear-gradient(to right, #9b9603 0%, #eed000 100%);
+}
+.sales-cartItems-type-chip{
+    padding: 0 5px;
+    background: #00e5ff52;
+    border-radius: 5px;
+    border: 1px solid #0cb8aa;
+    color: #400951 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+.sales-po-product-header-item{
+    flex-basis: 18% !important;
+}
+.sales-po-product-header-item-remove{
+    flex-basis: 5% !important;
+}

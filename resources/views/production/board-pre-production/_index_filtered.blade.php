@@ -47,6 +47,7 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="sendToProduction({{$data->id}})"><i class="la la-hand-o-right m-r-5"></i> Send to Production</a>
+                                        <a class="dropdown-item" href="{{route('production.board-pre-production.calculate-price', $data->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Price</a>
                                         <a class="dropdown-item" href="{{ route('production.board-pre-production.get-production-details', $data->id) }}" ><i class="fa-solid fa-eye m-r-5"></i> View Details</a>
                                         <a class="dropdown-item" href="{{ route('production.board-pre-production.edit',$data->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.board-pre-production.delete',$data->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>

@@ -7,6 +7,7 @@
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Name</th>
                 <th class="erp-th text-center">Code</th>
+                <th class="erp-th text-center">Production Cost</th>
                 <th class="erp-th text-center">Note</th>
                 @if(hasPermission('manage-plate'))
                     <th class="erp-th text-center">Action </th>
@@ -32,6 +33,7 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->code??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $data->production_cost??'0' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->note??'N/A' }}</td>
                     @if(hasPermission('manage-plate'))
                         <td class="text-end erp-tbody-td">

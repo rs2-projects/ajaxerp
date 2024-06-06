@@ -45,6 +45,7 @@ class BoardEmbossedService
 
         $board_embossed = new BoardEmbossed();
         $board_embossed->name = $request->name;
+        $board_embossed->production_cost = $request->production_cost;
         $board_embossed->code = $request->code;
         $board_embossed->image = $image_path??null;
         $board_embossed->note = $request->note;
@@ -91,6 +92,7 @@ class BoardEmbossedService
         }
 
         $board_embossed->name = $request->name;
+        $board_embossed->production_cost = $request->production_cost;
         $board_embossed->code = $request->code;
         $board_embossed->image = $image_path?? $board_embossed->image;
         $board_embossed->note = $request->note;

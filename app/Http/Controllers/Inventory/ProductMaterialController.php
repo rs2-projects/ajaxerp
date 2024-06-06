@@ -148,4 +148,20 @@ class ProductMaterialController extends BackendController
 //            return $this->returnAjaxError([],$e->getMessage());
         }
     }
+
+    public function calculatePrice($id){
+        $this->setPageTitle("Calculate Price");
+        $this->setActiveMenu('inventory.product-material.index');
+        $data = $this->service->calculateData($id);
+        return  $this->view('inventory.product-material.calculate_price')->with($data);
+    }
+
+    public function calculatePriceStore(Request $request, $id){
+        try {
+            $this->service->calculatePriceStoreData($request, $id);
+            return $this->returnAjaxSuccess([], 'Price Calculated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
 }
