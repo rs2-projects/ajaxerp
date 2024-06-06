@@ -113,6 +113,16 @@ class InvoiceController extends BackendController
 
         $data = $this->service->editData($id);
 
+        if (!isset($data['invoice'])) {
+            return redirect()->route('sales.invoice.index')->with(['failed' => 'Invalid Invoice!']);
+        }
+
+        $invoice = $data['invoice'];
+
+        if($invoice->payment_status != $invoice::PAYMENT_STATUS_UNPAID){
+            return redirect()->route('sales.invoice.index')->with(['failed' => 'You can not edit this invoice!']);
+        }
+
         return $this->view('sales.invoice.edit')->with($data);
     }
     //Get edit invoice data
