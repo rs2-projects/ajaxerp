@@ -29,6 +29,14 @@ class InvoiceDetails extends Model
         self::DELETED_NO => 'No',
         self::DELETED_YES => 'Yes',
     ];
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [
+        self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
+    
     //Dispatched Status
     const DISPATCHED_NO = 0;
     const DISPATCHED_YES = 1;
