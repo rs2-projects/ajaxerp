@@ -117,6 +117,7 @@
                                         <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
+                                                    <input type="hidden" name="invoice_details_id[]" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif v-bind:value="cartItem.invoice_details_id">
                                                     <input type="hidden" name="product_id[]" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif v-bind:value="cartItem.id">
                                                     <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
@@ -791,6 +792,7 @@
                         item.price = item.srp;
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
+                        item.invoice_details_id = "";
                         let ab = this.cartItems.push(item);
                         this.updateCartItemPrice(ab - 1);
                     }
@@ -836,7 +838,11 @@
                     this.updateCartItemPrice(index);
                 },
                 removeItem(index) {
-                    this.cartItems.splice(index,1);
+                    if(this.cartItems.length <= 1) {
+                        showInfoAlert('Opps!', 'You can\'t remove all products!');
+                    }else{
+                        this.cartItems.splice(index,1);
+                    }
                 },
                 updatePrice(index) {
                     this.updateCartItemPrice(index);
