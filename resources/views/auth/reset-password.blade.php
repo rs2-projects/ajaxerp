@@ -6,7 +6,7 @@
 
             <!-- Account Logo -->
             <div class="account-logo">
-                <a href="#"><img src="{{ asset('assets') }}/img/logo2.png" alt="{{ config('app.name') }}"></a>
+                <a href="#"><img src="{{ asset('assets') }}/img/logo.webp" alt="{{ config('app.name') }}"></a>
             </div>
             <!-- /Account Logo -->
 
