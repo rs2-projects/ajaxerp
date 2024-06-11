@@ -700,6 +700,7 @@ class InvoiceService
                     'item_type' => $item_type,
                     'srp' => $item->unit_price,
                     'material_items' => $material_items,
+                    'invoice_details_id' => $item->id
                 ];
             });
         $data['invoice'] = $invoice;
@@ -747,10 +748,12 @@ class InvoiceService
             $invoice->save();
 
             if (isset($request->product_id) && is_array($request->product_id)) {
-                $product_ids = $request->product_id ?? [];
-                // have to check with item_type as well
+                // $invoice_details_ids = $request->invoice_details_id ?? [];
+                $invoice_details_ids = array_filter($request->invoice_details_id, function ($value) {
+                    return !is_null($value);
+                });
                 $delete_not_exist_product = InvoiceDetails::where('invoice_id', $invoice->id)
-                    ->whereNotIn('item_id', $product_ids)
+                    ->whereNotIn('id', $invoice_details_ids)
                     ->where('deleted', InvoiceDetails::DELETED_NO)
                     ->delete();
             }
@@ -801,6 +804,7 @@ class InvoiceService
 
                     $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->id)
                         ->where('item_id', $product)
+                        ->where('item_type', $item_type)
                         ->where('deleted', InvoiceDetails::DELETED_NO)
                         ->first();
 
