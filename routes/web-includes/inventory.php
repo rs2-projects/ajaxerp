@@ -55,7 +55,8 @@ Route::group(['prefix' => 'inventory'], function () {
 
         Route::post('import/boards', [ProductMaterialController::class, 'importBoards'])->name('inventory.product-material.import-boards')->middleware('permission:manage-product-material');
         Route::post('import/papers', [ProductMaterialController::class, 'importPapers'])->name('inventory.product-material.import-papers')->middleware('permission:manage-product-material');
-    
+        Route::post('import/others', [ProductMaterialController::class, 'importOthers'])->name('inventory.product-material.import-others')->middleware('permission:manage-product-material');
+
         // calculate price 
         Route::get('/{id}/calculate-price', [ProductMaterialController::class, 'calculatePrice'])->name('inventory.product-material.calculate-price');
         Route::post('/{id}/calculate-price/store', [ProductMaterialController::class, 'calculatePriceStore'])->name('inventory.product-material.calculate-price.store');

@@ -13,6 +13,7 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#boardProductImportModal">Board Products</a></li>
                             <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#paperProductImportModal">Paper Products</a></li>
+                            <li><a class="dropdown-item" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#otherProductImportModal">Other Products</a></li>
                         </ul>
                     </div>
                 </div>
@@ -92,6 +93,7 @@
     @include('inventory.product-material._purchase_history_modal')
     @include('inventory.product-material.__board_product_import_modal')
     @include('inventory.product-material.__paper_product_import_modal')
+    @include('inventory.product-material.__other_product_import_modal')
 @endsection
 
 @section('css')
