@@ -243,6 +243,19 @@ class EmployeeController extends BackendController
         return $this->returnAjaxSuccess([], 'User Role updated successfully');
     }
 
+    public function updatePassword(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'password' => 'required|min:6'
+            ]);
+            $this->service->updatePassword($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'User Role updated successfully');
+    }
+
     public function getUserLeaveNumberOfDays(Request $request, LeavesService $leavesService)
     {
         try {

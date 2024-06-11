@@ -34,7 +34,7 @@
                                             <div class="erp-filter-item flex-48">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Type <span class="text-red">*</span><span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Type"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="type" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
+                                                    <select class="select select-step" name="type" onchange="changeProductType(this)" required {{$product_material->countPurchaseDetails() > 0 ? 'disabled' : ''}}>
                                                         <option value="">Select Type</option>
                                                         @foreach($material_types as $key=>$type)
                                                             <option {{ ($key == $product_material->type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
@@ -42,6 +42,7 @@
                                                     </select>
                                                     @if($product_material->countPurchaseDetails() > 0)
                                                         <small class="text-red">Can't change due to having purchase</small>
+                                                        <input type="hidden" name="type" value="{{ $product_material->type }}">
                                                     @endif
                                                 </div>
                                             </div>
@@ -57,10 +58,10 @@
                                                     <input type="text" class="form-control " value="{{ $product_material->code }}" name="code" required>
                                                 </div>
                                             </div>
-                                            <div class="erp-filter-item flex-48">
+                                            <div class="erp-filter-item flex-48 {{ $product_material->type != $product_material::TYPE_OTHERS ? 'd-none' : ''}}" id="category_section">
                                                 <div class="input-block erp-step-input-block mb-0 two">
                                                     <label class="col-form-label">Category <span class="text-red">*</span> <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Category"><i class="fa-duotone fa-exclamation"></i></span></label>
-                                                    <select class="select select-step" name="product_material_category_id" required>
+                                                    <select class="select select-step" id="category_select" name="product_material_category_id" {{ $product_material->type != $product_material::TYPE_OTHERS ? '' : 'required'}}>
                                                         <option value="">Select Category</option>
                                                         @foreach($material_categories as $category)
                                                             <option value="{{ $category->id }}" {{( $category->id == $product_material->product_material_category_id) ? 'selected' : ''}}>{{ $category->name }}</option>
@@ -193,7 +194,7 @@
                                             <div class="erp-filter-item flex-100">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Select Section(Line) <span class="text-danger">*</span></label>
-                                                    <select class="section-multiselect sections" multiple="multiple" onchange="changeSections(this)" name="sections[]" id="sections_id" required>
+                                                    <select class="section-multiselect sections" multiple="multiple" name="sections[]" id="sections_id" required>
                                                         @foreach($sections as $section)
                                                             <option value="{{ $section->id }}" {{ in_array($section->id, $product_material_sections) ? 'selected' : '' }}>{{ $section->name }}</option>
                                                         @endforeach
@@ -205,7 +206,7 @@
                                                     <label class="col-form-label">Select Subsection <span class="text-danger">*</span></label>
                                                     <select class="racks-multiselect racks" multiple="multiple" name="racks[]" id="racks_id" required>
                                                         @foreach($racks as $rack)
-                                                            <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->name }}</option>
+                                                            <option value="{{ $rack->id }}" {{ in_array($rack->id, $product_material_racks) ? 'selected' : '' }}>{{ $rack->section->name .' -> '.$rack->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -270,6 +271,10 @@
             initSectionMultipleSelect();
             initRackMultipleSelect();
 
+            $("#sections_id").on('change', function () {
+                changeSections(this)
+            });
+
             $("#productMaterialUpdateForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -331,6 +336,7 @@
         }
 
         function changeSections(select) {
+            console.log('Change triggered');
 
             let section_ids = $(select).val();
             let url = "{{ route('inventory.product-material.get-racks-by-sections') }}";
@@ -342,6 +348,20 @@
                     toastr.error(response.message);
                 }
             });
+        }
+
+        function changeProductType(select){
+            let type = $(select).val();
+            if(type != 0){
+                $("#category_section").hide();
+                $("#category_select").removeAttr('required');
+                $("#category_select").val('');
+            }else{
+                $("#category_section").show();
+                $("#category_select").attr('required', 'true');
+                $("#category_section").removeClass('d-none');
+
+            }
         }
 
         function initSectionMultipleSelect() {

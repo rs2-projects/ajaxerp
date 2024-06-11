@@ -5,10 +5,26 @@
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
+                    @if(hasPermission('deliver-requested-materials'))
+                        @if($pre_production->delivery_status != $pre_production::DELIVERY_STATUS_DELIVERED)
+                            <div class="erp-add-employee-wrapper mb-3 flex-100">
+                                <div class="erp-add-employee">
+                                    <a href="{{ route('inventory.material-request.deliver', $pre_production->id) }}" class="btn add-btn erp-add-employee"><i class="la la-hand-o-right m-r-5"></i> Deliver</a>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+                    
+                    <div class="pgib-item flex-32 pd-item">
+                        <div class="input-block erp-step-input-block mb-0">
+                            <label class="col-form-label">Date</label>
+                            <h4>{{ !empty($pre_production->date) ? getFormattedDate($pre_production->date, 'd M, Y') : 'N/A' }}</h4>
+                        </div>
+                    </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <h4>{{ !empty($pre_production->order_details) ? $pre_production->order_details : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
@@ -34,7 +50,7 @@
                 </div>
                 <div class="pd-table-box">
                     <div class="pd-table-box-item-wrapper">
-                        @if($deliveries->count() > 0 && $board_deliveries->count() > 0)
+                        @if($deliveries->count() > 0 || $board_deliveries->count() > 0)
                             @foreach ($deliveries as $data )
                                 <div class="pd-table-box-item">
                                     <div class="pd-deliver-date-box">

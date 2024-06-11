@@ -6,8 +6,13 @@
             <input class="form-control" name="name" value="{{ $item->name }}" required type="text">
             <span class="name_error ie-span"></span>
         </div>
+        <div class="input-block mb-2">
+            <label class="col-form-label">Production Cost <span class="text-danger">*</span></label>
+            <input class="form-control" type="number" value="{{ $item->production_cost }}" name="production_cost" min="0" required>
+            <span class="model_error ie-span"></span>
+        </div>
         <div class="input-block mb-3">
-            <label class="col-form-label">Code </label>
+            <label class="col-form-label">Code <span class="text-danger">*</span></label>
             <input class="form-control" name="code" value="{{ $item->code }}" type="text" required>
         </div>
         <div class="input-block mb-2">

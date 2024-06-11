@@ -5,6 +5,15 @@
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
                 <div class="product-general-info-box d-flex flex-wrap pd-box">
+                    @if(hasPermission('manage-pre-productions'))
+                        @if($pre_production->is_verified ==$pre_production::VERIFIED_NO || $pre_production->is_verified ==$pre_production::VERIFIED_REVISION)
+                            <div class="erp-add-employee-wrapper mb-3 flex-100">
+                                <div class="erp-add-employee">
+                                    <a href="{{ route('production.pre-production.edit',$pre_production->id) }}" class="btn add-btn erp-add-employee"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Batch No</label>
@@ -14,13 +23,13 @@
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Date</label>
-                            <h4>{{ getFormattedDate($pre_production->date, 'd M, Y') }}</h4>
+                            <h4>{{ !empty($pre_production->date) ? getFormattedDate($pre_production->date, 'd M, Y') : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <h4>{{ !empty($pre_production->order_details) ? $pre_production->order_details : 'N/A' }}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
@@ -40,7 +49,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Description</label>
-                            <p>{{$pre_production->description ?? 'N/A'}}</p>
+                            <h4>{{$pre_production->description ?? 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>
@@ -191,13 +200,17 @@
                         <div class="d-flex justify-content-center">
                             <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
                                 <button class=" erp-search-btn text-center"  @if($pre_production->is_verified !=$pre_production::VERIFIED_YES) id="verifiedBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,1]) }}" @endif>
-                                    @if($pre_production->is_verified==$pre_production::VERIFIED_YES) Varified @else Verify @endif
+                                    @if($pre_production->is_verified==$pre_production::VERIFIED_YES) Verified @else Verify @endif
                                 </button>
                             </div>
                             @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
                                 <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                                    <button class=" erp-search-btn text-center" id="revisionBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.pre-production.change-status',[$pre_production->id,2]) }}">
-                                        @if($pre_production->is_verified==$pre_production::VERIFIED_REVISION) Revisioned @else Revision @endif</button>
+                                    @if($pre_production->is_verified ==$pre_production::VERIFIED_NO)
+                                        <button class=" erp-search-btn text-center" id="revisionBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id,2]) }}">
+                                            Revision</button>
+                                    @elseif($pre_production->is_verified ==$pre_production::VERIFIED_REVISION)
+                                        <h4 class="erp-search-btn" id="revisionBtn">Revisioned</h4>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -229,9 +242,6 @@
             background: #16b0ae;
             color: #fff;
             padding: 5px 20px;
-        }
-        #revisionBtn{
-            background: linear-gradient(to right, #0054cf 0%, #6a68dd 100%);
         }
     </style>
 @endsection

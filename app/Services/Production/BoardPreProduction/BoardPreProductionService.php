@@ -2,6 +2,7 @@
 
 namespace App\Services\Production\BoardPreProduction;
 
+use App\Imports\Production\BoardPreProductionImport;
 use App\Models\Machine;
 use App\Models\Production\BoardPreProduction;
 use App\Models\Production\BoardPreProductionMaterials;
@@ -19,6 +20,7 @@ use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BoardPreProductionService
 {
@@ -118,7 +120,7 @@ class BoardPreProductionService
             if (empty($board_category)) {
                 throw new \Exception("Category not found");
             }
-            
+
             $board = new FinishedGoods();
             $board->name = $request->code;
             $board->type = FinishedGoods::TYPE_BOARD;
@@ -160,7 +162,7 @@ class BoardPreProductionService
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = new BoardPreProductionMaterials();
-                        $material->type = $request->type;
+                        $material->type = $request->type[$key];
                         $material->board_pre_production_id = $pre_production->id;
                         $material->product_material_category_id =$product_material->product_material_category_id;
                         $material->product_material_id = $request->product_material_id[$key];
@@ -170,6 +172,15 @@ class BoardPreProductionService
                         $material->updated_by = auth()->user()->id;
                         $material->updated_at = now();
                         $material->save();
+
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
+                            $board->color_up = $request->product_material_id[$key];
+                            $board->save();
+                        }
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
+                            $board->color_down = $request->product_material_id[$key];
+                            $board->save();
+                        }
                     }
                 }
             }
@@ -186,7 +197,7 @@ class BoardPreProductionService
             ->where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
             ->first();
-              
+
         if(!$pre_production){
             throw new \Exception("Board Pre Production not found");
         }
@@ -197,7 +208,7 @@ class BoardPreProductionService
             ->where('type', FinishedGoods::TYPE_BOARD)
             ->where('id',$pre_production->finished_goods_id)
             ->first();
-            
+
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
@@ -242,7 +253,7 @@ class BoardPreProductionService
             ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
             ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP)
             ->first();
-            
+
         $data['paper_down_id'] = BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
             ->where('deleted', BoardPreProductionMaterials::DELETED_NO)
             ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
@@ -257,7 +268,6 @@ class BoardPreProductionService
         // dd($request->all());
         DB::beginTransaction();
         try {
-            
             $pre_production = BoardPreProduction::where('id', $id)
                 ->where('deleted', BoardPreProduction::DELETED_NO)
                 ->where('status', BoardPreProduction::STATUS_ACTIVE)
@@ -318,7 +328,8 @@ class BoardPreProductionService
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
-                            ->where('product_material_id', $material_id)
+                            ->where('product_material_category_id', $product_material->product_material_category_id)
+                            ->where('type', $request->type[$key])
                             ->first();
 
                         if (!empty($material)) {
@@ -328,7 +339,17 @@ class BoardPreProductionService
                             $material->updated_by = auth()->user()->id;
                             $material->updated_at = now();
                             $material->save();
+
+                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
+                                $board->color_up = $request->product_material_id[$key];
+                                $board->save();
+                            }
+                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
+                                $board->color_down = $request->product_material_id[$key];
+                                $board->save();
+                            }
                         }
+
                     }
                 }
             }
@@ -356,7 +377,8 @@ class BoardPreProductionService
 
     public function detailsData($id)
     {
-        $data['item'] = BoardPreProduction::where('id', $id)
+        $data['item'] = BoardPreProduction::with(['rawBoard', 'paperUp', 'paperDown'])
+            ->where('id', $id)
             ->where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
             ->first();
@@ -395,7 +417,7 @@ class BoardPreProductionService
             $pre_production->finished_goods_id = $board_pre_production->finished_goods_id;
             $pre_production->estimated_production_qty = $board_pre_production->estimated_quantity*$request->unit;
             $pre_production->notes = $board_pre_production->note;
-            $pre_production->is_verified = PreProduction::VERIFIED_YES;
+            $pre_production->is_verified = PreProduction::VERIFIED_NO;
             $pre_production->created_by = auth()->user()->id;
             $pre_production->created_at = Carbon::now();
             $pre_production->updated_by = auth()->user()->id;
@@ -441,10 +463,11 @@ class BoardPreProductionService
                 ->where('status', BoardPreProductionMaterials::STATUS_ACTIVE)
                 ->get();
 
-            $uniqueProductMaterials = [];
+            // $uniqueProductMaterials = [];
 
             foreach ($board_materials as $key => $data) {
                 $material = new PreProductionProcessMaterial();
+                $material->type = $data->type;
                 $material->pre_production_id = $pre_production->id;
                 $material->pre_production_process_id = $process->id;
                 $material->product_material_category_id = $data->product_material_category_id;
@@ -453,39 +476,57 @@ class BoardPreProductionService
                 $material->base_quantity = $data->quantity * $request->unit;
                 $material->save();
 
-                $material_id = $data->product_material_id;
-                $quantity = $data->quantity * $request->unit;
-                $category_id = $data->product_material_category_id;
-
-                if(isset($uniqueProductMaterials[$material_id])) {
-                    $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
-                } else {
-                    $uniqueProductMaterials[$material_id] = [
-                        'material_id' => $material_id,
-                        'category_id' => $category_id,
-                        'quantity' => $quantity,
-                    ];
-                }
-            }
-
-            foreach ($uniqueProductMaterials as $materialData) {
                 $material = new PreProductionMaterial();
                 $material->pre_production_id = $pre_production->id;
-                $material->product_material_category_id = $materialData['category_id'];
-                $material->product_material_id = $materialData['material_id'];
-                $material->quantity = $materialData['quantity'];
-                $material->base_quantity = $materialData['quantity'];
+                $material->product_material_category_id = $data->product_material_category_id;
+                $material->product_material_id = $data->product_material_id;
+                $material->quantity = $data->quantity * $request->unit;
+                $material->base_quantity = $data->quantity * $request->unit;
                 $material->created_by = auth()->user()->id;
                 $material->created_at = Carbon::now();
                 $material->updated_by = auth()->user()->id;
                 $material->updated_at = Carbon::now();
                 $material->save();
+
+                // $type = $data->type;
+                // $material_id = $data->product_material_id;
+                // $quantity = $data->quantity * $request->unit;
+                // $category_id = $data->product_material_category_id;
+
+                // if(isset($uniqueProductMaterials[$material_id])) {
+                //     $uniqueProductMaterials[$material_id]['quantity'] += $quantity;
+                // } else {
+                //     $uniqueProductMaterials[$material_id] = [
+                //         'material_id' => $material_id,
+                //         'category_id' => $category_id,
+                //         'quantity' => $quantity,
+                //     ];
+                // }
             }
+
+            // foreach ($uniqueProductMaterials as $materialData) {
+            //     $material = new PreProductionMaterial();
+            //     $material->pre_production_id = $pre_production->id;
+            //     $material->product_material_category_id = $materialData['category_id'];
+            //     $material->product_material_id = $materialData['material_id'];
+            //     $material->quantity = $materialData['quantity'];
+            //     $material->base_quantity = $materialData['quantity'];
+            //     $material->created_by = auth()->user()->id;
+            //     $material->created_at = Carbon::now();
+            //     $material->updated_by = auth()->user()->id;
+            //     $material->updated_at = Carbon::now();
+            //     $material->save();
+            // }
 
         }catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function bulkImport($request)
+    {
+        Excel::import(new BoardPreProductionImport(), $request->product_file);
     }
 }

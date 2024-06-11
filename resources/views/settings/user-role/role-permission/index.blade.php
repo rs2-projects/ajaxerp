@@ -18,7 +18,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="manage-administration-settings" class="check" name="permissions[]" value="manage-administration-settings" 
+                                            <input type="checkbox" id="manage-administration-settings" class="check" name="permissions[]" value="manage-administration-settings"
                                                 {{ in_array('manage-administration-settings', $permissions) ? 'checked' : ''}}>
                                             <label for="manage-administration-settings" class="checktoggle">checkbox</label>
                                         </div>
@@ -30,7 +30,7 @@
                                     </div>
                                     <div class="rs-erp-permission-c-item ">
                                         <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="manage-payroll-settings" class="check" name="permissions[]" value="manage-payroll-settings" 
+                                            <input type="checkbox" id="manage-payroll-settings" class="check" name="permissions[]" value="manage-payroll-settings"
                                             {{ in_array('manage-payroll-settings', $permissions) ? 'checked' : ''}}>
                                             <label for="manage-payroll-settings" class="checktoggle">checkbox</label>
                                         </div>
@@ -60,9 +60,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
-                            
+
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
                                     <h4>Payroll</h4>
@@ -103,7 +103,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
@@ -414,7 +414,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
@@ -613,7 +613,32 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Material Requests</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-material-requests" data-required-remove="deliver-requested-materials" class="check" name="permissions[]" value="view-material-requests"
+                                                {{ in_array('view-material-requests', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-material-requests" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Deliver Requested Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="deliver-requested-materials" data-required-add="view-material-requests" class="check" name="permissions[]" value="deliver-requested-materials"
+                                                {{ in_array('deliver-requested-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="deliver-requested-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
@@ -763,9 +788,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
-                            
+
                             {{-- sales & order --}}
                             <div class="rs-erp-permission-item">
                                 <div class="rs-erp-permission-item-title-box">
@@ -843,7 +868,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
 
                             {{-- pre production & production --}}
@@ -911,30 +936,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
-                                    <div class="rs-erp-permission-c-item">
-                                        <h4>View Material Requests</h4>
-                                    </div>
-                                    <div class="rs-erp-permission-c-item ">
-                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="view-material-requests" data-required-remove="deliver-requested-materials" class="check" name="permissions[]" value="view-material-requests"
-                                            {{ in_array('view-material-requests', $permissions) ? 'checked' : ''}}>
-                                            <label for="view-material-requests" class="checktoggle">checkbox</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
-                                    <div class="rs-erp-permission-c-item">
-                                        <h4>Deliver Requested Materials</h4>
-                                    </div>
-                                    <div class="rs-erp-permission-c-item ">
-                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
-                                            <input type="checkbox" id="deliver-requested-materials" data-required-add="view-material-requests" class="check" name="permissions[]" value="deliver-requested-materials"
-                                            {{ in_array('deliver-requested-materials', $permissions) ? 'checked' : ''}}>
-                                            <label for="deliver-requested-materials" class="checktoggle">checkbox</label>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
                                     <div class="rs-erp-permission-c-item">
@@ -998,6 +999,153 @@
                                 </div>
                             </div>
 
+                            {{-- board pre production & production --}}
+                            <div class="rs-erp-permission-item">
+                                <div class="rs-erp-permission-item-title-box">
+                                    <h4>Board Production & Pre Production</h4>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-board-pre-productions" data-required-remove="manage-board-pre-productions,verify-board-pre-productions" class="check" name="permissions[]" value="view-board-pre-productions"
+                                            {{ in_array('view-board-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-board-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-board-pre-productions" data-required-add="view-board-pre-productions" class="check" name="permissions[]" value="manage-board-pre-productions"
+                                            {{ in_array('manage-board-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-board-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Verify Pre Productions</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="verify-board-pre-productions" data-required-add="view-board-pre-productions" class="check" name="permissions[]" value="verify-board-pre-productions"
+                                            {{ in_array('verify-board-pre-productions', $permissions) ? 'checked' : ''}}>
+                                            <label for="verify-board-pre-productions" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Production</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-board-production" data-required-remove="receive-board-production-materials,dispatch-board-production-materials,production-board-print-barcode" class="check" name="permissions[]" value="view-board-production"
+                                            {{ in_array('view-board-production', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-board-production" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Receive Production Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="receive-board-production-materials" data-required-add="view-board-production" class="check" name="permissions[]" value="receive-board-production-materials"
+                                            {{ in_array('receive-board-production-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="receive-board-production-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Dispatch Production Materials</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="dispatch-board-production-materials" data-required-add="view-board-production" class="check" name="permissions[]" value="dispatch-board-production-materials"
+                                            {{ in_array('dispatch-board-production-materials', $permissions) ? 'checked' : ''}}>
+                                            <label for="dispatch-board-production-materials" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Production Print Barcode</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="production-board-print-barcode" data-required-add="view-board-production" class="check" name="permissions[]" value="production-board-print-barcode"
+                                            {{ in_array('production-board-print-barcode', $permissions) ? 'checked' : ''}}>
+                                            <label for="production-board-print-barcode" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- miscellaneous --}}
+                            <div class="rs-erp-permission-item">
+                                <div class="rs-erp-permission-item-title-box">
+                                    <h4>Miscellaneous</h4>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Plate</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-plate" data-required-remove="manage-plate" class="check" name="permissions[]" value="view-plate"
+                                            {{ in_array('view-plate', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-plate" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Plate</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-plate" data-required-add="view-plate" class="check" name="permissions[]" value="manage-plate"
+                                            {{ in_array('manage-plate', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-plate" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Production Staff</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-production-staff" data-required-remove="manage-production-staff" class="check" name="permissions[]" value="view-production-staff"
+                                            {{ in_array('view-production-staff', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-production-staff" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Production Staff</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-production-staff" data-required-add="view-production-staff" class="check" name="permissions[]" value="manage-production-staff"
+                                            {{ in_array('manage-production-staff', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-production-staff" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="erp-filter-box d-flex align-items-center justify-content-center flex-100 pt-4">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-center flex-100">
                                     <div class="erp-filter-item">
@@ -1010,10 +1158,10 @@
                         </div>
                     </form>
                 </div>
-                
+
             </div>
         </div>
-    
+
 
     </div>
     <!--End::row-1 -->

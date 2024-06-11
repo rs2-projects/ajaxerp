@@ -313,7 +313,6 @@ class ProductionService
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('id', $id)
             ->where('status', PreProduction::STATUS_ACTIVE)
-            ->where('type', PreProduction::TYPE_OTHERS)
             ->first();
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
@@ -492,7 +491,6 @@ class ProductionService
         try {
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
-                ->where('type', PreProduction::TYPE_OTHERS)
                 ->where('id', $id)
                 ->first();
             if(!$pre_production){
@@ -517,10 +515,10 @@ class ProductionService
             }
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
-                
+
                 foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
                     if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
-                        
+
                         foreach($request->code[$detailsKey] as $itemKey => $itemCode){
                             if($type == 'board'){
                                 $item = PreProductionBoardDeliveryDetailsItem::where('received', PreProductionBoardDeliveryDetailsItem::RECEIVED_NO)
@@ -585,7 +583,7 @@ class ProductionService
                                 ->where('barcode', $itemCode)
                                 ->count();
                         }
-                        
+
                         $details = $details_model::find($detailsId);
 
                         if($item_count > 0){
@@ -605,12 +603,12 @@ class ProductionService
                         ->where('pre_production_id', $id)
                         ->where('pre_production_board_delivery_id', $delivery_id)
                         ->count();
-                    
+
                     // $processing_count = $details_model::where('pre_production_board_delivery_id', $delivery_id)
                     //     ->where('pre_production_id', $id)
                     //     ->where('received_status', $details_model::RECEIVED_STATUS_PARTIAL)
                     //     ->exists();
-                    
+
                 }else{
                     $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
                         ->where('status', $details_model::STATUS_ACTIVE)
@@ -664,7 +662,7 @@ class ProductionService
             // }else if($other_delivery_processing || $board_delivery_processing){
             //     $pre_production->received_status = PreProduction::RECEIVED_STATUS_PARTIAL;
             // }
-            
+
             if ($other_delivery_count == 0 && $board_delivery_count == 0) {
                 $pre_production->received_status = PreProduction::RECEIVED_STATUS_DELIVERED;
             } else {
@@ -683,7 +681,6 @@ class ProductionService
     public function getDeliveryData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
-            ->where('type', PreProduction::TYPE_OTHERS)
             ->where('id', $id)
             ->first();
         if(!$pre_production){
@@ -694,7 +691,7 @@ class ProductionService
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'delivery_details', 
+                'delivery_details',
                 'delivery_details.material',
                 'delivery_details.material.category',
                 'delivery_details.material.product',
@@ -706,7 +703,7 @@ class ProductionService
             ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'board_delivery_details', 
+                'board_delivery_details',
                 'board_delivery_details.board',
                 'board_delivery_details.board.category',
                 'board_delivery_details.board.product',
@@ -741,7 +738,7 @@ class ProductionService
         if(!$pre_production){
             throw new \Exception('Pre Production not found');
         }
-        
+
         if($request->type == 'other'){
             $valid_code = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
                 ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
@@ -775,24 +772,26 @@ class ProductionService
         $material_deliveries= PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
+            ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_PENDING)
             ->with(
-                'delivery_details', 
-                'delivery_details.material',
-                'delivery_details.material.category',
-                'delivery_details.material.product',
-                'delivery_details.pending_scans',
+                'scan_details',
+                'scan_details.material',
+                'scan_details.material.category',
+                'scan_details.material.product',
+                'scan_details.pending_scans',
             )
             ->get();
 
         $board_deliveries= PreProductionBoardDelivery::where('deleted', PreProductionBoardDelivery::DELETED_NO)
             ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
+            ->where('received_status', '!=', PreProductionBoardDelivery::RECEIVED_STATUS_PENDING)
             ->with(
-                'board_delivery_details', 
-                'board_delivery_details.board',
-                'board_delivery_details.board.category',
-                'board_delivery_details.board.product',
-                'board_delivery_details.pending_scans',
+                'board_scan_details',
+                'board_scan_details.board',
+                'board_scan_details.board.category',
+                'board_scan_details.board.product',
+                'board_scan_details.pending_scans',
             )
             ->get();
 
@@ -858,7 +857,7 @@ class ProductionService
                                     ->first();
                             }else{
                                 $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES)
-                                    ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)    
+                                    ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
                                     ->where('pre_production_id', $id)
                                     ->where('pre_production_material_delivery_id', $delivery_id)
                                     ->where('pre_production_material_delivery_details_id', $detailsId)
@@ -924,7 +923,7 @@ class ProductionService
                                 ->where('barcode', $itemCode)
                                 ->count();
                         }
-                        
+
                         $details = $details_model::find($detailsId);
 
                         if($item_count > 0){
@@ -1136,7 +1135,8 @@ class ProductionService
     public function dispatchStoreData($request, $id){
         DB::beginTransaction();
         try {
-            $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            $pre_production = PreProduction::with('finishedGoods')
+                ->where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
                 ->where('id', $id)
                 ->first();
@@ -1179,6 +1179,11 @@ class ProductionService
             $dispatch->save();
             $dispatch->dispatch_no = 1000 + $dispatch->id;
             $dispatch->save();
+
+            $finishedGoods = $pre_production->finishedGoods;
+            $finishedGoods->total_finished_qty += $request->dispatched_qty;
+            $finishedGoods->available_qty += $request->dispatched_qty;
+            $finishedGoods->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -1496,7 +1501,7 @@ class ProductionService
                         ->where('deleted', PreProductionBoard::DELETED_NO)
                         ->where('status', PreProductionBoard::STATUS_ACTIVE)
                         ->first();
-                        
+
                     if($board){
                         $board->quantity += $boardData['quantity'];
                         $board->extra_quantity += $boardData['quantity'];

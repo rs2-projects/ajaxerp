@@ -30,6 +30,8 @@ class ProductMaterialCategoryService
     {
         $category = new ProductMaterialCategory();
         $category->name = $request->name;
+        $category->srp_markup_percent = $request->srp_markup_percent;
+        $category->wholesale_discount_percent = $request->wholesale_discount_percent;
         $category->description = $request->description;
         $category->created_by = auth()->user()->id;
         $category->created_at = now();
@@ -58,6 +60,8 @@ class ProductMaterialCategoryService
             throw new \Exception('Product Material Category not found');
         }
         $category->name = $request->name;
+        $category->srp_markup_percent = $request->srp_markup_percent;
+        $category->wholesale_discount_percent = $request->wholesale_discount_percent;
         $category->description = $request->description;
         $category->updated_by = auth()->user()->id;
         $category->updated_at = now();

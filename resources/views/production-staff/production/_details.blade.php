@@ -9,7 +9,7 @@
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Order Details</label>
-                            <h4>{{$pre_production->order_details}}</h4>
+                            <h4>{{ !empty($pre_production->order_details) ? $pre_production->order_details : 'N/A'}}</h4>
                         </div>
                     </div>
                     <div class="pgib-item flex-32 pd-item">
@@ -49,7 +49,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Description</label>
-                            <p>{{$pre_production->description ?? 'N/A'}}</p>
+                            <h4>{{$pre_production->description ?? 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>
@@ -696,9 +696,9 @@
                         this.deliveries = response.data.deliveries.map(delivery_data => {
                                 let details_data = [];
                                 if(delivery_data.type == 'other'){
-                                    details_data = delivery_data?.delivery.delivery_details;
+                                    details_data = delivery_data?.delivery.scan_details;
                                 }else{
-                                    details_data = delivery_data?.delivery.board_delivery_details;
+                                    details_data = delivery_data?.delivery.board_scan_details;
                                 }
                                 return {
                                     ...delivery_data,
@@ -743,9 +743,9 @@
                     this.deliveries = response.map(delivery_data => {
                         let details_data = [];
                         if(delivery_data.type == 'other'){
-                            details_data = delivery_data?.delivery.delivery_details;
+                            details_data = delivery_data?.delivery.scan_details;
                         }else{
-                            details_data = delivery_data?.delivery.board_delivery_details;
+                            details_data = delivery_data?.delivery.board_scan_details;
                         }
                         return {
                             ...delivery_data,

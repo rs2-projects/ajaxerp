@@ -168,8 +168,8 @@ class PurchaseCalculatePriceService
     {
         try {
             $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
-                $q->where('product_type', ProductMaterial::TYPE_BOARD);
-            }])
+                    $q->whereIn('product_type', [ProductMaterial::TYPE_BOARD,ProductMaterial::TYPE_PAPER]);
+                }])
                 ->where('id', $purchase_id)
                 ->where('deleted', ProductMaterialPurchase::DELETED_NO)
                 ->first();

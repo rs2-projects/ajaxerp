@@ -24,6 +24,7 @@ class StoreMachineRequest extends FormRequest
         return [
             'name' => 'required',
             'model' => 'required',
+            'production_cost' => 'required',
         ];
     }
 }

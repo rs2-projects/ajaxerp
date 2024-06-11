@@ -17,12 +17,16 @@ use App\Models\Products\ProductMaterialCategory;
 use App\Models\Products\ProductMaterialRack;
 use App\Models\Products\ProductMaterialSection;
 use App\Services\Common\ImageUploadService;
+use App\Traits\LatestCalculatedPurchaseCostTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductMaterialService
 {
+    private $paginate_limit;
+    use LatestCalculatedPurchaseCostTrait;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -67,6 +71,22 @@ class ProductMaterialService
 
         $keyword_filtered = $request->keyword_filtered;
         $category_filtered = $request->category_filtered;
+        $status_filtered = $request->status_filtered;
+
+        switch ($status_filtered){
+            case 'board':
+                $type = ProductMaterial::TYPE_BOARD;
+                break;
+            case 'paper':
+                $type = ProductMaterial::TYPE_PAPER;
+                break;
+            case 'other':
+                $type = ProductMaterial::TYPE_OTHERS;
+                break;
+            case 'all':
+                $type = "";
+                break;
+        }
 
         $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where(function ($q) use ($keyword_filtered){
@@ -79,6 +99,11 @@ class ProductMaterialService
             ->where(function ($q) use ($category_filtered){
                 if ($category_filtered !=''){
                     $q->where('product_material_category_id', $category_filtered);
+                }
+            })
+            ->where(function ($q) use ($type){
+                if ($type !=''){
+                    $q->where('type', $type);
                 }
             })
             ->orderBy('name', 'asc')
@@ -107,11 +132,24 @@ class ProductMaterialService
                 $image_path = $image_path['path'];
             }
 
+            $type = $request->type;
+            if($type == ProductMaterial::TYPE_BOARD){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_BOARD)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else if($type == ProductMaterial::TYPE_PAPER){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_PAPER)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else{
+                $product_material_category_id = $request->product_material_category_id;
+            }
+
             $product_material = new ProductMaterial();
-            $product_material->type = $request->type ?? ProductMaterial::TYPE_OTHERS;
+            $product_material->type = $type ?? ProductMaterial::TYPE_OTHERS;
             $product_material->name = $request->name;
             $product_material->image = $image_path??null;
-            $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->product_material_category_id = $product_material_category_id;
             $product_material->code = $request->code;
             $product_material->unit_type = $request->unit_type;
             $product_material->low_stock_warning = $request->low_stock_warning;
@@ -240,8 +278,9 @@ class ProductMaterialService
                 ->orderBy('name', 'asc')
                 ->get();
 
-            $data['racks'] = WarehouseSectionRack::where('warehouse_id', $data['product_material']->warehouse_id)
-                ->whereIn('id', $data['product_material_racks'])
+            $data['racks'] = WarehouseSectionRack::with('section')
+                ->where('warehouse_id', $data['product_material']->warehouse_id)
+                ->whereIn('warehouse_section_id', $data['product_material_sections'])
                 ->where('deleted', WarehouseSectionRack::DELETED_NO)
                 ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
                 ->orderBy('name', 'asc')
@@ -283,10 +322,22 @@ class ProductMaterialService
                 $image_path = $image_path['path'];
             }
 
+            $type = $request->type;
+            if($type == ProductMaterial::TYPE_BOARD){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_BOARD)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else if($type == ProductMaterial::TYPE_PAPER){
+                $product_material_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_PAPER)
+                    ->first();
+                $product_material_category_id = $product_material_category->id;
+            }else{
+                $product_material_category_id = $request->product_material_category_id;
+            }
             $product_material->name = $request->name;
-            $product_material->type = $request->type ?? $product_material->type;
+            $product_material->type = $type ?? $product_material->type;
             $product_material->image = $image_path??$product_material->image;
-            $product_material->product_material_category_id = $request->product_material_category_id;
+            $product_material->product_material_category_id = $product_material_category_id;
             $product_material->warehouse_id = $request->warehouse_id;
             $product_material->code = $request->code;
             $product_material->unit_type = $request->unit_type;
@@ -471,7 +522,8 @@ class ProductMaterialService
     public function getRacksBySectionsData($request)
     {
         $section_ids = $request->section_ids??[];
-        $data['racks'] = WarehouseSectionRack::whereIn('warehouse_section_id', $section_ids)
+        $data['racks'] = WarehouseSectionRack::with('section')
+            ->whereIn('warehouse_section_id', $section_ids)
             ->where('deleted', WarehouseSectionRack::DELETED_NO)
             ->where('status', WarehouseSectionRack::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
@@ -501,5 +553,45 @@ class ProductMaterialService
     public function importPaperProducts($request)
     {
         Excel::import(new PaperProductsImport(), $request->product_file);
+    }
+    
+
+    public function calculateData($id){
+        $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        if (!$material) {
+            throw new \Exception('Product Material Not Found');
+        }
+        $data['material'] = $material;
+
+        $material_cost = $this->getLatestCalculatedPurchaseCost($id);
+        $data['material_cost'] = $material_cost;
+
+        return $data; 
+    }
+
+    public function calculatePriceStoreData($request, $id){
+        $material = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        if (!$material) {
+            throw new \Exception('Product Material Not Found');
+        }
+
+        $fixed_percent = 20;
+        $material->rp_cost = $request->rp_cost;
+        $material->srp_markup_percent = $request->srp_markup_percent;
+        $material->wholesale_discount_percent = $request->wholesale_discount_percent;
+        $srp_with_discount = $request->rp_cost * ($request->srp_markup_percent / 100);
+        $material->srp_with_discount = $srp_with_discount;
+        $material->rp_srp = $srp_with_discount / (1 - ($fixed_percent / 100));
+        $material->wholesale = $srp_with_discount * (1 - ($request->wholesale_discount_percent/100));
+        $material->price_calculated = ProductMaterial::PRICE_CALCULATED_YES;
+        $material->save();
     }
 }

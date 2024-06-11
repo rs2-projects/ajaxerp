@@ -6,7 +6,7 @@
 
             <!-- Account Logo -->
             <div class="account-logo">
-                <a href="#"><img src="{{ asset('assets') }}/img/logo2.png" alt="Dreamguy's Technologies"></a>
+                <a href="#"><img src="{{ asset('assets') }}/img/logo2.png" alt="{{ config('app.name') }}"></a>
             </div>
             <!-- /Account Logo -->
 
@@ -21,7 +21,7 @@
                         <input type="hidden" name="redirectTo" value="{{ request()->redirectTo }}">
                         <div class="input-block mb-4">
                             <label class="col-form-label">Email/Username Address</label>
-                            <input class="form-control" type="text" name="email" value="" required>
+                            <input class="form-control" type="text" name="email" value="{{ old('email') }}" required>
                             <span class="email_error ie-span"></span>
                         </div>
                         <div class="input-block mb-4">
@@ -30,7 +30,7 @@
                                     <label class="col-form-label">Password</label>
                                 </div>
                                 <div class="col-auto">
-                                    <a class="text-muted" href="#">
+                                    <a class="text-muted" href="{{ route('forgot-password') }}">
                                         Forgot password?
                                     </a>
                                 </div>

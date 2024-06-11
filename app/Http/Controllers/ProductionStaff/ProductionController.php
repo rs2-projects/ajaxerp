@@ -80,6 +80,8 @@ class ProductionController extends BackendController
         try {
             $this->service->receiveStoreData($request, $id);
             $data = $this->service->getDeliveryData($id);
+            session()->flash('success', "Received successfully");
+            $data['redirectUri'] = route('production-staff.production.production.index');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
@@ -146,7 +148,7 @@ class ProductionController extends BackendController
     }
 
     public function updateVerifyOutput($id, $type)
-    {   
+    {
         try {
             $data = $this->service->updateVerifyOutput($id, $type);
             return $this->returnAjaxSuccess([$data], 'Verified Successfully');

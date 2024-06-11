@@ -5,9 +5,9 @@
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Product Name & Code </th>
                 <th class="erp-th">Quantity </th>
-                <th class="erp-th text-center">Embossed Up </th>
+                <th class="erp-th text-center">Plate Up </th>
                 <th class="erp-th text-center">Color Up </th>
-                <th class="erp-th text-center">Embossed Down </th>
+                <th class="erp-th text-center">Plate Down </th>
                 <th class="erp-th text-center">Color Down </th>
                 {{-- @if(hasPermission( 'manage-finished-goods')) --}}
 {{--                    <th class="erp-th text-center">Action </th>--}}
@@ -34,9 +34,9 @@
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->available_qty }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->embossed_ups?->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->color_ups?->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->embossed_downs?->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->color_downs?->name??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $data->color_ups?->name ?? 'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $data->embossed_ups?->name??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $data->color_downs?->name ?? 'N/A' }}</td>
                     {{-- @if(hasPermission('manage-finished-goods')) --}}
                         {{--<td class="text-end erp-tbody-td">
                             <div class="erp-action-t">

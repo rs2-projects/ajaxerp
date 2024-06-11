@@ -29,11 +29,14 @@ class LeavesService
             ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
             ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
             ->first();
-        if (empty($salarySetEmployee)) {
-            throw new \Exception("Please Contact with Admin For Your Salary Set");
-        }
+        
+        $data['salarySetEmployee'] = $salarySetEmployee;
+            
+        // if (empty($salarySetEmployee)) {
+        //     throw new \Exception("Please Contact with Admin For Your Salary Set");
+        // }
 
-        $salarySetLeaveTypes = SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySetEmployee->settings_salary_set_id)
+        $salarySetLeaveTypes = SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySetEmployee?->settings_salary_set_id)
             ->where('deleted', SettingsSalarySetLeaveType::DELETED_NO)
             ->where('status', SettingsSalarySetLeaveType::STATUS_ACTIVE)
             ->pluck('settings_leave_type_id')->toArray();

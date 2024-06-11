@@ -2,6 +2,7 @@
 
 namespace App\Services\Production\BoardProduction;
 
+use App\Models\Machine;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionMaterial;
 use App\Models\Production\PreProductionMaterialDelivery;
@@ -9,11 +10,17 @@ use App\Models\Production\PreProductionMaterialDeliveryDetails;
 use App\Models\Production\PreProductionMaterialDeliveryDetailsItems;
 use App\Models\Production\PreProductionProcess;
 use App\Models\Production\PreProductionProcessMachine;
+use App\Models\Production\PreProductionProcessMaterial;
 use App\Models\Production\ProductionDispatch;
+use App\Models\Production\ProductionStaff;
+use App\Models\Products\BoardEmbossed;
+use App\Models\Products\FinishedGoods;
+use App\Models\Products\ProductMaterial;
 use Illuminate\Support\Facades\DB;
 
 class BoardProductionService
 {
+    private $paginate_limit;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -91,7 +98,7 @@ class BoardProductionService
             })
             ->has('pendingPreProductionMaterialDeliveries')
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-        
+
         $data['view'] = view('production.board-production._pending_for_receive_filtered', $data)->render();
         return $data;
     }
@@ -147,6 +154,112 @@ class BoardProductionService
         return $data;
     }
 
+    // not in use
+    // public function editData($id){
+    //     $pre_production = PreProduction::where('id', $id)
+    //         ->where('deleted', PreProduction::DELETED_NO)
+    //         ->where('status', PreProduction::STATUS_ACTIVE)
+    //         ->where('type', PreProduction::TYPE_BOARD)
+    //         ->where('is_verified', PreProduction::VERIFIED_REVISION)
+    //         ->first();
+
+    //     if(!$pre_production){
+    //         throw new \Exception("Board Production not found");
+    //     }
+    //     $data['pre_production'] = $pre_production;
+
+    //     $data['board'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+    //         ->where('status', FinishedGoods::STATUS_ACTIVE)
+    //         ->where('type', FinishedGoods::TYPE_BOARD)
+    //         ->where('id',$pre_production->finished_goods_id)
+    //         ->first();
+
+    //     $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
+    //         ->where('status', Machine::STATUS_ACTIVE)
+    //         ->orderBy('id', 'desc')
+    //         ->get();
+
+    //     $process = PreProductionProcess::where('pre_production_id', $pre_production->id)
+    //         ->where('deleted', PreProductionProcess::DELETED_NO)
+    //         ->where('status', PreProductionProcess::STATUS_ACTIVE)
+    //         ->first();
+
+    //     $data['process'] = $process;
+
+    //     $data['process_machine'] = PreProductionProcessMachine::where('pre_production_id', $pre_production->id)
+    //         ->where('pre_production_process_id', $process->id)
+    //         ->first();
+
+    //     $data['finished_products'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+    //         ->where('status', FinishedGoods::STATUS_ACTIVE)
+    //         ->where('type', FinishedGoods::TYPE_BOARD)
+    //         ->orderBy('id', 'desc')
+    //         ->get();
+
+    //     $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
+    //         ->where('status', ProductionStaff::STATUS_ACTIVE)
+    //         ->orderBy('id', 'desc')
+    //         ->get();
+
+    //     $data['boards'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where('status', ProductMaterial::STATUS_ACTIVE)
+    //         ->where('type', ProductMaterial::TYPE_BOARD)
+    //         ->orderBy('name', 'asc')
+    //         ->get();
+
+    //     $data['plates'] = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
+    //         ->where('status', BoardEmbossed::STATUS_ACTIVE)
+    //         ->orderBy('name', 'asc')
+    //         ->get();
+
+    //     $data['papers'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where('status', ProductMaterial::STATUS_ACTIVE)
+    //         ->where('type', ProductMaterial::TYPE_PAPER)
+    //         ->orderBy('name', 'asc')
+    //         ->get();
+
+    //     $data['raw_board_id'] = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
+    //         ->where('type', PreProductionProcessMaterial::TYPE_RAW_BOARD)
+    //         ->first();
+
+    //     $data['paper_up_id'] = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
+    //         ->where('type', PreProductionProcessMaterial::TYPE_PAPER_UP)
+    //         ->first();
+
+    //     $data['paper_down_id'] = PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
+    //         ->where('type', PreProductionProcessMaterial::TYPE_PAPER_DOWN)
+    //         ->first();
+
+    //     return $data;
+    // }
+
+    public function pendingVerificationData($request)
+    {
+
+        $keyword_filtered = $request->keyword_filtered ?? null;
+        $verification_status = $request->status_filtered;
+        $query = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_BOARD);
+
+        if ($verification_status == 'pending') {
+            $query->where('is_verified', PreProduction::VERIFIED_NO);
+        } elseif ($verification_status == 'rejected') {
+            $query->where('is_verified', PreProduction::VERIFIED_REJECTED);
+        }
+
+        $query->where(function ($q) use ($keyword_filtered) {
+            if ($keyword_filtered != '') {
+                $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
+            }
+        });
+        $data['pre_productions'] = $query->orderBy('id', 'desc')->paginate($this->paginate_limit);
+        $data['view'] = view('production.pending-board-production._index_filtered', $data)->render();
+
+        return $data;
+    }
+
+
     public function detailsData($id){
         $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
             ->where('status', PreProduction::STATUS_ACTIVE)
@@ -164,6 +277,47 @@ class BoardProductionService
             ->where('status', PreProductionProcess::STATUS_ACTIVE)
             ->first();
         return $data;
+    }
+
+    public function pendingDetailsData($id){
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('type', PreProduction::TYPE_BOARD)
+            ->where('id', $id)
+            ->first();
+        if(!$pre_production){
+            throw new \Exception('Pre Production not found');
+        }
+        $data['pre_production'] = $pre_production;
+        $data['p_machine'] = PreProductionProcessMachine::where('pre_production_id', $pre_production->id)
+            ->first();
+        $data['board_process'] = PreProductionProcess::where('pre_production_id', $pre_production->id)
+            ->where('deleted', PreProductionProcess::DELETED_NO)
+            ->where('status', PreProductionProcess::STATUS_ACTIVE)
+            ->first();
+        return $data;
+    }
+
+    public function verificationStatusUpdate($id, $status)
+    {
+        try {
+            $pre_production = PreProduction::where('id', $id)
+                ->where('deleted', PreProduction::DELETED_NO)
+                ->first();
+            if (!$pre_production) {
+                throw new \Exception('Pre Production not found');
+            }
+            $pre_production->is_verified = $status;
+            $pre_production->updated_by = auth()->user()->id;
+            $pre_production->updated_at = now();
+            $pre_production->save();
+
+            $data['status'] = $status;
+            return $data;
+
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function statusUpdateData($id, $processId, $status)
@@ -203,7 +357,7 @@ class BoardProductionService
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_PROCESSING;
                 $pre_production->updated_by = auth()->user()->id;
                 $pre_production->updated_at = now();
-                $pre_production->save();  
+                $pre_production->save();
             }
 
             $count_completed = PreProductionProcess::where('pre_production_id', $id)
@@ -223,7 +377,7 @@ class BoardProductionService
                 $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
                 $pre_production->updated_by = auth()->user()->id;
                 $pre_production->updated_at = now();
-                $pre_production->save();  
+                $pre_production->save();
             }
         }catch (\Exception $e) {
             DB::rollBack();
@@ -299,10 +453,10 @@ class BoardProductionService
             }
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
-                
+
                 foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
                     if($detailsId != '' && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0){
-                        
+
                         foreach($request->code[$detailsKey] as $itemKey => $itemCode){
                             $item = PreProductionMaterialDeliveryDetailsItems::where('received', PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO)
                                 ->where('pre_production_id', $id)
@@ -401,7 +555,7 @@ class BoardProductionService
             ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
             ->where('pre_production_id', $id)
             ->with(
-                'delivery_details', 
+                'delivery_details',
                 'delivery_details.material',
                 'delivery_details.material.category',
                 'delivery_details.material.product',
@@ -429,7 +583,8 @@ class BoardProductionService
     public function dispatchStoreData($request, $id){
         DB::beginTransaction();
         try {
-            $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            $pre_production = PreProduction::with('finishedGoods')
+                ->where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
                 ->where('type', PreProduction::TYPE_BOARD)
                 ->where('id', $id)
@@ -445,7 +600,7 @@ class BoardProductionService
             if($request->dispatched_qty > ($pre_production->estimated_production_qty - $pre_production->dispatched_qty) || $request->dispatched_qty == 0){
                 throw new \Exception('Invalid Quantity!');
             }
-            
+
             $pre_production->dispatched_qty += $request->dispatched_qty;
             $pre_production->updated_by = auth()->user()->id;
             $pre_production->updated_at = now();
@@ -473,6 +628,11 @@ class BoardProductionService
             $dispatch->save();
             $dispatch->dispatch_no = 1000 + $dispatch->id;
             $dispatch->save();
+
+            $finishedGoods = $pre_production->finishedGoods;
+            $finishedGoods->total_finished_qty += $request->dispatched_qty;
+            $finishedGoods->available_qty += $request->dispatched_qty;
+            $finishedGoods->save();
 
         }catch (\Exception $e) {
             DB::rollBack();

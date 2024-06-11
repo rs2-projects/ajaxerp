@@ -273,7 +273,7 @@ class EmployeeService
             ->where('status', Contractor::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->get();
-        
+
         $data['roles'] = Role::where('deleted', Role::DELETED_NO)
             ->where('status', Role::STATUS_ACTIVE)
             ->orderBy('title', 'asc')
@@ -965,7 +965,7 @@ class EmployeeService
         $data['item'] = User::where('id', $id)
             ->where('deleted', User::DELETED_NO)
             ->first();
-        
+
         $data['roles'] = Role::where('deleted', Role::DELETED_NO)
             ->where('status', Role::STATUS_ACTIVE)
             ->orderBy('title', 'asc')
@@ -984,6 +984,22 @@ class EmployeeService
         }
 
         $user->role_id = $request->role_id;
+        $user->updated_by = auth()->user()->id;
+        $user->updated_at = now();
+        $user->save();
+    }
+
+
+    public function updatePassword($request, $id){
+        $user = User::where('id', $id)
+            ->where('deleted', User::DELETED_NO)
+            ->first();
+
+        if (!$user) {
+            throw new \Exception('User not found');
+        }
+
+        $user->password = bcrypt($request->password);
         $user->updated_by = auth()->user()->id;
         $user->updated_at = now();
         $user->save();
@@ -1052,7 +1068,7 @@ class EmployeeService
             if (!$check_leave_type) {
                 throw new \Exception('Leave type not found.');
             }
-            
+
             $general_number_of_days =  LeaveHelper::countEmployeeGeneralDays($check_user->id, $request->start_date, $request->end_date);
             $salary_set = SalarySetHelper::getEmployeeSalarySet($check_user->id);
             $get_leave_type_data = LeaveHelper::leaveType($request->settings_leave_type_id);

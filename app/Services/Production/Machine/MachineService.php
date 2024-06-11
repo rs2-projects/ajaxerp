@@ -52,6 +52,7 @@ class MachineService
         $machine->name = $request->name;
         $machine->image = $image_path??null;
         $machine->model = $request->model;
+        $machine->production_cost = $request->production_cost;
         $machine->color = $request->color;
         $machine->description = $request->description;
         $machine->created_by = auth()->user()->id;
@@ -99,6 +100,7 @@ class MachineService
         $machine->name = $request->name;
         $machine->image = $image_path?? $machine->image;
         $machine->model = $request->model;
+        $machine->production_cost = $request->production_cost;
         $machine->color = $request->color;
         $machine->description = $request->description;
         $machine->updated_by = auth()->user()->id;

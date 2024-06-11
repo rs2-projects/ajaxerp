@@ -2276,7 +2276,7 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     flex-basis: 23.5%;
 }
 .em-pro-details-box h5{
-    width: 96% !important;
+    width: 100% !important;
 }
 .rs-ecp-std-item-title-box h4 {
     font-size: 12px;
@@ -2471,6 +2471,7 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px;
     width: 400px;
+    margin-right: 10px;
 }
 .default-vat-set-box .rs-ecp-std-item-title-box h4 {
     font-size: 14px;

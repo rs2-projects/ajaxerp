@@ -4,7 +4,7 @@
     <meta name="description" content="AjaxERP - Full ERP Solution">
     <meta name="keywords" content="ERP">
     <meta name="author" content="Retinasoft">
-    <title>Login - {{ __(config('app.name')) }}</title>
+    <title>{{ $pageTitle }} - {{ __(config('app.name')) }}</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets') }}/img/favicon.png">

@@ -39,4 +39,9 @@ class WarehouseSectionRack extends Model
         'deleted_at',
         'deleted_by'
     ];
+
+    public function section()
+    {
+        return $this->belongsTo(WarehouseSection::class, 'warehouse_section_id', 'id');
+    }
 }

@@ -1,4 +1,4 @@
-name: Deploy Staging Server by ${{ github.actor }}
+name: Deploy Staging Server by
 
 on:
     push:
@@ -23,6 +23,7 @@ jobs:
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
                         cd /var/www/staging.ajaxtradingcorp.com/
+                        git stash
                         git pull
 
             -   name: Install Dependencies On Server

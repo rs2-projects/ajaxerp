@@ -20,10 +20,13 @@ class PreProduction extends Model
     const VERIFIED_NO = 0;
     const VERIFIED_YES = 1;
     const VERIFIED_REVISION = 2;
+    const VERIFIED_REJECTED = 3;
+
     const VERIFIEDS = [
         self::VERIFIED_NO => 'Not Verified',
         self::VERIFIED_YES => 'Verified',
         self::VERIFIED_REVISION => 'Revision',
+        self::VERIFIED_REJECTED => 'Rejected',
     ];
 
     const PROCESS_STATUS_PENDING = 0;
@@ -182,5 +185,44 @@ class PreProduction extends Model
         $boardCount = $this->board_material()->count();
         return $materialCount + $boardCount;
     }
-    
+
+    public function showStatus($type = 'default')
+    {
+        if($type == 'process') {
+            if ($this->process_status == self::PROCESS_STATUS_PROCESSING) {
+                return "On Process";
+            }
+        }
+        if ($this->delivery_status == self::DELIVERY_STATUS_PENDING) {
+            return "Waiting for Items";
+        }
+        if ($this->received_status == self::RECEIVED_STATUS_PENDING) {
+            return "Pending Items";
+        }
+        if($type == 'receive_raw_materials') {
+            if (($this->delivery_status != self::DELIVERY_STATUS_DELIVERED) && ($this->received_status != self::RECEIVED_STATUS_PENDING)) {
+                return "Partial";
+            }
+        }
+        if ($this->process_status == self::PROCESS_STATUS_PENDING) {
+            return "Production Pending";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_PENDING)) {
+            return "Completed";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_PARTIAL)) {
+            return "Partial Dispatched";
+        }
+        if(($this->process_status == self::PROCESS_STATUS_COMPLETED) && ($this->dispatched_status == self::DISPATCH_STATUS_DISPATCHED)) {
+            return "Dispatched";
+        }
+        if ($this->process_status == self::PROCESS_STATUS_PROCESSING) {
+            return "On Process";
+        }
+        if (($this->delivery_status != self::DELIVERY_STATUS_DELIVERED) && ($this->received_status != self::RECEIVED_STATUS_PENDING)) {
+            return "Partial";
+        }
+        return "N/A";
+    }
+
 }

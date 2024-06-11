@@ -81,12 +81,13 @@ class PreProductionMaterialDeliveryDetails extends Model
     public function pending_items()
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
-            ->where('received', 0);
+        ->where('received',  PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO);
     }
 
     public function pending_scans()
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
-            ->where('scanned', 0);
+            ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
+            ->where('received',  PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES);
     }
 }

@@ -3,10 +3,11 @@
     <!-- Start::row-1 -->
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addProdStaffModal"><i class="fa-solid fa-plus"></i> New Production Staff</a>
-
-            </div>
+            @if(hasPermission('manage-production-staff'))
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addProdStaffModal"><i class="fa-solid fa-plus"></i> New Production Staff</a>
+                </div>
+            @endif
         </div>
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">

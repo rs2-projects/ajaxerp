@@ -26,6 +26,12 @@ class PermissionMiddleware
                 ->whereIn('permission', $permissions)
                 ->first();
             if (empty($check)) {
+                if ($request->ajax()) {
+                    return response()->json([
+                        'status' => 403,
+                        'message' => 'You do not have permission to access this page.'
+                    ]);
+                }
                 return redirect()->back()->with(['failed' => 'You do not have permission to access this page.']);
             }
         }

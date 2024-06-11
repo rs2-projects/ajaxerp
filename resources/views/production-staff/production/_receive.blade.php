@@ -24,8 +24,8 @@
                             <h4>{{$pre_production->estimated_production_qty}}</h4>
                         </div>
                     </div>
-                    
-                    
+
+
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Description</label>
@@ -36,13 +36,13 @@
                 <div class="pd-table-box">
                     <div v-if="deliveries.length > 0">
                         <div class="pd-table-box-item-wrapper" v-for="(deliverData, deliverIndex) in deliveries" :key="deliverIndex">
-                            <form action="{{route('production-staff.production.production.receive.store', $pre_production->id)}}" 
-                                :id="'deliverStoreForm'+deliverData.delivery.id" method="post" 
+                            <form action="{{route('production-staff.production.production.receive.store', $pre_production->id)}}"
+                                :id="'deliverStoreForm'+deliverData.delivery.id" method="post"
                                 @submit="checkValidation($event, deliverIndex)">
                                 @csrf
                                 <input type="hidden" name="type" :value="deliverData.type">
                                 <input type="hidden" name="pre_production_id" :value="deliverData.delivery.pre_production_id">
-                                <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.delivery.id">  
+                                <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.delivery.id">
                                 {{-- <input type="hidden" id="pre_production_material_delivery_id" name="pre_production_id" value="{{$pre_production->id}}">  --}}
                                 <div class="pd-table-box-item">
                                     <div class="pd-deliver-date-box">
@@ -161,7 +161,7 @@
 @endsection
 
 @section('modals')
-    
+
 @endsection
 
 @section('css')
@@ -233,12 +233,12 @@
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.splice(barcodeIndex, 1);
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts--;
                     },
-                    
+
                     getMaterials() {
                         let id = document.getElementById('pre_production_id').value;
                         let url = "{{ route('production-staff.production.production.get-delivery-details', ':id') }}";
                         url = url.replace(':id', id);
-                        
+
                         axios.get(url)
                         .then(response => {
                             this.deliveries = response.data.deliveries.map(delivery_data => {
@@ -285,7 +285,7 @@
                         const options = { year: 'numeric', month: 'short', day: '2-digit' };
                         return new Date(dateString).toLocaleDateString('en-US', options);
                     },
-                    
+
                     // updateReceivedQty(deliveryIndex) {
                     //     const delivery = this.deliveries[deliveryIndex];
                     //     delivery.delivery_details.forEach(detail => {
@@ -326,7 +326,7 @@
                 var formData = new FormData($(self)[0]);
                 var url = $(self).attr('action');
 
-                formPost(url, formData, function (res) {
+                /*formPost(url, formData, function (res) {
                     if(res.status == 200){
                         showSuccessAlert('Success',res.message);
                         // console.log(res.deliveries);
@@ -336,7 +336,8 @@
                     }else{
                         showErrorAlert('Error',res.message)
                     }
-                }, 'show_input_error');
+                }, 'show_input_error');*/
+                formPost(url, formData, 'redirect', 'show_input_error');
             }
     </script>
 @endsection

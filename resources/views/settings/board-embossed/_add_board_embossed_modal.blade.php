@@ -17,8 +17,13 @@
                             <input class="form-control" type="text" name="name" required>
                             <span class="name_error ie-span"></span>
                         </div>
+                        <div class="input-block mb-2">
+                            <label class="col-form-label">Production Cost <span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" name="production_cost" min="0" required>
+                            <span class="model_error ie-span"></span>
+                        </div>
                         <div class="input-block mb-3">
-                            <label class="col-form-label"> Code </label>
+                            <label class="col-form-label"> Code <span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="code" required>
                         </div>
                         <div class="input-block mb-2">

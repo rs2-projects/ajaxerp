@@ -318,7 +318,7 @@ class PreProductionMaterialRequestService
                     ->where('delivery_status', PreProductionBoard::DELIVERY_STATUS_PARTIAL)
                     ->exists();
 
-                if ($processing_material_count || $processing_board_count) {
+                if ($processing_material_count || $processing_board_count || $material_count != $delivered_material_count || $board_count != $delivered_board_count) {
                     $pre_production->delivery_status = PreProduction::DELIVERY_STATUS_PARTIAL;
                 }
 

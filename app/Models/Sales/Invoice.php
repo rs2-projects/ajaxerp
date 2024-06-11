@@ -100,6 +100,6 @@ class Invoice extends Model
     }
     //relation with invoice details
     public function details(){
-        return $this->hasMany(InvoiceDetails::class, 'invoice_id', 'id');
+        return $this->hasMany(InvoiceDetails::class, 'invoice_id', 'id')->where('deleted', InvoiceDetails::DELETED_NO);
     }
 }

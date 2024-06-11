@@ -12,6 +12,9 @@ class AssetProductPurchaseOrder extends Model
     protected $table = 'asset_product_purchase_orders';
     public $timestamps = false;
 
+    const CURRENCY_TYPE_PHP = 0;
+    const CURRENCY_TYPE_USD = 1;
+
     const PAYMENT_STATUS_UNPAID = 0;
     const PAYMENT_STATUS_PARTIAL_PAID = 1;
     const PAYMENT_STATUS_PAID = 2;
@@ -75,6 +78,14 @@ class AssetProductPurchaseOrder extends Model
         'purchase_date',
         'estimated_delivery_date',
         'subtotal_amount',
+        'currency_type',
+        'php_rate',
+        'subtotal_amount_php',
+        'total_vat_amount_php',
+        'total_discount_amount_php',
+        'payable_amount_php',
+        'paid_amount_php',
+        'due_amount_php',
         'total_vat_amount',
         'discount_type',
         'discount_value',

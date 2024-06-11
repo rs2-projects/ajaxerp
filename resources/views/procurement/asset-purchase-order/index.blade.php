@@ -139,6 +139,11 @@
             border-radius: 100px;
             line-height: 1;
         }
+        #php_amount{
+            font-size: 11px;
+            padding-top: 2px;
+            font-weight: 600;
+            color: #0d6efd;
         }
     </style>
 @endsection
@@ -200,6 +205,18 @@
                     }
                 }, 'show_input_error');
             });
+
+
+            $(document).on("keyup", "#amount", function(e) {
+              let amount = $(this).val();
+              let php_rate = $("#php_rate").val();
+              let amount_in_php = amount * php_rate;
+              if(amount_in_php > 0){
+                $("#php_amount_val").text(amount_in_php);
+              }else{
+                $("#php_amount_val").text(0);
+              }
+            })
 
         });
 

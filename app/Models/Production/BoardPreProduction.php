@@ -14,6 +14,9 @@ class BoardPreProduction extends Model
     protected $table = 'board_pre_productions';
     public $timestamps = false;
 
+    const PRICE_CALCULATED_NO = 0;
+    const PRICE_CALCULATED_YES = 1;
+
     // status const
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
@@ -37,6 +40,7 @@ class BoardPreProduction extends Model
         'machine_id',
         'staff_id',
         'note',
+        'price_calculated',
         'status',
         'created_by',
         'created_at',
@@ -49,6 +53,27 @@ class BoardPreProduction extends Model
 
     public function board_materials(){
         return $this->hasMany(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id');
+    }
+
+    public function other_board_materials(){
+        return $this->hasMany(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', '!=', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+
+    public function rawBoard()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+    public function paperUp()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP);
+    }
+    public function paperDown()
+    {
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_DOWN);
     }
 
     public function finishedGoods()
@@ -65,4 +90,20 @@ class BoardPreProduction extends Model
     {
         return $this->belongsTo(ProductionStaff::class, 'staff_id', 'id');
     }
+
+    public function raw_board(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_RAW_BOARD);
+    }
+
+    public function paper_up(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_UP);
+    }
+
+    public function paper_down(){
+        return $this->hasOne(BoardPreProductionMaterials::class, 'board_pre_production_id', 'id')
+            ->where('type', BoardPreProductionMaterials::TYPE_PAPER_DOWN);
+    }
+
 }

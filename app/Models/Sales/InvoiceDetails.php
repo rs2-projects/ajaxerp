@@ -4,6 +4,8 @@ namespace App\Models\Sales;
 
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Products\FinishedGoods;
+use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialSet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +15,13 @@ class InvoiceDetails extends Model
     protected $table = 'invoice_details';
     public $timestamps = false;
 
+    CONST TYPE_RAW_MATERIAL = 0;
+    CONST TYPE_RAW_BOARD = 1;
+    CONST TYPE_PAPER = 2;
+    CONST TYPE_FINISHED_GOODS = 3;
+    CONST TYPE_FINISHED_BOARD = 4;
+    CONST TYPE_SET_ITEM = 5;
+
     //Delete status const
     const DELETED_NO = 0;
     const DELETED_YES = 1;
@@ -20,6 +29,14 @@ class InvoiceDetails extends Model
         self::DELETED_NO => 'No',
         self::DELETED_YES => 'Yes',
     ];
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUSES = [
+        self::STATUS_INACTIVE => 'Inactive',
+        self::STATUS_ACTIVE => 'Active',
+    ];
+    
     //Dispatched Status
     const DISPATCHED_NO = 0;
     const DISPATCHED_YES = 1;
@@ -33,7 +50,8 @@ class InvoiceDetails extends Model
 
     protected $fillable = [
         'invoice_id',
-        'finished_good_id',
+        'item_id',
+        'item_type',
         'description',
         'quantity',
         'unit_price',
@@ -57,7 +75,17 @@ class InvoiceDetails extends Model
 
     public function finishedGood()
     {
-        return $this->belongsTo(FinishedGoods::class, 'finished_good_id', 'id');
+        return $this->belongsTo(FinishedGoods::class, 'item_id', 'id');
+    }
+
+    public function product_material()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'item_id', 'id');
+    }
+
+    public function set_item()
+    {
+        return $this->belongsTo(ProductMaterialSet::class, 'item_id', 'id');
     }
 
     public function invoice()

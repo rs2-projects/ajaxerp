@@ -58,6 +58,21 @@
                             </div>
                         </div>
 
+                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center status_type mt-4" id="myTab" role="tablist">
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link active erp-nav-link" data="all" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="other" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Other</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="board" id="all-purchase-tab" data-bs-toggle="tab" data-bs-target="#all-purchase" type="button" role="tab" aria-controls="home" aria-selected="false">Board</button>
+                            </li>
+                            <li class="nav-item erp-nav-item" role="presentation">
+                                <button class="nav-link erp-nav-link" data="paper" id="new-purchase-tab" data-bs-toggle="tab" data-bs-target="#new-purchase" type="button" role="tab" aria-controls="profile" aria-selected="false">Paper</button>
+                            </li>
+                        </ul>
+
                         <div class="big-table pt-4">
                             <div class="de-table-wrapper" id="ajax-data-load">
 
@@ -73,7 +88,7 @@
 
 @section('modals')
     @include('inventory.product-material._add_product_material')
-    @include('inventory.product-material._edit_product_material')
+    {{-- @include('inventory.product-material._edit_product_material') --}}
     @include('inventory.product-material._purchase_history_modal')
     @include('inventory.product-material.__board_product_import_modal')
     @include('inventory.product-material.__paper_product_import_modal')
@@ -97,7 +112,8 @@
     <script>
         var filterData = {
             keyword_filtered: '',
-            category_filtered: ''
+            category_filtered: '',
+            status_filtered: 'all',
         };
         $(document).ready(function() {
             getData();
@@ -112,6 +128,12 @@
             $("#category_filtered").on('change', function () {
                 filterData.category_filtered = $(this).val();
             });
+
+            $('.status_type li').on('click', function () {
+                filterData.status_filtered = $('.status_type .active').attr('data');
+                getData();
+            });
+
             $("#productMaterialStoreForm").on('submit', function (e) {
                 var self = this;
                 e.preventDefault();
@@ -122,7 +144,7 @@
                 formPost(url, formData, function (res) {
                     if(res.status == 200){
                         $("#addProductMaterial").modal('hide');
-                        $(self)[0].reset();
+                        resetStoreForm();
                         showSuccessAlert('Success',res.message)
                         getData();
                         let total_product = parseInt($("#total_product").text());
@@ -137,6 +159,17 @@
                 validateCustomForm("#productMaterialStoreForm");
             });
         });
+
+        function resetStoreForm() {
+            $("#productMaterialStoreForm")[0].reset()
+            $('.select').select2('destroy').val('').select2();
+            $("#sections_id").multipleSelect('destroy');
+            $("#sections_id").val('');
+            initSectionMultipleSelect();
+            $("#racks_id").multipleSelect('destroy');
+            $("#racks_id").val('');
+            initRackMultipleSelect();
+        }
 
         function validateCustomForm(form) {
             var tab1Fields = $(form).find(':input[required]');
@@ -194,6 +227,19 @@
                     toastr.error(response.message);
                 }
             });
+        }
+
+        function changeProductType(select){
+            let type = $(select).val();
+            if(type != 0){
+                $("#category_section").hide();
+                $("#category_select").removeAttr('required');
+                $("#category_select").val('');
+            }else{
+                $("#category_section").show();
+                $("#category_select").attr('required', 'true');
+
+            }
         }
 
         /*function editItem(id){

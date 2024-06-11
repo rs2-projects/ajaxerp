@@ -382,6 +382,8 @@ class ProductMaterialPurchaseService
                     }
                     if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
                         $has_boards = 1;
+                    }elseif ($productMaterial->type == ProductMaterial::TYPE_PAPER) {
+                        $has_boards = 1;
                     } else {
                         $has_others = 1;
                     }

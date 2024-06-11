@@ -30,7 +30,7 @@
                             <div class="em-pro-details-box">
                                 <h5>{{ $item->full_name??'N/A' }}</h5>
                                 <p class="em-id">ID: <span> #{{ $item->employee_id??'N/A' }}</span></p>
-        
+
                             </div>
                         </a>
                     </td>
@@ -54,6 +54,7 @@
                                     @if(hasPermission('manage-employees'))
                                         <a class="dropdown-item" href="{{ route('hr.employee.edit',$item->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="editRole({{$item->id}})"><i class="fa-regular fa-circle-user m-r-5"></i> Change Role</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="changePassword(this)" data-url="{{ route('hr.employee.update-password', $item->id) }}"><i class="la la-lock m-r-5"></i> Change Password</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.employee.delete',$item->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         <a class="dropdown-item" href="{{ route('hr.employee-attendance', ['employee_id_search' => $item->id]) }}"><i class="la la-crosshairs m-r-5"></i> Attendance</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="showUserLeaveModal({{$item->id}})"><i class="la la-question m-r-5"></i> Add Leave</a>

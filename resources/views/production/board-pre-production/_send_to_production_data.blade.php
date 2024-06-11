@@ -9,11 +9,11 @@
             </div>
             <div class="input-block">
                 <label class="col-form-label">Unit <span class="text-danger">*</span></label>
-                <input class="form-control" id="unit_input" name="unit" type="number" required>
+                <input class="form-control" id="unit_input" name="unit" value="1" type="number" required>
             </div>
         </div>
 
-        <div class="row estimated-output-wrapper m-0 gap-bottom">
+        {{-- <div class="row estimated-output-wrapper m-0 gap-bottom">
             <label class="col-form-label estimated-output-title">Estimated Output Quantity</label>
             <div class="pms-item-wrapper d-flexflex-wrap align-items-end pre-d-item-wrapper">
                 <div class="row mb-2">
@@ -39,10 +39,26 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="send_to_pp_table" >
             <table class=" table mb-2 erp-table table-responsive mt-2">
+                <thead class="erp-thead">
+                    <tr class="erp-tr">
+                        <th class="erp-th">Board QTY</th>
+                        <th class="erp-th">Paper up QTY</th>
+                        <th class="erp-th">Paper Down QTY</th>
+                    </tr>
+                </thead>
+                <tbody class="erp-tbody">
+                    <tr class="erp-tbody-tr calculated-qty">
+                        <td class="erp-tbody-td text-left raw-product-qty item-qty-show" data-qty="{{ $item->rawBoard?->quantity }}">{{ $item->rawBoard?->quantity }}</td>
+                        <td class="erp-tbody-td text-left paper-up-qty item-qty-show" data-qty="{{ $item->paperUp?->quantity }}">{{ $item->paperUp?->quantity }}</td>
+                        <td class="erp-tbody-td text-left paper-down-qty item-qty-show" data-qty="{{ $item->paperDown?->quantity }}">{{ $item->paperDown?->quantity }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {{--<table class=" table mb-2 erp-table table-responsive mt-2">
                 <thead class="erp-thead">
                     <tr class="erp-tr">
                         <th class="erp-th">Sl.</th>
@@ -54,7 +70,7 @@
                 </thead>
                 <tbody class="erp-tbody">
                     @php $i = 1; @endphp
-                    @foreach ($item->board_materials as $product )
+                    @foreach ($item->other_board_materials as $product )
                         <tr class="erp-tbody-tr">
                             <td class="erp-tbody-td text-left">{{ $i++ }}</td>
                             <td class="erp-tbody-td text-left">{{ $product->product_material?->name }}</td>
@@ -64,7 +80,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-            </table>
+            </table>--}}
         </div>
         <div class="submit-section mt-2">
             <button class="btn btn-primary submit-btn" type="submit">Send To Production</button>

@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('asset_product_purchase_payments', function (Blueprint $table) {
+            $table->unsignedDecimal('amount_php', 12, 2)->default(0)->after('amount');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('asset_product_purchase_payments', function (Blueprint $table) {
+            $table->dropColumn('amount_php');
+        });
+    }
+};

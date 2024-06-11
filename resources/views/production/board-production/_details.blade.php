@@ -44,7 +44,7 @@
                     <div class="pgib-item flex-100 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Note</label>
-                            <p>{{$pre_production->notes ?? 'N/A'}}</p>
+                            <h4>{{ !empty($pre_production->notes) ? $pre_production->notes : 'N/A'}}</h4>
                         </div>
                     </div>
                 </div>
@@ -54,15 +54,17 @@
                             <div class="production-process-status-wrapper d-flex justify-content-between align-items-center">
                                 <h4>Material</h4>
                                 @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                    @if(hasPermission('manage-processes'))
+                                    {{-- @if(hasPermission('manage-processes'))
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.board-production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
-                                    @endif
+                                    @endif --}}
+                                    <p class="start-process-btn">Pending</p>
                                 @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
-                                    @if(hasPermission('manage-processes')) 
+                                    {{-- @if(hasPermission('manage-processes')) 
                                         <a href="javascript:void(0)" onclick="changeStatus('{{ route('production.board-production.update-process-status',[$pre_production->id,$processData->id,2]) }}')" class="complete-process-btn">Complete Process</a>
-                                    @endif
+                                    @endif --}}
+                                    <p class="complete-process-btn">Processing</p>
                                 @else
-                                    <p class="rs-pre-completed-process">Completed Process</p>
+                                <p class="rs-pre-completed-process">Completed Process</p>
                                 @endif
                             </div>
                             <div class="production-matarial-selection-wrappers">

@@ -3,100 +3,117 @@
     <!-- Start::row-1 -->
     <div class="row">
         <div class="erp-add-employee-wrapper mb-3">
-            <div class="erp-add-employee">
-                <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#add_user_leave"><i class="fa-solid fa-plus"></i> Add Leave</a>
-            </div>
+            @if(!empty($salary_set))
+                <div class="erp-add-employee">
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee ms-2" data-bs-toggle="modal" data-bs-target="#add_user_leave"><i class="fa-solid fa-plus"></i> Add Leave</a>
+                </div>
+            @endif
         </div>
         <div class="erp-employee-list-wrapper">
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
-                    <div class="erp-leave-tab-wrapper">
-                        <ul class="nav nav-tabs erp-nav-tabs justify-content-center" id="myTab" role="tablist">
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link active erp-nav-link" onclick="getData()" id="all-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="pending-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="approved-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved</button>
-                            </li>
-                            <li class="nav-item erp-nav-item" role="presentation">
-                                <button class="nav-link erp-nav-link" onclick="getData()" id="rejected-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Rejected</button>
-                            </li>
-                        </ul>
+                    @if(empty($salary_set))
+                        <div class="erp-leave-tab-wrapper" style="height: 56vh">
+                            <div class="alert alert-danger" role="alert">
+                                <h4>You have not been assigned any Salary Set. Please contact your HR or Admin.</h4>
+                            </div>
 
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active" id="all-leave" role="tabpanel" aria-labelledby="all-leave-tab">
-                                <div class="my-attendance-report-wrapper">
-                                    <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
-                                        <div class="erp-box-header">
-                                            <h4>All Leave History </h4>
-                                        </div>
-                                        <div class="erp-filter-box d-flex align-items-center justify-content-end">
-
-                                            <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end">
-                                                <div class="erp-filter-item">
-                                                    <h6 class="me-2">Search By: </h6>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class=" form-focus select-focus custom-form-focus">
-                                                        <select class="select floating select2-box">
-                                                            <option>Select Month</option>
-                                                            <option>January</option>
-                                                            <option>February</option>
-                                                            <option>March</option>
-                                                            <option>April</option>
-                                                            <option>May</option>
-                                                            <option>June</option>
-                                                            <option>July</option>
-                                                            <option>August</option>
-                                                            <option>September</option>
-                                                            <option>October</option>
-                                                            <option>November</option>
-                                                            <option>December</option>
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class=" form-focus select-focus custom-form-focus">
-                                                        <select class="select floating select2-box">
-                                                            <option>Select Year</option>
-                                                            <option>2023</option>
-                                                            <option>2022</option>
-                                                            <option>2021</option>
-                                                            <option>Last Year</option>
-                                                            <option>Last Two Years</option>
-
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                                <div class="erp-filter-item">
-                                                    <div class="erp-search-btn-wrap">
-                                                        <button class=" erp-search-btn">Search</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="big-table pt-4">
-                                        <div class="de-table-wrapper">
-                                            <div class="" id="ajax-data-load">
-
-                                            </div>
-                                        </div>
-                                    </div>
-
+                            <div>
+                                <div class="punch-in-out-box position-relative">
+                                    <div class="pulse-css"></div>
+                                    <label class="switch punch-switch ">
+                                        <div class="slider slider--0">No Access</div>
+                                    </label>
                                 </div>
                             </div>
                         </div>
+                    @else
+                        <div class="erp-leave-tab-wrapper">
+                            <ul class="nav nav-tabs erp-nav-tabs justify-content-center" id="myTab" role="tablist">
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link active erp-nav-link" onclick="getData()" id="all-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="home" aria-selected="true">All</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" onclick="getData()" id="pending-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="profile" aria-selected="false">Pending</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" onclick="getData()" id="approved-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Approved</button>
+                                </li>
+                                <li class="nav-item erp-nav-item" role="presentation">
+                                    <button class="nav-link erp-nav-link" onclick="getData()" id="rejected-leave-tab" data-bs-toggle="tab" data-bs-target="#all-leave" type="button" role="tab" aria-controls="contact" aria-selected="false">Rejected</button>
+                                </li>
+                            </ul>
 
-                    </div>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="all-leave" role="tabpanel" aria-labelledby="all-leave-tab">
+                                    <div class="my-attendance-report-wrapper">
+                                        <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
+                                            <div class="erp-box-header">
+                                                <h4>All Leave History </h4>
+                                            </div>
+                                            <div class="erp-filter-box d-flex align-items-center justify-content-end">
 
+                                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end">
+                                                    <div class="erp-filter-item">
+                                                        <h6 class="me-2">Search By: </h6>
+                                                    </div>
+                                                    <div class="erp-filter-item">
+                                                        <div class=" form-focus select-focus custom-form-focus">
+                                                            <select class="select floating select2-box">
+                                                                <option>Select Month</option>
+                                                                <option>January</option>
+                                                                <option>February</option>
+                                                                <option>March</option>
+                                                                <option>April</option>
+                                                                <option>May</option>
+                                                                <option>June</option>
+                                                                <option>July</option>
+                                                                <option>August</option>
+                                                                <option>September</option>
+                                                                <option>October</option>
+                                                                <option>November</option>
+                                                                <option>December</option>
+                                                            </select>
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="erp-filter-item">
+                                                        <div class=" form-focus select-focus custom-form-focus">
+                                                            <select class="select floating select2-box">
+                                                                <option>Select Year</option>
+                                                                <option>2023</option>
+                                                                <option>2022</option>
+                                                                <option>2021</option>
+                                                                <option>Last Year</option>
+                                                                <option>Last Two Years</option>
+
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="erp-filter-item">
+                                                        <div class="erp-search-btn-wrap">
+                                                            <button class=" erp-search-btn">Search</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="big-table pt-4">
+                                            <div class="de-table-wrapper">
+                                                <div class="" id="ajax-data-load">
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -24,6 +24,7 @@ class UpdateBoardEmbossedRequest extends FormRequest
         return [
             'name' => 'required',
             'code' => 'required',
+            'production_cost' => 'required',
         ];
     }
 }

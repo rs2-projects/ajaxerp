@@ -19,6 +19,17 @@
 								<p>{{$pre_production->description ?? 'N/A'}}</p>
 							</div>
 						</div>
+
+
+                        <div class="pgib-item flex-32">
+                            <p class="text-primary">Total QTY: {{ $pre_production->estimated_production_qty }}</p>
+                        </div>
+                        <div class="pgib-item flex-32">
+                            <p class="text-primary">Delivered QTY: {{ $pre_production->dispatched_qty }}</p>
+                        </div>
+                        <div class="pgib-item flex-32">
+                            <p class="text-primary">Remaining QTY: {{ $pre_production->estimated_production_qty - $pre_production->dispatched_qty }}</p>
+                        </div>
 					</div>
 					<div class="pd-table-box">
 						<div class="my-attendance-report-wrapper">

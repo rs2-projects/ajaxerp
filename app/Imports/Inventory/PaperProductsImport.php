@@ -22,7 +22,7 @@ class PaperProductsImport implements ToCollection, WithStartRow
     */
     public function collection(Collection $collection)
     {
-        $default_paper_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_BOARD)
+        $default_paper_category = ProductMaterialCategory::where('type', ProductMaterialCategory::TYPE_PAPER)
             ->first();
         if (empty($default_paper_category)) {
             throw new \Exception('Default paper category not found');

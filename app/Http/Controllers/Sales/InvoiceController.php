@@ -55,11 +55,18 @@ class InvoiceController extends BackendController
 
     }
     //Get all finished goods
-    public function getAllFinishedGoods(Request $request)
+    // public function getAllFinishedGoods(Request $request)
+    // {
+    //     $data = $this->service->getAllFinishedGoods($request);
+    //     return response()->json($data['finished_goods']);
+    // }
+
+    public function getAllFinishedGoods()
     {
-        $data = $this->service->getAllFinishedGoods($request);
-        return response()->json($data['finished_goods']);
+        $data = $this->service->getAllFinishedGoods();
+        return response()->json($data);
     }
+    
     //Get all taxes
     public function getAllTaxes(Request $request)
     {
@@ -105,6 +112,16 @@ class InvoiceController extends BackendController
         $this->setActiveMenu('sales.invoice.index');
 
         $data = $this->service->editData($id);
+
+        if (!isset($data['invoice'])) {
+            return redirect()->route('sales.invoice.index')->with(['failed' => 'Invalid Invoice!']);
+        }
+
+        $invoice = $data['invoice'];
+
+        if($invoice->payment_status != $invoice::PAYMENT_STATUS_UNPAID){
+            return redirect()->route('sales.invoice.index')->with(['failed' => 'You can not edit this invoice!']);
+        }
 
         return $this->view('sales.invoice.edit')->with($data);
     }
