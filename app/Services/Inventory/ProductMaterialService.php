@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Imports\Inventory\BoardProductsImport;
+use App\Imports\Inventory\OtherProductsImport;
 use App\Imports\Inventory\PaperProductsImport;
 use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
@@ -541,6 +542,9 @@ class ProductMaterialService
             case 'papers':
                 $this->importPaperProducts($request);
                 break;
+            case 'others':
+                $this->importOtherProducts($request);
+                break;
             default:
                 throw new \Exception('Invalid type');
         }
@@ -553,6 +557,11 @@ class ProductMaterialService
     public function importPaperProducts($request)
     {
         Excel::import(new PaperProductsImport(), $request->product_file);
+    }
+
+    public function importOtherProducts($request)
+    {
+        Excel::import(new OtherProductsImport(), $request->product_file);
     }
     
 

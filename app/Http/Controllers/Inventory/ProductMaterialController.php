@@ -149,6 +149,16 @@ class ProductMaterialController extends BackendController
         }
     }
 
+    public function importOthers(Request $request)
+    {
+        try {
+            $this->service->importProducts($request, 'others');
+            return redirect()->back()->with(['success' => 'Other Products Imported Successfully!']);
+        }catch (\Exception $e) {
+            return redirect()->back()->with(['failed' => $e->getMessage()]);
+        }
+    }
+
     public function calculatePrice($id){
         $this->setPageTitle("Calculate Price");
         $this->setActiveMenu('inventory.product-material.index');
