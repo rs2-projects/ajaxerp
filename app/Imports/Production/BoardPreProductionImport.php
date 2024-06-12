@@ -48,7 +48,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if (!empty($check_code)) {
-                        throw new \Exception("Code already exists");
+                        throw new \Exception("Code '{$item[0]}' already exists");
                     }
 
                     $plate_up_id = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
