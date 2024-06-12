@@ -30,7 +30,7 @@ class OtherProductsImport implements ToCollection, WithStartRow
                     ->where('type', ProductMaterial::TYPE_OTHERS)
                     ->first();
                 if (!empty($check_name)) {
-                    throw new \Exception("Product already exists");
+                    throw new \Exception("Product '{$item[0]}' already exists");
                 }
 
                 $check_code = ProductMaterial::where('code', $item[1])
@@ -39,7 +39,7 @@ class OtherProductsImport implements ToCollection, WithStartRow
                     ->first();
                 
                 if (!empty($check_code)) {
-                    throw new \Exception("Code already exists");
+                    throw new \Exception("Code '{$item[1]}' already exists");
                 }
 
                 $category = ProductMaterialCategory::where('name', $item[2])
@@ -49,13 +49,13 @@ class OtherProductsImport implements ToCollection, WithStartRow
                     ->first();
 
                 if (empty($category)) {
-                    throw new \Exception("Category not found");
+                    throw new \Exception("Category '{$item[2]}' not found");
                 }
 
                 $unit = $item[5];
                 $unitTypeArr = ProductMaterial::UNIT_TYPES;
                 if (!in_array($unit, $unitTypeArr)) {
-                    throw new \Exception("Invalid Unit");
+                    throw new \Exception("Invalid Unit '{$item[5]}'");
                 }
                 $unitTypeValue = array_search($unit, $unitTypeArr);
 
