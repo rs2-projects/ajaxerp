@@ -57,7 +57,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$plate_up_id){
-                        throw new \Exception("Plate Up not found");
+                        throw new \Exception("Plate Up '{$item[3]}' not found");
                     }
 
                     $plate_down_id = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
@@ -66,7 +66,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$plate_down_id){
-                        throw new \Exception("Plate Down not found");
+                        throw new \Exception("Plate Down '{$item[6]}' not found");
                     } 
 
                     $machine_id = Machine::where('deleted', Machine::DELETED_NO)
@@ -75,7 +75,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$machine_id){
-                        throw new \Exception("Machine not found");
+                        throw new \Exception("Machine '{$item[2]}' not found");
                     }
 
                     $staff_id = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
@@ -84,7 +84,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$staff_id){
-                        throw new \Exception("Production Staff not found");
+                        throw new \Exception("Production Staff '{$item[9]}' not found");
                     }
 
                     $raw_board_id = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
@@ -94,7 +94,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$raw_board_id){
-                        throw new \Exception("Wood not found");
+                        throw new \Exception("Raw Board '{$item[1]}' not found");
                     }
 
                     $paper_up_id = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
@@ -104,7 +104,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$paper_up_id){
-                        throw new \Exception("Paper Up not found");
+                        throw new \Exception("Paper Up '{$item[4]}' not found");
                     }
 
                     $paper_down_id = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
@@ -114,7 +114,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                         ->first();
 
                     if(!$paper_down_id){
-                        throw new \Exception("Paper Down not found");
+                        throw new \Exception("Paper Down '{$item[7]}' not found");
                     }
 
                     // create board

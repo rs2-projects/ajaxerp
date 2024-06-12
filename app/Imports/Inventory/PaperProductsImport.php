@@ -89,7 +89,7 @@ class PaperProductsImport implements ToCollection, WithStartRow
             $unit = $item[2];
             $unitTypeArr = ProductMaterial::UNIT_TYPES;
             if (!in_array($unit, $unitTypeArr)) {
-                throw new \Exception("Invalid Unit");
+                throw new \Exception("Invalid Unit '{$item[2]}'");
             }
             $unitTypeValue = array_search($unit, $unitTypeArr);
             
