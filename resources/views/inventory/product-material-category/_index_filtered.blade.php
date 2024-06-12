@@ -22,7 +22,7 @@
                     <td class="erp-tbody-td text-center">{{ $data->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->srp_markup_percent??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->wholesale_discount_percent??'0' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->description??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center" title="{{ $data->description??'N/A' }}" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $data->description??'N/A' }}</td>
                     @if(hasPermission('manage-product-material-category'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
