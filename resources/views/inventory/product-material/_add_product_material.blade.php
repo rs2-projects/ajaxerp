@@ -101,7 +101,7 @@
                                                     <select class="select select-step" name="unit_type" required>
                                                         <option value="">Select Unit</option>
                                                         @foreach($units as $key=>$unit)
-                                                            <option value="{{ $key }}">{{ $unit }}-{{$key}}</option>
+                                                            <option value="{{ $key }}">{{ $unit }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
