@@ -194,3 +194,9 @@
 .sales-po-product-header-item-remove{
     flex-basis: 5% !important;
 }
+.custom-text{
+    max-width: 200px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+}
