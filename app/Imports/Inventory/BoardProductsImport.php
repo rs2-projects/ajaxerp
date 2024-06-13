@@ -37,20 +37,22 @@ class BoardProductsImport implements ToCollection, WithStartRow
             $product_material = ProductMaterial::where('name', $item[1])
                 ->where('product_material_category_id', $default_board_category_id)
                 ->where('type', ProductMaterial::TYPE_BOARD)
-                ->first();
-            if (!empty($product_material)) {
-                throw new \Exception("Raw Board with the name '{$item[1]}' already exists");
-            }
-
-            $check_name = ProductMaterial::where('name', $item[1])
                 ->where('deleted', ProductMaterial::DELETED_NO)
                 ->where('status', ProductMaterial::STATUS_ACTIVE)
-                ->where('type', ProductMaterial::TYPE_BOARD)
                 ->first();
-
-            if (!empty($check_name)) {
-                throw new \Exception("Raw Board already exists");
+            if (!empty($product_material)) {
+                throw new \Exception("Raw Board '{$item[1]}' already exists");
             }
+
+            // $check_name = ProductMaterial::where('name', $item[1])
+            //     ->where('deleted', ProductMaterial::DELETED_NO)
+            //     ->where('status', ProductMaterial::STATUS_ACTIVE)
+            //     ->where('type', ProductMaterial::TYPE_BOARD)
+            //     ->first();
+
+            // if (!empty($check_name)) {
+            //     throw new \Exception("Raw Board '{$item[1]}' already exists");
+            // }
             
             $check_code = ProductMaterial::where('code', $item[0])
                 ->where('deleted', ProductMaterial::DELETED_NO)
