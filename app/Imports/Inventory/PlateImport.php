@@ -22,19 +22,32 @@ class PlateImport implements ToCollection, WithStartRow
     public function collection(Collection $collection)
     {
         foreach ($collection as $item) {
-            if ($item[0] == '') {
+            if ($item[1] == '') {
                 continue;
             }
             //check board embossed name unique
-            $board_embossed = BoardEmbossed::where('name', $item[0])
+            $board_embossed = BoardEmbossed::where('name', $item[1])
+                ->where('deleted', BoardEmbossed::DELETED_NO)
+                ->where('status', BoardEmbossed::STATUS_ACTIVE)
                 ->first();
+
             if (!empty($board_embossed)) {
-                continue;
+                throw new \Exception("Plate '{$item[1]}' already exists");
             }
+
+            $check_code = BoardEmbossed::where('code', $item[0])
+                ->where('deleted', BoardEmbossed::DELETED_NO)
+                ->where('status', BoardEmbossed::STATUS_ACTIVE)
+                ->first();
+            
+            if (!empty($check_code)) {
+                throw new \Exception("Code '{$item[0]}' already exists");
+            }
+            
             //store board embossed
             BoardEmbossed::create([
-                'name' => $item[0],
-                'production_cost' => $item[1],
+                'name' => $item[1],
+                'production_cost' => $item[2],
                 'code' => $item[0],
                 'created_at' => Carbon::now(),
                 'created_by' => Auth::id(),

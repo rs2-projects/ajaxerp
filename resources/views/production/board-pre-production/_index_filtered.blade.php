@@ -1,5 +1,5 @@
-<div class="">
-    <table class="table mb-0 erp-table">
+<div class="table-responsive">
+    <table class="table mb-0 erp-table ">
         <thead class="erp-thead">
             <tr class="erp-tr">
                 <th class="erp-th">SL</th>
