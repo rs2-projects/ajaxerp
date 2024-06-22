@@ -66,8 +66,8 @@
 
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
-                                            <select name="plate_up" class="select select-step material-product" required>
+                                            <label class="col-form-label">Plate Up </label>
+                                            <select name="plate_up" class="select select-step material-product">
                                                 <option value="">Select Plate Up</option>
                                                 @foreach ($plates as $plate)
                                                     <option value="{{ $plate->id }}">{{ $plate->name }}</option>
@@ -77,8 +77,8 @@
                                     </div>
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Plate Down <span class="text-danger">*</span> </label>
-                                            <select name="plate_down" class="select select-step material-product" required>
+                                            <label class="col-form-label">Plate Down </label>
+                                            <select name="plate_down" class="select select-step material-product">
                                                 <option value="">Select Plate Down</option>
                                                 @foreach ($plates as $plate)
                                                     <option value="{{ $plate->id }}">{{ $plate->name }}</option>
@@ -93,8 +93,8 @@
                                                     <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_UP }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product" required>
+                                                            <label class="col-form-label">Paper Up </label>
+                                                            <select name="product_material_id[]" class="select select-step material-product">
                                                                 <option value="">Select Paper Up</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
@@ -104,8 +104,8 @@
                                                     </div>
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
+                                                            <label class="col-form-label">QTY</label>
+                                                            <input type="number" name="quantity[]" min="0" class="form-control" placeholder="QTY">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -115,8 +115,8 @@
                                                     <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_DOWN }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Paper Down <span class="text-danger">*</span> </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product" required>
+                                                            <label class="col-form-label">Paper Down </label>
+                                                            <select name="product_material_id[]" class="select select-step material-product">
                                                                 <option value="">Select Paper Down</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
@@ -126,8 +126,8 @@
                                                     </div>
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" min="1" class="form-control" required placeholder="QTY">
+                                                            <label class="col-form-label">QTY </label>
+                                                            <input type="number" name="quantity[]" min="0" class="form-control" placeholder="QTY">
                                                         </div>
                                                     </div>
                                                 </div>

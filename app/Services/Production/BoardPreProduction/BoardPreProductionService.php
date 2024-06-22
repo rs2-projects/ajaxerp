@@ -102,6 +102,7 @@ class BoardPreProductionService
 
     public function store($request)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $check_code = FinishedGoods::where('code', $request->code)
@@ -156,9 +157,10 @@ class BoardPreProductionService
 
             if (isset($request->product_material_id) && is_array($request->product_material_id) && (count($request->product_material_id) > 0)) {
                 foreach ($request->product_material_id as $key=>$material_id) {
-                    if(($request->product_material_id[$key] != '') &&
-                        ($request->quantity[$key] != '')
-                    ){
+                    // if(($request->product_material_id[$key] != '') &&
+                    //     ($request->quantity[$key] != '')
+                    // ){
+                    if($request->product_material_id[$key] != '') {
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = new BoardPreProductionMaterials();
@@ -166,7 +168,7 @@ class BoardPreProductionService
                         $material->board_pre_production_id = $pre_production->id;
                         $material->product_material_category_id =$product_material->product_material_category_id;
                         $material->product_material_id = $request->product_material_id[$key];
-                        $material->quantity = $request->quantity[$key];
+                        $material->quantity = $request->quantity[$key]??0;
                         $material->created_by = auth()->user()->id;
                         $material->created_at = now();
                         $material->updated_by = auth()->user()->id;
@@ -321,10 +323,17 @@ class BoardPreProductionService
             $pre_production->save();
 
             if (isset($request->product_material_id) && is_array($request->product_material_id) && (count($request->product_material_id) > 0)) {
+                $board_pre_production_material_ids = $request->board_pre_production_material_id??[];
+                $filtered_ids = array_filter($board_pre_production_material_ids);
+                BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
+                    ->whereNotIn('id', $filtered_ids)
+                    ->delete();
+                    
                 foreach ($request->product_material_id as $key=>$material_id) {
-                    if(($request->product_material_id[$key] != '') &&
-                        ($request->quantity[$key] != '')
-                    ){
+                    // if(($request->product_material_id[$key] != '') &&
+                    //     ($request->quantity[$key] != '')
+                    // ){
+                    if($request->product_material_id[$key] != '') {
                         $product_material = ProductMaterial::find($material_id);
 
                         $material = BoardPreProductionMaterials::where('board_pre_production_id', $pre_production->id)
@@ -332,22 +341,27 @@ class BoardPreProductionService
                             ->where('type', $request->type[$key])
                             ->first();
 
-                        if (!empty($material)) {
-                            $material->product_material_category_id =$product_material->product_material_category_id;
-                            $material->product_material_id = $request->product_material_id[$key];
-                            $material->quantity = $request->quantity[$key];
-                            $material->updated_by = auth()->user()->id;
-                            $material->updated_at = now();
-                            $material->save();
+                        if (empty($material)) {
+                            $material = new BoardPreProductionMaterials();
+                            $material->type = $request->type[$key];
+                            $material->board_pre_production_id = $pre_production->id;
+                            $material->created_by = auth()->user()->id;
+                            $material->created_at = now();
+                        }
+                        $material->product_material_category_id =$product_material->product_material_category_id;
+                        $material->product_material_id = $request->product_material_id[$key];
+                        $material->quantity = $request->quantity[$key]??0;
+                        $material->updated_by = auth()->user()->id;
+                        $material->updated_at = now();
+                        $material->save();
 
-                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
-                                $board->color_up = $request->product_material_id[$key];
-                                $board->save();
-                            }
-                            if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
-                                $board->color_down = $request->product_material_id[$key];
-                                $board->save();
-                            }
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_UP) {
+                            $board->color_up = $request->product_material_id[$key];
+                            $board->save();
+                        }
+                        if($request->type[$key] == BoardPreProductionMaterials::TYPE_PAPER_DOWN) {
+                            $board->color_down = $request->product_material_id[$key];
+                            $board->save();
                         }
 
                     }
