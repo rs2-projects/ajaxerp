@@ -3,13 +3,14 @@
 namespace App\Models\Sales;
 
 use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialSet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InvoiceDetails extends Model
+class InvoiceDetails extends BaseModel
 {
     use HasFactory;
     protected $table = 'invoice_details';
@@ -36,7 +37,7 @@ class InvoiceDetails extends Model
         self::STATUS_INACTIVE => 'Inactive',
         self::STATUS_ACTIVE => 'Active',
     ];
-    
+
     //Dispatched Status
     const DISPATCHED_NO = 0;
     const DISPATCHED_YES = 1;
