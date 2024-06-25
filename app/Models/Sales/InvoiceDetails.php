@@ -8,7 +8,6 @@ use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialSet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class InvoiceDetails extends BaseModel
 {

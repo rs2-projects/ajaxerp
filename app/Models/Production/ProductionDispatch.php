@@ -2,17 +2,17 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseModel;
 use App\Models\Products\FinishedGoods;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductionDispatch extends Model
+class ProductionDispatch extends BaseModel
 {
     use HasFactory;
 
     protected $table = 'production_dispatches';
     public $timestamps = false;
-    
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [

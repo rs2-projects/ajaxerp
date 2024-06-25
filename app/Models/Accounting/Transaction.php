@@ -11,7 +11,7 @@ class Transaction extends BaseModel
     protected $table = 'transactions';
     public $timestamps = false;
 
-    //TODO: need to check the account id and category id in every transaction add and edit
+    //TODO: need to check the account id and category id in every transaction add and edit (important)
     const PAID_TYPE_UNPAID = 0;
     const PAID_TYPE_PAID = 1;
     const PAID_TYPES = [

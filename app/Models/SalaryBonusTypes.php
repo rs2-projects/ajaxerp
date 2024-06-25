@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SalaryBonusTypes extends Model
+class SalaryBonusTypes extends BaseModel
 {
     use HasFactory;
 

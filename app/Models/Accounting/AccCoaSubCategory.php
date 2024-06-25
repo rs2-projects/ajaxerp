@@ -12,7 +12,6 @@ class AccCoaSubCategory extends BaseModel
     protected $table = 'acc_coa_sub_categories';
     public $timestamps = false;
 
-
     const IS_ACCOUNT_TYPE_NO = 0;
     const IS_ACCOUNT_TYPE_YES = 1;
     const IS_ACCOUNT_TYPES = [

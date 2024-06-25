@@ -2,10 +2,10 @@
 
 namespace App\Models\Accounting;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class TransactionReceipt extends Model
+class TransactionReceipt extends BaseModel
 {
     use HasFactory;
     protected $table = 'transaction_receipts';

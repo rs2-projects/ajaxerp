@@ -2,12 +2,11 @@
 
 namespace App\Models\Products;
 
-use App\Models\Inventory\Warehouse;
+use App\Models\BaseModel;
 use App\Models\Inventory\WarehouseSection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterialSection extends Model
+class ProductMaterialSection extends BaseModel
 {
     use HasFactory;
     protected $table = 'product_material_sections';

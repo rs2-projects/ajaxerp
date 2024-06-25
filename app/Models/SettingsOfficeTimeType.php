@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SettingsOfficeTimeType extends Model
+class SettingsOfficeTimeType extends BaseModel
 {
     use HasFactory;
     protected $table = 'settings_office_time_types';

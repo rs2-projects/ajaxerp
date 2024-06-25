@@ -5,6 +5,7 @@ namespace App\Models\Accounting;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+
 class AccCoaCategory extends BaseModel
 {
     use HasFactory;

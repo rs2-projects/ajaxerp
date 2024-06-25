@@ -2,10 +2,10 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AssetProduct extends Model
+class AssetProduct extends BaseModel
 {
     use HasFactory;
 
@@ -62,7 +62,7 @@ class AssetProduct extends Model
     {
         return $this->belongsTo(AssetProductCategory::class, 'asset_product_category_id', 'id');
     }
-    
+
     public function asset_product_assigns(){
         return $this->hasMany(AssetProductAssign::class, 'asset_product_id', 'id')
             ->where('deleted', AssetProductAssign::DELETED_NO)

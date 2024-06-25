@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AttendanceHistory extends Model
+class AttendanceHistory extends BaseModel
 {
     use HasFactory;
 
