@@ -2,10 +2,10 @@
 
 namespace App\Models\Accounting;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AccCoaCategory extends Model
+class AccCoaCategory extends BaseModel
 {
     use HasFactory;
 
