@@ -4,10 +4,10 @@ namespace App\Models;
 
 use App\QueryBuilder\CustomQueryBuilder;
 use App\Traits\UpdatedTableTrait;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Log;
 
-class BaseModel extends Model
+class BaseAuthenticatableModel extends Authenticatable
 {
     use UpdatedTableTrait;
     /**

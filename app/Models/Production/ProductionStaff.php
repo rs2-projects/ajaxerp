@@ -2,11 +2,11 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseAuthenticatableModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class ProductionStaff extends Authenticatable
+class ProductionStaff extends BaseAuthenticatableModel
 {
     use HasFactory;
 
