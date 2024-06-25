@@ -56,6 +56,8 @@ class BaseModel extends Model
 
         static::created(function ($model) {
             self::storeTableName($model->getTable());
+            $model->synced = false;
+            $model->save();
 //            Log::info('Created event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -65,6 +67,8 @@ class BaseModel extends Model
 
         static::updated(function ($model) {
             self::storeTableName($model->getTable());
+            $model->synced = false;
+            $model->save();
 //            Log::info('Updated event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -74,6 +78,8 @@ class BaseModel extends Model
 
         static::deleted(function ($model) {
             self::storeTableName($model->getTable());
+            $model->synced = false;
+            $model->save();
 //            Log::info('Deleted event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -83,6 +89,8 @@ class BaseModel extends Model
 
         static::saved(function ($model) {
             self::storeTableName($model->getTable());
+            $model->synced = false;
+            $model->save();
 //            Log::info('Saved event fired for: ' . get_class($model), ['model' => $model]);
         });
     }
