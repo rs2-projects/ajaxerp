@@ -5,6 +5,7 @@ namespace App\Models;
 use App\QueryBuilder\CustomQueryBuilder;
 use App\Traits\UpdatedTableTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BaseModel extends Model
@@ -56,8 +57,7 @@ class BaseModel extends Model
 
         static::created(function ($model) {
             self::storeTableName($model->getTable());
-            $model->synced = false;
-            $model->save();
+            DB::table($model->getTable())->update(['synced' => false]);
 //            Log::info('Created event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -67,8 +67,9 @@ class BaseModel extends Model
 
         static::updated(function ($model) {
             self::storeTableName($model->getTable());
-            $model->synced = false;
-            $model->save();
+            DB::table($model->getTable())->update(['synced' => false]);
+//            $model->synced = false;
+//            $model->save();
 //            Log::info('Updated event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -78,8 +79,7 @@ class BaseModel extends Model
 
         static::deleted(function ($model) {
             self::storeTableName($model->getTable());
-            $model->synced = false;
-            $model->save();
+            DB::table($model->getTable())->update(['synced' => false]);
 //            Log::info('Deleted event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -89,8 +89,7 @@ class BaseModel extends Model
 
         static::saved(function ($model) {
             self::storeTableName($model->getTable());
-            $model->synced = false;
-            $model->save();
+            DB::table($model->getTable())->update(['synced' => false]);
 //            Log::info('Saved event fired for: ' . get_class($model), ['model' => $model]);
         });
     }

@@ -3,9 +3,9 @@
 namespace App\QueryBuilder;
 
 use App\Models\DeletedHistory;
-use App\Models\UpdatedTable;
 use App\Traits\UpdatedTableTrait;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CustomQueryBuilder extends Builder
@@ -45,12 +45,11 @@ class CustomQueryBuilder extends Builder
     {
         $updateResponse = parent::update($values);
         self::storeTableName($this->model->getTable());
-        //TODO: need to update those data synced = false
-//        $ids = $this->pluck('id')->toArray();
-//        if (count($ids) > 0) {
-//            Log::info('Updated -> '.count($ids));
-////            $this->model->whereIn('id', $ids)->update(['synced' => false]);
-//        }
+
+        $ids = $this->pluck('id')->toArray();
+        if (count($ids) > 0) {
+            DB::table($this->model->getTable())->whereIn('id', $ids)->where('synced', 1)->update(['synced' => false]);
+        }
         return $updateResponse;
     }
 
@@ -58,12 +57,11 @@ class CustomQueryBuilder extends Builder
     {
         $createResponse = parent::create($attributes);
         self::storeTableName($this->model->getTable());
-        //TODO: need to update those data synced = false
-//        $ids = $this->pluck('id')->toArray();
-//        if (count($ids) > 0) {
-//            Log::info('Created -> '.count($ids));
-////            $this->model->whereIn('id', $ids)->update(['synced' => false]);
-//        }
+
+        $ids = $this->pluck('id')->toArray();
+        if (count($ids) > 0) {
+            DB::table($this->model->getTable())->whereIn('id', $ids)->where('synced', 1)->update(['synced' => false]);
+        }
         return $createResponse;
     }
 }

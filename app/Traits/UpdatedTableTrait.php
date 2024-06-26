@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\UpdatedTable;
+use Illuminate\Support\Facades\Log;
 
 trait UpdatedTableTrait
 {
@@ -13,6 +14,9 @@ trait UpdatedTableTrait
             UpdatedTable::create([
                 'table_name' => $tableName
             ]);
+            Log::info('ff');
+        } else {
+            Log::info('dd');
         }
     }
 }
