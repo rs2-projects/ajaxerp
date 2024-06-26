@@ -57,7 +57,7 @@ class BaseModel extends Model
 
         static::created(function ($model) {
             self::storeTableName($model->getTable());
-            DB::table($model->getTable())->update(['synced' => false]);
+            DB::table($model->getTable())->where('id', $model->id)->update(['synced' => false]);
 //            Log::info('Created event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -67,7 +67,7 @@ class BaseModel extends Model
 
         static::updated(function ($model) {
             self::storeTableName($model->getTable());
-            DB::table($model->getTable())->update(['synced' => false]);
+            DB::table($model->getTable())->where('id', $model->id)->update(['synced' => false]);
 //            $model->synced = false;
 //            $model->save();
 //            Log::info('Updated event fired for: ' . get_class($model), ['model' => $model]);
@@ -79,7 +79,7 @@ class BaseModel extends Model
 
         static::deleted(function ($model) {
             self::storeTableName($model->getTable());
-            DB::table($model->getTable())->update(['synced' => false]);
+            DB::table($model->getTable())->where('id', $model->id)->update(['synced' => false]);
 //            Log::info('Deleted event fired for: ' . get_class($model), ['model' => $model]);
         });
 
@@ -89,7 +89,7 @@ class BaseModel extends Model
 
         static::saved(function ($model) {
             self::storeTableName($model->getTable());
-            DB::table($model->getTable())->update(['synced' => false]);
+            DB::table($model->getTable())->where('id', $model->id)->update(['synced' => false]);
 //            Log::info('Saved event fired for: ' . get_class($model), ['model' => $model]);
         });
     }

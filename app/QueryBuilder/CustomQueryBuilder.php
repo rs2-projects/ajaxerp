@@ -20,7 +20,6 @@ class CustomQueryBuilder extends Builder
     public function delete()
     {
         // Get the IDs of the records that are going to be deleted
-//        $ids = $this->pluck($this->model->getKeyName())->toArray();
         $ids = $this->pluck('id')->toArray();
         $tableName = $this->model->getTable();
         // Add custom logic before deleting
@@ -46,8 +45,10 @@ class CustomQueryBuilder extends Builder
         $updateResponse = parent::update($values);
         self::storeTableName($this->model->getTable());
 
+        //Get the ids which are updating
         $ids = $this->pluck('id')->toArray();
         if (count($ids) > 0) {
+            //update synced data as un-synced as it is updated
             DB::table($this->model->getTable())->whereIn('id', $ids)->where('synced', 1)->update(['synced' => false]);
         }
         return $updateResponse;
@@ -58,8 +59,10 @@ class CustomQueryBuilder extends Builder
         $createResponse = parent::create($attributes);
         self::storeTableName($this->model->getTable());
 
+        //Get the ids which are creating
         $ids = $this->pluck('id')->toArray();
         if (count($ids) > 0) {
+            //update synced data as un-synced as it is updated
             DB::table($this->model->getTable())->whereIn('id', $ids)->where('synced', 1)->update(['synced' => false]);
         }
         return $createResponse;
