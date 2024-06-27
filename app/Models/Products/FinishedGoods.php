@@ -2,11 +2,10 @@
 
 namespace App\Models\Products;
 
-use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class FinishedGoods extends Model
+class FinishedGoods extends BaseModel
 {
     use HasFactory;
 

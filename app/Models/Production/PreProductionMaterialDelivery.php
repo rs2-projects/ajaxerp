@@ -2,13 +2,13 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class PreProductionMaterialDelivery extends Model
+class PreProductionMaterialDelivery extends BaseModel
 {
     use HasFactory;
-    
+
     protected $table = 'pre_production_material_deliveries';
     public $timestamps = false;
 

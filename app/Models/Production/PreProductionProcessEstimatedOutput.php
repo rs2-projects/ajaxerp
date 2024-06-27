@@ -2,10 +2,10 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class PreProductionProcessEstimatedOutput extends Model
+class PreProductionProcessEstimatedOutput extends BaseModel
 {
     use HasFactory;
 

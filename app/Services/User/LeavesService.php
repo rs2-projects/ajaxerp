@@ -29,9 +29,9 @@ class LeavesService
             ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
             ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
             ->first();
-        
+
         $data['salarySetEmployee'] = $salarySetEmployee;
-            
+
         // if (empty($salarySetEmployee)) {
         //     throw new \Exception("Please Contact with Admin For Your Salary Set");
         // }
@@ -46,6 +46,12 @@ class LeavesService
             ->where('status', SettingsLeaveType::STATUS_ACTIVE)
             ->orderBy('title', 'asc')
             ->get();
+
+        $salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $auth_user->id)
+            ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
+            ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+            ->first();
+        $data['salary_set'] = $salary_set_employee;
 
         return $data;
     }

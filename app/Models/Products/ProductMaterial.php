@@ -3,12 +3,12 @@
 namespace App\Models\Products;
 
 use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use App\Models\Inventory\Warehouse;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterial extends Model
+class ProductMaterial extends BaseModel
 {
     use HasFactory;
     protected $table = 'product_materials';

@@ -3,11 +3,11 @@
 namespace App\Models\Procurements;
 
 use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use App\Models\Products\ProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterialPurchaseDetails extends Model
+class ProductMaterialPurchaseDetails extends BaseModel
 {
     use HasFactory;
 
