@@ -8,11 +8,11 @@ use App\Models\Permission\Role;
 use App\Traits\HasPermission;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends BaseAuthenticatableModel
 {
     use HasApiTokens, HasFactory, Notifiable, HasPermission;
 

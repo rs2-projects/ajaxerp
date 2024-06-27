@@ -2,10 +2,10 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterialPurchaseDetailDamageFile extends Model
+class ProductMaterialPurchaseDetailDamageFile extends BaseModel
 {
     use HasFactory;
 

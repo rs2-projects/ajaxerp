@@ -2,12 +2,11 @@
 
 namespace App\Models\Procurements;
 
-use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use App\Models\Products\AssetProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AssetProductPurchaseOrderDetails extends Model
+class AssetProductPurchaseOrderDetails extends BaseModel
 {
     use HasFactory;
 

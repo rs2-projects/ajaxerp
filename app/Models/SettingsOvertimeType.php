@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SettingsOvertimeType extends Model
+class SettingsOvertimeType extends BaseModel
 {
     use HasFactory;
     protected $table = 'settings_overtime_types';

@@ -2,10 +2,10 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterialPurchasePayment extends Model
+class ProductMaterialPurchasePayment extends BaseModel
 {
     use HasFactory;
     protected $table = 'product_material_purchase_payments';

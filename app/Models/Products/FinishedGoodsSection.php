@@ -2,11 +2,11 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use App\Models\Inventory\WarehouseSection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class FinishedGoodsSection extends Model
+class FinishedGoodsSection extends BaseModel
 {
     use HasFactory;
     protected $table = 'finished_goods_sections';

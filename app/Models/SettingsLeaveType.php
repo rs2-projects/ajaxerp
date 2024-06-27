@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SettingsLeaveType extends Model
+class SettingsLeaveType extends BaseModel
 {
     use HasFactory;
 

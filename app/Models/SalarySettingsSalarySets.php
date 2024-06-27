@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SalarySettingsSalarySets extends Model
+class SalarySettingsSalarySets extends BaseModel
 {
     use HasFactory;
     protected $table = 'salary_settings_salary_sets';

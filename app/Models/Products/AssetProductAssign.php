@@ -2,11 +2,11 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AssetProductAssign extends Model
+class AssetProductAssign extends BaseModel
 {
     use HasFactory;
 
