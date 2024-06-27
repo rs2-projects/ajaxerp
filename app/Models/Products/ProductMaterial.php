@@ -3,12 +3,12 @@
 namespace App\Models\Products;
 
 use App\Models\Accounting\AccCoaAccount;
+use App\Models\BaseModel;
 use App\Models\Inventory\Warehouse;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterial extends Model
+class ProductMaterial extends BaseModel
 {
     use HasFactory;
     protected $table = 'product_materials';
@@ -41,8 +41,10 @@ class ProductMaterial extends Model
     const UNIT_TYPE_PCS = 13;
     const UNIT_TYPE_SET = 14;
     const UNIT_TYPE_YD = 15;
+    const UNIT_TYPE_PAIRS = 16;
+    const UNIT_TYPE_SACK = 17;
     const UNIT_TYPES = [
-        self::UNIT_TYPE_BOX => 'Box',
+        self::UNIT_TYPE_BOX => 'BOXES',
         self::UNIT_TYPE_CM => 'CM',
         self::UNIT_TYPE_DZ => 'DZ',
         self::UNIT_TYPE_FT => 'FT',
@@ -53,10 +55,12 @@ class ProductMaterial extends Model
         self::UNIT_TYPE_LB => 'LB',
         self::UNIT_TYPE_MG => 'MG',
         self::UNIT_TYPE_ML => 'ML',
-        self::UNIT_TYPE_M => 'M',
+        self::UNIT_TYPE_M => 'METERS',
         self::UNIT_TYPE_PCS => 'PCS',
         self::UNIT_TYPE_SET => 'SET',
         self::UNIT_TYPE_YD => 'YD',
+        self::UNIT_TYPE_PAIRS => 'PAIRS',
+        self::UNIT_TYPE_SACK => 'SACK',
     ];
 
     const BOTH_SIDE_COLOR_NO = 0;

@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class SettingsSalarySetUpdateHistory extends Model
+class SettingsSalarySetUpdateHistory extends BaseModel
 {
     use HasFactory;
     protected $table = 'settings_salary_set_update_histories';

@@ -2,10 +2,10 @@
 
 namespace App\Models\Sales;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class InvoicePayment extends Model
+class InvoicePayment extends BaseModel
 {
     use HasFactory;
     protected $table = 'invoice_payments';

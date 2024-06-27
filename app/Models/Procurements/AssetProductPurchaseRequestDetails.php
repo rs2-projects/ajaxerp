@@ -2,12 +2,12 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\BaseModel;
 use App\Models\Products\AssetProduct;
 use App\Models\Products\AssetProductCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AssetProductPurchaseRequestDetails extends Model
+class AssetProductPurchaseRequestDetails extends BaseModel
 {
     use HasFactory;
 

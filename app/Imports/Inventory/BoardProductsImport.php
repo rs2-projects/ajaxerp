@@ -28,24 +28,57 @@ class BoardProductsImport implements ToCollection, WithStartRow
             throw new \Exception('Default board category not found');
         }
         $default_board_category_id = $default_board_category->id;
+
         foreach ($collection as $item) {
-            if ($item[0] == '') {
+            if($item[0] == null || $item[1] == null || $item[2] == null ){
                 continue;
             }
-            //check product material name unique
-            $product_material = ProductMaterial::where('name', $item[0])
+
+            $product_material = ProductMaterial::where('name', $item[1])
                 ->where('product_material_category_id', $default_board_category_id)
+                ->where('type', ProductMaterial::TYPE_BOARD)
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->where('status', ProductMaterial::STATUS_ACTIVE)
                 ->first();
             if (!empty($product_material)) {
-                continue;
+                throw new \Exception("Raw Board '{$item[1]}' already exists");
             }
-            //store product material
+
+            // $check_name = ProductMaterial::where('name', $item[1])
+            //     ->where('deleted', ProductMaterial::DELETED_NO)
+            //     ->where('status', ProductMaterial::STATUS_ACTIVE)
+            //     ->where('type', ProductMaterial::TYPE_BOARD)
+            //     ->first();
+
+            // if (!empty($check_name)) {
+            //     throw new \Exception("Raw Board '{$item[1]}' already exists");
+            // }
+            
+            $check_code = ProductMaterial::where('code', $item[0])
+                ->where('deleted', ProductMaterial::DELETED_NO)
+                ->where('status', ProductMaterial::STATUS_ACTIVE)
+                ->first();
+            
+            if (!empty($check_code)) {
+                throw new \Exception("Code '{$item[0]}' already exists");
+            }
+
+            $unit = $item[2];
+            $unitTypeArr = ProductMaterial::UNIT_TYPES;
+            if (!in_array($unit, $unitTypeArr)) {
+                throw new \Exception("Invalid Unit '{$item[2]}'");
+            }
+            $unitTypeValue = array_search($unit, $unitTypeArr);
+            
             ProductMaterial::create([
                 'type' => ProductMaterial::TYPE_BOARD,
                 'product_material_category_id' => $default_board_category_id,
-                'unit_type' => ProductMaterial::UNIT_TYPE_PCS,
-                'name' => $item[0],
+                'unit_type' => $unitTypeValue,
+                'name' => $item[1],
                 'code' => $item[0],
+                'thickness' => $item[3],
+                'low_stock_warning' => $item[4],
+                'low_stock_at_least' => $item[5],
                 'created_at' => Carbon::now(),
                 'created_by' => Auth::id(),
                 'updated_at' => Carbon::now(),

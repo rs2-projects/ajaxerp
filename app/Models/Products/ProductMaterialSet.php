@@ -2,10 +2,10 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class ProductMaterialSet extends Model
+class ProductMaterialSet extends BaseModel
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class ProductMaterialSet extends Model
 
     const PRICE_CALCULATED_NO = 0;
     const PRICE_CALCULATED_YES = 1;
-    
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [

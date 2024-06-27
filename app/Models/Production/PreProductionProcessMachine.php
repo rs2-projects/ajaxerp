@@ -2,11 +2,11 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseModel;
 use App\Models\Machine;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class PreProductionProcessMachine extends Model
+class PreProductionProcessMachine extends BaseModel
 {
     use HasFactory;
 

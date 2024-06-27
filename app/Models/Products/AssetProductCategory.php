@@ -2,10 +2,10 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class AssetProductCategory extends Model
+class AssetProductCategory extends BaseModel
 {
     use HasFactory;
     protected $table = 'asset_product_categories';

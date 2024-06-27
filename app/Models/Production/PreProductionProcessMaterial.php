@@ -2,12 +2,12 @@
 
 namespace App\Models\Production;
 
+use App\Models\BaseModel;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class PreProductionProcessMaterial extends Model
+class PreProductionProcessMaterial extends BaseModel
 {
     use HasFactory;
 

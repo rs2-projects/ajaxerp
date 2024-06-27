@@ -169,7 +169,9 @@
                         showSuccessAlert('Success',res.message)
                         getData();
                     }else{
-                        showErrorAlert('Error',res.message)
+                        showErrorAlert('Error',res.message);
+                        $(self)[0].reset();
+                        $("#preProductionImportModal").modal('hide');
                     }
                 }, 'show_input_error');
 

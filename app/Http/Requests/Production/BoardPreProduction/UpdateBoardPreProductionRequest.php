@@ -25,9 +25,9 @@ class UpdateBoardPreProductionRequest extends FormRequest
             'code' => 'required',
             'machine_id' => 'required',
             'staff_id' => 'required',
-            'quantity' => 'required',
-            'plate_up' => 'required',
-            'plate_down' => 'required'
+            // 'quantity' => 'required',
+            // 'plate_up' => 'required',
+            // 'plate_down' => 'required'
         ];
     }
 }

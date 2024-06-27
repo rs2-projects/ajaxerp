@@ -23,8 +23,8 @@ class UpdateCategoryReqeust extends FormRequest
     {
         return [
             'name' => 'required',
-            'srp_markup_percent' => 'required',
-            'wholesale_discount_percent' => 'required',
+            // 'srp_markup_percent' => 'required',
+            // 'wholesale_discount_percent' => 'required',
         ];
     }
 }

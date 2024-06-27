@@ -62,26 +62,27 @@
                                         </div>
                                         <input type="hidden" name="quantity[]" value="1" class="form-control">
                                         <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_RAW_BOARD }}" class="form-control">
+                                        <input type="hidden" name="board_pre_production_material_id[]" value="{{ $raw_board_id->id }}" class="form-control">
                                     </div>
                                     
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Plate Up <span class="text-danger">*</span> </label>
-                                            <select name="plate_up" class="select select-step material-product" required>
+                                            <label class="col-form-label">Plate Up </label>
+                                            <select name="plate_up" class="select select-step material-product">
                                                 <option value="">Select Plate Up</option>
                                                 @foreach ($plates as $plate)
-                                                    <option value="{{ $plate->id }}" {{( $board->embossed_up == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
+                                                    <option value="{{ $plate->id }}" {{( $board?->embossed_up == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
                                     <div class="pms-item flex-32">
                                         <div class="input-block erp-step-input-block mb-0">
-                                            <label class="col-form-label">Plate Down <span class="text-danger">*</span> </label>
-                                            <select name="plate_down" class="select select-step material-product" required>
+                                            <label class="col-form-label">Plate Down </label>
+                                            <select name="plate_down" class="select select-step material-product">
                                                 <option value="">Select Plate Down</option>
                                                 @foreach ($plates as $plate)
-                                                    <option value="{{ $plate->id }}" {{( $board->embossed_down == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
+                                                    <option value="{{ $plate->id }}" {{( $board?->embossed_down == $plate->id) ? 'selected' : ''}}>{{ $plate->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -92,21 +93,22 @@
                                             <div class="flex-50">
                                                 <div class="d-flex pe-3">
                                                     <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_UP }}" class="form-control">
+                                                    <input type="hidden" id="paper_up_production_material_id" name="board_pre_production_material_id[]" value="{{ $paper_up_id?->id }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Paper Up <span class="text-danger">*</span> </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product" required>
+                                                            <label class="col-form-label">Paper Up</label>
+                                                            <select onchange="changePaperUp(this, 'paper_up')" name="product_material_id[]" class="select select-step material-product">
                                                                 <option value="">Select Paper Up</option>
                                                                 @foreach ($papers as $paper)
-                                                                    <option value="{{ $paper->id }}" {{( $paper_up_id->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
+                                                                    <option value="{{ $paper->id }}" {{( $paper_up_id?->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" value="{{$paper_up_id->quantity}}" min="1" class="form-control" required>
+                                                            <label class="col-form-label">QTY </label>
+                                                            <input type="number" id="paper_up_qty" name="quantity[]" value="{{$paper_up_id?->quantity}}" min="0" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -114,21 +116,22 @@
                                             <div class="flex-50">
                                                 <div class="d-flex ps-3">
                                                     <input type="hidden" name="type[]" value="{{ \App\Models\Production\BoardPreProductionMaterials::TYPE_PAPER_DOWN }}" class="form-control">
+                                                    <input type="hidden" id="paper_down_production_material_id" name="board_pre_production_material_id[]" value="{{ $paper_down_id?->id }}" class="form-control">
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Paper Down <span class="text-danger">*</span> </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product" required>
+                                                            <label class="col-form-label">Paper Down</label>
+                                                            <select onchange="changePaperUp(this, 'paper_down')" name="product_material_id[]" class="select select-step material-product">
                                                                 <option value="">Select Paper Down</option>
                                                                 @foreach ($papers as $paper)
-                                                                    <option value="{{ $paper->id }}" {{( $paper_down_id->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
+                                                                    <option value="{{ $paper->id }}" {{( $paper_down_id?->product_material_id == $paper->id) ? 'selected' : ''}}>{{ $paper->name }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">QTY <span class="text-danger">*</span> </label>
-                                                            <input type="number" name="quantity[]" value="{{$paper_down_id->quantity}}" min="1" class="form-control" required>
+                                                            <label class="col-form-label">QTY</label>
+                                                            <input type="number" id="paper_down_qty" name="quantity[]" value="{{$paper_down_id?->quantity}}" min="0" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -210,6 +213,20 @@
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
+        }
+
+        // remove hidden board pre production material id when no paper up or paper down is selected
+        function changePaperUp(select, type){
+            let paper_id = $(select).val();
+            if(paper_id ==""){
+                if(type == 'paper_up'){
+                    $("#paper_up_production_material_id").val("");
+                    $("#paper_up_qty").val(0);
+                }else if(type == 'paper_down'){
+                    $("#paper_down_production_material_id").val("");
+                    $("#paper_down_qty").val(0);
+                }
+            }
         }
     </script>
 @endsection

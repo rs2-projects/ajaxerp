@@ -2,10 +2,10 @@
 
 namespace App\Models\Sales;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class Customer extends BaseModel
 {
     use HasFactory;
     protected $table = 'customers';

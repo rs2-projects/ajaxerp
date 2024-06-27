@@ -2,12 +2,12 @@
 
 namespace App\Models\Procurements;
 
+use App\Models\BaseModel;
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Supplier extends Model
+class Supplier extends BaseModel
 {
     use HasFactory;
 

@@ -2,10 +2,10 @@
 
 namespace App\Models\Products;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class BoardEmbossed extends Model
+class BoardEmbossed extends BaseModel
 {
     use HasFactory;
 

@@ -23,8 +23,8 @@ class StoreCategoryReqeust extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'srp_markup_percent' => 'required',
-            'wholesale_discount_percent' => 'required',
+            // 'srp_markup_percent' => 'required',
+            // 'wholesale_discount_percent' => 'required',
         ];
     }
 }

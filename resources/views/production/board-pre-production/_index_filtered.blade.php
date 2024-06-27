@@ -1,5 +1,5 @@
-<div class="">
-    <table class="table mb-0 erp-table">
+<div class="table-responsive">
+    <table class="table mb-0 erp-table ">
         <thead class="erp-thead">
             <tr class="erp-tr">
                 <th class="erp-th">SL</th>
@@ -10,7 +10,7 @@
                 <th class="erp-th text-center">Plate Down </th>
                 <th class="erp-th text-center">Paper Down </th>
                 <th class="erp-th text-center">Machine </th>
-                <th class="erp-th text-center">Production Staff </th>
+                {{-- <th class="erp-th text-center">Production Staff </th> --}}
                 {{-- @if(hasPermission( 'manage-finished-goods')) --}}
                     <th class="erp-th text-center">Action </th>
                 {{-- @endif --}}
@@ -39,7 +39,7 @@
                     <td class="erp-tbody-td text-center">{{ $data->finishedGoods?->embossed_downs?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->paper_down?->product_material?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->machine?->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ !empty($data->staff->title) ? $data->staff->title : 'N/A'}}</td>
+                    {{-- <td class="erp-tbody-td text-center">{{ !empty($data->staff->title) ? $data->staff->title : 'N/A'}}</td> --}}
                     {{-- @if(hasPermission('manage-finished-goods')) --}}
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
