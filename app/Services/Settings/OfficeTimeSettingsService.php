@@ -119,6 +119,7 @@ class OfficeTimeSettingsService
         DB::beginTransaction();
         try {
             $type = SettingsOfficeTimeType::find($id);
+
             $type->name = $request->name;
             $type->working_hour = $request->working_hour;
             $type->description = $request->description;
@@ -160,6 +161,7 @@ class OfficeTimeSettingsService
                 ->whereIn('settings_salary_set_id', $salary_set_ids)
                 ->where('salary_generated', AttendanceReport::SALARY_GENERATED_NO)
                 ->delete();
+
 
         }catch (\Exception $exception){
             DB::rollBack();

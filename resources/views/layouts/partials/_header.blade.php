@@ -27,7 +27,7 @@
                 <a href="{{ route('hr.employee.login.back-to-admin') }}"><i class="fa fa-arrow-left"></i> Back To Your Account</a>
             </div>
         @else
-            <h3>RS ERP</h3>
+            <h3>{{ config('app.name') }}</h3>
         @endif
     </div>
     <!-- /Header Title -->
