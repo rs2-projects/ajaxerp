@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\DB;
 
 class OfficeTimeSettingsService
 {
+    public SettingsSalarySetUpdateHelperService $updateSalarySetHelperService;
     public function __construct()
     {
         $this->weekDays = config('commonData.week_days');
         $this->paginate_limit = config('commonData.paginate_limit');
+        $this->updateSalarySetHelperService = new SettingsSalarySetUpdateHelperService();
     }
 
     public function getWeekDays()
@@ -119,7 +121,46 @@ class OfficeTimeSettingsService
         DB::beginTransaction();
         try {
             $type = SettingsOfficeTimeType::find($id);
+            if (empty($type)) {
+                throw new \Exception("Invalid Time");
+            }
 
+            $type->status = SettingsOfficeTimeType::STATUS_INACTIVE;
+            $type->updated_at = Carbon::now();
+            $type->updated_by = auth()->id();
+            $type->save();
+
+            $newType = new SettingsOfficeTimeType();
+            $newType->name = $request->name;
+            $newType->working_hour = $request->working_hour;
+            $newType->description = $request->description;
+            $newType->status = SettingsOfficeTimeType::STATUS_ACTIVE;
+            $newType->deleted = SettingsOfficeTimeType::DELETED_NO;
+            $newType->created_at = Carbon::now();
+            $newType->created_by = auth()->id();
+            $newType->save();
+
+            foreach ($request->days as $key=> $day){
+                $is_weekend_input = $day.'_is_weekend';
+                $start_time_input = $day.'_start_time';
+                $end_time_input = $day.'_end_time';
+
+                if(isset($request->$is_weekend_input) && ($request->$is_weekend_input == 1)) {
+                    $is_weekend = 1;
+                } else {
+                    $is_weekend = 0;
+                }
+
+                $office_time = new SettingsOfficeTime();
+                $office_time->office_time_type_id = $newType->id;
+                $office_time->day = $day;
+                $office_time->is_weekend = $is_weekend;
+                $office_time->start_time = $request->$start_time_input;
+                $office_time->end_time = $request->$end_time_input;
+                $office_time->save();
+
+            }
+            /*
             $type->name = $request->name;
             $type->working_hour = $request->working_hour;
             $type->description = $request->description;
@@ -153,14 +194,10 @@ class OfficeTimeSettingsService
                 $office_time->end_time = $request->$end_time_input;
                 $office_time->save();
 
-            }
+            }*/
 
-            $salary_set_ids = SettingsSalarySet::where('settings_office_time_type_id', $type->id)->pluck('id')->toArray();
-            $employee_ids = SettingsSalarySetEmployee::whereIn('settings_salary_set_id', $salary_set_ids)->pluck('employee_id')->toArray();
-            AttendanceReport::whereIn('employee_id', $employee_ids)
-                ->whereIn('settings_salary_set_id', $salary_set_ids)
-                ->where('salary_generated', AttendanceReport::SALARY_GENERATED_NO)
-                ->delete();
+            /*update salary set or create new if required*/
+            $this->updateSalarySetHelperService->updateOfficeTimeType($type, $newType);
 
 
         }catch (\Exception $exception){

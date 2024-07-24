@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class OverTimeSettingsService
 {
+    public SettingsSalarySetUpdateHelperService $updateSalarySetHelperService;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
+        $this->updateSalarySetHelperService = new SettingsSalarySetUpdateHelperService();
     }
 
     public function getIndexData()
@@ -78,14 +81,37 @@ class OverTimeSettingsService
         try {
 
             $over_time = SettingsOvertimeType::findOrFail($id);
-            $over_time->title = $request->title;
+            if (empty($over_time)){
+                throw new \Exception("Invalid Overtime!");
+            }
+            $over_time->status = SettingsOvertimeType::STATUS_INACTIVE;
+            $over_time->updated_at = Carbon::now();
+            $over_time->updated_by = auth()->id();
+            $over_time->save();
+            /*$over_time->title = $request->title;
             $over_time->description = $request->description;
             $over_time->salary_type = $request->salary_type;
             $over_time->rate = $request->rate;
             $over_time->special_rate = $request->special_rate;
             $over_time->updated_at = Carbon::now();
             $over_time->updated_by = auth()->id();
-            $over_time->save();
+            $over_time->save();*/
+
+            $newOvertime = new SettingsOvertimeType();
+            $newOvertime->title = $request->title;
+            $newOvertime->description = $request->description;
+            $newOvertime->salary_type = $request->salary_type;
+            $newOvertime->rate = $request->rate;
+            $newOvertime->special_rate = $request->special_rate;
+            $newOvertime->status = SettingsOvertimeType::STATUS_ACTIVE;
+            $newOvertime->deleted = SettingsOvertimeType::DELETED_NO;
+            $newOvertime->created_at = Carbon::now();
+            $newOvertime->created_by = auth()->id();
+            $newOvertime->save();
+
+            /*update salary set or create new if required*/
+            $this->updateSalarySetHelperService->updateOvertimeType($over_time, $newOvertime);
+
 
         }catch (\Exception $exception){
             DB::rollBack();
