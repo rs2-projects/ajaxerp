@@ -40,6 +40,7 @@ class GenerateSalaryService
      */
     public function generateSalary($request)
     {
+
         DB::beginTransaction();
         try {
 
@@ -71,6 +72,8 @@ class GenerateSalaryService
                     $salary_end_date = $salary_end_date->format('Y-m-25');
                 }
             }
+            dump($salary_start_date);
+            dd($salary_end_date);
 
             if(isset($request->deduction_type) && ($request->deduction_type != '')) {
                 $salary->settings_salary_deduction_type_id = $request->deduction_type;
@@ -127,9 +130,11 @@ class GenerateSalaryService
                         ->where('salary_period', $request->period_type)
                         ->pluck('id')
                         ->toArray();
-                    $generated_salary_set = SalarySettingsSalarySets::where('salary_id', $salary_ids)
+
+                    $generated_salary_set = SalarySettingsSalarySets::whereIn('salary_id', $salary_ids)
                         ->where('settings_salary_set_id', $salary_set)
                         ->first();
+
                     if (!empty($generated_salary_set)) {
                         continue;
                     }

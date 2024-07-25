@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Payroll;
 
+use App\Helpers\SalaryGenerateDateHelper;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Models\Salary;
 use App\Models\SalarySettingsSalarySets;
@@ -57,11 +58,24 @@ class GenerateSalaryController extends BackendController
             ->pluck('settings_salary_set_id')
             ->toArray();
 
+        $check_date['start'] = SalaryGenerateDateHelper::monthStartDateByRequest($request);
+        $check_date['end'] = SalaryGenerateDateHelper::monthEndDateByRequest($request);
 
-        $data['settingsSalarySets'] = SettingsSalarySet::where('status', SettingsSalarySet::STATUS_ACTIVE)
-            ->whereNotIn('id', $generated_salary_set_ids)
+        /*where('status', SettingsSalarySet::STATUS_ACTIVE)
+            ->*/
+        $data['settingsSalarySets'] = SettingsSalarySet::whereNotIn('id', $generated_salary_set_ids)
             ->where('deleted', SettingsSalarySet::DELETED_NO)
             ->where('salary_generate_type', $request->salary_type)
+            ->where('start_date', '<=', $check_date['start'])
+            ->where(function ($q) use ($check_date) {
+                $q->where(function ($j) use ($check_date) {
+                    $j->where('status', SettingsSalarySet::STATUS_INACTIVE)
+                        ->where('end_date', '>=', $check_date['end']);
+                })->orWhere(function ($j) use ($check_date) {
+                    $j->where('status', SettingsSalarySet::STATUS_ACTIVE)
+                        ->where('end_date', null);
+                });
+            })
             ->get();
 
         $data['bonusTypes'] = SettingsBonusType::where('status', SettingsBonusType::STATUS_ACTIVE)

@@ -20,21 +20,21 @@ use Carbon\Carbon;
 
 class AttendanceHelper
 {
-    public static function employeeAttendanceDetails($employee_id, $date):array
+    public static function employeeAttendanceDetails($employee_id, $date, $salary_set):array
     {
         $employee = User::where('id', $employee_id)
             ->where('status', User::STATUS_ACTIVE)
             ->where('deleted', User::DELETED_NO)
             ->first();
         $day = strtolower(Carbon::make($date)->format('l'));
-        $salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $employee_id)
+        /*$salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $employee_id)
             ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
             ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
-            ->first();
-        $salary_set = SettingsSalarySet::where('id', $salary_set_employee->settings_salary_set_id)
+            ->first();*/
+        /*$salary_set = SettingsSalarySet::where('id', $salary_set_employee->settings_salary_set_id)
             ->where('status', SettingsSalarySet::STATUS_ACTIVE)
             ->where('deleted', SettingsSalarySet::DELETED_NO)
-            ->first();
+            ->first();*/
         $office_time_type = SettingsOfficeTimeType::with('officeTimes')
             ->where('id', $salary_set->settings_office_time_type_id)
             ->where('status', SettingsOfficeTimeType::STATUS_ACTIVE)
@@ -131,7 +131,7 @@ class AttendanceHelper
             ->first();
 
         $day = strtolower(Carbon::make($date)->format('l'));
-        $salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $employee_id)
+        /*$salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $employee_id)
             ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
             ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
             ->first();
@@ -149,6 +149,17 @@ class AttendanceHelper
             ->where('deleted', SettingsSalarySet::DELETED_NO)
             ->first();
         if (empty($salary_set)){
+            $show_status = 'absent';
+            $icon_status = '<i class="fa fa-close text-white"></i>';
+
+            return  [
+                'show_status' => $show_status,
+                'icon_status' => $icon_status,
+            ];
+        }*/
+        try {
+            $salary_set = SalarySetHelper::getEmployeeSalarySet($employee_id, $date);
+        } catch (\Exception $exception) {
             $show_status = 'absent';
             $icon_status = '<i class="fa fa-close text-white"></i>';
 

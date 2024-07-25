@@ -50,6 +50,7 @@ class SettingsSalarySet extends BaseModel
     protected $fillable = [
         'start_date',
         'end_date',
+        'parent_id',
         'name',
         'description',
         'settings_salary_type_id',

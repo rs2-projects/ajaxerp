@@ -2,6 +2,7 @@
 
 namespace App\Services\Settings;
 
+use App\Helpers\SalaryGenerateDateHelper;
 use App\Models\AttendanceReport;
 use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetAttendanceLocation;
@@ -94,11 +95,11 @@ class SettingsSalarySetUpdateHelperService
 
     public function updateSingleColumn($salarySets, $columnName, $value)
     {
-        $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $month_start_date = SalaryGenerateDateHelper::monthStartDate();
         foreach ($salarySets as $salarySet) {
             if($salarySet->start_date != $month_start_date) {
                 $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
-                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->end_date = SalaryGenerateDateHelper::previousMonthEndDate();
                 $salarySet->save();
 
                 $singleColumns = [
@@ -115,6 +116,7 @@ class SettingsSalarySetUpdateHelperService
 
                 $newSalarySet = new SettingsSalarySet();
                 $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->parent_id = $salarySet->id;
                 $newSalarySet->name = $salarySet->name;
                 $newSalarySet->description = $salarySet->description;
                 foreach ($singleColumns as $singleColumn) {

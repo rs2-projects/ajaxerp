@@ -2,6 +2,7 @@
 
 namespace App\Services\Hr;
 
+use App\Helpers\SalaryGenerateDateHelper;
 use App\Models\Department;
 use App\Models\SettingsAbsentPenalty;
 use App\Models\SettingsGeoLocation;
@@ -100,6 +101,7 @@ class SalarySetService
         try {
 
             $salarySet = new SettingsSalarySet();
+            $salarySet->start_date = SalaryGenerateDateHelper::monthStartDate();
             $salarySet->name = $request->name;
             $salarySet->description = $request->description;
             $salarySet->settings_salary_type_id = $request->settings_salary_type_id;
@@ -202,7 +204,7 @@ class SalarySetService
     public function update($id,$request){
 
         try {
-            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $month_start_date = SalaryGenerateDateHelper::monthStartDate();
 
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
@@ -215,13 +217,14 @@ class SalarySetService
             if($salarySet->start_date != $month_start_date) {
 
                 $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
-                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->end_date = SalaryGenerateDateHelper::previousMonthEndDate();
                 $salarySet->updated_at = Carbon::now();
                 $salarySet->updated_by = auth()->user()->id;
                 $salarySet->save();
 
                 $newSalarySet = new SettingsSalarySet();
                 $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->parent_id = $salarySet->id;
                 $newSalarySet->name = $request->name;
                 $newSalarySet->description = $request->description;
                 $newSalarySet->settings_salary_type_id = $request->settings_salary_type_id;
@@ -308,7 +311,7 @@ class SalarySetService
     public function attendanceSetUpdate($id,$request)
     {
         try {
-            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $month_start_date = SalaryGenerateDateHelper::monthStartDate();
 
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
@@ -327,13 +330,14 @@ class SalarySetService
             $updateSalarySetId = $salarySet->id;
             if($salarySet->start_date != $month_start_date) {
                 $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
-                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->end_date = SalaryGenerateDateHelper::previousMonthEndDate();
                 $salarySet->updated_at = Carbon::now();
                 $salarySet->updated_by = auth()->user()->id;
                 $salarySet->save();
 
                 $newSalarySet = new SettingsSalarySet();
                 $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->parent_id = $salarySet->id;
                 $newSalarySet->name = $salarySet->name;
                 $newSalarySet->description = $salarySet->description;
                 $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
@@ -352,7 +356,7 @@ class SalarySetService
 
                 $updateSalarySetId = $newSalarySet->id;
 
-                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
+//                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
                 $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
                 $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
             } else {
@@ -434,7 +438,7 @@ class SalarySetService
     public function leaveTypeSetUpdate($id,$request)
     {
         try {
-            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $month_start_date = SalaryGenerateDateHelper::monthStartDate();
 
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
@@ -452,13 +456,14 @@ class SalarySetService
 
             if($salarySet->start_date != $month_start_date) {
                 $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
-                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->end_date = SalaryGenerateDateHelper::previousMonthEndDate();
                 $salarySet->updated_at = Carbon::now();
                 $salarySet->updated_by = auth()->user()->id;
                 $salarySet->save();
 
                 $newSalarySet = new SettingsSalarySet();
                 $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->parent_id = $salarySet->id;
                 $newSalarySet->name = $salarySet->name;
                 $newSalarySet->description = $salarySet->description;
                 $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
@@ -478,7 +483,7 @@ class SalarySetService
                 $updateSalarySetId = $newSalarySet->id;
 
                 $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
-                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
+//                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
                 $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
             } else {
 
@@ -556,7 +561,7 @@ class SalarySetService
     public function setEmployeesStore($id,$request)
     {
         try {
-            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $month_start_date = SalaryGenerateDateHelper::monthStartDate();
 
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
@@ -574,13 +579,14 @@ class SalarySetService
             $updateSalarySetId = $salarySet->id;
             if($salarySet->start_date != $month_start_date) {
                 $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
-                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->end_date = SalaryGenerateDateHelper::previousMonthEndDate();
                 $salarySet->updated_at = Carbon::now();
                 $salarySet->updated_by = auth()->user()->id;
                 $salarySet->save();
 
                 $newSalarySet = new SettingsSalarySet();
                 $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->parent_id = $salarySet->id;
                 $newSalarySet->name = $salarySet->name;
                 $newSalarySet->description = $salarySet->description;
                 $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
@@ -601,7 +607,7 @@ class SalarySetService
 
                 $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
                 $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
-                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
+//                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
             } else {
 
             }
