@@ -5,6 +5,7 @@ namespace App\Services\Ajax;
 use App\Models\Designation;
 use App\Models\SalarySettingsSalarySets;
 use App\Models\SettingsLeaveType;
+use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalarySetLeaveType;
 use App\Models\User;
@@ -87,12 +88,18 @@ class AjaxService
     {
         if(isset($request->salary_set_id)) {
             $salary_set_id = $request->salary_set_id;
-            $salary_set_employees = SettingsSalarySetEmployee::where('settings_salary_set_id', $salary_set_id)
+            $salary_set_employees = SettingsSalarySetEmployee::whereHas('salarySet', function ($q) {
+                $q->where('status', SettingsSalarySet::STATUS_ACTIVE);
+            })
+                ->where('settings_salary_set_id', $salary_set_id)
                 ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
                 ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
                 ->pluck('basic_salary', 'employee_id')->toArray();
 
-            $removed_employee_ids = SettingsSalarySetEmployee::where('settings_salary_set_id', '!=', $salary_set_id)
+            $removed_employee_ids = SettingsSalarySetEmployee::whereHas('salarySet', function ($q) {
+                $q->where('status', SettingsSalarySet::STATUS_ACTIVE);
+            })
+                ->where('settings_salary_set_id', '!=', $salary_set_id)
                 ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
                 ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
                 ->pluck('employee_id')->toArray();

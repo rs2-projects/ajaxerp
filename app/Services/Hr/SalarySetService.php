@@ -16,19 +16,23 @@ use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalarySetLeaveType;
 use App\Models\SettingsSalaryType;
 use App\Models\User;
+use App\Services\Settings\SettingsSalarySetUpdateHelperService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SalarySetService
 {
+    public SettingsSalarySetUpdateHelperService $updateSalarySetHelperService;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
+        $this->updateSalarySetHelperService = new SettingsSalarySetUpdateHelperService();
     }
 
     public function getIndexFilteredData()
     {
         $data['settingsSalarySets'] = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
+            ->where('status', SettingsSalarySet::STATUS_ACTIVE)
             ->orderBy('name', 'asc')
             ->paginate($this->paginate_limit);
 
@@ -198,25 +202,59 @@ class SalarySetService
     public function update($id,$request){
 
         try {
+            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
                 ->first();
 
-            if (!$salarySet){
+            if (empty($salarySet)){
                 throw new \Exception("Salary Set not found");
             }
 
-            $salarySet->name = $request->name;
-            $salarySet->description = $request->description;
-            $salarySet->settings_salary_type_id = $request->settings_salary_type_id;
-            $salarySet->settings_overtime_type_id = $request->settings_overtime_type_id;
-            $salarySet->settings_absent_penalty_id = $request->settings_absent_penalty_id;
-            $salarySet->settings_late_penalty_id = $request->settings_late_penalty_id;
-            $salarySet->settings_office_time_type_id = $request->settings_office_time_type_id;
-            $salarySet->salary_generate_type = $request->salary_generate_type;
-            $salarySet->updated_at = Carbon::now();
-            $salarySet->updated_by = auth()->user()->id;
-            $salarySet->save();
+            if($salarySet->start_date != $month_start_date) {
+
+                $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
+                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+
+                $newSalarySet = new SettingsSalarySet();
+                $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->name = $request->name;
+                $newSalarySet->description = $request->description;
+                $newSalarySet->settings_salary_type_id = $request->settings_salary_type_id;
+                $newSalarySet->settings_overtime_type_id = $request->settings_overtime_type_id;
+                $newSalarySet->settings_absent_penalty_id = $request->settings_absent_penalty_id;
+                $newSalarySet->settings_late_penalty_id = $request->settings_late_penalty_id;
+                $newSalarySet->settings_office_time_type_id = $request->settings_office_time_type_id;
+                $newSalarySet->salary_generate_type = $request->salary_generate_type;
+                $newSalarySet->attendance_type_fingerprint_device = $salarySet->attendance_type_fingerprint_device??0;
+                $newSalarySet->attendance_type_location = $salarySet->attendance_type_location??0;
+                $newSalarySet->created_at = Carbon::now();
+                $newSalarySet->created_by = auth()->user()->id;
+                $newSalarySet->updated_at = Carbon::now();
+                $newSalarySet->updated_by = auth()->user()->id;
+                $newSalarySet->save();
+
+                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
+
+            } else {
+                $salarySet->name = $request->name;
+                $salarySet->description = $request->description;
+                $salarySet->settings_salary_type_id = $request->settings_salary_type_id;
+                $salarySet->settings_overtime_type_id = $request->settings_overtime_type_id;
+                $salarySet->settings_absent_penalty_id = $request->settings_absent_penalty_id;
+                $salarySet->settings_late_penalty_id = $request->settings_late_penalty_id;
+                $salarySet->settings_office_time_type_id = $request->settings_office_time_type_id;
+                $salarySet->salary_generate_type = $request->salary_generate_type;
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+            }
 
         }catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
@@ -270,6 +308,8 @@ class SalarySetService
     public function attendanceSetUpdate($id,$request)
     {
         try {
+            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
                 ->first();
@@ -277,12 +317,53 @@ class SalarySetService
             if (!$salarySet){
                 throw new \Exception("Salary Set not found");
             }
+            if ($salarySet->attendance_type_location == 1) {
+                $geoLocationIds = $request->settings_geo_location_id ?? [];
+                if (count($geoLocationIds) == 0) {
+                    throw new \Exception("Please select at least one geo location");
+                }
+            }
 
-            $salarySet->attendance_type_fingerprint_device = $request->attendance_type_fingerprint_device??0;
-            $salarySet->attendance_type_location = $request->attendance_type_location??0;
-            $salarySet->updated_at = Carbon::now();
-            $salarySet->updated_by = auth()->user()->id;
-            $salarySet->save();
+            $updateSalarySetId = $salarySet->id;
+            if($salarySet->start_date != $month_start_date) {
+                $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
+                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+
+                $newSalarySet = new SettingsSalarySet();
+                $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->name = $salarySet->name;
+                $newSalarySet->description = $salarySet->description;
+                $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
+                $newSalarySet->settings_overtime_type_id = $salarySet->settings_overtime_type_id;
+                $newSalarySet->settings_absent_penalty_id = $salarySet->settings_absent_penalty_id;
+                $newSalarySet->settings_late_penalty_id = $salarySet->settings_late_penalty_id;
+                $newSalarySet->settings_office_time_type_id = $salarySet->settings_office_time_type_id;
+                $newSalarySet->salary_generate_type = $salarySet->salary_generate_type;
+                $newSalarySet->attendance_type_fingerprint_device = $request->attendance_type_fingerprint_device??0;
+                $newSalarySet->attendance_type_location = $request->attendance_type_location??0;
+                $newSalarySet->created_at = Carbon::now();
+                $newSalarySet->created_by = auth()->user()->id;
+                $newSalarySet->updated_at = Carbon::now();
+                $newSalarySet->updated_by = auth()->user()->id;
+                $newSalarySet->save();
+
+                $updateSalarySetId = $newSalarySet->id;
+
+                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
+            } else {
+
+                $salarySet->attendance_type_fingerprint_device = $request->attendance_type_fingerprint_device??0;
+                $salarySet->attendance_type_location = $request->attendance_type_location??0;
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+            }
+
 
 
             if ($salarySet->attendance_type_location == 1){
@@ -290,19 +371,19 @@ class SalarySetService
                 if (count($geoLocationIds) == 0){
                     throw new \Exception("Please select at least one geo location");
                 }
-                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $updateSalarySetId)
                     ->whereNotIn('settings_geo_location_id', $geoLocationIds)
                     ->delete();
 
                 if (count($geoLocationIds) > 0){
                     foreach ($geoLocationIds as $key => $value){
                         if ($value != null && $value != '') {
-                            $location = SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+                            $location = SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $updateSalarySetId)
                                 ->where('settings_geo_location_id', $value)
                                 ->first();
                             if (!$location){
                                 $location = new SettingsSalarySetAttendanceLocation();
-                                $location->settings_salary_set_id = $salarySet->id;
+                                $location->settings_salary_set_id = $updateSalarySetId;
                                 $location->settings_geo_location_id = $value;
                                 $location->created_at = Carbon::now();
                                 $location->created_by = auth()->user()->id;
@@ -316,7 +397,7 @@ class SalarySetService
                 }
             }else{
                 $geoLocationIds = $request->settings_geo_location_id??[];
-                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $salarySet->id)
+                SettingsSalarySetAttendanceLocation::where('settings_salary_set_id', $updateSalarySetId)
 //                    ->whereNotIn('settings_geo_location_id', $geoLocationIds)
                     ->delete();
             }
@@ -353,11 +434,12 @@ class SalarySetService
     public function leaveTypeSetUpdate($id,$request)
     {
         try {
+            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
                 ->first();
-
-            if (!$salarySet){
+            if (empty($salarySet)){
                 throw new \Exception("Salary Set not found");
             }
 
@@ -365,19 +447,57 @@ class SalarySetService
             if (count($leaveTypeIds) == 0){
                 throw new \Exception("Please select at least one leave type");
             }
-            SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySet->id)
+
+            $updateSalarySetId = $salarySet->id;
+
+            if($salarySet->start_date != $month_start_date) {
+                $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
+                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+
+                $newSalarySet = new SettingsSalarySet();
+                $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->name = $salarySet->name;
+                $newSalarySet->description = $salarySet->description;
+                $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
+                $newSalarySet->settings_overtime_type_id = $salarySet->settings_overtime_type_id;
+                $newSalarySet->settings_absent_penalty_id = $salarySet->settings_absent_penalty_id;
+                $newSalarySet->settings_late_penalty_id = $salarySet->settings_late_penalty_id;
+                $newSalarySet->settings_office_time_type_id = $salarySet->settings_office_time_type_id;
+                $newSalarySet->salary_generate_type = $salarySet->salary_generate_type;
+                $newSalarySet->attendance_type_fingerprint_device = $salarySet->attendance_type_fingerprint_device??0;
+                $newSalarySet->attendance_type_location = $salarySet->attendance_type_location??0;
+                $newSalarySet->created_at = Carbon::now();
+                $newSalarySet->created_by = auth()->user()->id;
+                $newSalarySet->updated_at = Carbon::now();
+                $newSalarySet->updated_by = auth()->user()->id;
+                $newSalarySet->save();
+
+                $updateSalarySetId = $newSalarySet->id;
+
+                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
+            } else {
+
+            }
+
+
+            SettingsSalarySetLeaveType::where('settings_salary_set_id', $updateSalarySetId)
                 ->whereNotIn('settings_leave_type_id', $leaveTypeIds)
                 ->delete();
 
             if (count($leaveTypeIds) > 0){
                 foreach ($leaveTypeIds as $key => $value){
                     if ($value != null && $value != '') {
-                        $leaveType = SettingsSalarySetLeaveType::where('settings_salary_set_id', $salarySet->id)
+                        $leaveType = SettingsSalarySetLeaveType::where('settings_salary_set_id', $updateSalarySetId)
                             ->where('settings_leave_type_id', $value)
                             ->first();
                         if (!$leaveType){
                             $leaveType = new SettingsSalarySetLeaveType();
-                            $leaveType->settings_salary_set_id = $salarySet->id;
+                            $leaveType->settings_salary_set_id = $updateSalarySetId;
                             $leaveType->settings_leave_type_id = $value;
                             $leaveType->created_at = Carbon::now();
                             $leaveType->created_by = auth()->user()->id;
@@ -389,6 +509,7 @@ class SalarySetService
                     }
                 }
             }
+
         }catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
         }
@@ -435,6 +556,8 @@ class SalarySetService
     public function setEmployeesStore($id,$request)
     {
         try {
+            $month_start_date = Carbon::now()->startOfMonth()->format('Y-m-d');
+
             $salarySet = SettingsSalarySet::where('deleted', SettingsSalarySet::DELETED_NO)
                 ->where('id', $id)
                 ->first();
@@ -447,19 +570,55 @@ class SalarySetService
             if (count($employeeIds) == 0){
                 throw new \Exception("Employee Required");
             }
-            SettingsSalarySetEmployee::where('settings_salary_set_id', $salarySet->id)
+
+            $updateSalarySetId = $salarySet->id;
+            if($salarySet->start_date != $month_start_date) {
+                $salarySet->status = SettingsSalarySet::STATUS_INACTIVE;
+                $salarySet->end_date = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+                $salarySet->updated_at = Carbon::now();
+                $salarySet->updated_by = auth()->user()->id;
+                $salarySet->save();
+
+                $newSalarySet = new SettingsSalarySet();
+                $newSalarySet->start_date = $month_start_date;
+                $newSalarySet->name = $salarySet->name;
+                $newSalarySet->description = $salarySet->description;
+                $newSalarySet->settings_salary_type_id = $salarySet->settings_salary_type_id;
+                $newSalarySet->settings_overtime_type_id = $salarySet->settings_overtime_type_id;
+                $newSalarySet->settings_absent_penalty_id = $salarySet->settings_absent_penalty_id;
+                $newSalarySet->settings_late_penalty_id = $salarySet->settings_late_penalty_id;
+                $newSalarySet->settings_office_time_type_id = $salarySet->settings_office_time_type_id;
+                $newSalarySet->salary_generate_type = $salarySet->salary_generate_type;
+                $newSalarySet->attendance_type_fingerprint_device = $salarySet->attendance_type_fingerprint_device??0;
+                $newSalarySet->attendance_type_location = $salarySet->attendance_type_location??0;
+                $newSalarySet->created_at = Carbon::now();
+                $newSalarySet->created_by = auth()->user()->id;
+                $newSalarySet->updated_at = Carbon::now();
+                $newSalarySet->updated_by = auth()->user()->id;
+                $newSalarySet->save();
+
+                $updateSalarySetId = $newSalarySet->id;
+
+                $this->updateSalarySetHelperService->copyAttendanceLocations($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyLeaveTypes($salarySet, $newSalarySet);
+                $this->updateSalarySetHelperService->copyEmployees($salarySet, $newSalarySet);
+            } else {
+
+            }
+
+            SettingsSalarySetEmployee::where('settings_salary_set_id', $updateSalarySetId)
                 ->whereNotIn('employee_id', $employeeIds)
                 ->delete();
 
 
             foreach ($employeeIds as $key => $value){
                 if ($value != null && $value != '') {
-                    $employee = SettingsSalarySetEmployee::where('settings_salary_set_id', $salarySet->id)
+                    $employee = SettingsSalarySetEmployee::where('settings_salary_set_id', $updateSalarySetId)
                         ->where('employee_id', $value)
                         ->first();
                     if (!$employee){
                         $employee = new SettingsSalarySetEmployee();
-                        $employee->settings_salary_set_id = $salarySet->id;
+                        $employee->settings_salary_set_id = $updateSalarySetId;
                         $employee->employee_id = $value;
                         $employee->basic_salary = $request->basic_salary[$key];
                         $employee->created_at = Carbon::now();

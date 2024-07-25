@@ -112,8 +112,7 @@
 @endsection
 
 @section('js')
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    @include('layouts.partials.__vue_scripts')
 
     <script>
         $(document).ready(function() {
