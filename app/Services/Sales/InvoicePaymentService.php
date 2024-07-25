@@ -26,7 +26,7 @@ class InvoicePaymentService
             $invoice_payment->save();
             return $invoice_payment;
 
-            //TODO: need to add data in transactioninvoicePaymentService
+            //TODO: need to add data in transactionInvoicePaymentService
         }catch(\Exception $e){
             return throw new \Exception($e->getMessage());
         }

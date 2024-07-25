@@ -1,5 +1,5 @@
 <div class="table-header-wrapper d-flex flex-wrap">
-    <div class="table-header-item">
+    <div class="table-header-item dep-list">
         <h4>SL</h4>
     </div>
     <div class="table-header-item dep-list text-start">
