@@ -12,14 +12,22 @@ class SalaryGenerateDateHelper
      * */
 
     /*
+     * 2024-04-26 -> 2024-04-26
+     * 2024-04-25 -> 2024-03-26
+     * 2024-04-27 -> 2024-04-26
+     * 2024-04-01 -> 2024-03-26
+     *
+     * */
+
+    /*
      * TODO: need to calculate month start and end date properly
      * */
     public static function monthStartDate()
     {
         $today = Carbon::now()->format('Y-m-d');
-        $monthStartDate = Carbon::now()->subMonth()->format('Y-m-26');
-        if ($today > $monthStartDate) {
-            $monthStartDate = Carbon::now()->format('Y-m-26');
+        $monthStartDate = Carbon::now()->format('Y-m-26');
+        if ($today < $monthStartDate) {
+            $monthStartDate = Carbon::now()->subMonth()->format('Y-m-26');
         }
 
         return $monthStartDate;
@@ -41,10 +49,10 @@ class SalaryGenerateDateHelper
 
     public static function monthStartDateByRequest($request)
     {
-        return Carbon::make($request->year.'-'.$request->month.'-26')->format('Y-m-d');
+        return Carbon::make($request->year.'-'.$request->month.'-26')->subMonth()->format('Y-m-d');
     }
     public static function monthEndDateByRequest($request)
     {
-        return Carbon::make($request->year.'-'.$request->month.'-25')->addMonth()->format('Y-m-25');
+        return Carbon::make($request->year.'-'.$request->month.'-25')->format('Y-m-25');
     }
 }
