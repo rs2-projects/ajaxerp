@@ -560,6 +560,7 @@ class SalarySetService
 
     public function setEmployeesStore($id,$request)
     {
+        DB::beginTransaction();
         try {
             $month_start_date = SalaryGenerateDateHelper::monthStartDate();
 
@@ -616,35 +617,52 @@ class SalarySetService
                 ->whereNotIn('employee_id', $employeeIds)
                 ->delete();
 
-
+            $userLifecycleService = new UserLifecycleService();
+            $current_timestamp = now();
+            $current_date = now()->format('Y-m-d');
             foreach ($employeeIds as $key => $value){
                 if ($value != null && $value != '') {
                     $employee = SettingsSalarySetEmployee::where('settings_salary_set_id', $updateSalarySetId)
                         ->where('employee_id', $value)
                         ->first();
+                    $salaryUpdated = false;
                     if (!$employee){
                         $employee = new SettingsSalarySetEmployee();
                         $employee->settings_salary_set_id = $updateSalarySetId;
                         $employee->employee_id = $value;
                         $employee->basic_salary = $request->basic_salary[$key];
-                        $employee->created_at = Carbon::now();
+                        $employee->created_at = $current_timestamp;
                         $employee->created_by = auth()->user()->id;
-                        $employee->updated_at = Carbon::now();
+                        $employee->updated_at = $current_timestamp;
                         $employee->updated_by = auth()->user()->id;
 
+                        $salaryUpdated = true;
+
                     }else{
-                        $employee->basic_salary = $request->basic_salary[$key];
-                        $employee->updated_at = Carbon::now();
+                        if($employee->basic_salary != $request->basic_salary[$key]) {
+                            $employee->basic_salary = $request->basic_salary[$key];
+                            $salaryUpdated = true;
+                        }
+                        $employee->updated_at = $current_timestamp;
                         $employee->updated_by = auth()->user()->id;
                     }
 
                     $employee->save();
 
+                    if ($salaryUpdated === true) {
+                        $userLifecycleService->storeUpdateSalary(
+                            user_id:$employee->employee_id,
+                            salary:$employee->basic_salary,
+                            date: $current_date
+                        );
+                    }
                 }
             }
 
         }catch (\Exception $exception) {
+            DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
+        DB::commit();
     }
 }

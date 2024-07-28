@@ -2,6 +2,7 @@
 
 namespace App\Services\Hr;
 
+use App\Models\User;
 use App\Models\UserLifecycle;
 
 class UserLifecycleService
@@ -134,5 +135,30 @@ class UserLifecycleService
             description: ''
         );
         return $this->storeLifecycle();
+    }
+
+    public function storeUpdateSalary($user_id, $salary, $date)
+    {
+        $user = $this->findUser($user_id);
+        $this->setProperties(
+            user_id: $user->id,
+            type: UserLifecycle::TYPE_SALARY_UPDATE,
+            date: $date,
+            department: $user->department_id,
+            designation: $user->designation_id,
+            basic_salary: $salary,
+            reference_description: '',
+            description: ''
+        );
+        return $this->storeLifecycle();
+    }
+
+    public function findUser($user_id)
+    {
+        $user = User::where('id', $user_id)->first();
+        if (empty($user)) {
+            throw new \Exception("Invalid User!");
+        }
+        return $user;
     }
 }
