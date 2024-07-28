@@ -258,6 +258,9 @@ class UserResignationService
             $chek_user->resign_date = null;
             $chek_user->save();
 
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeResignationRequestRejected($userResignation);
+
         }catch (\Exception $exception) {
             DB::rollBack();
             throw new \Exception($exception->getMessage());
