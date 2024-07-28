@@ -27,28 +27,28 @@ class UserLifecycleService
         $description=null
     )
     {
-        if ($user_id != null) {
+        if ($user_id !== null) {
             $this->user_id = $user_id;
         }
-        if ($type != null) {
+        if ($type !== null) {
             $this->type = $type;
         }
-        if ($date != null) {
+        if ($date !== null) {
             $this->date = $date;
         }
-        if ($department != null) {
+        if ($department !== null) {
             $this->department = $department;
         }
-        if ($designation != null) {
+        if ($designation !== null) {
             $this->designation = $designation;
         }
-        if ($basic_salary != null) {
+        if ($basic_salary !== null) {
             $this->basic_salary = $basic_salary;
         }
-        if ($reference_description != null) {
+        if ($reference_description !== null) {
             $this->reference_description = $reference_description;
         }
-        if ($description != null) {
+        if ($description !== null) {
             $this->description = $description;
         }
         return $this;
@@ -83,8 +83,8 @@ class UserLifecycleService
         $cycle->user_id = $this->user_id;
         $cycle->type = $this->type;
         $cycle->date = $this->date;
-        $cycle->department_id = $this->department_id;
-        $cycle->designation_id = $this->designation_id;
+        $cycle->department_id = $this->department;
+        $cycle->designation_id = $this->designation;
         $cycle->basic_salary = $this->basic_salary;
         $cycle->reference_description = $this->reference_description;
         $cycle->description = $this->description;
@@ -95,27 +95,53 @@ class UserLifecycleService
         $cycle->updated_by = auth()->id();
         $cycle->save();
         return $cycle;
+    }
+    public function storeOrUpdateLifecycle()
+    {
+        $this->storeValidation();
 
+        $cycle = UserLifecycle::where('user_id', $this->user_id)
+            ->where('type', $this->type)
+            ->first();
+        if (empty($cycle)) {
+            $cycle = new UserLifecycle();
+            $cycle->user_id = $this->user_id;
+            $cycle->type = $this->type;
+            $cycle->status = 1;
+            $cycle->created_at = now();
+            $cycle->created_by = auth()->id();
+        }
+
+        $cycle->date = $this->date;
+        $cycle->department_id = $this->department;
+        $cycle->designation_id = $this->designation;
+        $cycle->basic_salary = $this->basic_salary;
+        $cycle->reference_description = $this->reference_description;
+        $cycle->description = $this->description;
+        $cycle->updated_at = now();
+        $cycle->updated_by = auth()->id();
+        $cycle->save();
+        return $cycle;
     }
 
     public function storeValidation()
     {
-        if ($this->user_id == null) {
+        if ($this->user_id === null) {
             throw new \Exception("User Id is required!");
         }
-        if ($this->type == null) {
+        if ($this->type === null) {
             throw new \Exception("Type is required!");
         } elseif (!in_array($this->type, array_keys(UserLifecycle::TYPES))) {
             throw new \Exception("Invalid Type!");
         }
-        if ($this->date == null) {
+        if ($this->date === null) {
             throw new \Exception("Date is required!");
         }
         if (in_array($this->type,[UserLifecycle::TYPE_PROMOTION, UserLifecycle::TYPE_DEMOTION])) {
-            if ($this->department == null) {
+            if ($this->department === null) {
                 throw new \Exception("Department is required for ".UserLifecycle::TYPES[$this->type]."!");
             }
-            if ($this->designation == null) {
+            if ($this->designation === null) {
                 throw new \Exception("Designation is required for ".UserLifecycle::TYPES[$this->type]."!");
             }
         }
@@ -151,6 +177,22 @@ class UserLifecycleService
             description: ''
         );
         return $this->storeLifecycle();
+    }
+
+    public function storeOrUpdateTermination($userTermination)
+    {
+        $user = $this->findUser($userTermination->user_id);
+        $this->setProperties(
+            user_id: $user->id,
+            type: UserLifecycle::TYPE_TERMINATION,
+            date: $userTermination->termination_date,
+            department: $user->department_id,
+            designation: $user->designation_id,
+            basic_salary: '',
+            reference_description: $userTermination->reason,
+            description: ''
+        );
+        return $this->storeOrUpdateLifecycle();
     }
 
     public function findUser($user_id)
