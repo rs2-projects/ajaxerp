@@ -17,6 +17,7 @@ use App\Models\UserEmergencyContact;
 use App\Models\UserExperienceInfo;
 use App\Models\UserLeave;
 use App\Models\UserLeaveDetail;
+use App\Models\UserLifecycle;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -245,6 +246,8 @@ class EmployeeService
                 }
             }
 
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeJoin($user);
 
         }catch (\Exception $exception) {
             DB::rollBack();
