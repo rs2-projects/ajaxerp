@@ -227,6 +227,23 @@ class UserLifecycleService
         return $this->storeOrUpdateLifecycle();
     }
 
+
+    public function storeResignationRequestApproved($resignation)
+    {
+        $user = $this->findUser($resignation->user_id);
+        $this->setProperties(
+            user_id: $user->id,
+            type: UserLifecycle::TYPE_RESIGNATION_APPROVED,
+            date: $resignation->approved_at,
+            department: $user->department_id,
+            designation: $user->designation_id,
+            basic_salary: 0,
+            reference_description: '',
+            description: ''
+        );
+        return $this->storeOrUpdateLifecycle();
+    }
+
     public function findUser($user_id)
     {
         $user = User::where('id', $user_id)->first();

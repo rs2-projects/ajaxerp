@@ -193,6 +193,10 @@ class UserResignationService
                 $chek_user->resigned = User::RESIGNED_YES;
                 $chek_user->resign_date = $userResignation->resignation_date;
                 $chek_user->save();
+
+                $userLifecycleService = new UserLifecycleService();
+                $userLifecycleService->storeResignationRequestApproved($userResignation);
+
             }elseif ($status == UserResignation::RESIGNATION_STATUS_REJECTED) {
                 $userResignation->resignation_status = UserResignation::RESIGNATION_STATUS_REJECTED;
                 $userResignation->rejected_at = Carbon::now();
@@ -202,6 +206,9 @@ class UserResignationService
                 $chek_user->resigned = User::RESIGNED_NO;
                 $chek_user->resign_date = null;
                 $chek_user->save();
+
+                $userLifecycleService = new UserLifecycleService();
+                $userLifecycleService->storeResignationRequestRejected($userResignation);
             }else {
                 throw new \Exception("Invalid status");
             }
