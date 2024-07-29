@@ -60,4 +60,21 @@ class SalarySetHelper
         return $salary_set;
 
     }
+
+    public static function getEmployeeCurrentSalary($employee_id) {
+        $salary_set_employee = SettingsSalarySetEmployee::where('employee_id', $employee_id)
+                ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
+                ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
+                ->whereHas('salarySet', function($q) {
+                    $q->where('status', SettingsSalarySet::STATUS_ACTIVE)
+                        ->where('end_date', null);
+                })
+                ->orderBy('id', 'DESC')
+                ->first();
+        if (empty($salary_set_employee)) {
+            throw new InvalidSalarySetException();
+        }
+
+        return $salary_set_employee;
+    }
 }

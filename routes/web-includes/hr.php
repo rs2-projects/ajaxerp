@@ -7,6 +7,7 @@ use App\Http\Controllers\Hr\DesignationController;
 use App\Http\Controllers\Hr\EmployeeAttendanceController;
 use App\Http\Controllers\Hr\EmployeeController;
 use App\Http\Controllers\Hr\EmployeeLoginController;
+use App\Http\Controllers\Hr\EmployeePromotionController;
 use App\Http\Controllers\Hr\SalarySetController;
 use App\Http\Controllers\Hr\UserLeavesController;
 use App\Http\Controllers\Hr\UserResignationController;
@@ -64,6 +65,12 @@ Route::group(['prefix' => 'hr'], function () {
         // employee leave
         Route::get('get-user-leave-number-of-days',[EmployeeController::class, 'getUserLeaveNumberOfDays'])->name('hr.employee.get-user-leave-number-of-days');
         Route::post('/employee-leave/create', [EmployeeController::class, 'storeEmpLeave'])->name('hr.employee-leaves.store');
+
+        // employee promotion
+        Route::get('{id}/get-promotion-modal-data',[EmployeePromotionController::class, 'getPromotionModalData'])->name('hr.employee.get-promotion-modal-data');
+        Route::post('{id}/promote', [EmployeePromotionController::class, 'storeEmployeePromotion'])->name('hr.employee.store-promotion');
+        Route::get('{id}/get-demotion-modal-data',[EmployeePromotionController::class, 'getDemotionModalData'])->name('hr.employee.get-demotion-modal-data');
+        Route::post('{id}/demote', [EmployeePromotionController::class, 'storeEmployeeDemotion'])->name('hr.employee.store-demotion');
 
         // employee panel login
         Route::get('/{id}/login', [EmployeeLoginController::class, 'login'])->name('hr.employee.login');

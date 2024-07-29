@@ -58,6 +58,8 @@
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.employee.delete',$item->id) }}', 'reloadAjaxGetData')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         <a class="dropdown-item" href="{{ route('hr.employee-attendance', ['employee_id_search' => $item->id]) }}"><i class="la la-crosshairs m-r-5"></i> Attendance</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="showUserLeaveModal({{$item->id}})"><i class="la la-question m-r-5"></i> Add Leave</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="showPromoteUserModal({{$item->id}})"><i class="la la-question m-r-5"></i> Promote</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="showDemoteUserModal({{$item->id}})"><i class="la la-question m-r-5"></i> Demote</a>
                                     @endif
                                 </div>
                             </div>

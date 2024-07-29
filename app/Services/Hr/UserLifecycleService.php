@@ -244,6 +244,38 @@ class UserLifecycleService
         return $this->storeOrUpdateLifecycle();
     }
 
+
+    public function storePromotion($user, $salary, $date)
+    {
+        $this->setProperties(
+            user_id: $user->id,
+            type: UserLifecycle::TYPE_PROMOTION,
+            date: $date,
+            department: $user->department_id,
+            designation: $user->designation_id,
+            basic_salary: $salary,
+            reference_description: '',
+            description: ''
+        );
+        return $this->storeLifecycle();
+    }
+
+
+    public function storeDemotion($user, $salary, $date)
+    {
+        $this->setProperties(
+            user_id: $user->id,
+            type: UserLifecycle::TYPE_DEMOTION,
+            date: $date,
+            department: $user->department_id,
+            designation: $user->designation_id,
+            basic_salary: $salary,
+            reference_description: '',
+            description: ''
+        );
+        return $this->storeLifecycle();
+    }
+
     public function findUser($user_id)
     {
         $user = User::where('id', $user_id)->first();
