@@ -3,7 +3,9 @@
 namespace App\Services\User;
 
 use App\Models\UserResignation;
+use App\Services\Hr\UserLifecycleService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ResignationService
 {
@@ -36,6 +38,7 @@ class ResignationService
 
     public function store($request)
     {
+        DB::beginTransaction();
         try {
             $auth_user = auth()->user();
             $check_resignation = UserResignation::where('user_id', $auth_user->id)
@@ -56,9 +59,14 @@ class ResignationService
             $resignation->updated_at = Carbon::now();
             $resignation->updated_by = $auth_user->id;
             $resignation->save();
+
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeResignationRequest($resignation);
         }catch (\Exception $exception) {
+            DB::rollBack();
             throw new \Exception($exception->getMessage());
         }
+        DB::commit();
     }
 
     public function getEditData($id)

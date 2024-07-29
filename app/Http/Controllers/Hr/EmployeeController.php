@@ -12,7 +12,6 @@ use App\Http\Requests\Hr\Employee\UpdateExperienceInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdatePersonalInfoRequest;
 use App\Http\Requests\Hr\Employee\UpdateProfileInfoRequest;
 use App\Services\Hr\EmployeeService;
-use App\Services\Hr\UserLeavesService;
 use App\Services\User\LeavesService;
 use Illuminate\Http\Request;
 

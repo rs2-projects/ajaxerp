@@ -74,7 +74,7 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
-                                                    <div ><input class="form-control " required  name="php_rate" type="number"></div>
+                                                    <div ><input class="form-control " required step="0.01" name="php_rate" type="number"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">

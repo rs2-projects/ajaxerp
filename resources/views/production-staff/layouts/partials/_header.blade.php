@@ -22,7 +22,7 @@
 
     <!-- Header Title -->
     <div class="page-title-box">
-        <h3>RS ERP</h3>
+        <h3>{{ config('app.name') }}</h3>
     </div>
     <!-- /Header Title -->
 
@@ -266,7 +266,7 @@
             </a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="#">My Profile</a>
-               
+
                 <a class="dropdown-item" href="{{route('production-staff.logout')}}">Logout</a>
             </div>
         </li>
