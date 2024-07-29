@@ -26,7 +26,7 @@
                                     <div class="supplier-invoice-input-box flex-48 d-none" id="php_rate_container">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
-                                            <div ><input class="form-control" required id="php_rate" value="1" v-model="php_rate" name="php_rate" type="number"></div>
+                                            <div ><input class="form-control" required id="php_rate" value="1" v-model="php_rate" step="0.01" name="php_rate" type="number"></div>
                                         </div>
                                     </div>
                                 </div>

@@ -26,7 +26,7 @@
                                     <div class="supplier-invoice-input-box flex-48" id="php_rate_container" v-if="currency_type == 1">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
-                                            <div ><input class="form-control" required id="php_rate" v-model="php_rate" name="php_rate" type="number"></div>
+                                            <div ><input class="form-control" required id="php_rate" step="0.01" v-model="php_rate" name="php_rate" type="number"></div>
                                         </div>
                                     </div>
                                     <div class="d-none" v-else>
