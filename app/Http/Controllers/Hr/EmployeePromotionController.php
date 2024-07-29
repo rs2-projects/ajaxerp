@@ -58,4 +58,25 @@ class EmployeePromotionController extends BackendController
 
         return $this->returnAjaxSuccess([], "Demote Success");
     }
+    
+    public function getUpdateSalaryModalData($id) 
+    {
+        
+        $data = $this->service->updateSalaryModalData($id);
+        $response['view'] = $this->view('hr.employee.__update_salary_employee_modal_data')->with($data)->render();
+        $response['status'] = 200;
+        
+        return $this->returnAjaxSuccess($response);
+    }
+
+    public function storeEmployeeUpdateSalary(Request $request, $id) 
+    {
+        try {
+            $this->service->updateEmployeeSalary($request, $id);
+        }catch (\Exception $exception) {
+            return $this->returnAjaxException($exception);
+        }
+
+        return $this->returnAjaxSuccess([], "Salary Update Success");
+    }
 }

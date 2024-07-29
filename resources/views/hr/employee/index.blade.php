@@ -113,6 +113,7 @@
     @include('hr.employee._add_user_leave_modal')
     @include('hr.employee._promote_employee_modal')
     @include('hr.employee._demote_employee_modal')
+    @include('hr.employee._update_salary_employee_modal')
 @endsection
 
 @section('css')
@@ -235,6 +236,23 @@
                 formPost(url, formData, function (res){
                     if(res.status == 200){
                         $("#demote_employee_modal").modal('hide');
+                        showSuccessAlert('Success',res.message);
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $(document).on("submit", "#updateEmployeeSalaryForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#update_salary_employee_modal").modal('hide');
                         showSuccessAlert('Success',res.message);
                         getData();
                     }else{
@@ -473,6 +491,20 @@
                 if (response.status == 200) {
                     $("#demote_employee_modal .modal-body").html(response.view);
                     $("#demote_employee_modal").modal('show');
+                    initializeDemotionSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function showUpdateSalaryModal(id) {
+            let url = "{{route('hr.employee.get-update-salary-modal-data', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#update_salary_employee_modal .modal-body").html(response.view);
+                    $("#update_salary_employee_modal").modal('show');
                     initializeDemotionSelect();
                 } else {
                     toastr.error(response.message);

@@ -142,4 +142,47 @@ class EmployeePromotionService
         }
         DB::commit();
     }
+
+    public function updateSalaryModalData($id){
+        $data['employee'] = User::where('id', $id)->first();
+        if(empty($data['employee'])) {
+            throw new \Exception("Invalid Employee!");
+        }
+        //calculate and get employee current salary
+        try {
+            $salary_set_employee = SalarySetHelper::getEmployeeCurrentSalary($id);
+            $data['basic_salary'] = $salary_set_employee->basic_salary;
+        } catch(\Exception $exception) {
+            $data['basic_salary'] = 0;
+        }
+
+        return $data;
+    }
+
+    public function updateEmployeeSalary(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $id)->first();
+            if(empty($user)) {
+                throw new \Exception("Invalid Employee!");
+            }
+            
+            $currentDate = Carbon::now();
+
+            $basic_salary = $request->basic_salary;
+            $salary_set_employee = SalarySetHelper::getEmployeeCurrentSalary($id);
+            $salary_set_employee->basic_salary = $basic_salary;
+            $salary_set_employee->save();
+        
+
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeUpdateSalary($user->id, $basic_salary, $currentDate->format('Y-m-d'));
+
+        }catch (\Exception $exception) {
+            DB::rollBack();
+            throw new \Exception($exception->getMessage());
+        }
+        DB::commit();
+    }
 }

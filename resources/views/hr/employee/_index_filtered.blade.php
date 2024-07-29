@@ -60,6 +60,7 @@
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="showUserLeaveModal({{$item->id}})"><i class="la la-question m-r-5"></i> Add Leave</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="showPromoteUserModal({{$item->id}})"><i class="la la-question m-r-5"></i> Promote</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="showDemoteUserModal({{$item->id}})"><i class="la la-question m-r-5"></i> Demote</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="showUpdateSalaryModal({{$item->id}})"><i class="la la-question m-r-5"></i> Update Salary</a>
                                     @endif
                                 </div>
                             </div>

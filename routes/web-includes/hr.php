@@ -71,6 +71,8 @@ Route::group(['prefix' => 'hr'], function () {
         Route::post('{id}/promote', [EmployeePromotionController::class, 'storeEmployeePromotion'])->name('hr.employee.store-promotion');
         Route::get('{id}/get-demotion-modal-data',[EmployeePromotionController::class, 'getDemotionModalData'])->name('hr.employee.get-demotion-modal-data');
         Route::post('{id}/demote', [EmployeePromotionController::class, 'storeEmployeeDemotion'])->name('hr.employee.store-demotion');
+        Route::get('{id}/get-update-salary-modal-data',[EmployeePromotionController::class, 'getUpdateSalaryModalData'])->name('hr.employee.get-update-salary-modal-data');
+        Route::post('{id}/update-salary', [EmployeePromotionController::class, 'storeEmployeeUpdateSalary'])->name('hr.employee.store-update-salary');
 
         // employee panel login
         Route::get('/{id}/login', [EmployeeLoginController::class, 'login'])->name('hr.employee.login');
