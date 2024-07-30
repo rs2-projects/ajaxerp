@@ -100,44 +100,49 @@
                                 </h4>
                             </div>
 
-                            <ul class="personal-info erp-personal-info">
-                                <li>
-                                    <div class="title">NID No :</div>
-                                    <div class="text">{{ $employee->nid_no?? 'N/A' }}</div>
-                                </li>
-                                <li>
-                                    <div class="title">Passport No :</div>
-                                    <div class="text">{{ $employee->passport_no }}</div>
-                                </li>
-                                <li>
-                                    <div class="title">Passport Exp. Date :</div>
-                                    <div class="text">{{ getFormattedDate($employee->passport_expiry_date,'d M, Y') }}</div>
-                                </li>
-                                <li>
-                                    <div class="title">Date of Birth :</div>
-                                    <div class="text">{{ getFormattedDate($employee->date_of_birth, 'd M, Y') }}</div>
-                                </li>
-
-                                {{--<li>
-                                    <div class="title">Nationality :</div>
-                                    <div class="text">Bangladesh</div>
-                                </li>--}}
-                                <li>
-                                    <div class="title">Religion :</div>
-                                    <div class="text">{{ $employee->religion??'N/A' }}</div>
-                                </li>
-                                <li>
-                                    <div class="title">Marital status :</div>
-                                    <div class="text">{{ $employee->marital_status_text }}</div>
-                                </li>
-                                <li>
-                                    <div class="title">Marriage Date :</div>
-                                    <div class="text">{{ getFormattedDate($employee->marriage_date,'d M, Y') }}</div>
-                                </li>
-
-
-                            </ul>
-
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    <ul class="personal-info ">
+                                        <li>
+                                            <div class="title">NID No :</div>
+                                            <div class="text">{{ $employee->nid_no?? 'N/A' }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Passport No :</div>
+                                            <div class="text">{{ $employee->passport_no }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Passport Exp. Date :</div>
+                                            <div class="text">{{ getFormattedDate($employee->passport_expiry_date,'d M, Y') }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Date of Birth :</div>
+                                            <div class="text">{{ getFormattedDate($employee->date_of_birth, 'd M, Y') }}</div>
+                                        </li>
+        
+                                        {{--<li>
+                                            <div class="title">Nationality :</div>
+                                            <div class="text">Bangladesh</div>
+                                        </li>--}}
+                                        <li>
+                                            <div class="title">Religion :</div>
+                                            <div class="text">{{ $employee->religion??'N/A' }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Marital status :</div>
+                                            <div class="text">{{ $employee->marital_status_text }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Marriage Date :</div>
+                                            <div class="text">{{ getFormattedDate($employee->marriage_date,'d M, Y') }}</div>
+                                        </li>
+        
+        
+                                    </ul>
+                                </div>
+    
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="erp-em-details-tab-item flex-32 bg-card">
@@ -151,36 +156,40 @@
                                 @endif
                                 </h4>
                             </div>
-                            @if(count($employee->userBankInfo) > 0)
-                                @foreach($employee->userBankInfo as $key=> $bankInfo)
-                                    <ul class="personal-info erp-personal-info">
-                                        <li>
-                                            <div class="title">Bank name :</div>
-                                            <div class="text">{{ $bankInfo->bank_name??'N/A' }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Account Name :</div>
-                                            <div class="text">{{ $bankInfo->account_name??'N/A' }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Bank Account No :</div>
-                                            <div class="text">{{ $bankInfo->account_number??'N/A' }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Routing Number: :</div>
-                                            <div class="text">{{ $bankInfo->routing_number??'N/A' }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Swift Code :</div>
-                                            <div class="text">{{ $bankInfo->swift_code??'N/A' }}</div>
-                                        </li>
-                                        <li>
-                                            <div class="title">Note :</div>
-                                            <div class="text">{{ $bankInfo->note??'N/A' }}</div>
-                                        </li>
-                                    </ul>
-                                @endforeach
-                            @endif
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    @if(count($employee->userBankInfo) > 0)
+                                        @foreach($employee->userBankInfo as $key=> $bankInfo)
+                                            <ul class="personal-info">
+                                                <li>
+                                                    <div class="title">Bank name :</div>
+                                                    <div class="text">{{ $bankInfo->bank_name??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Account Name :</div>
+                                                    <div class="text">{{ $bankInfo->account_name??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Bank Account No :</div>
+                                                    <div class="text">{{ $bankInfo->account_number??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Routing Number: :</div>
+                                                    <div class="text">{{ $bankInfo->routing_number??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Swift Code :</div>
+                                                    <div class="text">{{ $bankInfo->swift_code??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">Note :</div>
+                                                    <div class="text">{{ $bankInfo->note??'N/A' }}</div>
+                                                </li>
+                                            </ul>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="erp-em-details-tab-item flex-32 bg-card">
@@ -194,25 +203,30 @@
                                     @endif
                                 </h4>
                             </div>
-                            <div class="experience-box erp-experience-box">
-                                <ul class="experience-list">
-                                    @if(count($employee->userEducationInfo))
-                                        @foreach($employee->userEducationInfo as $key=>$education)
-                                            <li>
-                                                <div class="experience-user">
-                                                    <div class="before-circle"></div>
-                                                </div>
-                                                <div class="experience-content">
-                                                    <div class="timeline-content">
-                                                        <a href="javascript:void(0);" class="name">{{ $education->institute_name??'N/A' }}</a>
-                                                        <div>{{ $education->degree??'' }} {{ $education->subject??'' }}</div>
-                                                        <span class="time">{{ getFormattedDate($education->start_date,'d M, Y') }} - {{ ($education->end_date) ? getFormattedDate($education->end_date,'d M, Y') : 'Present' }}</span>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
+
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    <div class="experience-box ">
+                                        <ul class="experience-list">
+                                            @if(count($employee->userEducationInfo))
+                                                @foreach($employee->userEducationInfo as $key=>$education)
+                                                    <li>
+                                                        <div class="experience-user">
+                                                            <div class="before-circle"></div>
+                                                        </div>
+                                                        <div class="experience-content">
+                                                            <div class="timeline-content">
+                                                                <a href="javascript:void(0);" class="name">{{ $education->institute_name??'N/A' }}</a>
+                                                                <div>{{ $education->degree??'' }} {{ $education->subject??'' }}</div>
+                                                                <span class="time">{{ getFormattedDate($education->start_date,'d M, Y') }} - {{ ($education->end_date) ? getFormattedDate($education->end_date,'d M, Y') : 'Present' }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -228,28 +242,33 @@
                                     @endif
                                 </h4>
                             </div>
-                            <div class="experience-box erp-experience-box">
-                                <ul class="experience-list">
-                                    @if(count($employee->userEmergencyContacts) >0)
-                                        @foreach($employee->userEmergencyContacts as $key=>$contact)
-                                            <li>
-                                                <div class="experience-user">
-                                                    <div class="before-circle"></div>
-                                                </div>
-                                                <div class="experience-content">
-                                                    <div class="timeline-content">
-                                                        <div class="erp-emergency-relation">
-                                                            <h4><span class="me-2">Name:</span>{{$contact->name}}</h4>
-                                                            <p class="rel-email"><span class="me-2">Email:</span>{{ $contact->email }}</p>
-                                                            <p class="rel-phone"><span class="me-2">Phone:</span>{{ $contact->phone }}</p>
-                                                            <p class="rel-relation"><span class="me-2">Relationship:</span> {{ $contact->relation }}</p>
+                            
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    <div class="experience-box ">
+                                        <ul class="experience-list">
+                                            @if(count($employee->userEmergencyContacts) >0)
+                                                @foreach($employee->userEmergencyContacts as $key=>$contact)
+                                                    <li>
+                                                        <div class="experience-user">
+                                                            <div class="before-circle"></div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
+                                                        <div class="experience-content">
+                                                            <div class="timeline-content">
+                                                                <div class="erp-emergency-relation">
+                                                                    <h4><span class="me-2">Name:</span>{{$contact->name}}</h4>
+                                                                    <p class="rel-email"><span class="me-2">Email:</span>{{ $contact->email }}</p>
+                                                                    <p class="rel-phone"><span class="me-2">Phone:</span>{{ $contact->phone }}</p>
+                                                                    <p class="rel-relation"><span class="me-2">Relationship:</span> {{ $contact->relation }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -265,27 +284,123 @@
                                     @endif
                                 </h4>
                             </div>
-                            <div class="experience-box erp-experience-box">
-                                <ul class="experience-list">
-                                    @if(count($employee->userExperienceInfo) > 0)
-                                        @foreach($employee->userExperienceInfo as $key=> $experience)
+
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    <div class="experience-box ">
+                                        <ul class="experience-list">
+                                            @if(count($employee->userExperienceInfo) > 0)
+                                                @foreach($employee->userExperienceInfo as $key=> $experience)
+                                                    <li>
+                                                        <div class="experience-user">
+                                                            <div class="before-circle"></div>
+                                                        </div>
+                                                        <div class="experience-content">
+                                                            <div class="timeline-content">
+                                                                <a href="javascript:void(0);" class="name">{{ $experience->company_name??'N/A' }}</a>
+                                                                <div>{{ $experience->designation??'N/a' }}</div>
+                                                                <span class="time">{{ getFormattedDate($experience->start_date, 'd M, Y') }} - {{ ($experience->end_date) ? getFormattedDate($experience->end_date, 'd M, Y') : 'Present' }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="erp-em-details-tab-item flex-32 bg-card">
+                        <div class="erp-profile-info-box">
+                            <div class="erp-box-header mb-3">
+                                <h4>Activity History</h4>
+                            </div>
+                            <div class="ed-box-body">
+                                <div class="ed-box-body-inner">
+                                    <div class="employee-activity-box erp-timeline checkin-timeline">
+                                        <ul class="timeline list-unstyled">
                                             <li>
-                                                <div class="experience-user">
-                                                    <div class="before-circle"></div>
+
+                                                <div class="timeline-icon">
+                                                    <a href="javascript:void(0);"></a>
                                                 </div>
-                                                <div class="experience-content">
-                                                    <div class="timeline-content">
-                                                        <a href="javascript:void(0);" class="name">{{ $experience->company_name??'N/A' }}</a>
-                                                        <div>{{ $experience->designation??'N/a' }}</div>
-                                                        <span class="time">{{ getFormattedDate($experience->start_date, 'd M, Y') }} - {{ ($experience->end_date) ? getFormattedDate($experience->end_date, 'd M, Y') : 'Present' }}</span>
+                                                <div class="timeline-body">
+                                                    <div class="timeline-header er-punch">
+                                                        <span class="d-block activity-type">Joining</span>
+                                                        <div class="activity-body">
+                                                            <p>
+                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Department </span> <span class="ab-devider">:</span> <span class="ab-data">HR</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Designation </span> <span class="ab-devider">:</span> <span class="ab-data">Senior Manager</span>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
-                            </div>
+                                            
+                                            <li>
 
+                                                <div class="timeline-icon">
+                                                    <a href="javascript:void(0);"></a>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <div class="timeline-header er-punch">
+                                                        <span class="d-block activity-type">Promotion</span>
+                                                        <div class="activity-body">
+                                                            <p>
+                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Department </span class="ab-devider"> <span>:</span> <span class="ab-data">HR</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Designation </span class="ab-devider"> <span>:</span> <span class="ab-data">Senior Manager</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Salary </span> <span class="ab-devider">:</span> <span class="ab-data">25000</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            
+                                            <li>
+
+                                                <div class="timeline-icon">
+                                                    <a href="javascript:void(0);"></a>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <div class="timeline-header er-punch">
+                                                        <span class="d-block activity-type">Salary Updated</span>
+                                                        <div class="activity-body">
+                                                            <p>
+                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Department </span class="ab-devider"> <span>:</span> <span class="ab-data">HR</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Designation </span class="ab-devider"> <span>:</span> <span class="ab-data">Senior Manager</span>
+                                                            </p>
+                                                            <p>
+                                                                <span class="ab-label">Salary </span> <span class="ab-devider">:</span> <span class="ab-data">25000</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
