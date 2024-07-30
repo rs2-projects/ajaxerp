@@ -550,6 +550,13 @@ class EmployeeService
             throw new \Exception("Employee not found!");
         }
 
+        $data['activities'] = UserLifecycle::with('designation', 'department')
+            ->where('user_id', $id)
+            ->where('status', UserLifecycle::STATUS_ACTIVE)
+            ->where('deleted', UserLifecycle::DELETED_NO)
+            ->orderBy('date', 'ASC')
+            ->get();
+
         return $data;
     }
 

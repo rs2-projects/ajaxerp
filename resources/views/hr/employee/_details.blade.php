@@ -321,81 +321,43 @@
                                 <div class="ed-box-body-inner">
                                     <div class="employee-activity-box erp-timeline checkin-timeline">
                                         <ul class="timeline list-unstyled">
-                                            <li>
+                                            @foreach ($activities as $activity)
+                                                <li>
+                                                    <div class="timeline-icon">
+                                                        <a href="javascript:void(0);"></a>
+                                                    </div>
+                                                    <div class="timeline-body">
+                                                        <div class="timeline-header er-punch">
+                                                            <span class="d-block activity-type">
+                                                                {{ App\Models\UserLifecycle::TYPES[$activity->type] ?? 'N/A' }}
+                                                            </span>
+                                                            <div class="activity-body">
+                                                                <p>
+                                                                    <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">{{ $activity->date }}</span>
+                                                                </p>
+                                                                <p>
+                                                                    <span class="ab-label">Department </span> <span class="ab-devider">:</span> <span class="ab-data">{{ $activity->department->name ?? '' }}</span>
+                                                                </p>
+                                                                <p>
+                                                                    <span class="ab-label">Designation </span> <span class="ab-devider">:</span> <span class="ab-data">{{ $activity->designation->name }}</span>
+                                                                </p>
+                                                                @if(in_array($activity->type, [App\Models\UserLifecycle::TYPE_PROMOTION,App\Models\UserLifecycle::TYPE_DEMOTION,App\Models\UserLifecycle::TYPE_SALARY_UPDATE]))
+                                                                    <p>
+                                                                        <span class="ab-label">Salary </span> <span class="ab-devider">:</span> <span class="ab-data">{{ $activity->basic_salary }}</span>
+                                                                    </p>
+                                                                @endif
+                                                                
+                                                                @if(in_array($activity->type, [App\Models\UserLifecycle::TYPE_TERMINATION,App\Models\UserLifecycle::TYPE_RESIGNATION_REQUESTED,App\Models\UserLifecycle::TYPE_RESIGNATION_REJECTED]))
+                                                                    <p>
+                                                                        <span class="ab-label">Reason </span> <span class="ab-devider">:</span> <span class="ab-data">{{ $activity->reference_description }}</span>
+                                                                    </p>
+                                                                @endif
 
-                                                <div class="timeline-icon">
-                                                    <a href="javascript:void(0);"></a>
-                                                </div>
-                                                <div class="timeline-body">
-                                                    <div class="timeline-header er-punch">
-                                                        <span class="d-block activity-type">Joining</span>
-                                                        <div class="activity-body">
-                                                            <p>
-                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Department </span> <span class="ab-devider">:</span> <span class="ab-data">HR</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Designation </span> <span class="ab-devider">:</span> <span class="ab-data">Senior Manager</span>
-                                                            </p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                            
-                                            <li>
-
-                                                <div class="timeline-icon">
-                                                    <a href="javascript:void(0);"></a>
-                                                </div>
-                                                <div class="timeline-body">
-                                                    <div class="timeline-header er-punch">
-                                                        <span class="d-block activity-type">Promotion</span>
-                                                        <div class="activity-body">
-                                                            <p>
-                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Department </span class="ab-devider"> <span>:</span> <span class="ab-data">HR</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Designation </span class="ab-devider"> <span>:</span> <span class="ab-data">Senior Manager</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Salary </span> <span class="ab-devider">:</span> <span class="ab-data">25000</span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            
-                                            <li>
-
-                                                <div class="timeline-icon">
-                                                    <a href="javascript:void(0);"></a>
-                                                </div>
-                                                <div class="timeline-body">
-                                                    <div class="timeline-header er-punch">
-                                                        <span class="d-block activity-type">Salary Updated</span>
-                                                        <div class="activity-body">
-                                                            <p>
-                                                                <span class="ab-label">Date </span> <span class="ab-devider">:</span> <span class="ab-data">2024-01-05</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Department </span class="ab-devider"> <span>:</span> <span class="ab-data">HR</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Designation </span class="ab-devider"> <span>:</span> <span class="ab-data">Senior Manager</span>
-                                                            </p>
-                                                            <p>
-                                                                <span class="ab-label">Salary </span> <span class="ab-devider">:</span> <span class="ab-data">25000</span>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-
+                                                </li>
+                                            @endforeach
 
                                         </ul>
                                     </div>
