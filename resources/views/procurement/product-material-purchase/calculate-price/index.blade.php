@@ -52,7 +52,7 @@
                                                 </div>
                                                 <div class="rs-ecp-std-item-content-box">
                                                     <input type="hidden" name="price[]" value="{{$data->unit_price}}">
-                                                   {{ getCurrencySymbol() }}<span class="unit_price">{{$data->unit_price}}</span>
+                                                    {{getCurrencySymbol('usd')}}<span class="unit_price">{{$data->unit_price}}</span>
                                                 </div>
                                             </div>
                                             <div class="rs-ecp-std-left-item flex-100">
@@ -159,7 +159,7 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                                <input type="number" value="{{ $purchase->php_rate }}" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -167,7 +167,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" value="{{$data->unit_price}}" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -355,7 +355,7 @@
                         priceFOBPHPElement.textContent = 0;
                     } else {
                         const priceFOBPHP = exchangeRate * priceUsd;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(6);
                     }
                 },
 
@@ -376,12 +376,16 @@
                     const cbm = parseFloat(cmbInput.value);
                     const exchangeRateAfterImport = parseFloat(exchangeRateAfterImportInput.value);
 
+                    console.log(cbm, totalPcPerContainer, freightCostUsd, exchangeRateAfterImport)
                     if (isNaN(totalPcPerContainer) || isNaN(freightCostUsd) || isNaN(cbm) || isNaN(exchangeRateAfterImport)) {
                         freightCostElement.textContent = 0;
+                        console.log("not worked")
                     } else {
                         // const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
                         const freightCost = (((freightCostUsd / this.CONST_VALUE) * cbm) * exchangeRateAfterImport) / totalPcPerContainer;
-                        freightCostElement.textContent = freightCost.toFixed(2);
+                        freightCostElement.textContent = freightCost.toFixed(6);
+
+                        console.log(" worked")
                     }
                 },
 
@@ -405,7 +409,7 @@
                     } else {
                         // const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
                         const taxesImportDuties = ((totalTaxesImportDuties / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(2);
+                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(6);
                     }
                 },
 
@@ -429,7 +433,7 @@
                     } else {
                         // const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
                         const costToWareHouse = ((totalTransportCostToWh / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
+                        transportCostToWhElement.textContent = costToWareHouse.toFixed(6);
                     }
                 },
 
@@ -453,7 +457,7 @@
                     } else {
                         // const unloadingCost = totalUnloadingCost / totalPcPerContainer;
                         const unloadingCost = ((totalUnloadingCost / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        unloadingCostElement.textContent = unloadingCost.toFixed(2);
+                        unloadingCostElement.textContent = unloadingCost.toFixed(6);
                     }
                 },
 
@@ -482,7 +486,7 @@
                         priceExcludingVat.textContent = '0.00';
                     } else {
                         const finalPrice = (priceFOB + freightCost + taxesImportDuties + transportCostToWh + unloadingCost) * handlingCost;
-                        priceExcludingVat.textContent = finalPrice.toFixed(2);
+                        priceExcludingVat.textContent = finalPrice.toFixed(6);
                     }
 
                     // Calculate and display the VAT amount based on calculated price
@@ -508,10 +512,10 @@
                             totalFinalPriceElement.textContent = '0.00';
                         } else{
                             const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                            vatAmountElement.textContent = vatAmount.toFixed(2);
-                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                            vatAmountElement.textContent = vatAmount.toFixed(6);
+                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(6);
                             finalPriceElement.textContent = final_price_amt;
-                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(6);
                         }
                     }else{
                         const items = document.querySelectorAll('.rs-ecp-single-wrap');
@@ -532,10 +536,10 @@
                                 totalFinalPriceElement.textContent = '0.00';
                             } else{
                                 const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                                vatAmountElement.textContent = vatAmount.toFixed(2);
-                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                                vatAmountElement.textContent = vatAmount.toFixed(6);
+                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(6);
                                 finalPriceElement.textContent = final_price_amt;
-                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(6);
                             }
                         });
                     }

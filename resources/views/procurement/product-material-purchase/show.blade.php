@@ -149,7 +149,7 @@
                                             <div class="purchase-order-product-body-item-inner">
                                                 <div class="purchase-order-product-body-item-inner-content">
                                                     <div class="input-block mb-0 erp-step-input-block view-purchase-i-two">
-                                                        <h4>{{ $item->unit_price }}</h4>
+                                                        <h4>{{getCurrencySymbol('usd')}} {{ $item->unit_price }}</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -157,7 +157,7 @@
                                         <div class="purchase-order-product-body-item">
                                             <div class="purchase-order-product-body-item-inner">
                                                 <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                    <h4 class="text-end total-amount-product pe-2">{{ $item->total_price }}</h4>
+                                                    <h4 class="text-end total-amount-product pe-2">{{getCurrencySymbol('usd')}} {{ $item->total_price }}</h4>
 
                                                 </div>
                                             </div>
@@ -173,7 +173,7 @@
                                                 </div>
                                                 <div class="po-vat-tax-item">
                                                     <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                        <h4 class="text-end total-amount-product pe-2">{{ $item->tax_amount }}</h4>
+                                                        <h4 class="text-end total-amount-product pe-2">{{getCurrencySymbol('usd')}} {{ $item->tax_amount }}</h4>
 
                                                     </div>
                                                 </div>
@@ -192,7 +192,7 @@
                                             </div>
                                             <div class="po-vat-tax-item grand-total-item">
                                                 <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                    <h4 class="text-end sub-total-amount pe-2">{{ $purchase->subtotal_amount }}</h4>
+                                                    <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol('usd')}} {{ $purchase->subtotal_amount }}</h4>
 
                                                 </div>
                                             </div>
@@ -203,7 +203,7 @@
                                             </div>
                                             <div class="po-vat-tax-item grand-total-item">
                                                 <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                    <h4 class="text-end sub-total-amount pe-2">{{ $purchase->total_vat_amount }}</h4>
+                                                    <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol('usd')}} {{ $purchase->total_vat_amount }}</h4>
 
                                                 </div>
                                             </div>
@@ -226,7 +226,7 @@
                                             </div>
                                             <div class="po-vat-tax-item grand-total-item">
                                                 <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                    <h4 class="text-end total-amount-product pe-2">{{ $purchase->payable_amount }}</h4>
+                                                    <h4 class="text-end total-amount-product pe-2">{{getCurrencySymbol('usd')}} {{ $purchase->payable_amount }}</h4>
                                                 </div>
                                             </div>
                                         </div>

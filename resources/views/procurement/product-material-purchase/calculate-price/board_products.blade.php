@@ -159,7 +159,7 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                                <input type="number" value="{{ $purchase->php_rate }}" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -167,7 +167,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" value="{{$data->unit_price}}" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
 
@@ -176,7 +176,7 @@
                                                 <h4>CBM</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" name="cbm[]" step="0.01" min="0" class="form-control" required>
+                                                <input type="number" value="0" readonly name="cbm[]" step="0.01" min="0" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -347,7 +347,7 @@
                         priceFOBPHPElement.textContent = 0;
                     } else {
                         const priceFOBPHP = exchangeRate * priceUsd;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(6);
                     }
                 },
 
@@ -370,7 +370,7 @@
                         freightCostElement.textContent = 0;
                     } else {
                         const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
-                        freightCostElement.textContent = freightCost.toFixed(2);
+                        freightCostElement.textContent = freightCost.toFixed(6);
                     }
                 },
 
@@ -391,7 +391,7 @@
                         taxesImportDutiesElement.textContent = 0;
                     } else {
                         const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
-                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(2);
+                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(6);
                     }
                 },
 
@@ -412,7 +412,7 @@
                         transportCostToWhElement.textContent = 0;
                     } else {
                         const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
-                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
+                        transportCostToWhElement.textContent = costToWareHouse.toFixed(6);
                     }
                 },
 
@@ -433,7 +433,7 @@
                         unloadingCostElement.textContent = 0;
                     } else {
                         const unloadingCost = totalUnloadingCost / totalPcPerContainer;
-                        unloadingCostElement.textContent = unloadingCost.toFixed(2);
+                        unloadingCostElement.textContent = unloadingCost.toFixed(6);
                     }
                 },
 
@@ -462,7 +462,7 @@
                         priceExcludingVat.textContent = '0.00';
                     } else {
                         const finalPrice = (priceFOB + freightCost + taxesImportDuties + transportCostToWh + unloadingCost) * handlingCost;
-                        priceExcludingVat.textContent = finalPrice.toFixed(2);
+                        priceExcludingVat.textContent = finalPrice.toFixed(6);
                     }
 
                     // Calculate and display the VAT amount based on calculated price
@@ -488,10 +488,10 @@
                             totalFinalPriceElement.textContent = '0.00';
                         } else{
                             const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                            vatAmountElement.textContent = vatAmount.toFixed(2);
-                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                            vatAmountElement.textContent = vatAmount.toFixed(6);
+                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(6);
                             finalPriceElement.textContent = final_price_amt;
-                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(6);
                         }
                     }else{
                         const items = document.querySelectorAll('.rs-ecp-single-wrap');
@@ -512,10 +512,10 @@
                                 totalFinalPriceElement.textContent = '0.00';
                             } else{
                                 const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                                vatAmountElement.textContent = vatAmount.toFixed(2);
-                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                                vatAmountElement.textContent = vatAmount.toFixed(6);
+                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(6);
                                 finalPriceElement.textContent = final_price_amt;
-                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(6);
                             }
                         });
                     }

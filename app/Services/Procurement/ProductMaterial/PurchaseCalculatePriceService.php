@@ -24,6 +24,7 @@ class PurchaseCalculatePriceService
             if (!$purchase) {
                 throw new \Exception('Purchase Order Not Found');
             }
+
             $data['purchase'] = $purchase;
             return $data;
         }catch (\Exception $e) {
