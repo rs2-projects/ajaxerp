@@ -242,7 +242,7 @@
                                             <div class="pms-item flex-100">
                                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Raw Board</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_goods')" class="erp-search-btn text-center pp-add-more-btn pp-add-goods-btn"><i class="la la-plus-circle"></i> Finished Goods</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn"><i class="la la-plus-circle"></i> Finished Board</a>
