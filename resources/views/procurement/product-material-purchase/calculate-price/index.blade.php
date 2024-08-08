@@ -32,7 +32,7 @@
                                                         <img src="{{$data->productMaterial->show_image}}" alt="">
                                                     </div>
                                                     <div class="em-pro-details-box">
-                                                        <h5>{{$data->productMaterial->name}}</h5>
+                                                        <h5 title="{{$data->productMaterial->name}}">{{$data->productMaterial->name}}</h5>
                                                         <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>
                                                     </div>
                                                 </div>
@@ -167,7 +167,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" value="{{$data->unit_price}}" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -339,6 +339,7 @@
                 },
 
                 calculatePriceFOB(event){
+                    console.log("okkkk")
                     const parentElement = event.target.closest('.rs-ecp-single-wrap');
                     if (!parentElement) return;
 
@@ -376,16 +377,12 @@
                     const cbm = parseFloat(cmbInput.value);
                     const exchangeRateAfterImport = parseFloat(exchangeRateAfterImportInput.value);
 
-                    console.log(cbm, totalPcPerContainer, freightCostUsd, exchangeRateAfterImport)
                     if (isNaN(totalPcPerContainer) || isNaN(freightCostUsd) || isNaN(cbm) || isNaN(exchangeRateAfterImport)) {
                         freightCostElement.textContent = 0;
-                        console.log("not worked")
                     } else {
                         // const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
                         const freightCost = (((freightCostUsd / this.CONST_VALUE) * cbm) * exchangeRateAfterImport) / totalPcPerContainer;
                         freightCostElement.textContent = freightCost.toFixed(6);
-
-                        console.log(" worked")
                     }
                 },
 
@@ -568,6 +565,7 @@
 
             },
             mounted () {
+
             }
 
         }).mount('#VueApp');

@@ -25,8 +25,9 @@ class ProductMaterialCategoryController extends BackendController
     {
         $this->setPageTitle("Product Material Category");
         $this->setActiveMenu('inventory.product-material-category.index');
+        $data = $this->service->indexData();
 
-        return  $this->view('inventory.product-material-category.index');
+        return  $this->view('inventory.product-material-category.index')->with($data);
     }
 
     public function indexFiltered(Request $request)

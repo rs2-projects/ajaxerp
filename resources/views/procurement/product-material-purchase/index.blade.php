@@ -15,7 +15,7 @@
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-end align-items-center mb-4">
 
-                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
+                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-80">
 
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
                                     <div class="erp-filter-item">

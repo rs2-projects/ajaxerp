@@ -10,6 +10,7 @@ use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\Supplier;
 use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialCategory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -380,12 +381,23 @@ class ProductMaterialPurchaseService
                     if(empty($productMaterial)){
                         continue;
                     }
+
                     if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
                         $has_boards = 1;
                     }elseif ($productMaterial->type == ProductMaterial::TYPE_PAPER) {
                         $has_boards = 1;
                     } else {
-                        $has_others = 1;
+                        // $has_others = 1;
+                        $material_category = ProductMaterialCategory::where('status', ProductMaterialCategory::STATUS_ACTIVE)
+                            ->where('deleted', ProductMaterialCategory::DELETED_NO)
+                            ->where('id', $productMaterial->product_material_category_id)
+                            ->first();
+                        
+                        if($material_category->calculator_type == ProductMaterialCategory::CALCULATOR_TYPE_BOARDS){
+                            $has_boards = 1;
+                        }else{
+                            $has_others = 1;
+                        }
                     }
 
                     $qty = $request->qty[$key];
@@ -407,9 +419,11 @@ class ProductMaterialPurchaseService
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
                         } else {
                             $tax_id = null;
+                            $amount_with_tax = $amount_without_tax;
                         }
                     } else {
                         $tax_id = null;
+                        $amount_with_tax = $amount_without_tax;
                     }
 
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
@@ -605,6 +619,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -614,6 +631,24 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    }elseif ($productMaterial->type == ProductMaterial::TYPE_PAPER) {
+                        $has_boards = 1;
+                    } else {
+                        // $has_others = 1;
+                        $material_category = ProductMaterialCategory::where('status', ProductMaterialCategory::STATUS_ACTIVE)
+                            ->where('deleted', ProductMaterialCategory::DELETED_NO)
+                            ->where('id', $productMaterial->product_material_category_id)
+                            ->first();
+                        
+                        if($material_category->calculator_type == ProductMaterialCategory::CALCULATOR_TYPE_BOARDS){
+                            $has_boards = 1;
+                        }else{
+                            $has_others = 1;
+                        }
                     }
 
                     $qty = $request->qty[$key];
@@ -635,9 +670,11 @@ class ProductMaterialPurchaseService
                             $tax_amount = $amount_without_tax * $tax_rate / 100;
                         } else {
                             $tax_id = null;
+                            $amount_with_tax = $amount_without_tax;
                         }
                     } else {
                         $tax_id = null;
+                        $amount_with_tax = $amount_without_tax;
                     }
 
                     $purchaseDetails = ProductMaterialPurchaseDetails::where('product_material_purchase_id', $purchase->id)
@@ -705,8 +742,11 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount_php = $total_discount_amount_php;
             $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
-            $purchase->save();
+            
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
 
+            $purchase->save();
 
         }catch (\Exception $e) {
             DB::rollBack();
@@ -775,6 +815,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -784,6 +827,24 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    }elseif ($productMaterial->type == ProductMaterial::TYPE_PAPER) {
+                        $has_boards = 1;
+                    } else {
+                        // $has_others = 1;
+                        $material_category = ProductMaterialCategory::where('status', ProductMaterialCategory::STATUS_ACTIVE)
+                            ->where('deleted', ProductMaterialCategory::DELETED_NO)
+                            ->where('id', $productMaterial->product_material_category_id)
+                            ->first();
+                        
+                        if($material_category->calculator_type == ProductMaterialCategory::CALCULATOR_TYPE_BOARDS){
+                            $has_boards = 1;
+                        }else{
+                            $has_others = 1;
+                        }
                     }
 
                     $qty = $request->qty[$key];
@@ -869,6 +930,9 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount_php = $total_discount_amount_php;
             $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
             $purchase->save();
 
             $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;
@@ -947,6 +1011,9 @@ class ProductMaterialPurchaseService
             $subtotal_amount = 0;
             $total_vat_amount = 0;
 
+            $has_boards = 0;
+            $has_others = 0;
+
             if(isset($request->product_id) && is_array($request->product_id)){
                 foreach ($request->product_id as $key=>$product){
                     $productMaterial = ProductMaterial::where('status', ProductMaterial::STATUS_ACTIVE)
@@ -956,6 +1023,24 @@ class ProductMaterialPurchaseService
 
                     if(empty($productMaterial)){
                         continue;
+                    }
+
+                    if ($productMaterial->type == ProductMaterial::TYPE_BOARD) {
+                        $has_boards = 1;
+                    }elseif ($productMaterial->type == ProductMaterial::TYPE_PAPER) {
+                        $has_boards = 1;
+                    } else {
+                        // $has_others = 1;
+                        $material_category = ProductMaterialCategory::where('status', ProductMaterialCategory::STATUS_ACTIVE)
+                            ->where('deleted', ProductMaterialCategory::DELETED_NO)
+                            ->where('id', $productMaterial->product_material_category_id)
+                            ->first();
+                        
+                        if($material_category->calculator_type == ProductMaterialCategory::CALCULATOR_TYPE_BOARDS){
+                            $has_boards = 1;
+                        }else{
+                            $has_others = 1;
+                        }
                     }
 
                     $qty = $request->qty[$key];
@@ -1040,6 +1125,9 @@ class ProductMaterialPurchaseService
             $purchase->total_discount_amount_php = $total_discount_amount_php;
             $purchase->payable_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
             $purchase->due_amount_php = ($subtotal_amount_php + $total_vat_amount_php) - $total_discount_amount_php;
+            
+            $purchase->has_boards = $has_boards;
+            $purchase->has_others = $has_others;
             $purchase->save();
 
             $parentPurchase->purchase_status = $parentPurchase::PURCHASE_STATUS_REVISED_OR_BACKED;

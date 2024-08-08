@@ -32,7 +32,7 @@
                                                         <img src="{{$data->productMaterial->show_image}}" alt="">
                                                     </div>
                                                     <div class="em-pro-details-box">
-                                                        <h5>{{$data->productMaterial->name}}</h5>
+                                                        <h5 title="{{$data->productMaterial->name}}">{{$data->productMaterial->name}}</h5>
                                                         <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>
                                                     </div>
                                                 </div>
@@ -52,7 +52,7 @@
                                                 </div>
                                                 <div class="rs-ecp-std-item-content-box">
                                                     <input type="hidden" name="price[]" value="{{$data->unit_price}}">
-                                                   {{ getCurrencySymbol() }}<span class="unit_price">{{$data->unit_price}}</span>
+                                                   {{ getCurrencySymbol('usd') }}<span class="unit_price">{{$data->unit_price}}</span>
                                                 </div>
                                             </div>
                                             <div class="rs-ecp-std-left-item flex-100">
@@ -167,7 +167,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" value="{{$data->unit_price}}" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
 
