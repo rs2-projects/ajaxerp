@@ -233,7 +233,7 @@
 
                                 <div class="total-revenue">
                                     <div class="invoice-chart">
-                                        <h5 class="me-2">₱ {{ $invoice['total_payable_amount'] }}</h5>
+                                        <h5 class="me-2">₱ {{ formatNumber($invoice['total_payable_amount']) }}</h5>
                                         <p>Total {{ $invoice['total_count'] }} Invoices</p>
                                     </div>
                                     <div class="progress">
@@ -244,7 +244,7 @@
                                 </div>
                                 <div class="total-revenue">
                                     <div class="invoice-chart total-collection-invoice">
-                                        <h5 class="me-2">₱ {{ $invoice['total_paid_amount'] }}</h5>
+                                        <h5 class="me-2">₱ {{ formatNumber($invoice['total_paid_amount']) }}</h5>
                                         <p>Total Collection From {{ $invoice['paid_count'] }} Invoices</p>
                                     </div>
                                     <div class="progress">
@@ -378,7 +378,7 @@
                                     @foreach($accounts as $account)
                                         <div class="al-cashbank-item-wrapper">
                                             <h4>{{ $account->name }}</h4>
-                                            <p>Account Balance: <strong>{{ getCurrencySymbol() }} {{ $account->available_balance }}</strong></p>
+                                            <p>Account Balance: <strong>{{ getCurrencySymbol() }} {{ formatNumber($account->available_balance) }}</strong></p>
                                             <span>Last Transactions Mar 20, 2024</span>
                                         </div>
                                     @endforeach
@@ -424,7 +424,7 @@
                                                 <td>
                                                     <h6>{{ getFormattedDate($order->invoice_date) }}</h6>
                                                 </td>
-                                                <td>{{ getCurrencySymbol() }} {{ $order->payable_amount }}</td>
+                                                <td>{{ getCurrencySymbol() }} {{ formatNumber($order->payable_amount) }}</td>
                                                 <td class="text-center">
                                                     <span class="badge rs-badge">{{ \App\Models\Sales\Invoice::PAYMENT_STATUSES[$order->payment_status] }}</span>
                                                 </td>

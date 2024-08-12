@@ -151,7 +151,7 @@ class AjaxService
                 $selected_employee_ids = array_keys($salary_set_employees);
                 if(in_array($employee->id, $selected_employee_ids)) {
                     $employee->is_selected = true;
-                    $employee->basic_salary = $salary_set_employees[$employee->id];
+                    $employee->basic_salary = formatNumber($salary_set_employees[$employee->id]);
                 } else {
                     $employee->is_selected = false;
                     $employee->basic_salary = 0;

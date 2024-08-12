@@ -238,7 +238,7 @@
 
             const total_production_cost = landed_cost_excluding_vat + machine_cost + paper_up_cost + plate_up_cost + paper_down_cost + plate_down_cost;
 
-            $("#total_production_cost").text(total_production_cost.toFixed(2));
+            $("#total_production_cost").text(total_production_cost.toFixed(6));
         }
 
 
@@ -247,9 +247,9 @@
             const retail_percent = $("#retail_percent").val();
             if(total_production_cost != "" && retail_percent != ""){
                 const retail_price = total_production_cost + (total_production_cost / 100) * parseFloat(retail_percent);
-                $("#retail_price").text(retail_price.toFixed(2));
+                $("#retail_price").text(retail_price.toFixed(6));
             }else{
-                $("#retail_price").text(total_production_cost.toFixed(2));
+                $("#retail_price").text(total_production_cost.toFixed(6));
             }
         }
 
@@ -258,13 +258,13 @@
             const vat_percent = $("#vat_percent").val();
             if(retail_price != "" && vat_percent != ""){
                 const price_ex_vat = retail_price - (retail_price / 100) * parseFloat(vat_percent)
-                const price_ex_vat_amt = price_ex_vat.toFixed(2);
+                const price_ex_vat_amt = price_ex_vat.toFixed(6);
                 const vat = retail_price - parseFloat(price_ex_vat_amt);
-                const vat_amt = vat.toFixed(2);
+                const vat_amt = vat.toFixed(6);
                 $("#price_ex_vat").text(price_ex_vat_amt);
                 $("#vat_amt").text(vat_amt);
             }else{
-                $("#price_ex_vat").text(retail_price.toFixed(2));
+                $("#price_ex_vat").text(retail_price.toFixed(6));
                 $("#vat_amt").text(0);
             }
         }
@@ -274,9 +274,9 @@
             const discount_percent = $("#discount_percent").val();
             if(retail_price != "" && discount_percent != ""){
                 const discount_price = retail_price - (retail_price / 100) * parseFloat(discount_percent);
-                $("#discount_price").text(discount_price.toFixed(2));
+                $("#discount_price").text(discount_price.toFixed(6));
             }else{
-                $("#discount_price").text(retail_price.toFixed(2));
+                $("#discount_price").text(retail_price.toFixed(6));
             }
         }
 

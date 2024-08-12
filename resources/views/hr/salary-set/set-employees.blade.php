@@ -53,7 +53,6 @@
                                                         <div class="em-pro-details-box">
                                                             <h5>@{{ selectedEmployee.full_name }}</h5>
                                                             <p class="em-id">ID: <span> # @{{ selectedEmployee.employee_id }}</span></p>
-
                                                         </div>
                                                     </a>
                                                 </div>

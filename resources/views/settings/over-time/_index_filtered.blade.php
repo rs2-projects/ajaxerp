@@ -32,10 +32,10 @@
                     <h4 class="text-center d-table-title">{{$item->salary_type_text}}</h4>
                 </td>
                 <td class="erp-tbody-td text-center">
-                    <h4 class="text-center d-table-title">{{$item->rate}}% of {{$item->salary_type_text}}</h4>
+                    <h4 class="text-center d-table-title">{{formatNumber($item->rate)}}% of {{$item->salary_type_text}}</h4>
                 </td>
                 <td class="erp-tbody-td text-center">
-                    <h4 class="text-center d-table-title">{{$item->special_rate}}% of {{$item->salary_type_text}}</h4>
+                    <h4 class="text-center d-table-title">{{formatNumber($item->special_rate)}}% of {{$item->salary_type_text}}</h4>
                 </td>
                 <td class="text-end erp-tbody-td">
                     <div class="erp-action-t">

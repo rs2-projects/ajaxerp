@@ -111,14 +111,6 @@ return new class extends Migration
             $table->unsignedDecimal('net_total', 16, 6)->default(0)->change();
         });
 
-        Schema::table('invoice_details', function (Blueprint $table) {
-            $table->unsignedDecimal('unit_price', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('total', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('tax_rate', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('tax_amount', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('net_total', 16, 6)->default(0)->change();
-        });
-
         Schema::table('invoice_payments', function (Blueprint $table) {
             $table->unsignedDecimal('amount', 16, 6)->default(0)->change();
         });
@@ -196,9 +188,6 @@ return new class extends Migration
 
         Schema::table('salary_bonus_types', function (Blueprint $table) {
             $table->unsignedDecimal('total_bonus_amount', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('total_deduction_amount', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('total_amount_to_pay', 16, 6)->default(0)->change();
-            $table->unsignedDecimal('total_amount_paid', 16, 6)->default(0)->change();
         });
 
         Schema::table('salary_details', function (Blueprint $table) {
@@ -307,7 +296,22 @@ return new class extends Migration
             $table->unsignedDecimal('value', 16, 6)->default(0)->change();
         });
 
-        // completed upto transactions
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->unsignedDecimal('total_cost_price', 16, 6)->default(0)->change();
+            $table->unsignedDecimal('net_amount', 16, 6)->default(0)->change();
+            $table->unsignedDecimal('total_vat_amount', 16, 6)->default(0)->change();
+            $table->unsignedDecimal('total_amount', 16, 6)->default(0)->change();
+        });
+
+        Schema::table('transaction_vats', function (Blueprint $table) {
+            $table->unsignedDecimal('main_amount', 16, 6)->default(0)->change();
+            $table->unsignedDecimal('vat_percent', 16, 6)->default(0)->change();
+            $table->unsignedDecimal('vat_amount', 16, 6)->default(0)->change();
+        });
+
+        Schema::table('user_lifecycles', function (Blueprint $table) {
+            $table->unsignedDecimal('basic_salary', 16, 6)->default(0)->change();
+        });
     }
 
     /**

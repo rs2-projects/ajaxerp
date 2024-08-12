@@ -42,7 +42,7 @@ $(document).ready(function () {
         "text-shadow: 1px 1px 5px rgb(255, 77, 77);" +
         "filter: dropshadow(color=rgb(255, 77, 77), offx=1, offy=1);";
     setTimeout(console.log.bind(console, "%cStop!", cssRuleForConsoleStop), 0);
-    setTimeout(console.log.bind(console, "%cDo not pest or write anything here. It can be risky. Be careful!", "font-size:16px;"), 100);
+    setTimeout(console.log.bind(console, "%cDo not paste or write anything here. It can be risky. Be careful!", "font-size:16px;"), 100);
 
 });
 

@@ -57,9 +57,9 @@
                     <div class="erp-filter-item flex-48">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Amount {{($purchase->currency_type == $purchase::CURRENCY_TYPE_USD) ? '(USD)' : '(PHP)'}}<span class="text-danger">*</span></label>
-                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ $purchase->due_amount }}" value="{{ $purchase->due_amount }}" name="amount" id="amount">
+                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ $purchase->due_amount }}" value="{{ formatNumber($purchase->due_amount) }}" name="amount" id="amount">
                             @if($purchase->currency_type == $purchase::CURRENCY_TYPE_USD)    
-                                <small id="php_amount">PHP Amount: <span id="php_amount_val">{{$purchase->php_rate * $purchase->due_amount}}</span></small>
+                                <small id="php_amount">PHP Amount: <span id="php_amount_val">{{ formatNumber($purchase->php_rate * $purchase->due_amount)}}</span></small>
                             @endif
                         </div>
                     </div>
