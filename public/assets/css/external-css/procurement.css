@@ -2056,13 +2056,13 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     max-width: 300px !important;
 }
 .document-img-box {
-    width: 40px;
+    width: 35px;
 }
 .document-view-status-btn small {
-    width: 50px;
+    width: 45px;
     height: 18px;
     display: inline-block;
-    margin-left: 10px;
+    margin-left: 5px;
     font-size: 11px;
     font-weight: 600;
     line-height: 1.9;
@@ -2335,7 +2335,7 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     font-weight: 600;
 }
 .rs-ecp-std-r-left {
-    flex-basis: 63%;
+    flex-basis: 58%;
 }
 
 .rs-ecp-std-r-left-top-wrap {
@@ -2354,7 +2354,7 @@ background: linear-gradient(to right, #f43b48 0, #fd4f0d 100%) !important;
     flex-basis: 49%;
 }
 .rs-ecp-std-r-right {
-    flex-basis: 37%;
+    flex-basis: 42%;
     border-left: 1px solid #ddd;
 }
 .rs-ecp-bottom-box {

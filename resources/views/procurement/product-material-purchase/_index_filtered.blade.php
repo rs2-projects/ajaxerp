@@ -162,15 +162,17 @@
                                                 @endif
                                             @endif
                                         @endif
-
-                                        @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
-                                            @if($purchase_order->has_others == \App\Models\Procurements\ProductMaterialPurchase::HAS_OTHERS_YES)
-                                                <a class="dropdown-item" href="{{route('procurement.purchase-order.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Others Price</a>
+                                        
+                                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_DELIVERED)
+                                            @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_others == \App\Models\Procurements\ProductMaterialPurchase::HAS_OTHERS_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Others Price</a>
+                                                @endif
                                             @endif
-                                        @endif
-                                        @if($purchase_order->board_price_calculated == $purchase_order::BOARD_PRICE_CALCULATED_NO)
-                                            @if($purchase_order->has_boards == \App\Models\Procurements\ProductMaterialPurchase::HAS_BOARD_YES)
-                                                <a class="dropdown-item" href="{{route('procurement.purchase-order.board.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Board Price</a>
+                                            @if($purchase_order->board_price_calculated == $purchase_order::BOARD_PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_boards == \App\Models\Procurements\ProductMaterialPurchase::HAS_BOARD_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.board.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Board Price</a>
+                                                @endif
                                             @endif
                                         @endif
                                     </div>

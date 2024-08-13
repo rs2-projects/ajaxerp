@@ -527,7 +527,7 @@
                     open_select_item: false,
                     discount_type: "{{ $purchase->discount_type }}",
                     discount_value: "{{ formatNumber($purchase->discount_value) }}",
-                    discount_amount: "{{ $purchase->discount_amount }}",
+                    discount_amount: "{{ formatNumber($purchase->discount_amount) }}",
                     paying_amount: 0,
                     currency_type: null, 
                     php_rate: null
@@ -652,7 +652,7 @@
                     this.updateCartItemPrice(index);
                 },
                 updateCartItemPrice(index) {
-                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6))
+                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6));
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;

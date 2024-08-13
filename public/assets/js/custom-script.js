@@ -46,6 +46,28 @@ $(document).ready(function () {
 
 });
 
+function formatNumber(number) {
+    if (isNaN(number) || number == 0) {
+        return '0';
+    }
+
+    let formatted = number.toFixed(6);
+
+    formatted = formatted.replace(/\.?0+$/, '');
+
+    if (formatted.indexOf('.') === -1) {
+        formatted += '.00';
+    } else {
+        let parts = formatted.split('.');
+        if (parts[1].length === 1) {
+            formatted += '0';
+        }
+    }
+
+    return formatted;
+}
+
+
 /*let data = `
          _     wWw  wWw  _   wW  Ww\\\\\\  ///   .-.          W  W   wW  Ww   _
     /)  /||_   (O)  (O) /||_ (O)(O)((O)(O)) c(O_O)c    /) (O)(O)  (O)(O) _||\\

@@ -41,7 +41,7 @@
                     </td>
 
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title" >{{ getCurrencySymbol() }}{{ $product_material->rp_srp??0 }}</h4>
+                        <h4 class="text-center d-table-title" >{{ getCurrencySymbol() }}{{ formatNumber($product_material->rp_srp??0) }}</h4>
                     </td>
 
                     <td class="erp-tbody-td text-center">

@@ -102,10 +102,12 @@ class PurchaseMakePaymentService
             $transaction->updated_by = auth()->user()->id;
             $transaction->save();
 
-            $purchase->paid_amount = $purchase->paid_amount + $request->amount;
-            $purchase->paid_amount_php = $purchase->paid_amount_php + ($request->amount * $request->php_rate);
-            $purchase->due_amount = $purchase->due_amount - $request->amount;
-            $purchase->due_amount_php = $purchase->due_amount_php - ($request->amount * $request->php_rate);
+            $total_paid_amt = $purchase->paid_amount + $request->amount;
+            $total_paid_amt_php = $purchase->paid_amount_php + ($request->amount * $request->php_rate);
+            $purchase->paid_amount = $total_paid_amt;
+            $purchase->paid_amount_php = $total_paid_amt_php;
+            $purchase->due_amount = $purchase->payable_amount - $total_paid_amt;
+            $purchase->due_amount_php = $purchase->payable_amount_php - $total_paid_amt_php;
             $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_PARTIAL_PAID;
 
             if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){

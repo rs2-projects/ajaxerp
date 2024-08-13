@@ -104,10 +104,17 @@ class PurchaseOrderPaymentService
             $transaction->updated_by = auth()->user()->id;
             $transaction->save();
 
-            $purchase->paid_amount = $purchase->paid_amount + $request->amount;
-            $purchase->paid_amount_php = $purchase->paid_amount_php + $amount;
-            $purchase->due_amount = $purchase->due_amount - $request->amount;
-            $purchase->due_amount_php = $purchase->due_amount_php - $amount;
+            // $purchase->paid_amount = $purchase->paid_amount + $amount;
+            // $purchase->paid_amount_php = $purchase->paid_amount_php + $amount;
+            // $purchase->due_amount = $purchase->due_amount - $request->amount;
+            // $purchase->due_amount_php = $purchase->due_amount_php - $amount;
+
+            $total_paid_amt = $purchase->paid_amount + $amount;
+            $total_paid_amt_php = $purchase->paid_amount_php + $amount;
+            $purchase->paid_amount = $total_paid_amt;
+            $purchase->paid_amount_php = $total_paid_amt_php;
+            $purchase->due_amount = $purchase->payable_amount - $total_paid_amt;
+            $purchase->due_amount_php = $purchase->payable_amount_php - $total_paid_amt_php;
             $purchase->payment_status = AssetProductPurchaseOrder::PAYMENT_STATUS_PARTIAL_PAID;
 
             if ($purchase->purchse_status == $purchase::PURCHASE_STATUS_NEW){

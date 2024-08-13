@@ -151,7 +151,8 @@ if (!function_exists('formatNumber')) {
             if (strlen($parts[1]) === 1) {
                 $formatted .= '0';
             }
-        } else {
+        } 
+        else {
             $formatted .= '.00';
         }
 

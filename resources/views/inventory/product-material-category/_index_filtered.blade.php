@@ -20,8 +20,8 @@
                         <h4 class="d-table-title">{{ $categories->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->srp_markup_percent??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->wholesale_discount_percent??'0' }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->srp_markup_percent??'N/A') }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->wholesale_discount_percent??'0') }}</td>
                     <td class="erp-tbody-td text-center custom-text" title="{{ $data->description??'N/A' }}">{{ $data->description??'N/A' }}</td>
                     @if(hasPermission('manage-product-material-category'))
                         <td class="text-end erp-tbody-td">

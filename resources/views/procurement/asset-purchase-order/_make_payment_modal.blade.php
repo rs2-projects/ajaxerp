@@ -47,7 +47,7 @@
                         <div class="erp-filter-item flex-48" style="margin-top: -20px">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">PHP Rate</label>
-                                <input class="form-control" readonly value="{{$purchase->php_rate}}" id="php_rate" name="php_rate" type="text" >
+                                <input class="form-control" readonly value="{{ formatNumber($purchase->php_rate) }}" id="php_rate" name="php_rate" type="text" >
                             </div>
                         </div>
                     @endif

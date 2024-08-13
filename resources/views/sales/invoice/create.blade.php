@@ -216,7 +216,7 @@
                                                                 <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
-                                                                        @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                        @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
                                                             </div>
@@ -730,14 +730,14 @@
                     if(this.discount_value != 0) {
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = (total_amount * this.discount_value) / 100;
+                            this.discount_amount = parseFloat(((total_amount * this.discount_value) / 100).toFixed(6));
                         } else {
                             //fixed
-                            this.discount_amount = this.discount_value;
+                            this.discount_amount = parseFloat(this.discount_value.toFixed(6));
                         }
                     }
                     total_amount = total_amount - this.discount_amount;
-                    return total_amount;
+                    return parseFloat(total_amount.toFixed(6));
                 },
             },
             methods: {
@@ -803,6 +803,7 @@
                 },
 
                 addItemToCart(item) {
+                    console.log(item.srp)
                     // let exists = this.cartItems.findIndex(o => o.id === item.id);
                     let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
 
@@ -810,7 +811,7 @@
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = item.srp;
+                        item.price = formatNumber(parseFloat(item.srp));
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         let ab = this.cartItems.push(item);
@@ -865,15 +866,18 @@
                 updatePrice(index) {
                     this.updateCartItemPrice(index);
                 },
+                
                 updateCartItemPrice(index) {
-                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
+                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6));
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
+
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                        let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
+                        this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
                     }
-                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+                    this.cartItems[index].spt_amount = parseFloat((priceWithoutVat + this.cartItems[index].vat_amount).toFixed(6));
                 },
 
                 changeDiscountType() {

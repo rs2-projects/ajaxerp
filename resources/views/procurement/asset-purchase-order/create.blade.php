@@ -219,7 +219,7 @@
                                                                 <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="" >Select Tax</option>
                                                                     <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id">
-                                                                        @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                        @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
                                                             </div>

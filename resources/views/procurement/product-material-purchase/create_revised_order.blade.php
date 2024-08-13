@@ -73,8 +73,14 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
+                                                    <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
+                                                    <div ><input class="form-control " required step="0.01" name="php_rate" value="{{ formatNumber($purchase->php_rate) }}" type="number"></div>
+                                                </div>
+                                            </div>
+                                            <div class="supplier-invoice-input-box">
+                                                <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. </label>
-                                                    <div ><input class="form-control " required name="batch_number" type="text"></div>
+                                                    <div ><input class="form-control " required name="batch_number" value="{{ $purchase->batch_number }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
@@ -208,10 +214,10 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <select class="select select-step vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
-                                                                        @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                        @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
                                                             </div>
@@ -530,7 +536,7 @@
         });
 
         function initTaxSelect2() {
-            $('.select-step').select2({
+            $('.vat-tax-select2').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
@@ -570,8 +576,8 @@
                     selected_supplier:null,
                     open_select_item: false,
                     discount_type: "{{ $purchase->discount_type }}",
-                    discount_value: "{{ $purchase->discount_value }}",
-                    discount_amount: "{{ $purchase->discount_amount }}",
+                    discount_value: "{{ formatNumber($purchase->discount_value) }}",
+                    discount_amount: "{{ formatNumber($purchase->discount_amount) }}",
                     paying_amount: 0,
 
                 }
@@ -616,14 +622,14 @@
                     if(this.discount_value != 0) {
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = (total_amount * this.discount_value) / 100;
+                            this.discount_amount = parseFloat(((total_amount * this.discount_value) / 100).toFixed(6));
                         } else {
                             //fixed
-                            this.discount_amount = this.discount_value;
+                            this.discount_amount = parseFloat(this.discount_value.toFixed(6));
                         }
                     }
                     total_amount = total_amount - this.discount_amount;
-                    return total_amount;
+                    return parseFloat(total_amount.toFixed(6));
                 },
             },
             methods: {
@@ -703,15 +709,17 @@
                 updatePrice(index) {
                     this.updateCartItemPrice(index);
                 },
+
                 updateCartItemPrice(index) {
-                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
+                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6))
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                        let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
+                        this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
                     }
-                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+                    this.cartItems[index].spt_amount = parseFloat((priceWithoutVat + this.cartItems[index].vat_amount).toFixed(6));
                 },
 
                 changeDiscountType() {
@@ -741,6 +749,10 @@
                             for (let i in this.cartItems) {
                                 this.updateCartItemPrice(i);
                             }
+
+                            setTimeout(function () {
+                                initTaxSelect2();
+                            }, 100);
                         });
                 },
             },
