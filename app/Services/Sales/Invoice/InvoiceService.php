@@ -693,12 +693,12 @@ class InvoiceService
                     'thickness' => $product?->thickness,
                     'description' => $item->description,
                     'qty' => $item->quantity,
-                    'price' => $item->unit_price,
-                    'unit_price' => $item->unit_price,
-                    'total_price' => $item->net_total,
+                    'price' => formatNumber($item->unit_price),
+                    'unit_price' => formatNumber($item->unit_price),
+                    'total_price' => formatNumber($item->net_total),
                     'tax' => $itemTax,
                     'item_type' => $item_type,
-                    'srp' => $item->unit_price,
+                    'srp' => formatNumber($item->unit_price),
                     'material_items' => $material_items,
                     'invoice_details_id' => $item->id
                 ];

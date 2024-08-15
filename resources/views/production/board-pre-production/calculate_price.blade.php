@@ -128,7 +128,7 @@
                                             <h4>Machine Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$pre_production->machine?->production_cost}}" step="0.01" min="0" id="machine_cost" name="machine_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->machine?->production_cost) }}" step="0.01" min="0" id="machine_cost" name="machine_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -136,7 +136,7 @@
                                             <h4>Paper Up Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$paper_up_cost}}" id="paper_up_cost" name="paper_up_cost" step="0.01" min="0" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($paper_up_cost) }}" id="paper_up_cost" name="paper_up_cost" step="0.01" min="0" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -144,7 +144,7 @@
                                             <h4>Plate Up Cost </h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$pre_production->finishedGoods?->embossed_ups?->production_cost}}" step="0.01" min="0" id="plate_up_cost" name="plate_up_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_ups?->production_cost) }}" step="0.01" min="0" id="plate_up_cost" name="plate_up_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -152,7 +152,7 @@
                                             <h4>Paper Down Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$paper_down_cost}}" step="0.01" min="0" id="paper_down_cost" name="paper_down_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($paper_down_cost) }}" step="0.01" min="0" id="paper_down_cost" name="paper_down_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -160,7 +160,7 @@
                                             <h4>Plate Down Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$pre_production->finishedGoods?->embossed_downs?->production_cost}}" step="0.01" min="0" id="plate_down_cost"  name="plate_down_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_downs?->production_cost) }}" step="0.01" min="0" id="plate_down_cost"  name="plate_down_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                 </div>
@@ -238,7 +238,7 @@
 
             const total_production_cost = landed_cost_excluding_vat + machine_cost + paper_up_cost + plate_up_cost + paper_down_cost + plate_down_cost;
 
-            $("#total_production_cost").text(total_production_cost.toFixed(2));
+            $("#total_production_cost").text(formatNumber(parseFloat(total_production_cost)));
         }
 
 
@@ -247,9 +247,9 @@
             const retail_percent = $("#retail_percent").val();
             if(total_production_cost != "" && retail_percent != ""){
                 const retail_price = total_production_cost + (total_production_cost / 100) * parseFloat(retail_percent);
-                $("#retail_price").text(retail_price.toFixed(2));
+                $("#retail_price").text(formatNumber(parseFloat(retail_price)));
             }else{
-                $("#retail_price").text(total_production_cost.toFixed(2));
+                $("#retail_price").text(formatNumber(parseFloat(total_production_cost)));
             }
         }
 
@@ -258,13 +258,13 @@
             const vat_percent = $("#vat_percent").val();
             if(retail_price != "" && vat_percent != ""){
                 const price_ex_vat = retail_price - (retail_price / 100) * parseFloat(vat_percent)
-                const price_ex_vat_amt = price_ex_vat.toFixed(2);
+                const price_ex_vat_amt = formatNumber(parseFloat(price_ex_vat));
                 const vat = retail_price - parseFloat(price_ex_vat_amt);
-                const vat_amt = vat.toFixed(2);
+                const vat_amt = formatNumber(parseFloat(vat));
                 $("#price_ex_vat").text(price_ex_vat_amt);
                 $("#vat_amt").text(vat_amt);
             }else{
-                $("#price_ex_vat").text(retail_price.toFixed(2));
+                $("#price_ex_vat").text(formatNumber(parseFloat(retail_price)));
                 $("#vat_amt").text(0);
             }
         }
@@ -274,9 +274,9 @@
             const discount_percent = $("#discount_percent").val();
             if(retail_price != "" && discount_percent != ""){
                 const discount_price = retail_price - (retail_price / 100) * parseFloat(discount_percent);
-                $("#discount_price").text(discount_price.toFixed(2));
+                $("#discount_price").text(formatNumber(parseFloat(discount_price)));
             }else{
-                $("#discount_price").text(retail_price.toFixed(2));
+                $("#discount_price").text(formatNumber(parseFloat(retail_price)));
             }
         }
 

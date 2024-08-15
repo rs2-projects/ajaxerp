@@ -5,6 +5,7 @@ namespace App\Services\Procurement\ProductMaterial;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseCalculatedPrice;
 use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialCategory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -14,16 +15,29 @@ class PurchaseCalculatePriceService
     public function indexData($purchase_id)
     {
         try {
+            // $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
+            //         $q->where('product_type', ProductMaterial::TYPE_OTHERS);
+            //     }])
+            //     ->where('id', $purchase_id)
+            //     ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            //     ->first();
+            
             $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
-                $q->where('product_type', ProductMaterial::TYPE_OTHERS);
+                $q->where('product_type', ProductMaterial::TYPE_OTHERS)
+                  ->whereHas('productMaterial', function($query) {
+                      $query->whereHas('category', function($query) {
+                          $query->where('calculator_type', '!=', ProductMaterialCategory::CALCULATOR_TYPE_BOARDS);
+                      });
+                  });
             }])
-                ->where('id', $purchase_id)
-                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
-                ->first();
+            ->where('id', $purchase_id)
+            ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            ->first();
 
             if (!$purchase) {
                 throw new \Exception('Purchase Order Not Found');
             }
+        
             $data['purchase'] = $purchase;
             return $data;
         }catch (\Exception $e) {
@@ -168,11 +182,21 @@ class PurchaseCalculatePriceService
     {
         try {
             $purchase = ProductMaterialPurchase::with(['purchaseDetails' => function ($q) {
-                    $q->whereIn('product_type', [ProductMaterial::TYPE_BOARD,ProductMaterial::TYPE_PAPER]);
-                }])
-                ->where('id', $purchase_id)
-                ->where('deleted', ProductMaterialPurchase::DELETED_NO)
-                ->first();
+                $q->where(function($query) {
+                    $query->whereIn('product_type', [ProductMaterial::TYPE_BOARD, ProductMaterial::TYPE_PAPER])
+                        ->orWhere(function($subQuery) {
+                            $subQuery->where('product_type', ProductMaterial::TYPE_OTHERS)
+                            ->whereHas('productMaterial', function($query) {
+                                $query->whereHas('category', function($query) {
+                                    $query->where('calculator_type', ProductMaterialCategory::CALCULATOR_TYPE_BOARDS);
+                                });
+                            });
+                        });
+                });
+            }])
+            ->where('id', $purchase_id)
+            ->where('deleted', ProductMaterialPurchase::DELETED_NO)
+            ->first();
 
             if (!$purchase) {
                 throw new \Exception('Purchase Order Not Found');

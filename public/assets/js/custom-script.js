@@ -42,9 +42,31 @@ $(document).ready(function () {
         "text-shadow: 1px 1px 5px rgb(255, 77, 77);" +
         "filter: dropshadow(color=rgb(255, 77, 77), offx=1, offy=1);";
     setTimeout(console.log.bind(console, "%cStop!", cssRuleForConsoleStop), 0);
-    setTimeout(console.log.bind(console, "%cDo not pest or write anything here. It can be risky. Be careful!", "font-size:16px;"), 100);
+    setTimeout(console.log.bind(console, "%cDo not paste or write anything here. It can be risky. Be careful!", "font-size:16px;"), 100);
 
 });
+
+function formatNumber(number) {
+    if (isNaN(number) || number == 0) {
+        return '0';
+    }
+
+    let formatted = number.toFixed(6);
+
+    formatted = formatted.replace(/\.?0+$/, '');
+
+    if (formatted.indexOf('.') === -1) {
+        formatted += '.00';
+    } else {
+        let parts = formatted.split('.');
+        if (parts[1].length === 1) {
+            formatted += '0';
+        }
+    }
+
+    return formatted;
+}
+
 
 /*let data = `
          _     wWw  wWw  _   wW  Ww\\\\\\  ///   .-.          W  W   wW  Ww   _

@@ -7,6 +7,14 @@
             <span class="name_error ie-span"></span>
         </div>
         <div class="input-block mb-2">
+            <label class="col-form-label">Calculator Type <span class="text-danger">*</span></label>
+            <select class="select select2 select-step" name="calculator_type" required>
+                @foreach($calculator_types as $key=>$type)
+                    <option {{ ($key == $item->calculator_type) ? 'selected' : ''}} value="{{ $key }}">{{ $type }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="input-block mb-2">
             <label class="col-form-label">SRP Markup Percent (%)</label>
             <input class="form-control" type="number" value="{{ $item->srp_markup_percent }}" min="0" name="srp_markup_percent">
         </div>

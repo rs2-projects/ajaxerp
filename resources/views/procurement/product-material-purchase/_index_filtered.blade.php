@@ -75,11 +75,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->payable_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->due_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
@@ -159,6 +159,19 @@
 
                                                 @if($purchase_order->is_backed == $purchase_order::IS_BACKED_NO)
                                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
+                                                @endif
+                                            @endif
+                                        @endif
+                                        
+                                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_DELIVERED)
+                                            @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_others == \App\Models\Procurements\ProductMaterialPurchase::HAS_OTHERS_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Others Price</a>
+                                                @endif
+                                            @endif
+                                            @if($purchase_order->board_price_calculated == $purchase_order::BOARD_PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_boards == \App\Models\Procurements\ProductMaterialPurchase::HAS_BOARD_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.board.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Board Price</a>
                                                 @endif
                                             @endif
                                         @endif

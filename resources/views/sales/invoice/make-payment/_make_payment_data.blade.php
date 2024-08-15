@@ -13,7 +13,7 @@
                     <div class="erp-filter-item flex-48">
                         <div class="input-block erp-step-input-block mb-0">
                             <label class="col-form-label">Amount <span class="text-danger">*</span></label>
-                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ $invoice->due_amount }}" value="{{ $invoice->due_amount }}" name="amount">
+                            <input type="number" step="any" class="form-control" required min="0.01" max="{{ formatNumber($invoice->due_amount) }}" value="{{ formatNumber($invoice->due_amount) }}" name="amount">
                         </div>
                     </div>
                     <div class="erp-filter-item flex-48">

@@ -18,7 +18,7 @@
         }
         .barcode-wrapper .single-code p {
             margin-top: 5px;
-            margin-bottom: 0;
+            margin-bottom: 5px;
         }
         .header-wrapper {
             text-align: center;
@@ -38,7 +38,7 @@
                 <img src="data:image/png;base64,{{ base64_encode($code_generator->getBarcode($data->barcode, $code_generator::TYPE_CODE_128)) }}" style="max-width: 90%;">
                 <p>{{ $data->barcode }}</p>
                 <p>{{$data->name}}</p>
-                <p>MRP: {{getCurrencySymbol()}} {{$data->unit_price}}</p>
+                <p>MRP: {{getCurrencySymbol()}} {{ formatNumber($data->unit_price) }}</p>
             </div>
         @endfor
     @endforeach

@@ -36,7 +36,7 @@
                         <h4 class="text-center d-table-title">{{$item::SALARY_TYPES[$item->salary_type]}}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ $item->rate??0 }}</h4>
+                        <h4 class="text-center d-table-title">{{ formatNumber($item->rate??0) }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">
                         <div class="erp-action-t erp-table-status {{ ($item->status == \App\Models\SettingsLeaveType::STATUS_ACTIVE) ? 'status-approved' : '' }}">

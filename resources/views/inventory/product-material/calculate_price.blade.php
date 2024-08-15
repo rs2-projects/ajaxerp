@@ -59,7 +59,7 @@
                                             <h4>Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$material_cost}}" step="0.01" min="0" id="rp_cost" name="rp_cost" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material_cost) }}" step="0.01" min="0" id="rp_cost" name="rp_cost" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -67,7 +67,7 @@
                                             <h4>SRP Markup Percent</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$material->category?->srp_markup_percent}}" step="0.01" min="0" id="srp_markup_percent" name="srp_markup_percent" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material->category?->srp_markup_percent) }}" step="0.01" min="0" id="srp_markup_percent" name="srp_markup_percent" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -75,7 +75,7 @@
                                             <h4>Wholesale Discount Percent</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$material->category?->wholesale_discount_percent}}" id="wholesale_discount_percent" name="wholesale_discount_percent" step="0.01" min="0" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material->category?->wholesale_discount_percent) }}" id="wholesale_discount_percent" name="wholesale_discount_percent" step="0.01" min="0" class="form-control" required>
                                         </div>
                                     </div>
                                 </div>
@@ -142,8 +142,8 @@
             const srp_with_discount = rp_cost * (srp_markup_percent / 100);
             const srp = srp_with_discount / (1 - (FIXED_PERCENT / 100));
 
-            $("#rp_srp").text(srp.toFixed(2));
-            $("#srp_with_discount").text(srp_with_discount.toFixed(2));
+            $("#rp_srp").text(formatNumber(parseFloat(srp)));
+            $("#srp_with_discount").text(formatNumber(parseFloat(srp_with_discount)));
         }
 
         function calculateWholesalePrice(){
@@ -152,13 +152,11 @@
             if(isNaN(wholesale_discount_percent)){
                 wholesale_discount_percent = 0;
             }
-
-            console.log(wholesale_discount_percent);
             if(srp_with_discount != "" && wholesale_discount_percent != ""){
                 const wholesale = srp_with_discount * (1 - (wholesale_discount_percent/100));
-                $("#wholesale").text(wholesale.toFixed(2));
+                $("#wholesale").text(formatNumber(parseFloat(wholesale)));
             }else{
-                $("#wholesale").text(srp_with_discount.toFixed(2));
+                $("#wholesale").text(formatNumber(parseFloat(srp_with_discount)));
             }
         }
 

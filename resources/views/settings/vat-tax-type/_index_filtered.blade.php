@@ -23,7 +23,7 @@
                     <h4 class="text-start d-table-title">{!! $vat->description !!}</h4>
                 </td>
                 <td class="erp-tbody-td">
-                    <h4 class="text-center d-table-title">{{ $vat->tax_rate }}</h4>
+                    <h4 class="text-center d-table-title">{{ formatNumber($vat->tax_rate) }}</h4>
                 </td>
                 <td class="erp-tbody-td text-center">
                     <h4 class="text-center d-table-title">#{{ $vat->account_no??'N/A' }}</h4>

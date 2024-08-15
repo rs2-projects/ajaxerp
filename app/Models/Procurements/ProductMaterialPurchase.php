@@ -3,6 +3,7 @@
 namespace App\Models\Procurements;
 
 use App\Models\BaseModel;
+use App\Models\Products\ProductMaterialCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductMaterialPurchase extends BaseModel
@@ -163,6 +164,7 @@ class ProductMaterialPurchase extends BaseModel
     {
         return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO);
     }
+
     public function purchaseCalculated()
     {
         return $this->hasMany(ProductMaterialPurchaseCalculatedPrice::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO);

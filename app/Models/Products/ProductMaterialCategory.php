@@ -20,6 +20,13 @@ class ProductMaterialCategory extends BaseModel
         self::TYPE_PAPER => 'Paper'
     ];
 
+    const CALCULATOR_TYPE_OTHERS = 0;
+    const CALCULATOR_TYPE_BOARDS = 1;
+    const CALCULATOR_TYPES = [
+        self::CALCULATOR_TYPE_OTHERS => 'Others',
+        self::CALCULATOR_TYPE_BOARDS => 'Board, Paper, Vinyl, Glue',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -36,6 +43,7 @@ class ProductMaterialCategory extends BaseModel
 
     protected $fillable = [
         'type',
+        'calculator_type',
         'name',
         'description',
         'status',

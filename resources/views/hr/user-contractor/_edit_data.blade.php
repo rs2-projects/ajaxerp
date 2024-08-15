@@ -42,7 +42,7 @@
         <div class="input-block mb-2 flex-48">
             <label class="col-form-label">Contract Value <span class="text-danger">*</span></label>
 
-            <input type="number"  step="any" value="{{ $item->contract_value }}" name="contract_value" required class="form-control">
+            <input type="number"  step="any" value="{{ formatNumber($item->contract_value) }}" name="contract_value" required class="form-control">
 
         </div>
 

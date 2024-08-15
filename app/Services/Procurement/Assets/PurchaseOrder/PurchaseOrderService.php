@@ -304,6 +304,7 @@ class PurchaseOrderService
                             $amount_with_tax = $amount_without_tax + $tax_amount;
                         } else {
                             $tax_id = null;
+                            $amount_with_tax = $amount_without_tax;
                         }
                     }else{
                         $amount_with_tax = $amount_without_tax;
@@ -343,7 +344,8 @@ class PurchaseOrderService
             }
 
             if($purchase->discount_type == AssetProductPurchaseOrder::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $subtoal_amt_with_vat = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($subtoal_amt_with_vat * $purchase->discount_value) / 100;
             }else{
                 $total_discount_amount = $purchase->discount_value;
             }
@@ -546,7 +548,8 @@ class PurchaseOrderService
 
             $total_discount_amount = 0;
             if($purchase->discount_type == AssetProductPurchaseOrder::DISCOUNT_TYPE_PERCENTAGE){
-                $total_discount_amount = ($subtotal_amount * $purchase->discount_value) / 100;
+                $subtoal_amt_with_vat = $subtotal_amount + $total_vat_amount;
+                $total_discount_amount = ($subtoal_amt_with_vat * $purchase->discount_value) / 100;
             }else{
                 $total_discount_amount = $purchase->discount_value;
             }

@@ -39,8 +39,8 @@
                 </a>
             </td>
             <td class="erp-tbody-td text-center">
-                <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().$invoice->payable_amount }}</h4>
-                <h4 class="text-center d-table-title"><span class="in-t-amount-text due-text">Due - </span>{{ getCurrencySymbol().$invoice->due_amount }}</h4>
+                <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().formatNumber($invoice->payable_amount) }}</h4>
+                <h4 class="text-center d-table-title"><span class="in-t-amount-text due-text">Due - </span>{{ getCurrencySymbol().formatNumber($invoice->due_amount) }}</h4>
 
             </td>
 

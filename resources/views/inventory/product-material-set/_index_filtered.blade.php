@@ -22,12 +22,12 @@
                         <h4 class="d-table-title">{{ $material_sets->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->name??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->rp_cost??0 }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->srp_markup_percent??0}}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->wholesale_discount_percent??'0' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->rp_srp??0}}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->srp_with_discount??0}}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->wholesale??0}}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->rp_cost??0) }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->srp_markup_percent??0) }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->wholesale_discount_percent??'0') }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->rp_srp??0) }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->srp_with_discount??0) }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->wholesale??0) }}</td>
                     {{-- @if(hasPermission('manage-machines')) --}}
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">

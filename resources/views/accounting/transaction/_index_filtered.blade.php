@@ -68,7 +68,7 @@
                             <h4 class="text-center d-table-title">{{ $transaction->category->name }}</h4>
                         </td>
                         <td class="erp-tbody-td text-center">
-                            <h4 class="text-center d-table-title">{{ getCurrencySymbol() }} {{ $transaction->total_amount }}</h4>
+                            <h4 class="text-center d-table-title">{{ getCurrencySymbol() }} {{ formatNumber($transaction->total_amount) }}</h4>
                         </td>
 
                         @if(hasPermission('verify-transactions'))

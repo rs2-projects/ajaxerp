@@ -32,7 +32,7 @@
                                                         <img src="{{$data->productMaterial->show_image}}" alt="">
                                                     </div>
                                                     <div class="em-pro-details-box">
-                                                        <h5>{{$data->productMaterial->name}}</h5>
+                                                        <h5 title="{{$data->productMaterial->name}}">{{$data->productMaterial->name}}</h5>
                                                         <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>
                                                     </div>
                                                 </div>
@@ -52,7 +52,7 @@
                                                 </div>
                                                 <div class="rs-ecp-std-item-content-box">
                                                     <input type="hidden" name="price[]" value="{{$data->unit_price}}">
-                                                   {{ getCurrencySymbol() }}<span class="unit_price">{{$data->unit_price}}</span>
+                                                   {{ getCurrencySymbol('usd') }}<span class="unit_price">{{ formatNumber($data->unit_price) }}</span>
                                                 </div>
                                             </div>
                                             <div class="rs-ecp-std-left-item flex-100">
@@ -159,7 +159,7 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                                <input type="number" value="{{ formatNumber($purchase->php_rate) }}" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -176,7 +176,7 @@
                                                 <h4>CBM</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" name="cbm[]" step="0.01" min="0" class="form-control" required>
+                                                <input type="number" value="0" readonly name="cbm[]" step="0.01" min="0" class="form-control" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -347,7 +347,7 @@
                         priceFOBPHPElement.textContent = 0;
                     } else {
                         const priceFOBPHP = exchangeRate * priceUsd;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                        priceFOBPHPElement.textContent = formatNumber(priceFOBPHP);
                     }
                 },
 
@@ -370,7 +370,7 @@
                         freightCostElement.textContent = 0;
                     } else {
                         const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
-                        freightCostElement.textContent = freightCost.toFixed(2);
+                        freightCostElement.textContent = formatNumber(freightCost);
                     }
                 },
 
@@ -391,7 +391,7 @@
                         taxesImportDutiesElement.textContent = 0;
                     } else {
                         const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
-                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(2);
+                        taxesImportDutiesElement.textContent = formatNumber(taxesImportDuties);
                     }
                 },
 
@@ -412,7 +412,7 @@
                         transportCostToWhElement.textContent = 0;
                     } else {
                         const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
-                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
+                        transportCostToWhElement.textContent = formatNumber(costToWareHouse);
                     }
                 },
 
@@ -433,7 +433,7 @@
                         unloadingCostElement.textContent = 0;
                     } else {
                         const unloadingCost = totalUnloadingCost / totalPcPerContainer;
-                        unloadingCostElement.textContent = unloadingCost.toFixed(2);
+                        unloadingCostElement.textContent = formatNumber(unloadingCost);
                     }
                 },
 
@@ -462,7 +462,7 @@
                         priceExcludingVat.textContent = '0.00';
                     } else {
                         const finalPrice = (priceFOB + freightCost + taxesImportDuties + transportCostToWh + unloadingCost) * handlingCost;
-                        priceExcludingVat.textContent = finalPrice.toFixed(2);
+                        priceExcludingVat.textContent = formatNumber(finalPrice);
                     }
 
                     // Calculate and display the VAT amount based on calculated price
@@ -488,10 +488,10 @@
                             totalFinalPriceElement.textContent = '0.00';
                         } else{
                             const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                            vatAmountElement.textContent = vatAmount.toFixed(2);
-                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                            vatAmountElement.textContent = formatNumber(vatAmount);
+                            const final_price_amt = formatNumber(priceExcludingVat + vatAmount);
                             finalPriceElement.textContent = final_price_amt;
-                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                            totalFinalPriceElement.textContent = formatNumber(final_price_amt * parseFloat(qtyElement.textContent));
                         }
                     }else{
                         const items = document.querySelectorAll('.rs-ecp-single-wrap');
@@ -512,10 +512,10 @@
                                 totalFinalPriceElement.textContent = '0.00';
                             } else{
                                 const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                                vatAmountElement.textContent = vatAmount.toFixed(2);
-                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                                vatAmountElement.textContent = formatNumber(vatAmount);
+                                const final_price_amt = formatNumber(priceExcludingVat + vatAmount);
                                 finalPriceElement.textContent = final_price_amt;
-                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                                totalFinalPriceElement.textContent = formatNumber(final_price_amt * parseFloat(qtyElement.textContent));
                             }
                         });
                     }

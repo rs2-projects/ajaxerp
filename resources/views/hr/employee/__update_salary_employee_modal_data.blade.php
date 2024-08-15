@@ -6,7 +6,7 @@
                 <div class="erp-em-reg-step-item flex-48">
                     <div class="input-block erp-step-input-block ">
                         <label class="col-form-label">Basic Salary: <span class="text-red">*</span></label>
-                        <input class="form-control" value="{{ $basic_salary }}" name="basic_salary" required type="text" placeholder="Enter Basic Salary">
+                        <input class="form-control" value="{{ formatNumber($basic_salary) }}" name="basic_salary" required type="text" placeholder="Enter Basic Salary">
                         <span class="basic_salary_error ie-span"></span>
                     </div>
                 </div>

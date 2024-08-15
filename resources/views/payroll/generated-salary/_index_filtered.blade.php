@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="table-body-item dep-list flex-20">
-                    <h4 class="text-center erp-t-email">{{ getCurrencySymbol() }} {{ showAmount($item->total_amount_to_pay) }}</h4>
+                    <h4 class="text-center erp-t-email">{{ getCurrencySymbol() }} {{ formatNumber(showAmount($item->total_amount_to_pay)) }}</h4>
                 </div>
 
                 <div class="table-body-item dep-list flex-20">

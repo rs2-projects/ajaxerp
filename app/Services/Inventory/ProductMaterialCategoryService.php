@@ -10,6 +10,11 @@ class ProductMaterialCategoryService
     {
         $this->paginate_limit = config('commonData.paginate_limit');
     }
+
+    public function indexData(){
+        $data['calculator_types'] = ProductMaterialCategory::CALCULATOR_TYPES;
+        return $data;
+    }
     public function indexFilteredData($request)
     {
         $keyword_filtered = $request->keyword_filtered;
@@ -29,6 +34,7 @@ class ProductMaterialCategoryService
     public function store($request)
     {
         $category = new ProductMaterialCategory();
+        $category->calculator_type = $request->calculator_type;
         $category->name = $request->name;
         $category->srp_markup_percent = $request->srp_markup_percent??0;
         $category->wholesale_discount_percent = $request->wholesale_discount_percent??0;
@@ -48,6 +54,9 @@ class ProductMaterialCategoryService
         if (!$data['item']) {
             throw new \Exception('Product Material Category not found');
         }
+
+        $data['calculator_types'] = ProductMaterialCategory::CALCULATOR_TYPES;
+        
         return $data;
     }
 
@@ -59,6 +68,7 @@ class ProductMaterialCategoryService
         if (!$category) {
             throw new \Exception('Product Material Category not found');
         }
+        $category->calculator_type = $request->calculator_type;
         $category->name = $request->name;
         $category->srp_markup_percent = $request->srp_markup_percent??0;
         $category->wholesale_discount_percent = $request->wholesale_discount_percent??0;

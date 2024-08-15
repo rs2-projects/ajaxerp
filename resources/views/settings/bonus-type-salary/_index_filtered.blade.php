@@ -31,7 +31,7 @@
                         <h4 class="text-center d-table-title">{{$item->rate_type_text}}</h4>
                     </td>
                     <td class="erp-tbody-td">
-                        <h4 class="text-center d-table-title">{{$item->rate}}</h4>
+                        <h4 class="text-center d-table-title">{{ formatNumber($item->rate)}}</h4>
                     </td>
 
                     <td class="erp-tbody-td text-center">

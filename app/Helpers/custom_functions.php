@@ -135,3 +135,36 @@ function ____($string)
 {
     return strlen($string);
 }
+
+if (!function_exists('formatNumber')) {
+    function formatNumber($number) {
+        if (is_nan($number) || $number == 0) {
+            return '0';
+        }
+
+        $formatted = number_format($number, 6, '.', '');
+
+        $formatted = rtrim(rtrim($formatted, '0'), '.');
+
+        if (strpos($formatted, '.') !== false) {
+            $parts = explode('.', $formatted);
+            if (strlen($parts[1]) === 1) {
+                $formatted .= '0';
+            }
+        } 
+        else {
+            $formatted .= '.00';
+        }
+
+        return $formatted;
+    }
+}
+
+
+
+
+
+
+
+
+

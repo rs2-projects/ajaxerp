@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use Database\Seeders\DemoData\ProductMaterialCategoryTableSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,5 +26,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CountryTableSeeder::class);
         $this->call(StateTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
+        $this->call(ProductMaterialCategoryTableSeeder::class);
     }
 }
