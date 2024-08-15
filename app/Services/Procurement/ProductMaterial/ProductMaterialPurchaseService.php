@@ -688,6 +688,7 @@ class ProductMaterialPurchaseService
                         $purchaseDetails->created_at = Carbon::now();
                         $purchaseDetails->created_by = auth()->user()->id;
                     }
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
@@ -874,6 +875,7 @@ class ProductMaterialPurchaseService
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
                     $purchaseDetails->product_material_purchase_id = $purchase->id;
                     $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
@@ -1070,6 +1072,7 @@ class ProductMaterialPurchaseService
                     $purchaseDetails = new ProductMaterialPurchaseDetails();
                     $purchaseDetails->product_material_purchase_id = $purchase->id;
                     $purchaseDetails->product_material_id = $product;
+                    $purchaseDetails->product_type = $productMaterial->type;
                     $purchaseDetails->description = $request->description[$key];
                     $purchaseDetails->color = $request->color[$key];
                     $purchaseDetails->qty = $qty;
