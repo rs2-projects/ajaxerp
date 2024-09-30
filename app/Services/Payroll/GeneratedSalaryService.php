@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class GeneratedSalaryService
 {
+    public $paginate_limit;
+    
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
