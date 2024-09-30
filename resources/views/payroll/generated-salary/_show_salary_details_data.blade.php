@@ -15,19 +15,19 @@
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td><strong>Net Basic Salary</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->net_basic_salary)) }} </span></td>
+                        <td><strong>Net Basic Salary</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->net_basic_salary) }} </span></td>
                     </tr>
                     <tr>
-                        <td><strong>Total Over Time</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount)) }} </span></td>
+                        <td><strong>Total Over Time</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount) }} </span></td>
                     </tr>
                     <tr>
-                        <td><strong>Total Bonus</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->total_bonus_amount)) }} </span></td>
+                        <td><strong>Total Bonus</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->total_bonus_amount) }} </span></td>
                     </tr>
                     @php($total_earning = $salaryDetails->net_basic_salary + $salaryDetails->normal_day_overtime_amount + $salaryDetails->special_day_overtime_amount + $salaryDetails->total_bonus_amount)
                     @if(count($salaryDetails->salaryDetailsAdditions) > 0)
                         @foreach($salaryDetails->salaryDetailsAdditions as $addition)
                             <tr>
-                                <td><strong>{{ $addition->settingsSalaryTypeDetails->title??'N/A' }}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span>{{ formatNumber(showAmount($addition->amount)) }}</span></td>
+                                <td><strong>{{ $addition->settingsSalaryTypeDetails->title??'N/A' }}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span>{{ formatNumber($addition->amount) }}</span></td>
                             </tr>
                             @php($total_earning += $addition->amount)
                         @endforeach
@@ -56,20 +56,20 @@
                 <table class="table table-bordered">
                     <tbody>
                     <tr>
-                        <td><strong>Absent</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->absent_day_amount)) }} </span></td>
+                        <td><strong>Absent</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->absent_day_amount) }} </span></td>
                     </tr>
                     <tr>
-                        <td><strong>Late</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->late_amount)) }} </span></td>
+                        <td><strong>Late</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->late_amount) }} </span></td>
                     </tr>
                     <tr>
-                        <td><strong>Early Departure</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->early_departure_amount)) }} </span></td>
+                        <td><strong>Early Departure</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->early_departure_amount) }} </span></td>
                     </tr>
                     <tr>
-                        <td><strong>Extra Leave</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->extra_leave_amount)) }} </span></td>
+                        <td><strong>Extra Leave</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->extra_leave_amount) }} </span></td>
                     </tr>
                     @if($salaryDetails->settings_deduction_type_id != null)
                         <tr>
-                            <td><strong>{{$salaryDetails->settingsDeductionType->title??'N/A'}}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber(showAmount($salaryDetails->deduction_amount)) }} </span></td>
+                            <td><strong>{{$salaryDetails->settingsDeductionType->title??'N/A'}}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span> {{ formatNumber($salaryDetails->deduction_amount) }} </span></td>
                         </tr>
                     @endif
 
@@ -77,7 +77,7 @@
                     @if(count($salaryDetails->salaryDetailsDeductions) > 0)
                         @foreach($salaryDetails->salaryDetailsDeductions as $deduction)
                             <tr>
-                                <td><strong>{{ $deduction->settingsSalaryTypeDetails->title??'N/A' }}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span>{{ formatNumber(showAmount($deduction->amount)) }}</span></td>
+                                <td><strong>{{ $deduction->settingsSalaryTypeDetails->title??'N/A' }}</strong> <span class="float-right"><span class="currency-text">{{ getCurrencySymbol() }}</span>{{ formatNumber($deduction->amount) }}</span></td>
                             </tr>
                             @php($total_deduction += $deduction->amount)
                         @endforeach
@@ -88,7 +88,7 @@
                                 <strong>{{ $salaryDetails->custom_deduct_amount_text??'N/A' }}</strong>
                                 <span class="float-right">
                                 <span class="currency-text">{{ getCurrencySymbol() }}</span>
-                                {{ formatNumber(showAmount($salaryDetails->custom_deduct_amount)) }}
+                                {{ formatNumber($salaryDetails->custom_deduct_amount) }}
                             </span>
                             </td>
                             @php($total_deduction += $salaryDetails->custom_deduct_amount)
@@ -98,17 +98,17 @@
                         <td><strong>Total Deductions</strong>
                             <span class="float-right">
                                 <span class="currency-text">{{ getCurrencySymbol() }}</span>
-                                <strong id="total_deduction_text"> {{ formatNumber(showAmount($total_deduction)) }} </strong>
+                                <strong id="total_deduction_text"> {{ formatNumber($total_deduction) }} </strong>
                             </span>
                         </td>
                     </tr>
                     </tbody>
                 </table>
                 <input type="hidden" id="total_earning" value="{{ showAmount($total_earning) }}">
-                <input type="hidden" id="total_deduction" value="{{ formatNumber(showAmount($total_deduction)) }}">
+                <input type="hidden" id="total_deduction" value="{{ formatNumber($total_deduction) }}">
             </div>
         </div>
         <div class="col-sm-12">
-            <p><strong>Net Salary: </strong><span class="currency-text">{{ getCurrencySymbol() }}</span><strong id="total_net_salary_text">{{ formatNumber(showAmount($total_earning - $total_deduction)) }}</strong> </p>
+            <p><strong>Net Salary: </strong><span class="currency-text">{{ getCurrencySymbol() }}</span><strong id="total_net_salary_text">{{ formatNumber($total_earning - $total_deduction) }}</strong> </p>
         </div>
     </div>
