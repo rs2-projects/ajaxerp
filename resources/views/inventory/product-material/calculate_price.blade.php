@@ -59,7 +59,7 @@
                                             <h4>Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($material_cost) }}" step="0.01" min="0" id="rp_cost" name="rp_cost" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material_cost) }}" step="any" min="0" id="rp_cost" name="rp_cost" class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
