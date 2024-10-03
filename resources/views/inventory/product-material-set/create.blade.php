@@ -21,13 +21,13 @@
                                             <div class="pgib-item flex-30">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">SRP Markup % <span class="text-red">*</span></label>
-                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="srp_markup_percent" name="srp_markup_percent" type="number" min="0" required="">
+                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="srp_markup_percent" name="srp_markup_percent" type="number" step="0.01" min="0" required="">
                                                 </div>
                                             </div>
                                             <div class="pgib-item flex-30">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Wholesale Discount %</label>
-                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="wholesale_discount_percent" name="wholesale_discount_percent" type="number" min="0">
+                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="wholesale_discount_percent" name="wholesale_discount_percent" step="0.01" type="number" min="0">
                                                 </div>
                                             </div>
                                             <div class="pgib-item flex-20">

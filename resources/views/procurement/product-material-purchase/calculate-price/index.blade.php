@@ -160,7 +160,7 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" value="{{ formatNumber($purchase->php_rate) }}" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                                <input type="number" value="{{ formatNumber($purchase->php_rate) }}" step="any" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -168,7 +168,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" step="any" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -176,7 +176,7 @@
                                                 <h4>CBM</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" name="cbm[]" @input="cmbHandler($event)" step="0.01" min="0" class="form-control cbm" required>
+                                                <input type="number" name="cbm[]" @input="cmbHandler($event)" step="any" min="0" class="form-control cbm" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -184,7 +184,7 @@
                                                 <h4>Total Pieces per Container </h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
+                                                <input type="number" step="any" min="0" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -192,7 +192,7 @@
                                                 <h4>Freight Cost USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
+                                                <input type="number" step="any" min="0" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -200,7 +200,7 @@
                                                 <h4>Exchange Rate  <span>After Import</span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
+                                                <input type="number" step="any" min="0" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -208,7 +208,7 @@
                                                 <h4>Total Taxes I.D. <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Product Category" data-bs-original-title="Total Taxes Import Duties MNL" style="color: #48b36e;border: 1px solid #48b36e;"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
+                                                <input type="number" step="any" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -216,7 +216,7 @@
                                                 <h4>Total Transport Cost to WH</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
+                                                <input type="number" step="any" min="0" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -224,7 +224,7 @@
                                                 <h4>Total Unloading Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
+                                                <input type="number" step="any" min="0" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -232,7 +232,7 @@
                                                 <h4>Handling Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
+                                                <input type="number" step="any" min="0" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
                                             </div>
                                         </div>
                                     </div>

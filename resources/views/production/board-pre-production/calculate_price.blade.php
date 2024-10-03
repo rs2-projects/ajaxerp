@@ -14,7 +14,7 @@
                                             <h4>Vat Value(%)</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" name="vat_percent" id="vat_percent" class="form-control" value="12">
+                                            <input type="number" name="vat_percent" id="vat_percent" class="form-control" step="0.01" value="12">
                                         </div>
                                     </div>
                                 </div>
@@ -24,7 +24,7 @@
                                             <h4>Retail Percentage(%)</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" name="retail_percent" id="retail_percent" class="form-control" value="60">
+                                            <input type="number" name="retail_percent" id="retail_percent" class="form-control" step="0.01" value="60">
                                         </div>
                                     </div>
                                 </div>
@@ -34,7 +34,7 @@
                                             <h4>Discount Percentage(%)</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" name="discount_percent" id="discount_percent" class="form-control" value="24">
+                                            <input type="number" name="discount_percent" id="discount_percent" class="form-control" step="0.01" value="24">
                                         </div>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@
                                             <h4>Landed Cost (Ex. Vat)</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{$raw_board_cost}}" step="0.01" min="0" id="landed_cost_excluding_vat" name="landed_cost_excluding_vat" class="form-control cost_input" required>
+                                            <input type="number" value="{{$raw_board_cost}}" step="any" min="0" id="landed_cost_excluding_vat" name="landed_cost_excluding_vat" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -128,7 +128,7 @@
                                             <h4>Machine Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($pre_production->machine?->production_cost) }}" step="0.01" min="0" id="machine_cost" name="machine_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->machine?->production_cost) }}" step="any" min="0" id="machine_cost" name="machine_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -136,7 +136,7 @@
                                             <h4>Paper Up Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($paper_up_cost) }}" id="paper_up_cost" name="paper_up_cost" step="0.01" min="0" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($paper_up_cost) }}" id="paper_up_cost" name="paper_up_cost" step="any" min="0" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -144,7 +144,7 @@
                                             <h4>Plate Up Cost </h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_ups?->production_cost) }}" step="0.01" min="0" id="plate_up_cost" name="plate_up_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_ups?->production_cost) }}" step="any" min="0" id="plate_up_cost" name="plate_up_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -152,7 +152,7 @@
                                             <h4>Paper Down Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($paper_down_cost) }}" step="0.01" min="0" id="paper_down_cost" name="paper_down_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($paper_down_cost) }}" step="any" min="0" id="paper_down_cost" name="paper_down_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
@@ -160,7 +160,7 @@
                                             <h4>Plate Down Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_downs?->production_cost) }}" step="0.01" min="0" id="plate_down_cost"  name="plate_down_cost" class="form-control cost_input" required>
+                                            <input type="number" value="{{ formatNumber($pre_production->finishedGoods?->embossed_downs?->production_cost) }}" step="any" min="0" id="plate_down_cost"  name="plate_down_cost" class="form-control cost_input" required>
                                         </div>
                                     </div>
                                 </div>
