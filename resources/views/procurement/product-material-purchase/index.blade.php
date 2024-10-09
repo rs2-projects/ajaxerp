@@ -123,6 +123,23 @@
             font-weight: 600;
             color: #0d6efd;
         }
+        .purchase-supplier-td .em-pro-details-box h5 {
+            width: auto !important;
+        }
+        .purchase-supplier-td .em-profile-wrap {
+            gap: 5px;
+        }
+        .purchase-supplier-td .em-pro-details-box h5 {
+            width: 170px !important;
+            white-space: pre-wrap;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+        @media(max-width: 1400px) {
+            .purchase-supplier-td .em-pro-details-box h5 {
+                text-align: center
+            }
+        }
     </style>
 @endsection
 
