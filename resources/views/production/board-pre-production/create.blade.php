@@ -10,7 +10,7 @@
                         <div class="row w-100">
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Code <span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Product Code <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="code" placeholder="Enter Code" required>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Up </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product">
+                                                            <select name="product_material_id[]" id="paperUpSelect" class="select select-step material-product">
                                                                 <option value="">Select Paper Up</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
@@ -105,7 +105,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY</label>
-                                                            <input type="number" name="quantity[]" min="0" class="form-control" placeholder="QTY">
+                                                            <input type="number" name="quantity[]" min="0" id="paperUpQty" value="0" class="form-control" placeholder="QTY" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -116,7 +116,7 @@
                                                     <div class="pms-item flex-80">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">Paper Down </label>
-                                                            <select name="product_material_id[]" class="select select-step material-product">
+                                                            <select name="product_material_id[]" id="paperDownSelect" class="select select-step material-product">
                                                                 <option value="">Select Paper Down</option>
                                                                 @foreach ($papers as $paper)
                                                                     <option value="{{ $paper->id }}">{{ $paper->name }}</option>
@@ -127,7 +127,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY </label>
-                                                            <input type="number" name="quantity[]" min="0" class="form-control" placeholder="QTY">
+                                                            <input type="number" name="quantity[]" min="0" value="0" id="paperDownQty" class="form-control" placeholder="QTY" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -197,7 +197,25 @@
                         showErrorAlert('Error',res.message)
                     }
                 }, 'show_input_error');
+            });
 
+            $("#paperUpSelect").on('change', function (){
+                let paperId = $(this).val();
+                if((paperId == 0) || (paperId == '')) {
+                    $('#paperUpQty').val(0);
+                    return;
+                } else {
+                    $("#paperUpQty").val(1);
+                }
+            });
+            $("#paperDownSelect").on('change', function (){
+                let paperId = $(this).val();
+                if((paperId == 0) || (paperId == '')) {
+                    $('#paperDownQty').val(0);
+                    return;
+                } else {
+                    $("#paperDownQty").val(1);
+                }
             });
         });
 

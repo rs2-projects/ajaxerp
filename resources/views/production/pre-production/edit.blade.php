@@ -87,7 +87,7 @@
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Process Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             <option v-for="machine in machines"  :value="machine.id" :key="machine.id" :selected="process.process_machine_ids?.includes(machine.id)">@{{machine.name}}</option>
                                         </select>
@@ -571,14 +571,14 @@
             $('.machine-multiselect').multipleSelect('destroy');
             $('.machine-multiselect').multipleSelect({
                 filter: true,
-                placeholder: 'Select Machine',
+                placeholder: 'Select Process',
                 minimumCountSelected: 6,
-                filterPlaceholder: 'Search Machine',
+                filterPlaceholder: 'Search Process',
                 selectAll: true,
                 onOpen: function () {
                     $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Machines");
+                    }).replaceWith("Select All Processes");
                 },
             });
         }

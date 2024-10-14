@@ -10,7 +10,7 @@
                         <div class="row w-100">
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Code <span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Product Code <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" name="code" value="{{$board->code}}" placeholder="Enter Code" required>
                                 </div>
                             </div>
@@ -108,7 +108,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY </label>
-                                                            <input type="number" id="paper_up_qty" name="quantity[]" value="{{$paper_up_id?->quantity}}" min="0" class="form-control">
+                                                            <input type="number" id="paper_up_qty" name="quantity[]" value="{{$paper_up_id?->quantity}}" min="0" class="form-control" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -131,7 +131,7 @@
                                                     <div class="pms-item flex-20 ps-2">
                                                         <div class="input-block erp-step-input-block mb-0">
                                                             <label class="col-form-label">QTY</label>
-                                                            <input type="number" id="paper_down_qty" name="quantity[]" value="{{$paper_down_id?->quantity}}" min="0" class="form-control">
+                                                            <input type="number" id="paper_down_qty" name="quantity[]" value="{{$paper_down_id?->quantity}}" min="0" class="form-control" readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -204,8 +204,8 @@
                         showErrorAlert('Error',res.message)
                     }
                 }, 'show_input_error');
-
             });
+
         });
 
         function initSelect2() {
@@ -225,6 +225,12 @@
                 }else if(type == 'paper_down'){
                     $("#paper_down_production_material_id").val("");
                     $("#paper_down_qty").val(0);
+                }
+            } else {
+                if(type == 'paper_up'){
+                    $("#paper_up_qty").val(1);
+                }else if(type == 'paper_down'){
+                    $("#paper_down_qty").val(1);
                 }
             }
         }

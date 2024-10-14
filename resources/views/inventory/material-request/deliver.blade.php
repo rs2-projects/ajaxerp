@@ -32,6 +32,14 @@
 							</div>
 						</div>
 					</div>
+					<div class="text-end mt-4">
+						<a href="{{ route('inventory.material-request.barcode-details',$pre_production->id) }}" class="btn btn-primary btn-sm" target="_blank">
+							<span>
+								<i class="fa fa-print"></i>
+							</span>
+							Print Barcodes
+						</a>
+					</div>
 					<div class="pd-table-box">
 						<div class="my-attendance-report-wrapper">
 							<div class="big-table">
@@ -50,11 +58,12 @@
 											</thead>
 											<tbody class="erp-tbody">
 												<tr class="erp-tbody-tr" v-for="(material, index) in materials">
-													<input type="hidden" name="type[]" :value="material.type">
-													<input type="hidden" name="pre_production_material_id[]" :value="material.material.id">
-													<input type="hidden" name="product_material_id[]" :value="material.material.product.id">
-													<input type= "hidden" name="total_quantity[]" :value="material.material.quantity">
+													
 													<td class="erp-tbody-td text-start">
+														<input type="hidden" name="type[]" :value="material.type">
+														<input type="hidden" name="pre_production_material_id[]" :value="material.material.id">
+														<input type="hidden" name="product_material_id[]" :value="material.material.product.id">
+														<input type= "hidden" name="total_quantity[]" :value="material.material.quantity">
 														<h4 class="text-start d-table-title">@{{material.material.category.name}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">
@@ -250,6 +259,19 @@
 				showErrorAlert('Error',res.message)
 			}
 		}, 'show_input_error');
+	}
+
+	function getBarcodePrintDetails() {
+		let route = "{{ route('inventory.material-request.barcode-details',$pre_production->id) }}";
+
+		ajaxGet(route, {}, function (response) {
+			console.log(response);
+			if (response.status == 200) {
+				showSuccessAlert('Success', response.message);
+			} else {
+				showErrorAlert('Error', response.message);
+			}
+		});
 	}
 </script>
 

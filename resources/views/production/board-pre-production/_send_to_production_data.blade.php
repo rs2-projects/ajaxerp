@@ -4,11 +4,11 @@
         <div class="row p-0 gap-bottom">
             <div class="input-block mb-2">
                 <label class="col-form-label">Batch No <span class="text-danger">*</span></label>
-                <input class="form-control" name="pre_production_batch_no" required type="text">
+                <input class="form-control" name="pre_production_batch_no" required value="{{ $new_batch_no }}" type="text">
                 <span class="model_error ie-span"></span>
             </div>
             <div class="input-block">
-                <label class="col-form-label">Unit <span class="text-danger">*</span></label>
+                <label class="col-form-label">Amount <span class="text-danger">*</span></label>
                 <input class="form-control" id="unit_input" name="unit" value="1" type="number" required>
             </div>
         </div>
