@@ -399,6 +399,12 @@ class BoardPreProductionService
         if (!$data['item']) {
             throw new \Exception('Pre Production not found');
         }
+
+        $newBatchNo = PreProduction::where('type', PreProduction::TYPE_BOARD)
+            ->where('deleted', PreProduction::DELETED_NO)
+            ->count();
+        $data['new_batch_no'] = $newBatchNo + 1000 + 1;
+        $data['new_batch_no'] = 'PB - '.$data['new_batch_no'];
         return $data;
     }
 

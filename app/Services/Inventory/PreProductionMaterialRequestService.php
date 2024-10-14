@@ -428,4 +428,36 @@ class PreProductionMaterialRequestService
             }
         }
     }
+
+    public function barcodeDetails($id) {
+        //find pre production
+        $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+        
+        if(empty($pre_production)){
+            throw new \Exception('Invalid Pre Production!');
+        }
+
+        $product_material_ids = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+            ->where('pre_production_id', $id)
+            ->pluck('product_material_id')
+            ->toArray();
+        
+        $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->whereIn('id', $product_material_ids)
+            ->get()
+            ->map(function ($product_material) {
+                //get purchase details
+                $purchase_details = ProductMaterialPurchaseDetails::with('materialPurchase')
+                    ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                    ->where('product_material_id', $product_material->id)
+                    ->where('available_qty', '>', 0)
+                    ->get();
+                $product_material->purchase_details = $purchase_details;
+                return $product_material;
+            });
+        
+        return $data;
+    }
 }
