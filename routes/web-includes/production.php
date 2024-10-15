@@ -123,3 +123,5 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::get('/{id}/deliver/{barcode}/{count}/{type}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document')->middleware('permission:view-material-requests');
 });
+
+Route::get('newer-picked-materials', [PreProductionMaterialRequestController::class, 'newerPickedMaterials'])->name('inventory.material-request.newer-picked-materials')->middleware('permission:view-material-requests');

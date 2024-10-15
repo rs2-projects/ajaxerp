@@ -507,4 +507,13 @@ class PreProductionMaterialRequestService
         
         return $data;
     }
+
+    public function newerPickedMaterials() {
+        $data['items'] = NewerPickedProductHistory::with(['productMaterial', 'productMaterialPurchaseDetails'])
+            ->where('deleted', NewerPickedProductHistory::DELETED_NO)
+            ->where('status', NewerPickedProductHistory::STATUS_ACTIVE)
+            ->get();
+
+        return $data;
+    }
 }

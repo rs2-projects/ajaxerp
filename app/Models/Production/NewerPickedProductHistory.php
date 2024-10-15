@@ -2,6 +2,8 @@
 
 namespace App\Models\Production;
 
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Models\Products\ProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,4 +49,14 @@ class NewerPickedProductHistory extends Model
         'deleted_by',
         'deleted_at',
     ];
+
+    public function productMaterial()
+    {
+        return $this->belongsTo(ProductMaterial::class, 'product_material_id');
+    }
+
+    public function productMaterialPurchaseDetails()
+    {
+        return $this->belongsTo(ProductMaterialPurchaseDetails::class, 'product_material_purchase_details_id');
+    }
 }
