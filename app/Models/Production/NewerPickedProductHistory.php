@@ -4,6 +4,7 @@ namespace App\Models\Production;
 
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Products\ProductMaterial;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,5 +59,10 @@ class NewerPickedProductHistory extends Model
     public function productMaterialPurchaseDetails()
     {
         return $this->belongsTo(ProductMaterialPurchaseDetails::class, 'product_material_purchase_details_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

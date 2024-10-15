@@ -509,9 +509,10 @@ class PreProductionMaterialRequestService
     }
 
     public function newerPickedMaterials() {
-        $data['items'] = NewerPickedProductHistory::with(['productMaterial', 'productMaterialPurchaseDetails'])
+        $data['items'] = NewerPickedProductHistory::with(['productMaterial', 'productMaterialPurchaseDetails', 'user'])
             ->where('deleted', NewerPickedProductHistory::DELETED_NO)
             ->where('status', NewerPickedProductHistory::STATUS_ACTIVE)
+            ->orderBy('id', 'DESC')
             ->get();
 
         return $data;

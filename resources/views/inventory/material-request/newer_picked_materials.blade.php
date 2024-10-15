@@ -14,11 +14,12 @@
                                         <thead class="erp-thead">
                                             <tr class="erp-tr">
                                                 <th class="erp-th">SL</th>
+                                                <th class="erp-th">User </th>
                                                 <th class="erp-th">Material Name </th>
-                                                <th class="erp-th text-center">Purchase Order</th>
+                                                <th class="erp-th">Purchase Order</th>
                                                 <th class="erp-th text-center">Barcode</th>
                                                 <th class="erp-th text-center">Picked At</th>
-                                                <th class="erp-th text-center">Action </th>
+                                                <th class="erp-th text-end">Action </th>
                                             </tr>
                                         </thead>
                                         <tbody class="erp-tbody">
@@ -26,6 +27,10 @@
                                                 <tr class="erp-tbody-tr">
                                                     <td class="erp-tbody-td">
                                                         <h4 class="d-table-title">{{ $loop->iteration }}</h4>
+                                                    </td>
+
+                                                    <td class="erp-tbody-td">
+                                                        <h4 class="d-table-title">{{ $data->user->full_name }}</h4>
                                                     </td>
                                                     <td class="erp-tbody-td text-start">
                                                         <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
@@ -35,7 +40,7 @@
                                                             </div>
                                                         </a>
                                                     </td>
-                                                    <td class="erp-tbody-td text-center">
+                                                    <td class="erp-tbody-td text-start">
                                                         <a href="{{ route('procurement.product-material-purchase.details', $data->productMaterialPurchaseDetails->product_material_purchase_id) }}" target="_blank" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                             <div class="em-pro-details-box">
                                                                 <h5>{{ $data->productMaterialPurchaseDetails->materialPurchase->purchase_id }}</h5>
