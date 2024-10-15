@@ -3,6 +3,7 @@
 namespace App\Services\Inventory;
 
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Models\Production\NewerPickedProductHistory;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionBoard;
 use App\Models\Production\PreProductionBoardDelivery;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 
 class PreProductionMaterialRequestService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -203,6 +206,7 @@ class PreProductionMaterialRequestService
                 $board_delivery->save();
             }
 
+            $usedBarcodes = [];
             if (isset($request->pre_production_material_id) && is_array($request->pre_production_material_id) && count($request->pre_production_material_id) > 0) {
             
                 foreach ($request->pre_production_material_id as $key => $pre_production_material_id) {
@@ -252,7 +256,7 @@ class PreProductionMaterialRequestService
                             if($purchase_details_id != ""){
                                 $items = ($request->type[$key] === 'other') ? new PreProductionMaterialDeliveryDetailsItems() : new PreProductionBoardDeliveryDetailsItem();
                                 $items->pre_production_id = $pre_production->id;
-                                    
+                                
                                 if($request->type[$key] == 'other'){
                                     $items->pre_production_material_delivery_id = $delivery->id;
                                     $items->pre_production_material_delivery_details_id = $delivery_details->id;
@@ -282,6 +286,12 @@ class PreProductionMaterialRequestService
                                         $material->available_qty = $material->available_qty - 1;
                                         $material->save();
                                     }
+
+                                    $usedBarcodes[$items->product_material_purchase_details_id] = [
+                                        'barcode' => $items->barcode,
+                                        'product_material_id' => $items->product_material_id,
+                                        'product_material_purchase_details_id' => $items->product_material_purchase_details_id
+                                    ];
                                 }else{
                                     $purchase_details = PreProduction::find($purchase_details_id);
                                     if($purchase_details){
@@ -294,6 +304,32 @@ class PreProductionMaterialRequestService
                         }
                     }
                 }
+
+                foreach($usedBarcodes as $key => $usedBarcode){
+                    //check is there any previous purchase has available qty
+                    $has_previous_purchase = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                        ->where('product_material_id', $usedBarcode['product_material_id'])
+                        ->where('available_qty', '>', 0)
+                        ->where('id', '<', $usedBarcode['product_material_purchase_details_id'])
+                        ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                        ->first();
+                    if($has_previous_purchase){
+                        $newerPickedProductHistory = new NewerPickedProductHistory();
+                        $newerPickedProductHistory->user_id = auth()->user()->id;
+                        $newerPickedProductHistory->product_material_id = $usedBarcode['product_material_id'];
+                        $newerPickedProductHistory->product_material_purchase_details_id = $usedBarcode['product_material_purchase_details_id'];
+                        $newerPickedProductHistory->pre_production_material_delivery_details_id = $delivery_details->id;
+                        $newerPickedProductHistory->picked_at = Carbon::now();
+                        $newerPickedProductHistory->action_status = NewerPickedProductHistory::ACTION_STATUS_NOT_VIEWED;
+                        $newerPickedProductHistory->status = NewerPickedProductHistory::STATUS_ACTIVE;
+                        $newerPickedProductHistory->created_at = Carbon::now();
+                        $newerPickedProductHistory->created_by = auth()->user()->id;
+                        $newerPickedProductHistory->updated_at = Carbon::now();
+                        $newerPickedProductHistory->updated_by = auth()->user()->id;
+                        $newerPickedProductHistory->save();
+                    }
+                }
+                
 
                 $material_count = PreProductionMaterial::where('pre_production_id', $id)->count();
                 $board_count = PreProductionBoard::where('pre_production_id', $id)->count();
@@ -374,13 +410,6 @@ class PreProductionMaterialRequestService
     }
 
     public function checkBarCode($material_id, $barcode, $count, $type){
-        // $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
-        //     ->where('product_material_id', $material_id)
-        //     ->where('barcode', $barcode)
-        //     ->where('available_qty', '>', $count)
-        //     ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-        //     ->first();
-
 
         if($type == 'other'){
             $is_valid_code = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
@@ -391,16 +420,31 @@ class PreProductionMaterialRequestService
             if(!$is_valid_code){
                 throw new \Exception('Invalid Barcode');
             }else{
-                $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
-                    ->where('product_material_id', $material_id)
-                    ->where('barcode', $barcode)
-                    ->where('available_qty', '>', $count)
-                    ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
-                    ->first();
-                if(!$data){
+                if($is_valid_code->available_qty > $count){
+                    $has_previous_purchase = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                        ->where('product_material_id', $material_id)
+                        ->where('available_qty', '>', 0)
+                        ->where('id', '<', $is_valid_code->id)
+                        ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                        ->first();
+                    return [
+                        'data' => $is_valid_code,
+                        'has_previous_purchase' => $has_previous_purchase,
+                        'status' => !empty($has_previous_purchase) ? 201 : 200
+                    ];
+                } else {
                     throw new \Exception('Barcode already used!');
                 }
-                return $data;
+                // $data = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                //     ->where('product_material_id', $material_id)
+                //     ->where('barcode', $barcode)
+                //     ->where('available_qty', '>', $count)
+                //     ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
+                //     ->first();
+                // if(!$data){
+                //     throw new \Exception('Barcode already used!');
+                // }
+                // return $data;
             }
         }else if($type == 'board'){
 
@@ -424,7 +468,10 @@ class PreProductionMaterialRequestService
                 if(!$data){
                     throw new \Exception('Barcode already used!');
                 }
-                return $data;
+                return [
+                    'data' => $data,
+                    'status' => 200
+                ];
             }
         }
     }
