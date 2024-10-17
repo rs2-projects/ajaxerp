@@ -72,6 +72,11 @@
             <!-- End::header-element -->
         </li>
         <!-- Dark Switcher End -->
+        <li class="nav-item dropdown">
+            <a class="dropdown-toggle nav-link" data-bs-toggle="offcanvas" href="#cartDetailsCanvas" role="button" aria-controls="cartDetailsCanvas">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </a>
+        </li>
         <!-- Notifications -->
         @php($newerPickedItems = \App\Helpers\NewerPickedProductPurchase::getNewerPickedProduct())
         <li class="nav-item dropdown">

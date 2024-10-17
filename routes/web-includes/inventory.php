@@ -43,6 +43,7 @@ Route::group(['prefix' => 'inventory'], function () {
     Route::group(['prefix' => 'product-material'], function () {
         Route::get('/', [ProductMaterialController::class, 'index'])->name('inventory.product-material.index')->middleware('permission:view-product-material');
         Route::post('/filtered', [ProductMaterialController::class, 'indexFiltered'])->name('inventory.product-material.filtered')->middleware('permission:view-product-material');
+        Route::get('/{id}/details', [ProductMaterialController::class, 'details'])->name('inventory.product-material.details')->middleware('permission:view-product-material');
         Route::get('/create', [ProductMaterialController::class, 'create'])->name('inventory.product-material.create')->middleware('permission:manage-product-material');
         Route::post('/create', [ProductMaterialController::class, 'store'])->name('inventory.product-material.store')->middleware('permission:manage-product-material');
         Route::get('/{id}/edit', [ProductMaterialController::class, 'edit'])->name('inventory.product-material.edit')->middleware('permission:manage-product-material');
