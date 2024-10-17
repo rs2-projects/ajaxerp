@@ -19,7 +19,7 @@
                                                 <th class="erp-th">Purchase Order</th>
                                                 <th class="erp-th text-center">Barcode</th>
                                                 <th class="erp-th text-center">Picked At</th>
-                                                <th class="erp-th text-end">Action </th>
+                                                {{-- <th class="erp-th text-end">Action </th> --}}
                                             </tr>
                                         </thead>
                                         <tbody class="erp-tbody">
@@ -56,7 +56,7 @@
                                                         <h4 class="text-center d-table-title">{{ getFormattedDate($data->picked_at) }}</h4>
                                                     </td>
                                                     
-                                                    <td class="text-end erp-tbody-td">
+                                                    {{-- <td class="text-end erp-tbody-td">
                                                         <div class="erp-action-t">
                                                             <div class="dropdown dropdown-action">
                                                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
@@ -65,7 +65,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </td>
+                                                    </td> --}}
                                                 </tr>
                                             @empty
                                                 <tr class="erp-tbody-tr">

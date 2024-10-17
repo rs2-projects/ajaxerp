@@ -45,9 +45,19 @@
                                 <input type="hidden" name="pre_production_material_delivery_id" :value="deliverData.delivery.id">
                                 {{-- <input type="hidden" id="pre_production_material_delivery_id" name="pre_production_id" value="{{$pre_production->id}}">  --}}
                                 <div class="pd-table-box-item">
-                                    <div class="pd-deliver-date-box">
-                                        <p v-if="deliverData.type == 'other'">Material Delivery: <span>@{{ formatDate(deliverData.delivery.delivery_date) }}</span></p>
-                                        <p v-if="deliverData.type == 'board'">Board Delivery: <span>@{{ formatDate(deliverData.delivery.delivery_date) }}</span></p>
+                                    <div class="pd-deliver-date-box ">
+                                        <div v-if="deliverData.type == 'other'" class="align-center d-flex justify-content-between">
+                                            <span>
+                                                Material Delivery: <span class="bold">@{{ formatDate(deliverData.delivery.delivery_date) }}</span>
+                                            </span>
+                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary btn-sm">Print Barcode</a>
+                                        </div>
+                                        <div v-if="deliverData.type == 'board'" class="align-center d-flex justify-content-between">
+                                            <span>
+                                                Board Delivery: <span class="bold">@{{ formatDate(deliverData.delivery.delivery_date) }}</span>
+                                            </span>
+                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary">Print Barcode</a>
+                                        </div>
                                     </div>
                                     <div class="my-attendance-report-wrapper">
                                         <div class="big-table">
@@ -241,6 +251,7 @@
 
                         axios.get(url)
                         .then(response => {
+                            let baseLink = "{{ route('production-staff.production.production.receive.barcode-details', '#id') }}"
                             this.deliveries = response.data.deliveries.map(delivery_data => {
                                 let details_data = [];
                                 if(delivery_data.type == 'other'){
@@ -248,6 +259,7 @@
                                 }else{
                                     details_data = delivery_data?.delivery.board_delivery_details;
                                 }
+                                delivery_data.barcodeDetailsLink = baseLink.replace('#id', delivery_data.delivery.id);
                                 return {
                                     ...delivery_data,
                                     delivery_details: details_data.map(detail => {
