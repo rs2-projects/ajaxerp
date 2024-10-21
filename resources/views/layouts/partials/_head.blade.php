@@ -31,5 +31,6 @@
     <link rel="stylesheet" href="{{ asset('assets') }}/css/custom.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/css/external-css/procurement.css">
     <link rel="stylesheet" href="{{ asset('assets') }}/css/external-css/pre-custom.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/cart.css') }}">
     @yield('css')
 </head>

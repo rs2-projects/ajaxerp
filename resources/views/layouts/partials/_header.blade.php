@@ -74,6 +74,7 @@
         <!-- Dark Switcher End -->
         <li class="nav-item dropdown">
             <a class="dropdown-toggle nav-link" data-bs-toggle="offcanvas" href="#cartDetailsCanvas" role="button" aria-controls="cartDetailsCanvas">
+                <span class="badge rounded-pill cartItemCount">0</span>
                 <i class="fa-solid fa-cart-shopping"></i>
             </a>
         </li>

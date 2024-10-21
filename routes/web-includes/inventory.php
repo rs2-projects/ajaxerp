@@ -9,6 +9,7 @@ use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Inventory\BoardsController;
+use App\Http\Controllers\Inventory\ProductMaterialCartController;
 use App\Http\Controllers\Inventory\ProductMaterialSetController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,11 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/calculate-price', [ProductMaterialController::class, 'calculatePrice'])->name('inventory.product-material.calculate-price');
         Route::post('/{id}/calculate-price/store', [ProductMaterialController::class, 'calculatePriceStore'])->name('inventory.product-material.calculate-price.store');
 
+        Route::get('add-to-cart', [ProductMaterialCartController::class, 'addToCart'])->name('inventory.product-material.add-to-cart');
+        Route::get('get-cart-contents', [ProductMaterialCartController::class, 'getCartContents'])->name('inventory.product-material.get-cart-contents');
+        Route::get('remove-cart-item', [ProductMaterialCartController::class, 'removeCartItem'])->name('inventory.product-material.remove-cart-item');
+        Route::get('update-cart-qty', [ProductMaterialCartController::class, 'updateCartQty'])->name('inventory.product-material.update-cart-qty');
+        
     });
 
     //finished good category route

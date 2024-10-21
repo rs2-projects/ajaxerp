@@ -125,7 +125,15 @@ class ProductMaterialService
     }
 
     public function details($id) {
-        return [];
+        $data['product'] = ProductMaterial::with(['warehouse', 'category', 'tax', 'materialWarehouseSections', 'materialWarehouseSections.productMaterialRacks'])
+            ->where('id', $id)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->first();
+        if (!$data['product']) {
+            throw new \Exception('Product Material not found');
+        }
+
+        return $data;
     }
 
     public function storeData($request)

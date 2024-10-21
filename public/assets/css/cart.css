@@ -612,6 +612,7 @@ font-size: 14px;
     align-items: start;
     flex-wrap: wrap;
     margin-bottom: 10px;
+    position: relative;
 }
 .clm-list-item-wrapper .clm-list-item:last-child {
     margin-bottom: 0;
@@ -644,7 +645,22 @@ font-size: 14px;
 .clm-list-item-wrapper {
     margin-bottom: 100px;
 }
-
+.clm-item-sl {
+    position: absolute;
+    left: -9px;
+    top: -7px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    font-weight: 900;
+}
 
 .clm-list-item .clm-item-action {
     flex-basis: 25px;
@@ -776,7 +792,7 @@ font-size: 14px;
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translate(-50%, -2%);
+    transform: translate(-50%, 0%);
     background: #fff;
     width: 100%;
 }

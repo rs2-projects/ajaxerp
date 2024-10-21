@@ -14,10 +14,10 @@
                                 <img src="https://staging.ajaxtradingcorp.com/storage/inventory/product-material/17273314964757.webp" alt="Material Name">
                             </div>
                             <div class="info">
-                                <h4 class="name">18MM PLYWOOD (1MM MDF + 16MM PLYWOOD + 1MM MDF) (E1)</h4>
-                                <p class="code">Code: <span>BK.4118</span></p>
-                                <p class="category">Category: <span>KITCHEN ITEMS</span></p>
-                                <p class="type">Type: <span>Others</span></p>
+                                <h4 class="name">{{ $product->name }}</h4>
+                                <p class="code">Code: <span>{{ $product->code }}</span></p>
+                                <p class="category">Category: <span>{{ $product->category->name }}</span></p>
+                                <p class="type">Type: <span>{{ $product::TYPES[$product->type] ?? '' }}</span></p>
                             </div>
                         </div>
 
@@ -27,13 +27,13 @@
                                     <div class="left">
                                         <p>
                                             Low Stock Warning :
-                                            <span>50</span>
+                                            <span>{{ $product->low_stock_warning }}</span>
                                         </p>
                                     </div>
                                     <div class="right">
                                         <p>
                                             Low Stock At Least :
-                                            <span>50</span>
+                                            <span>{{ $product->low_stock_at_least }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -41,13 +41,13 @@
                                     <div class="left">
                                         <p>
                                             Tax :
-                                            <span>Govt Tax (50%)</span>
+                                            <span>{{ $product->tax?->name ?? 'N/A' }} ({{ $product->tax?->tax_rate ?? 0 }}%)</span>
                                         </p>
                                     </div>
                                     <div class="right">
                                         <p>
                                             Unit :
-                                            <span>METERS</span>
+                                            <span>{{ $product::UNIT_TYPES[$product->unit_type] ?? '' }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -55,14 +55,18 @@
                                     <div class="left">
                                         <p>
                                             Color :
-                                            <span>pink </span>
-                                            <span class="color-box" style="background-color: pink;"></span>
+                                            @if($product->color != '')
+                                                <span>{{ $product->color }}</span>
+                                                <span class="color-box" style="background-color: {{ $product->color }};"></span>
+                                            @else
+                                                <span>N/A </span>
+                                            @endif
                                         </p>
                                     </div>
                                     <div class="right">
                                         <p>
                                             Working Temperature :
-                                            <span>100 Deg</span>
+                                            <span>{{ $product->working_temperature }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -74,19 +78,19 @@
                                         <div class="erp-filter-item flex-32">
                                             <div class="input-block mb-0 erp-step-input-block ">
                                                 <label class="col-form-label">Length </label>
-                                                <input type="text" class="form-control " value="50CM" name="length" disabled>
+                                                <input type="text" class="form-control " value="{{ $product->length }}" name="length" disabled>
                                             </div>
                                         </div>
                                         <div class="erp-filter-item flex-32">
                                             <div class="input-block mb-0 erp-step-input-block ">
                                                 <label class="col-form-label">Width </label>
-                                                <input type="text" class="form-control " value="50CM" name="width" disabled>
+                                                <input type="text" class="form-control " value="{{ $product->width }}" name="width" disabled>
                                             </div>
                                         </div>
                                         <div class="erp-filter-item flex-32">
                                             <div class="input-block mb-0 erp-step-input-block ">
                                                 <label class="col-form-label">Thickness </label>
-                                                <input type="text" class="form-control " value="5CM" name="thickness" disabled>
+                                                <input type="text" class="form-control " value="{{ $product->thickness }}" name="thickness" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +99,7 @@
                                     <div class="full">
                                         <p class="fs-5 mb-1">Remarks :</p>
                                         <p>
-                                            <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</span>
+                                            <span>{{ $product->remarks }}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -104,7 +108,9 @@
                                     <div class="full">
                                         <p class="fs-5 mb-1">Description :</p>
                                         <p>
-                                            <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequuntur debitis fugiat iste quas, commodi, officiis placeat vero quo molestias atque at. Quae odio sunt voluptates consequatur in officiis deleniti pariatur.</span>
+                                            <span>
+                                                {!! $product->description !!}
+                                            </span>
                                         </p>
                                     </div>
                                 </div>
@@ -125,12 +131,12 @@
                         <div class="wbi-item">
                             <div class="wpi-child-item-wrapper d-flex flex-wrap gap-2">
                                 <div class="wpi-child-item flex-100">
-                                    <h4 class="warehouse-details-title">Main Warehouse</h4>
+                                    <h4 class="warehouse-details-title">{{ $product->warehouse?->name }}</h4>
 
                                 </div>
                                 <div class="wpi-child-item flex-100">
                                     <p class="warehouse-details-p">
-                                        Warehouse 1 (Unloading Area)
+                                        {{ $product->warehouse?->description }}
                                     </p>
                                 </div>
                             </div>
@@ -140,11 +146,13 @@
 
                         <div class="wbi-item">
                             <div class="new-warehouse-main-wrapper">
-                                                                                                                    <div class="new-warehouse-section-body d-flex flex-wrap gap-2 justify-content-between">
+                                @if(count($product->materialWarehouseSections) > 0)
+                                    @foreach ($product->materialWarehouseSections as $section)
+                                        <div class="new-warehouse-section-body d-flex flex-wrap gap-2 justify-content-between">
                                             <div class="new-wsb-item flex-40">
                                                 <div class="input-block mb-0 erp-step-input-block">
-                                                    <label class="col-form-label">Section 1 <span class="text-danger">*</span></label>
-                                                    <h4 class="warehouse-details-section-name">Line 1</h4>
+                                                    <label class="col-form-label">Section {{ $loop->iteration }} <span class="text-danger">*</span></label>
+                                                    <h4 class="warehouse-details-section-name">{{ $section?->warehouseSection?->name }}</h4>
                                                 </div>
                                             </div>
                                             <div class="new-wsb-item flex-58">
@@ -162,83 +170,25 @@
                                                             </div>
                                                         </div>
                                                         <div class="new-wsb-table-body">
-                                                                                                                                                                                                        <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center">
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <h5>1</h5>
-                                                                        </div>
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <div class="input-block mb-0 erp-step-input-block">
-                                                                                <h4 class="warehouse-subsection-name">Shelves 1</h4>
-                                                                            </div>
+                                                            @foreach ($section->productMaterialRacks as $rack)
+                                                                <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center">
+                                                                    <div class="new-wsb-table-body-item">
+                                                                        <h5>1</h5>
+                                                                    </div>
+                                                                    <div class="new-wsb-table-body-item">
+                                                                        <div class="input-block mb-0 erp-step-input-block">
+                                                                            <h4 class="warehouse-subsection-name">{{ $rack?->warehouseSectionRack?->name }}</h4>
                                                                         </div>
                                                                     </div>
-                                                                                                                                        <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center">
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <h5>2</h5>
-                                                                        </div>
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <div class="input-block mb-0 erp-step-input-block">
-                                                                                <h4 class="warehouse-subsection-name">Shelves</h4>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                                                                                                                                            </div>
+                                                                </div>
+                                                            @endforeach    
+                                                        </div>                                                                                       
                                                     </div>
-
-
                                                 </div>
                                             </div>
                                         </div>
-                                                                                <div class="new-warehouse-section-body d-flex flex-wrap gap-2 justify-content-between">
-                                            <div class="new-wsb-item flex-40">
-                                                <div class="input-block mb-0 erp-step-input-block">
-                                                    <label class="col-form-label">Section 2 <span class="text-danger">*</span></label>
-                                                    <h4 class="warehouse-details-section-name">Line 2</h4>
-                                                </div>
-                                            </div>
-                                            <div class="new-wsb-item flex-58">
-                                                <div class="new-wsb-sub-item-wrapper ">
-                                                    <div class="new-wsb-sub-item flex-100">
-                                                        <h2>Subsection (Inventory Storage Rack)</h2>
-                                                    </div>
-                                                    <div class="new-wsb-sub-item">
-                                                        <div class="new-wsb-table-header d-flex flex-wrap align-items-center">
-                                                            <div class="new-wsb-table-item">
-                                                                <h4>Sl</h4>
-                                                            </div>
-                                                            <div class="new-wsb-table-item">
-                                                                <h4>Subsection</h4>
-                                                            </div>
-                                                        </div>
-                                                        <div class="new-wsb-table-body">
-                                                                                                                                                                                                        <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center">
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <h5>1</h5>
-                                                                        </div>
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <div class="input-block mb-0 erp-step-input-block">
-                                                                                <h4 class="warehouse-subsection-name">Shelves 1</h4>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                                                                                        <div class="new-wsb-table-body-item-wrap d-flex flex-wrap align-items-center">
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <h5>2</h5>
-                                                                        </div>
-                                                                        <div class="new-wsb-table-body-item">
-                                                                            <div class="input-block mb-0 erp-step-input-block">
-                                                                                <h4 class="warehouse-subsection-name">Shelves 2</h4>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                                                                                                                                            </div>
-                                                    </div>
-
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                                                        
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
 

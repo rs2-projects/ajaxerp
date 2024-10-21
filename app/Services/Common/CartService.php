@@ -21,10 +21,14 @@ class CartService
         }
 
         $this->session_key = $this->cart_prefix . $this->cart_key;
+        
     }
 
     public function addToCart($item_id, $name='', $image='', $price=0, $qty = 1, $extra = []) {
+        // session()->put($this->session_key, []);
+        $this->initClassData();
         // Add to cart logic
+
         $item = [
             'id' => $item_id,
             'name' => $name,
@@ -33,22 +37,79 @@ class CartService
             'qty' => $qty,
             'extra' => $extra
         ];
+
+        $index = $this->findIndexById($item_id);
+
+        if($index !== false) {
+            $qty = $this->items[$index]['qty'] + 1;
+            $item['qty'] = $qty;
+
+            $this->items[$index] = $item;
+        } else {
+            $this->items[] = $item;
+        }
+
+        session()->put($this->session_key, $this->items);
+
+        $this->initClassData();
+
+        return $this;
+
     }
 
     public function removeFromCart($item_id) {
+        $this->initClassData();
         // Remove from cart logic
     }
 
+    public function updateCartQty($item_id, $quantity) {
+        $this->initClassData();
+        // Update cart logic
+        $index = $this->findIndexById($item_id);
+        if($index === false) {
+            throw new \Exception('Invalid Cart Item!');
+        }
+
+        $item = $this->items[$index];
+        $item['qty'] = $quantity;
+        $this->items[$index] = $item;
+
+        session()->put($this->session_key, $this->items);
+
+        $this->initClassData();
+
+        return $this;
+    }
+
+    public function removeCartItem($item_id) {
+        $this->initClassData();
+        // Update cart logic
+        $index = $this->findIndexById($item_id);
+        if($index === false) {
+            throw new \Exception('Invalid Cart Item!');
+        }
+
+        unset($this->items[$index]);
+        
+        session()->put($this->session_key, array_values($this->items));
+
+        $this->initClassData();
+
+        return $this;
+    }
+
     public function updateCart($item_id, $quantity) {
+        $this->initClassData();
         // Update cart logic
     }
 
     public function getCartContents(): array {
+        $this->initClassData();
         // Get cart logic
         return [
             'items' => $this->items,
             'total_price' => $this->total_price,
-            'total_quantity' => $this->total_quantity,
+            'total_qty' => $this->total_quantity,
             'total_items' => $this->total_items
         ];
     }
@@ -76,9 +137,18 @@ class CartService
         $this->total_quantity = 0;
         $this->total_items = 0;
         foreach($this->items as $item) {
-            $this->total_price += $item['price'] * $item['quantity'];
-            $this->total_quantity += $item['quantity'];
+            $this->total_price += $item['price'] * $item['qty'];
+            $this->total_quantity += $item['qty'];
             $this->total_items++;
         }
+    }
+
+    public function findIndexById($id) {
+        // Find index by id logic
+        $index = false;
+        if(count($this->items) >= 0) {
+            $index = array_search($id, array_column($this->items, 'id'));
+        }
+        return $index;
     }
 }

@@ -103,11 +103,10 @@
     @include('inventory.product-material.__board_product_import_modal')
     @include('inventory.product-material.__paper_product_import_modal')
     @include('inventory.product-material.__other_product_import_modal')
-    @include('inventory.product-material._cart_canvas')
 @endsection
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('assets/css/cart.css') }}">
+    
 @endsection
 
 @section('css_plugins')
