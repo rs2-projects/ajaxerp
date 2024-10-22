@@ -23,7 +23,20 @@
             </div>
         </div>
         <div class="cart-list-checkout-wrapper">
-            <a href="#" class="clm-checkout-btn">Place Order</a>
+            <form action="{{ route('inventory.product-material.submit-cart') }}" method="POST" id="cartSubmitForm">
+                @csrf
+                <div class="php-rate-wrapper">
+                    <div class="align-items-center cart-php-rate-wrapper d-flex gap-2 justify-content-center item">
+                        <div class="cprw-label">
+                            <label>PHP Rate : </label>
+                        </div>
+                        <div class="cprw-input">
+                            <input type="text" class="form-control" placeholder="PHP Rate" name="php_rate" id="cart_php_rate" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="clm-checkout-btn">Create Purchase Order</button>
+            </form>
         </div>
     
 

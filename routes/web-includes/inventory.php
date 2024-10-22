@@ -67,6 +67,8 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('get-cart-contents', [ProductMaterialCartController::class, 'getCartContents'])->name('inventory.product-material.get-cart-contents');
         Route::get('remove-cart-item', [ProductMaterialCartController::class, 'removeCartItem'])->name('inventory.product-material.remove-cart-item');
         Route::get('update-cart-qty', [ProductMaterialCartController::class, 'updateCartQty'])->name('inventory.product-material.update-cart-qty');
+
+        Route::post('submit-cart', [ProductMaterialCartController::class, 'submitCart'])->name('inventory.product-material.submit-cart');
         
     });
 

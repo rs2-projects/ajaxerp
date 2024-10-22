@@ -169,4 +169,19 @@ class ProductMaterialPurchase extends BaseModel
     {
         return $this->hasMany(ProductMaterialPurchaseCalculatedPrice::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO);
     }
+
+    public function generateBatchNumber($addNum = 1)
+    {
+        $total = ProductMaterialPurchase::count();
+        $total = $total + 1000;
+        $total += $addNum;
+        $batch_number = 'PO-' . $total;
+        // Check if batch number already exists
+        $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $batch_number)
+            ->first();
+        if (!empty($checkBatchNumber)) {
+            return $this->generateBatchNumber($addNum + 1);
+        }
+        return $batch_number;
+    }
 }

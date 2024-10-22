@@ -9,6 +9,7 @@ function addToCart(id) {
         ADD_TO_CART_ROUTE,
         {id: id}, 
         function(response) {
+            
             if(response.status == 200) {
                 showSuccessAlert('Success', response.message);
                 getCartContents();
@@ -107,3 +108,20 @@ function removeCartItem(input, id) {
         false
     );
 }
+
+$(document).on('submit', '#cartSubmitForm', function(e) {
+    var self = this;
+    e.preventDefault();
+    var formData = new FormData($(self)[0]);
+    $(".ie-span").text("").hide();
+    var url = $(self).attr('action');
+
+    formPost(url, formData, function (res) {
+        if (res.status == 200) {
+            showSuccessAlert('Success', res.message)
+            window.location.href = res.redirect;
+        } else {
+            showErrorAlert('Error', res.message)
+        }
+    }, 'show_input_error');
+});

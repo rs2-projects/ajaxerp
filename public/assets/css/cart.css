@@ -785,9 +785,10 @@ font-size: 14px;
     background: #018d2b;
 }
 
+
 .cart-list-checkout-wrapper {
     text-align: center;
-    padding: 35px 10px;
+    padding: 25px 10px 35px 10px;
     margin-top: 20px;
     position: absolute;
     bottom: 0;
@@ -808,8 +809,19 @@ font-size: 14px;
 .clm-list-item-wrapper {
     
 }
-
-
+.php-rate-wrapper {
+    margin-bottom: 30px;
+}
+.php-rate-wrapper>.item {
+    /* border: 2px dashed #ebebeb;
+    width: max-content;
+    margin: 0 auto;
+    padding: 7px 10px;
+    border-radius: 3px; */
+}
+.php-rate-wrapper .cprw-input input {
+    border-color: var(--primary-color);
+}
 
 
 /* Basic SCSS End */

@@ -17,7 +17,7 @@ class ProductMaterialCartController extends BackendController
 
     public function addToCart(Request $request) {
         try {
-            $data = $this->service->addToCart($request);
+            return $this->service->addToCart($request);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 404,
@@ -53,6 +53,22 @@ class ProductMaterialCartController extends BackendController
         return response()->json([
             'status' => 200,
             'message' => "Cart Item Removed!"
+        ]);
+    }
+
+    public function submitCart(Request $request) {
+        try {
+            return $this->service->submitCart($request);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 404,
+                'message' => $e->getMessage()
+            ]);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Cart submitted successfully'
         ]);
     }
 }
