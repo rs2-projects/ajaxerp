@@ -1,6 +1,6 @@
 
 
-<div class="">
+<div class="employee-list-table-wrapper">
     <table class="table mb-0 erp-table">
         <thead class="erp-thead">
             <tr class="erp-tr">

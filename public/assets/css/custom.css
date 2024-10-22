@@ -284,3 +284,7 @@
     margin-bottom: -3px;
     margin-left: 4px;
 }
+
+.employee-list-table-wrapper tr td, .employee-list-table-wrapper, tr th {
+    white-space: normal;
+}
