@@ -50,6 +50,15 @@
 
                                         </div>
                                     </div>
+                                    <div class="erp-filter-item flex-20">
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box" id="stock_filter">
+                                                <option value="">All Stock</option>
+                                                <option value="stock_warning">Stock Warning</option>
+                                                <option value="stock_alert">Stock Alert</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="erp-filter-item">
                                         <div class="erp-search-btn-wrap">
                                             <button class=" erp-search-btn" type="button" onclick="getData()">Search</button>
@@ -97,7 +106,7 @@
 @endsection
 
 @section('css')
-
+    
 @endsection
 
 @section('css_plugins')
@@ -115,6 +124,7 @@
         var filterData = {
             keyword_filtered: '',
             category_filtered: '',
+            stock_filter: '',
             status_filtered: 'all',
         };
         $(document).ready(function() {
@@ -129,6 +139,11 @@
             filterData.category_filtered = $("#category_filtered").val()
             $("#category_filtered").on('change', function () {
                 filterData.category_filtered = $(this).val();
+            });
+
+            filterData.stock_filter = $("#stock_filter").val()
+            $("#stock_filter").on('change', function () {
+                filterData.stock_filter = $(this).val();
             });
 
             $('.status_type li').on('click', function () {

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Services\ProductionStaff;
+
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionBoard;
 use App\Models\Production\PreProductionBoardDelivery;
@@ -323,6 +325,42 @@ class ProductionService
             ->get();
 
         $data['pre_production'] = $pre_production;
+        return $data;
+    }
+
+    
+    public function barcodeDetails($id) {
+        //find pre production
+        $delivery = PreProductionMaterialDelivery::where('deleted', PreProductionMaterialDelivery::DELETED_NO)
+            ->where('status', PreProductionMaterialDelivery::STATUS_ACTIVE)
+            ->where('id', $id)
+            ->first();
+        if(!$delivery){
+            throw new \Exception('Invalid Delivery!');
+        }
+
+        $product_material_ids = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+            ->where('pre_production_material_delivery_id', $id)
+            ->pluck('product_material_id')
+            ->toArray();
+        
+        $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+            ->whereIn('id', $product_material_ids)
+            ->get()
+            ->map(function ($product_material) use ($id) {
+                //get delivered purchase detail ids
+                $purchaseDetailIds = PreProductionMaterialDeliveryDetailsItems::where('pre_production_material_delivery_id', $id)
+                    ->where('product_material_id', $product_material->id)
+                    ->pluck('product_material_purchase_details_id')
+                    ->toArray();
+                //get purchase details
+                $purchase_details = ProductMaterialPurchaseDetails::with('materialPurchase')
+                    ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                    ->whereIn('id', $purchaseDetailIds)
+                    ->get();
+                $product_material->purchase_details = $purchase_details;
+                return $product_material;
+            });
         return $data;
     }
 

@@ -186,10 +186,15 @@
 						axios.get(url)
 						.then(response => {
 							console.log(response.data);
+							response = response.data;
 							event.target.value = '';
-							if(response.data){
+							if(response.status == 200){
 								this.materials[index].scannedBarcodes.push(response.data);
 								this.materials[index].barcodeCounts++;
+							}else if(response.status == 201){
+								this.materials[index].scannedBarcodes.push(response.data);
+								this.materials[index].barcodeCounts++;
+								showErrorAlert('Warning', "You are choosing an item from newer batch! Please take item from oldest batch first.")
 							}else{
 								showErrorAlert('Error', "Invalid Barcode")
 							}

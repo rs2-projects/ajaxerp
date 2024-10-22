@@ -18,6 +18,7 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::get('/{id}/details', [ProductionController::class, 'details'])->name('production-staff.production.production.details');
         Route::get('/{id}/change/{processId}/process-status/{status}', [ProductionController::class, 'changeProcessStatus'])->name('production-staff.production.production.update-process-status');
         Route::get('/{id}/receive', [ProductionController::class, 'receive'])->name('production-staff.production.production.receive');
+        Route::get('/{id}/receive/barcode-details', [ProductionController::class, 'barcodeDetails'])->name('production-staff.production.production.receive.barcode-details');
         Route::post('/{id}/receive', [ProductionController::class, 'receiveStore'])->name('production-staff.production.production.receive.store');
         Route::get('/{id}/get-deliveries', [ProductionController::class, 'getDeliveries'])->name('production-staff.production.production.get-delivery-details');
         Route::get('/{id}/check-barcode-validity', [ProductionController::class, 'checkBarCode'])->name('production-staff.production.production.check-barcode');

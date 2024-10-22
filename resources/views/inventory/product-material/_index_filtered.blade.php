@@ -21,7 +21,7 @@
                         <h4 class="d-table-title">{{ $product_materials->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                        <a href="{{ route('inventory.product-material.details', $product_material->id) }}" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                             <div class="em-pro-img-box">
                                 <img src="{{ $product_material->show_image }}" alt="">
                             </div>
@@ -92,6 +92,7 @@
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.product-material.delete',$product_material->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
                                         <a class="dropdown-item" href="{{route('inventory.product-material.calculate-price', $product_material->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Price</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="addToCart({{ $product_material->id }})"><i class="la la-cart-plus m-r-5"></i>Add To Cart</a>
                                     </div>
                                 </div>
                             </div>

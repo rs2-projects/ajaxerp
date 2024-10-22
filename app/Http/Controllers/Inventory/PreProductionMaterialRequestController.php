@@ -101,4 +101,13 @@ class PreProductionMaterialRequestController extends BackendController
         $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
         return $pdf->inline();
     }
+
+    public function newerPickedMaterials(){
+        $this->setPageTitle("Newer Picked Materials");
+        $this->setActiveMenu('nothing');
+        
+        $data = $this->service->newerPickedMaterials();
+        
+        return $this->view('inventory.material-request.newer_picked_materials')->with($data);
+    }
 }

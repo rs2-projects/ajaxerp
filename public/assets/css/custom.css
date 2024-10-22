@@ -200,3 +200,87 @@
     text-overflow: ellipsis; 
     white-space: nowrap;
 }
+
+.product-material-details-page {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.pmdw-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #ddd;
+}
+.pmdw-header .img img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+}
+.pmdw-header .info .code {
+    margin-bottom: 0;
+}
+.pmdw-header .info .type {
+    margin-bottom: 0;
+}
+.pmdw-header .info .name {
+    margin-bottom: 4px;
+    font-size: 15px;
+    font-weight: 700;
+}
+.pmdw-header .info .category {
+    margin-bottom: 0;
+}
+
+.pmdw-header .info p {
+    font-size: 13px;
+}
+
+.pmdw-header .info span{
+    font-weight: 600;
+}
+
+
+.pmdw-body .pmdwl-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+}
+.pmdw-body .pmdwl-item:last-child {
+    border-bottom: none;
+}
+.pmdw-body .pmdwl-item p {
+    margin-bottom: 0;
+    font-size: 13px;
+}
+.pmdw-body .pmdwl-item p span {
+    font-weight: 600;
+}
+.pmdw-body .pmdwl-item .left {
+    flex-basis: 48%;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+.pmdw-body .pmdwl-item .right {
+    flex-basis: 48%;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+.pmdw-body .pmdwl-item .full {
+    flex-basis: 100%;
+}
+.pmdw-body .pmdwl-item p span.color-box {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-bottom: -3px;
+    margin-left: 4px;
+}
