@@ -28,7 +28,7 @@ class InvoicePaymentService
 
             //TODO: need to add data in transactionInvoicePaymentService
         }catch(\Exception $e){
-            return throw new \Exception($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
 
     }
