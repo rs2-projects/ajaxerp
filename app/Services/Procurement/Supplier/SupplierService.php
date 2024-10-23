@@ -16,6 +16,8 @@ use Carbon\Carbon;
 
 class SupplierService
 {
+    public $paginate_limit;
+    
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -29,6 +31,7 @@ class SupplierService
             ->orderBy('name', 'asc')->get();
         $data['material_products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->whereDoesntHave('materialSupplier')
             ->orderBy('name', 'asc')->get();
         return $data;
     }
@@ -181,6 +184,9 @@ class SupplierService
 
         $data['material_products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
+            ->whereDoesntHave('materialSupplier', function ($q) use ($id){
+                $q->where('supplier_id', '!=', $id);
+            })
             ->orderBy('name', 'asc')->get();
 
         if (!$data['item']) {

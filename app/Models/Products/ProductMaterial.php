@@ -6,6 +6,7 @@ use App\Models\Accounting\AccCoaAccount;
 use App\Models\BaseModel;
 use App\Models\Inventory\Warehouse;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
+use App\Models\Procurements\SupplierProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductMaterial extends BaseModel
@@ -155,14 +156,18 @@ class ProductMaterial extends BaseModel
             ->where('status', self::STATUS_ACTIVE);
     }
 
-    public function unitType(){
-        return $this->hasOne(ProductMaterialUnitType::class, 'id', 'unit_type');
-    }
+    // public function unitType(){
+    //     return $this->hasOne(ProductMaterialUnitType::class, 'id', 'unit_type');
+    // }
 
     public function warehouse(){
         return $this->hasOne(Warehouse::class, 'id', 'warehouse_id');
     }
 
     public function purchaseDetails(){
+    }
+
+    public function materialSupplier(){
+        return $this->hasMany(SupplierProductMaterial::class, 'product_material_id', 'id');
     }
 }
