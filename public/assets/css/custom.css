@@ -213,7 +213,24 @@
     padding-bottom: 20px;
     border-bottom: 1px dashed #ddd;
 }
+.pmdw-header .img {
+    flex-basis: 100px;
+}
+.pmdw-header .qrcode {
+    flex-basis: 100px;
+}
+.pmdw-header .info {
+    flex-basis: calc(100% - 220px);
+}
 .pmdw-header .img img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    padding: 3px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+}
+.pmdw-header .qrcode img {
     width: 100px;
     height: 100px;
     object-fit: cover;

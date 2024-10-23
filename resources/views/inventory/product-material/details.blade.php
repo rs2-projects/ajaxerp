@@ -11,13 +11,16 @@
                     <div class="product-material-details-wrapper">
                         <div class="pmdw-header">
                             <div class="img">
-                                <img src="https://staging.ajaxtradingcorp.com/storage/inventory/product-material/17273314964757.webp" alt="Material Name">
+                                <img src="{{ $product->show_image }}" alt="Material Name">
                             </div>
                             <div class="info">
                                 <h4 class="name">{{ $product->name }}</h4>
                                 <p class="code">Code: <span>{{ $product->code }}</span></p>
                                 <p class="category">Category: <span>{{ $product->category->name }}</span></p>
                                 <p class="type">Type: <span>{{ $product::TYPES[$product->type] ?? '' }}</span></p>
+                            </div>
+                            <div class="qrcode">
+                                <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(600)->generate($product->code)) !!} " alt="QrCode">
                             </div>
                         </div>
 
