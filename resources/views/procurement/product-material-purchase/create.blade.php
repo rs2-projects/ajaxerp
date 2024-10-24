@@ -80,7 +80,7 @@
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Batch No. <span class="text-red">*</span></label>
-                                                    <div ><input class="form-control " required  name="batch_number" type="text"></div>
+                                                    <div ><input class="form-control " value="{{ $new_batch_number }}" required  name="batch_number" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
