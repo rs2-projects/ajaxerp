@@ -4,6 +4,7 @@ use App\Http\Controllers\Sales\CustomerController;
 use App\Http\Controllers\Sales\InvoiceController;
 use App\Http\Controllers\Sales\InvoiceDeliveredController;
 use App\Http\Controllers\Sales\InvoiceDesignController;
+use App\Http\Controllers\Sales\QuotationController;
 use Illuminate\Support\Facades\Route;
 //customer routes start
 Route::prefix('customers')->group(function(){
@@ -50,4 +51,13 @@ Route::prefix('invoice')->group(function(){
     Route::get('/{id}/finished-goods', [InvoiceDeliveredController::class, 'getFinishedGoods'])->name('sales.invoice.deliver.get-all-finished-goods')->middleware('permission:deliver-items');
     Route::get('/{id}/deliver/{barcode}/{count}', [InvoiceDeliveredController::class, 'checkBarCode'])->name('sales.invoice.deliver.check-barcode')->middleware('permission:deliver-items');
 
+});
+
+//start quotation route
+Route::prefix('quotation')->group(function(){
+    Route::get('/',[QuotationController::class,'index'])->name('sales.quotation.index')->middleware('permission:view-invoices');
+    Route::post('/filtered',[QuotationController::class,'indexFilteredData'])->name('sales.quotation.filtered')->middleware('permission:view-invoices');
+    //create invoice data
+    Route::get('/create',[QuotationController::class,'create'])->name('sales.quotation.create')->middleware('permission:manage-invoices');
+    Route::post('/create',[QuotationController::class,'store'])->name('sales.quotation.store')->middleware('permission:manage-invoices');
 });

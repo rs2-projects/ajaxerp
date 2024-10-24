@@ -48,7 +48,7 @@ class ContractorConroller extends BackendController
         try {
             $data = $contractorService->getEditData($id);
             if (empty($data['item'])){
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $view = $this->view('hr.user-contractor._edit_data')->with($data)
                 ->render();

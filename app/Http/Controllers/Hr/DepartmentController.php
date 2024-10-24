@@ -47,7 +47,7 @@ class DepartmentController extends BackendController
         try {
             $data = $departmentService->getEditData($id);
             if (empty($data['item'])){
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $view = $this->view('hr.department._edit_data')->with($data)
                 ->render();

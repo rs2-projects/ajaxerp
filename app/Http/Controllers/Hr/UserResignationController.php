@@ -48,7 +48,7 @@ class UserResignationController extends BackendController
         try {
             $data = $userResignationService->getEditData($id);
             if (empty($data['item'])){
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $view = $this->view('hr.user-resignation._edit_data')->with($data)
                 ->render();

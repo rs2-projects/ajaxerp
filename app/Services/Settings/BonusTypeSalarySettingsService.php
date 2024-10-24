@@ -9,6 +9,8 @@ use Carbon\Carbon;
 
 class BonusTypeSalarySettingsService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -71,7 +73,7 @@ class BonusTypeSalarySettingsService
             ->where('id', $id)
             ->first();
         if (!$data['item']){
-           return throw new \Exception("Bonus Type Salary not found");
+           throw new \Exception("Bonus Type Salary not found");
         }
         return $data;
     }

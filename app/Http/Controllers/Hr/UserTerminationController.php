@@ -48,7 +48,7 @@ class UserTerminationController extends BackendController
         try {
             $data = $userTerminationService->getEditData($id);
             if (empty($data['item'])){
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $view = $this->view('hr.user-termination._edit_data')->with($data)
                 ->render();

@@ -324,6 +324,7 @@ class ProductMaterialPurchaseService
     {
         $data['purchaseDate'] = Carbon::now();
         $data['estimatedDeliveryDate'] = Carbon::now();
+        $data['new_batch_number'] = (new ProductMaterialPurchase())->generateBatchNumber();
 
         return $data;
 

@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('procurement.product-material-purchase.store') }}" id="purchaseStoreForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('sales.quotation.store') }}" id="invoiceStoreForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -12,11 +12,12 @@
                                 <div class="purchase-supplier-select-box d-flex justify-content-between align-items-center">
                                     <div class="purchase-add-supplier-box">
                                         <div class="supplier-icon-box">
-                                            <img src="{{asset('assets/img/product/supplier.png')}}" alt="">
+                                            <img v-if="selected_customer===null" src="{{asset('assets/img/product/supplier.png')}}" alt="">
+                                            <img v-else :src="selected_customer.show_image_full_url" alt="">
                                         </div>
-                                        <div class="supplier-add-button-box text-center" onclick="showSuppliersModal()">
-                                            <a href="javascript:void(0)" v-if="selected_supplier === null" class="as-btn">Add Supplier</a>
-                                            <a href="javascript:void(0)" v-else>Change Supplier</a>
+                                        <div class="supplier-add-button-box text-center" onclick="showCustomerModal()">
+                                            <a href="javascript:void(0)" v-if="selected_customer === null" class="as-btn">Add Customer</a>
+                                            <a href="javascript:void(0)" v-else>Change Customer</a>
                                         </div>
                                     </div>
                                     <div class="purchase-invoice-info-wrapper d-flex justify-content-between align-items-center">
@@ -24,32 +25,32 @@
                                             <div class="title-bx">
                                                 <h2>Bill To</h2>
                                             </div>
-                                            <div class="invoice-info-bx" v-if="selected_supplier !== null">
-                                                <input type="hidden" name="supplier_id" v-bind:value="selected_supplier.id" id="selected_supplier_id">
+                                            <div class="invoice-info-bx" v-if="selected_customer !== null">
+                                                <input type="hidden" name="customer_id" v-bind:value="selected_customer.id" id="selected_customer_id">
                                                 <div class="invoice-info d-flex align-items-center">
-                                                    <h4 class="mb-0">Supplier Name</h4>
-                                                    <p class="mb-0"> @{{ selected_supplier.business_name  }} </p>
+                                                    <h4 class="mb-0">Customer Name</h4>
+                                                    <p class="mb-0"> @{{ selected_customer.business_name  }} </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-center">
                                                     <h4 class="mb-0">Contact Name</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.contact_full_name }} </p>
+                                                    <p class="mb-0">@{{ selected_customer.contact_full_name }} </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-center">
                                                     <h4 class="mb-0">Email</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.email }} </p>
+                                                    <p class="mb-0">@{{ selected_customer.email }} </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-center">
                                                     <h4 class="mb-0">Phone</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.phone }} </p>
+                                                    <p class="mb-0">@{{ selected_customer.phone }} </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-start address-invoice">
                                                     <h4 class="mb-0">Address</h4>
-                                                    <p class="mb-0">@{{ selected_supplier.full_address }}</p>
+                                                    <p class="mb-0">@{{ selected_customer.address }}</p>
                                                 </div>
                                             </div>
                                             <div class="invoice-info-bx" v-else>
                                                 <div class="invoice-info d-flex align-items-center">
-                                                    <h4 class="mb-0">Supplier Name</h4>
+                                                    <h4 class="mb-0">Customer Name</h4>
                                                     <p class="mb-0"> N/A </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-center">
@@ -73,32 +74,64 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Php Rate <span class="text-red">*</span></label>
-                                                    <div ><input class="form-control " required step="0.01" name="php_rate" type="number"></div>
+                                                    <label class="col-form-label">REF NO. </label>
+                                                    <div ><input class="form-control " required  name="ref_no" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Batch No. <span class="text-red">*</span></label>
-                                                    <div ><input class="form-control " value="{{ $new_batch_number }}" required  name="batch_number" type="text"></div>
-                                                </div>
-                                            </div>
-                                            <div class="supplier-invoice-input-box">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Purchase Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $purchaseDate }}" name="purchase_date" type="text"></div>
-                                                </div>
-                                            </div>
-                                            <div class="supplier-invoice-input-box">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Estimate Delivery Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker"  value="{{ $estimatedDeliveryDate }}" name="estimated_delivery_date" type="text"></div>
+                                                    <label class="col-form-label">Date </label>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $quotation_date }}" name="quotation_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="purchase-order-invoice-top-box">
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Project Name</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="project_name" placeholder="Enter Project Name" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Description - Scope of Work</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="description" rows="3" placeholder="Enter Description" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Gallery</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="gallery-wrapper row " id="gallery-wrapper">
+                                            <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
+                                                <input type="file" name="gallery[]" class="dropify">
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-info btn-sm" onclick="addNewImage()">
+                                                <strong>
+                                                    <span class="me-1"><i class="fa fa-plus"></i></span>
+                                                    Add New Image
+                                                </strong>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="purchase-order-invoice-body-box">
                                 <div class="purchase-order-invoice-body-product-wrap">
                                     <div class="purchase-order-product-header-wrapper d-flex flex-wrap align-items-center">
@@ -109,12 +142,9 @@
                                             <h4 class="text-center">Description</h4>
                                         </div>
                                         <div class="po-product-header-item">
-                                            <h4 class="text-center">Color</h4>
-                                        </div>
-                                        <div class="po-product-header-item">
                                             <h4 class="text-center">QTY</h4>
                                         </div>
-                                        <div class="po-product-header-item">
+                                        <div class="po-product-header-item sales-po-product-header-item">
                                             <h4 class="text-center">Price</h4>
                                         </div>
                                         <div class="po-product-header-item">
@@ -122,11 +152,13 @@
                                         </div>
                                     </div>
                                     <div class="purchase-order-product-body-wrapper">
-                                        <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
+                                        <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItemIndex">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
-                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                                    <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-if="cartItem.item_type != 'custom_item'">
+                                                        <input type="hidden" name="item_name[]">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
                                                         </div>
@@ -134,8 +166,13 @@
                                                             <h5>@{{ cartItem.name }}</h5>
                                                         </div>
                                                     </div>
-
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-else>
+                                                        <div class="em-pro-details-box po-product">
+                                                            <input type="text" name="item_name[]" class="form-control" placeholder="Item Name" required>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
                                                 <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
@@ -149,21 +186,12 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="text" class="form-control text-center" name="color[]" v-model="cartItem.color" placeholder="Color">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="purchase-order-product-body-item">
-                                                    <div class="purchase-order-product-body-item-inner">
-                                                        <div class="purchase-order-product-body-item-inner-content">
-                                                            <div class="input-block mb-0 erp-step-input-block ">
                                                                 <input type="number" name="qty[]" min="1" v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="purchase-order-product-body-item">
+                                                <div class="purchase-order-product-body-item sales-po-product-header-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
@@ -175,17 +203,31 @@
                                                 <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end total-amount-product pe-2">
-                                                            {{ getCurrencySymbol('usd') }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                            <h4 class="text-center total-amount-product pe-2">
+                                                            {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="purchase-order-product-body-item sales-po-product-header-item-remove">
+                                                    <div class="purchase-order-product-body-item-inner">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <div class="po-product-delete-icon-box">
                                                                 <a href="javascript:void(0)" @click="removeItem(cartItemIndex)"><i class="fa fa-trash"></i></a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="purchase-order-product-body-mesurement flex-100">
+                                                <div class="purchase-order-product-body-mesurement flex-100" v-if="cartItem.item_type != 'custom_item'">
                                                     <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
+                                                        
+                                                        <div class="po-order-product-body-mesurement-item" v-if="cartItem.material_items != null">
+                                                            <a href="javascript:void(0)" @click.prevent="itemDetails(cartItemIndex)" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn" data-bs-toggle="modal" data-bs-target="#itemDetailsModal" ><i class="fa-solid fa-eye" style="font-size: 11px"></i> Items</a>
+                                                        </div>
+                                                        <div class="po-order-product-body-mesurement-item">
+                                                            <h4>Type :</h4>
+                                                            <p class="sales-cartItems-type-chip">@{{ getItemType(cartItem.item_type)  }}</p>
+                                                        </div>
                                                         <div class="po-order-product-body-mesurement-item">
                                                             <h4>Product Code :</h4>
                                                             <p># @{{ cartItem.code  }}</p>
@@ -207,7 +249,6 @@
                                                             <p>@{{ cartItem.thickness }}</p>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                                 <div class="purchase-order-product-body-vat-tax flex-100">
                                                     <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
@@ -216,7 +257,7 @@
                                                                 <label class="col-form-label">Vat </label>
                                                                 <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
-                                                                    <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
+                                                                    <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
@@ -225,7 +266,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                   {{getCurrencySymbol('usd')}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                   {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                                 {{--<div class="po-product-delete-icon-box two">
                                                                     <a href="#"><i class="fa fa-times"></i></a>
@@ -238,46 +279,63 @@
                                         </div>
 
                                         <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
-                                            <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
+                                            {{-- <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a> --}}
+                                            
+                                            <div class="pms-item flex-100">
+                                                <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                                                    <a href="#" @click.prevent="addCustomItem()" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Custom Item</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('finished_goods')" class="erp-search-btn text-center pp-add-more-btn pp-add-goods-btn"><i class="la la-plus-circle"></i> Finished Goods</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('finished_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn"><i class="la la-plus-circle"></i> Finished Board</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('set_items')" class="erp-search-btn text-center pp-add-more-btn pp-add-set-item-btn"><i class="la la-plus-circle"></i> Set Item</a>
+                                                </div>
+                                            </div>
+
                                             <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
                                                     <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                                 </div>
                                                 <div class="search-product-item-wrapper custom-card-scroll" >
-                                                    <div class="search-product-item" v-for="singleItem in allItems" :key="singleItem.id" @click="addItemToCart(singleItem)">
-                                                        <div class="smi-left">
-                                                            <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
-                                                                <div class="em-pro-img-box">
-                                                                    <img :src="singleItem.show_image" alt="">
+                                                    <div v-if="items.length > 0">
+                                                        <div class="search-product-item" v-for="singleItem in items" :key="singleItem.id" @click="addItemToCart(singleItem)">
+                                                            <div class="smi-left">
+                                                                <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
+                                                                    <div class="em-pro-img-box">
+                                                                        <img :src="singleItem.show_image" alt="">
+                                                                    </div>
+                                                                    <div class="em-pro-details-box po-product text-start">
+                                                                        <h5>@{{ singleItem.name }}</h5>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="em-pro-details-box po-product text-start">
-                                                                    <h5>@{{ singleItem.name }}</h5>
+                                                                <div class="purchase-order-product-body-mesurement flex-100">
+                                                                    <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
+                                                                        <div class="po-order-product-body-mesurement-item">
+                                                                            <h4>Product Code :</h4>
+                                                                            <p>#@{{ singleItem.code }}</p>
+                                                                        </div>
+                                                                        <div class="po-order-product-body-mesurement-item">
+                                                                            <h4>Length :</h4>
+                                                                            <p>@{{ singleItem.length }}</p>
+                                                                        </div>
+                                                                        <div class="po-order-product-body-mesurement-item">
+                                                                            <h4>Width :</h4>
+                                                                            <p>@{{ singleItem.width }}</p>
+                                                                        </div>
+                                                                        <div class="po-order-product-body-mesurement-item">
+                                                                            <h4>Thickness :</h4>
+                                                                            <p> @{{ singleItem.thickness }}</p>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="purchase-order-product-body-mesurement flex-100">
-                                                                <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
-                                                                    <div class="po-order-product-body-mesurement-item">
-                                                                        <h4>Product Code :</h4>
-                                                                        <p>#@{{ singleItem.code }}</p>
-                                                                    </div>
-                                                                    <div class="po-order-product-body-mesurement-item">
-                                                                        <h4>Unit :</h4>
-                                                                        <p>@{{ singleItem.unit_type }}</p>
-                                                                    </div>
-                                                                    <div class="po-order-product-body-mesurement-item">
-                                                                        <h4>Length :</h4>
-                                                                        <p>@{{ singleItem.length }}</p>
-                                                                    </div>
-                                                                    <div class="po-order-product-body-mesurement-item">
-                                                                        <h4>Width :</h4>
-                                                                        <p>@{{ singleItem.width }}</p>
-                                                                    </div>
-                                                                    <div class="po-order-product-body-mesurement-item">
-                                                                        <h4>Thickness :</h4>
-                                                                        <p> @{{ singleItem.thickness }}</p>
-                                                                    </div>
-                                                                </div>
-
+                                                        </div>
+                                                    </div>
+                                                    <div v-else>
+                                                        <div class="search-product-item" style="background: #ff727230;">
+                                                            <div class="smi-left">
+                                                                <h4>No Item Found.</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -292,7 +350,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol('usd')}}
+                                                            <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol()}}
                                                                 <span class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
                                                             </h4>
 
@@ -305,7 +363,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol('usd')}}
+                                                            <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol()}}
                                                                 <span class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
                                                             </h4>
 
@@ -321,7 +379,7 @@
                                                                     <label for="discount-fixed" :class="{checked:(discount_type == 1)}">
                                                                         <input class="radio-input instagram" type="radio" id="discount-fixed" name="discount_type" value="1" style="display: none;"  v-model="discount_type" v-on:change="changeDiscountType" :checked="discount_type == 1" />
                                                                         <span class="radio-tile instagram">
-                                                                            <span class="radio-icon"> {{getCurrencySymbol('usd')}}</span>
+                                                                            <span class="radio-icon"> {{getCurrencySymbol()}}</span>
                                                                        </span>
                                                                     </label>
 
@@ -341,7 +399,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end sub-total-amount pe-2">
-                                                                {{getCurrencySymbol('usd')}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
+                                                                {{getCurrencySymbol()}} <span class="subtotal-amount"> @{{ discount_amount }}</span>
                                                             </h4>
 
                                                         </div>
@@ -354,7 +412,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end total-amount-product pe-2">
-                                                                {{getCurrencySymbol('usd')}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
+                                                                {{getCurrencySymbol()}}<span class="subtotal-amount">@{{ cartGrandTotalAmount }}</span>
                                                             </h4>
                                                         </div>
                                                     </div>
@@ -365,62 +423,78 @@
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
-                                                        <label class="col-form-label pt-0">Notes / Terms</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer"></textarea>
+                                                        <label class="col-form-label pt-0">Payment Method and Terms</label>
+                                                        <div class="payment-method-info">
+                                                            <p class="pmi-line">
+                                                                <span class="title">Bank </span>
+                                                                <span class="value"><span class="me-1">:</span> UnionBank</span>
+                                                            </p>
+                                                            <p class="pmi-line">
+                                                                <span class="title">Bank Name </span>
+                                                                <span class="value"><span class="me-1">:</span> AJAX TRADING CORP.</span>
+                                                            </p>
+                                                            <p class="pmi-line">
+                                                                <span class="title">Account No </span>
+                                                                <span class="value"><span class="me-1">:</span> 0023 4001 3295</span>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="po-order-product-payment-status d-none">
-                                            <div class="po-order-product-payment-status-item">
-                                                <div class="checkbox-wrapper-35">
-                                                    <input value="private" name="switch" id="payment_status_checkbox" v-on:change="this.c = !this.togglePaymentStatus;" type="checkbox" class="switch">
-                                                    <label for="payment_status_checkbox">
-                                                        <span class="switch-x-text">Payment Status </span>
-                                                        <span class="switch-x-toggletext">
-                                                            <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Unpaid</span>
-                                                            <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>Paid</span>
-                                                        </span>
-                                                    </label>
+                                        <div class="po-order-product-note-terms-box">
+                                            <div class="po-content-box-wrapper">
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        Unloading and installation
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        <input type="number" min="0" name="unloading_cost" v-model="unloading_cost" required>
+                                                    </div>
                                                 </div>
+                                                <div class="po-content-input-box has-border">
+                                                    <div class="first-child">
+                                                        <input class="small-size" type="number" v-model="down_payment_percent" min="0" max="100" required><p>% Down payment
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ downPaymentAmount }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        Total 1st Down payment:
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ firstDownPaymentAmount }}
+                                                    </div>
+                                                </div>
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        <span>@{{ remainingPaymentPercent }}</span>% Upon Completion
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ remainingPaymentAmount }}
+                                                    </div>
+                                                </div>
+                                                
                                             </div>
-                                            <div class="po-order-product-payment-status-item" id="payment_status_details" v-if="togglePaymentStatus">
-                                                <div class="payment-selection-wrapper d-flex flex-wrap justify-content-between">
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block  mb-0 two">
-                                                            <label class="col-form-label">Payment Method <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
-                                                                <option>Select Payment Method</option>
-                                                                <option>Bank Payment</option>
-                                                                <option>Cash</option>
-                                                                <option>Cheque</option>
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Payment Date <span class="text-danger">*</span> </label>
-                                                            <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block  mb-0 two">
-                                                            <label class="col-form-label">Payment Account <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
-                                                                <option>Select Payment Account</option>
-                                                                <option>DBBL</option>
-                                                                <option>DBBL Agent Banking</option>
-                                                                <option>EBL Banking</option>
-
-                                                            </select>
-                                                        </div>
+                                          
+                                        </div>
+                                        
+                                        <div class="po-order-product-payment-status">
+                                            <div class="po-order-product-note-terms-inner">
+                                                <div class="po-order-product-note-terms-item">
+                                                    <div class="input-block erp-step-input-block mb-0">
+                                                        <label class="col-form-label pt-0">Terms and Conditions</label>
+                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -428,23 +502,10 @@
                                     </div>
 
                                 </div>
-                                <div class="purchase-order-product-footer-wrapper">
-                                    <div class="purchase-order-product-footer-header">
-                                        <h2>Invoice Footer</h2>
-                                    </div>
-                                    <div class="purchase-order-product-footer-body">
-                                        <div class="purchase-order-product-footer-body-inner">
-                                            <div class="purchase-order-product-footer-body-item">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <div class="purchase-order-product-save-all-wrapper">
                                     <div class="purchase-save-all-btn-box">
-                                        <button type="submit">Save Invoice</button>
+                                        <button type="submit">Save Quotation</button>
                                     </div>
                                 </div>
                             </div>
@@ -454,42 +515,42 @@
             </form>
         </div>
 
-        <!-- Supplier Modal -->
-        <div id="addSupplierModal" class="modal custom-modal fade" role="dialog">
+        <!-- Customer Modal -->
+        <div id="addCustomerModal" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header erp-modal-header">
-                        <h5 class="modal-title">Supplier List</h5>
+                        <h5 class="modal-title">Customer List</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body erp-modal-body">
                         <div class="erp-modal-body-content">
-                            <div class="selected-loot-product d-flex align-items-center" v-if="selected_supplier !==null">
+                            <div class="selected-loot-product d-flex align-items-center" v-if="selected_customer !==null">
                                 <div class="slp-img-box me-2">
-                                    <img :src="selected_supplier.show_image_full_url" alt="">
+                                    <img :src="selected_customer.show_image_full_url" alt="">
                                 </div>
                                 <div class="slp-details-box">
-                                    <h5>@{{ selected_supplier.business_name }}</h5>
-                                    <p class="supplier-person-name">@{{ selected_supplier.contact_first_name }}</p>
+                                    <h5>@{{ selected_customer.business_name }}</h5>
+                                    <p class="supplier-person-name">@{{ selected_customer.contact_first_name }}</p>
                                 </div>
                             </div>
                             <div class="sl-search-view">
                                 <div class="sl-search-box">
                                     <div class="search-box position-relative">
-                                        <input class="form-control" name="search_supplier" v-model="supplier_search" v-on:input="getSuppliers()" type="text" placeholder="Search Supplier Here...">
+                                        <input class="form-control" name="search_customer" v-model="customer_search" v-on:input="getCustomers()" type="text" placeholder="Search Customer Here...">
                                         <button class="btn position-absolute search-btn" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
                                     </div>
                                 </div>
                                 <div class="sl-search-list-view custom-card-scroll-2">
-                                    <a href="javascript:void(0)" class="sl-search-list-view-item d-flex align-items-center" v-for="(supplier, supplierIndex) in suppliers" :key="supplier.id" @click="changeSupplier(supplierIndex)">
+                                    <a href="javascript:void(0)" class="sl-search-list-view-item d-flex align-items-center" v-for="(customer, customerIndex) in customers" :key="customer.id" @click="changeCustomer(customerIndex)">
                                         <div class="slp-img-box me-2">
-                                            <img :src="supplier.show_image_full_url" alt="">
+                                            <img :src="customer.show_image_full_url" alt="">
                                         </div>
                                         <div class="slp-details-box">
-                                            <h5>@{{ supplier.business_name }}</h5>
-                                            <p class="supplier-person-name">@{{ supplier.contact_first_name }} @{{ supplier.contact_last_name }}</p>
+                                            <h5>@{{ customer.business_name }}</h5>
+                                            <p class="supplier-person-name">@{{ customer.contact_first_name }} @{{ customer.contact_last_name }}</p>
                                         </div>
                                     </a>
                                 </div>
@@ -500,10 +561,54 @@
                 </div>
             </div>
         </div>
-        <!-- /Supplier Modal -->
+        <!-- /Customer Modal -->
+
+        {{-- item details modal --}}
+        <div id="itemDetailsModal" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header erp-modal-header">
+                        <h5 class="modal-title">Item Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body erp-modal-body pt-0">
+                        <div class="erp-modal-body-content">
+                            <table class="table mb-0 erp-table table-responsive">
+                                <thead class="erp-thead">
+                                    <tr class="erp-tr">
+                                        <th class="erp-th">Sl.</th>
+                                        <th class="erp-th">Name</th>
+                                        <th class="erp-th">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="erp-tbody">
+                                        <tr class="erp-tbody-tr" v-for="(data, i) in item_details" :key="i">
+                                            <td class="erp-tbody-td text-left">@{{ i+1 }}</td>
+                                            <td class="erp-tbody-td text-left">@{{ data.name  }} (@{{data.code}})</td>
+                                            <td class="erp-tbody-td text-left">@{{data.quantity}}</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     <!--End::row-1 -->
+
+    <div class="d-none">
+        <div id="hidden-image-input">
+            <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
+                <input type="file" name="gallery[]" class="dropify">
+                <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -517,12 +622,14 @@
 @section('css_plugins')
     <!-- Datetimepicker CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"/>
 @endsection
 
 @section('js_plugins')
     <!-- Datetimepicker JS -->
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
 @endsection
 
 @section('js')
@@ -533,20 +640,31 @@
 
         $(document).ready(function () {
             initializeDatepicker();
-        });
-        $(document).ready(function () {
-            let auto_grow_elements = $(".auto-grow-input");
-            auto_grow_elements.each( function () {
-                let element = this;
-                element.style.height = "5px";
-                element.style.height = (element.scrollHeight)+"px";
+            $("#payment_status_checkbox").on('change', function() {
+                if(this.checked) {
+                    $("#payment_status_details").slideDown();
+                    $("#amount").prop('required', true);
+                    $("#account_id").prop('required', true);
+                    $("#payment_method").prop('required', true);
+                    initPaymentMethodSelect2()
+                } else {
+                    $("#payment_status_details").slideUp();
+                    $("#amount").prop('required', false);
+                    $("#account_id").prop('required', false);
+                    $("#payment_method").prop('required', false);
+                    initPaymentMethodSelect2()
+                }
             });
+
+            $('.gallery-wrapper .dropify').dropify();
         });
-        $(document).on('input', '.auto-grow-input', function () {
-            let element = this;
-            element.style.height = "5px";
-            element.style.height = (element.scrollHeight)+"px";
-        });
+
+        function initPaymentMethodSelect2() {
+            $("#payment_method").select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
 
         function initTaxSelect2() {
             $('.select-step').select2({
@@ -555,10 +673,10 @@
             });
         }
 
-        function showSuppliersModal() {
-            $("#addSupplierModal").modal('show');
+        function showCustomerModal() {
+            $("#addCustomerModal").modal('show');
             setTimeout(function () {
-                $("#addSupplierModal input[name=search_supplier]")[0].focus();
+                $("#addCustomerModal input[name=search_customer]")[0].focus();
             },300);
         }
 
@@ -575,23 +693,37 @@
             });
         }
 
+        function addNewImage() {
+            let hiddenImageInput = $("#hidden-image-input").html();
+            $("#gallery-wrapper").append(hiddenImageInput);
+            $('.gallery-wrapper .dropify').dropify();
+        }
+        function removeImage(button) {
+            $(button).parent().remove();
+        }
+
         var { createApp } = Vue;
 
         var vueApp = createApp({
             data() {
                 return {
                     allItems:[],
+                    items: [],
+                    item_details: [],
                     item_search: '',
+                    current_item_type: '',
                     cartItems:[],
                     system_tax_items:[],
-                    suppliers:[],
-                    supplier_search: '',
-                    selected_supplier:null,
+                    customers:[],
+                    customer_search: '',
+                    selected_customer:null,
                     open_select_item: false,
                     discount_type: 0,
                     discount_value: 0,
                     discount_amount: 0,
                     paying_amount: 0,
+                    unloading_cost: 0,
+                    down_payment_percent: 0,
 
                 }
             },
@@ -642,59 +774,157 @@
                         }
                     }
                     total_amount = total_amount - this.discount_amount;
-
                     return parseFloat(total_amount.toFixed(6));
                 },
+                downPaymentAmount() {
+                    if(this.down_payment_percent > 100) {
+                        this.down_payment_percent = 100;
+                    } else if(this.down_payment_percent < 0) {
+                        this.down_payment_percent = 0;
+                    }
+                    let total_amount = this.cartGrandTotalAmount;
+                    let down_payment = 0;
+                    if(this.down_payment_percent != 0) {
+                        down_payment = parseFloat(((total_amount * this.down_payment_percent) / 100).toFixed(6));
+                    }
+                    return down_payment;
+                },
+                firstDownPaymentAmount() {
+                    return this.downPaymentAmount + this.unloading_cost;
+                },
+                remainingPaymentPercent() {
+                    return 100 - this.down_payment_percent;
+                },
+                remainingPaymentAmount() {
+                    return (this.cartGrandTotalAmount + this.unloading_cost) - this.firstDownPaymentAmount;
+                }
             },
             methods: {
-                openSelectItemModal() {
+                openSelectItemModal(type) {
                     this.open_select_item = !this.open_select_item;
                     this.item_search = '';
-                    this.getSearchedItems();
+                    this.current_item_type = type;
+                    this.getItems(type);
                 },
+
                 checkValidation(e) {
                     e.preventDefault();
-                    if (($("#selected_supplier_id").val() === undefined) || ($("#selected_supplier_id").val() == null) || ($("#selected_supplier_id").val() == '')) {
-                        showInfoAlert('Opps!', 'Please select a Supplier!');
+                    if (($("#selected_customer_id").val() === undefined) || ($("#selected_customer_id").val() == null) || ($("#selected_customer_id").val() == '')) {
+                        showInfoAlert('Opps!', 'Please select a Customer!');
                     } else if(this.cartItems.length <= 0) {
                         showInfoAlert('Opps!', 'Please add at-least 1 Product!');
                     } else {
-                        purchaseStoreFormSubmit();
+                        showInfoAlert('Info!', 'We are working on it!');
+                        return false;
+                        invoiceStoreFormSubmit();
                     }
                 },
-                getSearchedItems() {
+                // getSearchedItems() {
+                //     axios
+                //         .get('{{ route('sales.invoice.get-all-finished-goods') }}?q='+this.item_search)
+                //         .then(response => (this.allItems = response.data));
+                //     },
+
+                getAllProducts() {
                     axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
-                        .then(response => (this.allItems = response.data.product_materials));
-                },
+                        .get('{{ route('sales.invoice.get-all-finished-goods') }}')
+                        .then(response => {
+                            this.allItems = response.data;
+                        });
+                    },
                 getTaxItems() {
                     axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
+                        .get('{{ route('sales.invoice.get-all-taxes') }}')
                         .then(response => (this.system_tax_items = response.data));
                 },
-                getSuppliers() {
+                getCustomers() {
                     axios
-                        .get('{{ route('procurement.product-material-purchase.get-all-suppliers') }}?q=' + this.supplier_search)
-                        .then(response => (this.suppliers = response.data));
+                        .get('{{ route('sales.invoice.get-all-customer') }}?q=' + this.customer_search)
+                        .then(response => (this.customers = response.data));
                 },
+
+                getItems(type){
+                    if (this.allItems && this.allItems[type]) {
+                        this.items = this.allItems[type];
+                    } else {
+                        this.items = [];
+                    }
+                },
+
+                getSearchedItems() {
+                    if (this.item_search.length > 0) {
+                        if (this.allItems && this.allItems[this.current_item_type]) {
+                            this.items = this.allItems[this.current_item_type].filter(item =>
+                                item.name.toLowerCase().includes(this.item_search.toLowerCase())
+                            );
+                        }
+                    } else {
+                        this.getItems(this.current_item_type);
+                    }
+                },
+
                 addItemToCart(item) {
-                    let exists = this.cartItems.findIndex(o => o.id === item.id);
+                    console.log(item.srp)
+                    // let exists = this.cartItems.findIndex(o => o.id === item.id);
+                    let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
+
                     if (exists >= 0) {
-                        // exists.qty++;
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = 0;
+                        item.price = formatNumber(parseFloat(item.srp));
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         let ab = this.cartItems.push(item);
                         this.updateCartItemPrice(ab - 1);
+
                     }
                     setTimeout(function () {
                         initTaxSelect2();
-                    }, 300);
+                    }, 100);
                     this.open_select_item = !this.open_select_item;
                 },
+
+                addCustomItem() {
+                    let customItem = {
+                        id: 0,
+                        name: '',
+                        code: '',
+                        item_type: 'custom_item',
+                        description: '',
+                        qty: 1,
+                        price: 0,
+                        spt_amount: 0,
+                        spt_amount_wv: 0,
+                        tax: null,
+                        show_image: '{{asset('assets/img/placeholder.jpg')}}',
+                        unit_type: '',
+                        length: 0,
+                        width: 0,
+                        thickness: 0,
+                    };
+
+                    let ab = this.cartItems.push(customItem);
+                    this.updateCartItemPrice(ab - 1);
+                    setTimeout(function () {
+                        initTaxSelect2();
+                    }, 100);
+                },
+
+                itemDetails(index) {
+                    if (this.cartItems[index] && this.cartItems[index].material_items) {
+                        let items = this.cartItems[index].material_items;
+                        this.item_details = items;
+                    }else{
+                        this.item_details = [];
+                    }
+                },
+
+                getItemType(type){
+                    return type.replace(/_/g, ' ')
+                   .replace(/\b\w/g, char => char.toUpperCase());
+                },
+
                 incrementQty(index) {
                     this.cartItems[index].qty++;
                     this.updateCartItemPrice(index);
@@ -728,18 +958,21 @@
                     let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6));
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
 
-                    let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
-                    this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
-
+                    if(this.cartItems[index].tax == null) {
+                        this.cartItems[index].vat_amount = 0;
+                    } else {
+                        let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
+                        this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
+                    }
                     this.cartItems[index].spt_amount = parseFloat((priceWithoutVat + this.cartItems[index].vat_amount).toFixed(6));
                 },
 
                 changeDiscountType() {
 
                 },
-                changeSupplier(index) {
-                    this.selected_supplier = this.suppliers[index];
-                    $("#addSupplierModal").modal('hide');
+                changeCustomer(index) {
+                    this.selected_customer = this.customers[index];
+                    $("#addCustomerModal").modal('hide');
                 },
                 changeTax(cartItemIndex, new_tax_id) {
                     if(new_tax_id == 0) {
@@ -753,9 +986,9 @@
                 }
             },
             mounted () {
-                this.getSearchedItems();
+                this.getAllProducts();
                 this.getTaxItems();
-                this.getSuppliers();
+                this.getCustomers();
             }
 
         }).mount('#VueApp');
@@ -766,9 +999,9 @@
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }
 
-        function purchaseStoreFormSubmit(){
+        function invoiceStoreFormSubmit(){
 
-            var self = $("#purchaseStoreForm");
+            var self = $("#invoiceStoreForm");
             var formData = new FormData($(self)[0]);
             $(".ie-span").text("").hide();
             var url = $(self).attr('action');
@@ -777,7 +1010,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        window.location.href = "{{route('procurement.product-material-purchase.index')}}";
+                        window.location.href = "{{route('sales.invoice.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)
@@ -786,5 +1019,6 @@
         }
 
     </script>
-
 @endsection
+
+
