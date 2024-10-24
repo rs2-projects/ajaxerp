@@ -631,7 +631,8 @@
     border: 1px solid #c3c3c3;
     border-top: none;
     padding: 15px 10px;
-    border-radius: 0px 0px 10px 10px;
+    /* border-radius: 0px 0px 10px 10px; */
+    border-radius: 0;
 }
 
 

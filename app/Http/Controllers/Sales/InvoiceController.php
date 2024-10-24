@@ -52,7 +52,6 @@ class InvoiceController extends BackendController
     {
         $data = $this->service->getAllCustomer($request);
         return response()->json($data['customers']);
-
     }
     //Get all finished goods
     // public function getAllFinishedGoods(Request $request)

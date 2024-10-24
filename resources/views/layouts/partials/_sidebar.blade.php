@@ -153,14 +153,19 @@
                     <li class="menu-title">
                         <span>Sales & Orders</span>
                     </li>
-                    @if(hasPermission( 'view-customers','manage-customers' ))
+                    @if(hasPermission( 'view-invoices','manage-invoices','make-payment','deliver-items'))
                         <li>
-                            <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
+                            <a href="{{ route('sales.quotation.index') }}" class="{{ $activeMenu == 'sales.quotation.index' ? 'active' : ''}}"><i class="la la-file-pdf-o"></i> <span>Quotations</span></a>
                         </li>
                     @endif
                     @if(hasPermission( 'view-invoices','manage-invoices','make-payment','deliver-items'))
                         <li>
                             <a href="{{ route('sales.invoice.index') }}" class="{{ $activeMenu == 'sales.invoice.index' ? 'active' : ''}}"><i class="la la-file-pdf-o"></i> <span>Invoices</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-customers','manage-customers' ))
+                        <li>
+                            <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
                         </li>
                     @endif
                 @endif
