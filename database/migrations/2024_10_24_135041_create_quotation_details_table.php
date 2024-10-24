@@ -29,6 +29,7 @@ return new class extends Migration
             $table->decimal('net_total', 16, 6)->default(0)->comment('total_price + tax_amount');
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+            $table->boolean('synced')->default(false);
 
             //define foreign keys
             $table->foreign('quotation_id')->references('id')->on('quotations');

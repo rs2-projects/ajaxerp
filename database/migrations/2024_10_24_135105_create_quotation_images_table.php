@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('image_name', 255)->nullable();
 
             \App\Helpers\Development\MigrationHelper::getCommonColumns($table);
+            $table->boolean('synced')->default(false);
         });
     }
 

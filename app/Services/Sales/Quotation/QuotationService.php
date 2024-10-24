@@ -16,6 +16,7 @@ use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
 use App\Models\Sales\Quotation;
 use App\Models\Sales\QuotationDetails;
+use App\Models\Sales\QuotationImages;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
@@ -236,7 +237,7 @@ class QuotationService
     {
         DB::beginTransaction();
         try {
-            dd($request->all());
+            // dd($request->all());
             $checkRefNumber = Quotation::where('ref_no', $request->ref_no)
                 ->where('deleted', Quotation::DELETED_NO)
                 ->first();
@@ -249,17 +250,17 @@ class QuotationService
             $quotation->ref_no = $request->ref_no;
             $quotation->quotation_date = $request->quotation_date;
             $quotation->project_name = $request->project_name;
-            $quotation->description = $request->description;
+            $quotation->description = $request->project_description;
             $quotation->discount_type = $request->discount_type;
             $quotation->discount_value = $request->discount_value;
             $quotation->notes = $request->notes;
-            $quotation->invoice_footer = $request->invoice_footer;
+            
             $quotation->created_at = Carbon::now();
             $quotation->created_by = auth()->id();
             $quotation->updated_at = Carbon::now();
             $quotation->updated_by = auth()->id();
             $quotation->save();
-            $quotation->quotation_no = "QT - " . (1000 + $invquotationoice->id);
+            $quotation->quotation_no = "QT - " . (1000 + $quotation->id);
             $quotation->save();
 
             //upload design file
@@ -349,18 +350,19 @@ class QuotationService
             $quotation->discount_amount = $discount_amount;
             $quotation->save();
 
-            if ($request->hasFile('receipt')) {
-                if (count($request->file('receipt')) > 0) {
-                    foreach ($request->file('receipt') as $key => $file) {
+            if ($request->hasFile('gallery')) {
+                if (count($request->file('gallery')) > 0) {
+                    foreach ($request->file('gallery') as $key => $file) {
                         $fileUploadService = new FileUploadService();
-                        $file_path = $fileUploadService->store($request->receipt[$key], 'transaction/invoice-payment-receipt');
+                        $file_path = $fileUploadService->store($request->file('gallery.'.$key), 'quotation/gallery');
                         $file_path = $file_path['path'];
 
-                        $transaction_receipt = new TransactionReceipt();
-                        $transaction_receipt->transaction_id = $transaction->id;
-                        $transaction_receipt->receipt = $file_path;
-                        $transaction_receipt->status = TransactionReceipt::STATUS_ACTIVE;
-                        $transaction_receipt->save();
+                        $quotationImage = new QuotationImages();
+                        $quotationImage->quotation_id = $quotation->id;
+                        $quotationImage->image = $file_path;
+                        $quotationImage->image_name = $request->file('gallery.'.$key)->getClientOriginalName();
+                        $quotationImage->status = QuotationImages::STATUS_ACTIVE;
+                        $quotationImage->save();
                     }
                 }
             }

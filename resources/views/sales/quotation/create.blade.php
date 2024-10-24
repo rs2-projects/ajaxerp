@@ -106,7 +106,7 @@
                                     </div>
                                     <div class="poitb-body">
                                         <div class="form-group">
-                                            <textarea class="form-control" name="description" rows="3" placeholder="Enter Description" required></textarea>
+                                            <textarea class="form-control" name="project_description" rows="3" placeholder="Enter Description" required></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -814,9 +814,9 @@
                     } else if(this.cartItems.length <= 0) {
                         showInfoAlert('Opps!', 'Please add at-least 1 Product!');
                     } else {
-                        showInfoAlert('Info!', 'We are working on it!');
-                        return false;
-                        invoiceStoreFormSubmit();
+                        // showInfoAlert('Info!', 'We are working on it!');
+                        // return false;
+                        quotationStoreFormSubmit();
                     }
                 },
                 // getSearchedItems() {
@@ -999,7 +999,7 @@
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }
 
-        function invoiceStoreFormSubmit(){
+        function quotationStoreFormSubmit(){
 
             var self = $("#invoiceStoreForm");
             var formData = new FormData($(self)[0]);
@@ -1010,7 +1010,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        window.location.href = "{{route('sales.invoice.index')}}";
+                        window.location.href = "{{route('sales.quotation.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)
