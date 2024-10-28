@@ -14,7 +14,7 @@ class QuotationController extends BackendController
     public function __construct()
     {
         $this->addBreadcrumbs('Sales', route('sales.quotation.index'), 'fa fa-home');
-        $this->addBreadcrumbs('Quotation list');
+        $this->addBreadcrumbs('Quotations', route('sales.quotation.index'));
         $this->service = new QuotationService();
     }
     //index
@@ -22,6 +22,8 @@ class QuotationController extends BackendController
     {
         $this->setPageTitle("Quotations");
         $this->setActiveMenu('sales.quotation.index');
+        $this->addBreadcrumbs('List');
+        
         $data = $this->service->indexData();
         return  $this->view('sales.quotation.index')->with($data);
 
@@ -39,6 +41,7 @@ class QuotationController extends BackendController
     {
         $this->setPageTitle("New Quotation");
         $this->setActiveMenu('sales.quotation.index');
+        $this->addBreadcrumbs('Create');
         $data = $this->service->createData();
         return $this->view('sales.quotation.create')->with($data);
     }
@@ -57,6 +60,7 @@ class QuotationController extends BackendController
     public function edit($id){
         $this->setPageTitle("Edit Quotation");
         $this->setActiveMenu('sales.quotation.index');
+        $this->addBreadcrumbs('Edit');
 
         $data = $this->service->editData($id);
 
@@ -101,6 +105,7 @@ class QuotationController extends BackendController
         try {
             $this->setPageTitle("Convert To Invoice");
             $this->setActiveMenu('sales.quotation.index');
+            $this->addBreadcrumbs('Convert To Invoice');
 
             $data = $this->service->convertToInvoice($id);
             

@@ -9,6 +9,7 @@
             <th class="erp-th text-center">Ref No </th>
             <th class="erp-th text-center">Date </th>
             <th class="erp-th text-center">Amount </th>
+            <th class="erp-th text-center">Status </th>
             @if(hasPermission('deliver-items','manage-invoices'))
                 <th class="text-end erp-th">Action</th>
             @endif
@@ -46,7 +47,9 @@
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().formatNumber($quotation->payable_amount) }}</h4>
             </td>
-
+            <td class="erp-tbody-td text-center">
+                <h4 class="text-center d-table-title {{formatNstrToClassNameumber($quotation::QUOTATION_STATUSES[$quotation->quotation_status])}}-status">{{ $quotation::QUOTATION_STATUSES[$quotation->quotation_status] }}</h4>
+            </td>
             @if(hasPermission('deliver-items','manage-invoices'))
                 <td class="text-end erp-tbody-td">
                     <div class="erp-action-t">

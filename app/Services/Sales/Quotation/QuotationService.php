@@ -58,6 +58,11 @@ class QuotationService
                 if ($quotation_no != '') {
                     $q->where('quotation_no', 'like', '%' . $quotation_no . '%');
                 }
+            }) 
+            ->where(function ($q) use ($status_filter) {
+                if ($status_filter != '') {
+                    $q->where('quotation_status', 'like', '%' . $status_filter . '%');
+                }
             })
             ->where(function ($q) use ($start_date_filtered, $end_date_filtered) {
                 if ($start_date_filtered != null) {

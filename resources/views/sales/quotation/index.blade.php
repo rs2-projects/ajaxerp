@@ -27,6 +27,16 @@
 
                                         </div>
                                     </div>
+                                    <div class="erp-filter-item flex-15">
+                                        <div class=" form-focus select-focus custom-form-focus">
+                                            <select class="select floating select2-box" id="status_filter">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ App\Models\Sales\Quotation::QUOTATION_STATUS_PENDING }}">{{ App\Models\Sales\Quotation::QUOTATION_STATUSES[App\Models\Sales\Quotation::QUOTATION_STATUS_PENDING] }}</option>
+                                                <option value="{{ App\Models\Sales\Quotation::QUOTATION_STATUS_ORDER_CREATED }}">{{ App\Models\Sales\Quotation::QUOTATION_STATUSES[App\Models\Sales\Quotation::QUOTATION_STATUS_ORDER_CREATED] }}</option>
+                                            </select>
+
+                                        </div>
+                                    </div>
                                     <div class="erp-filter-item flex-15 ">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <input type="text" class="form-control search-product-in datetimepicker" id="start_date_filtered" placeholder="Start Date">
@@ -77,6 +87,14 @@
             border-radius: 100px;
             line-height: 1;
         }
+        .order-created-status{
+            display: inline-block;
+            background: linear-gradient(to right, #55ce63 0, #37b34a 100%) !important;
+            color: #fff !important;
+            padding: 5px 20px;
+            border-radius: 100px;
+            line-height: 1;
+        }
         .cancelled-status{
             display: inline-block;
             background: #ff0000;
@@ -113,6 +131,10 @@
             filterData.quotation_id = $("#quotation_id").val()
             $("#quotation_id").on('input', function () {
                 filterData.quotation_id = $(this).val();
+            });
+            filterData.status_filter = $("#status_filter").val()
+            $("#status_filter").on('input', function () {
+                filterData.status_filter = $(this).val();
             });
             $('#start_date_filtered').on('dp.change', function(e){
                 filterData.start_date_filtered = $(this).val();
