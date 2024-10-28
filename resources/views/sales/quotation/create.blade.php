@@ -456,7 +456,7 @@
                                                 </div>
                                                 <div class="po-content-input-box has-border">
                                                     <div class="first-child">
-                                                        <input class="small-size" type="number" v-model="down_payment_percent" min="0" max="100" required><p>% Down payment
+                                                        <input class="small-size" type="number" v-model="down_payment_percent" name="down_payment_percent" min="0" max="100" required><p>% Down payment
                                                     </div> 
                                                     <div class="second-child">PhP</div> 
                                                     <div class="third-child">

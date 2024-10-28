@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\Sales\StoreQuotationRequest;
+use App\Http\Requests\Sales\UpdateQuotationRequest;
 use App\Services\Sales\Quotation\QuotationService;
 use Illuminate\Http\Request;
 
@@ -50,5 +51,48 @@ class QuotationController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Quotation Created Successfully');
+    }
+
+    //edit invoice
+    public function edit($id){
+        $this->setPageTitle("Edit Quotation");
+        $this->setActiveMenu('sales.quotation.index');
+
+        $data = $this->service->editData($id);
+
+        if (!isset($data['quotation'])) {
+            return redirect()->route('sales.quotation.index')->with(['failed' => 'Invalid Invoice!']);
+        }
+
+        $quotation = $data['quotation'];
+
+        return $this->view('sales.quotation.edit')->with($data);
+    }
+    //Get edit invoice data
+    public function getEditQuotationData($id)
+    {
+        $data = $this->service->getEditQuotationData($id);
+        return response()->json($data);
+    }
+    //update invoice
+    public function update(UpdateQuotationRequest $request, $id)
+    {
+        try {
+            $this->service->update($request, $id);
+
+            return $this->returnAjaxSuccess([], 'Quotation Updated Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+    // delete invoice
+    public function delete($id)
+    {
+        try {
+            $this->service->delete($id);
+            return $this->returnAjaxSuccess([], 'Invoice Deleted Successfully');
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
     }
 }

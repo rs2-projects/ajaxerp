@@ -3,7 +3,7 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('sales.invoice.update',$invoice->id) }}" id="invoiceUpdateForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('sales.quotation.update',$quotation->id) }}" id="invoiceUpdateForm" method="post" @submit="checkValidation">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -13,9 +13,9 @@
                                     <div class="purchase-add-supplier-box">
                                         <div class="supplier-icon-box">
                                             <img v-if="selected_customer===null" src="{{asset('assets/img/product/supplier.png')}}" alt="">
-                                            <img v-else :src="selected_customer?.show_image_full_url" alt="">
+                                            <img v-else :src="selected_customer.show_image_full_url" alt="">
                                         </div>
-                                        <div class="supplier-add-button-box text-center" onclick="showCustomersModal()">
+                                        <div class="supplier-add-button-box text-center" onclick="showCustomerModal()">
                                             <a href="javascript:void(0)" v-if="selected_customer === null" class="as-btn">Add Customer</a>
                                             <a href="javascript:void(0)" v-else>Change Customer</a>
                                         </div>
@@ -50,7 +50,7 @@
                                             </div>
                                             <div class="invoice-info-bx" v-else>
                                                 <div class="invoice-info d-flex align-items-center">
-                                                    <h4 class="mb-0">Supplier Name</h4>
+                                                    <h4 class="mb-0">Customer Name</h4>
                                                     <p class="mb-0"> N/A </p>
                                                 </div>
                                                 <div class="invoice-info d-flex align-items-center">
@@ -74,26 +74,76 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Store Order No. </label>
-                                                    <div ><input class="form-control " @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif required name="order_no" value="{{ $invoice->order_no }}" type="text"></div>
+                                                    <label class="col-form-label">REF NO. </label>
+                                                    <div ><input class="form-control " required  name="ref_no" value="{{ $quotation->ref_no }}" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Invoice Date</label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker"  @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif value="{{ $invoice->invoice_date }}" name="invoice_date" type="text"></div>
-                                                </div>
-                                            </div>
-                                            <div class="supplier-invoice-input-box">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Payment Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif value="{{ $invoice->payment_date }}" name="payment_date" type="text"></div>
+                                                    <label class="col-form-label">Date </label>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $quotation->quotation_date }}" name="quotation_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="purchase-order-invoice-top-box">
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Project Name</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="project_name" placeholder="Enter Project Name" value="{{ $quotation->project_name }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Description - Scope of Work</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="project_description" rows="3" placeholder="Enter Description" required>{!! $quotation->description !!}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="poitb-item">
+                                    <div class="poitb-header">
+                                        <h4 class="title">Gallery</h4>
+                                    </div>
+                                    <div class="poitb-body">
+                                        <div class="gallery-wrapper row " id="gallery-wrapper">
+                                            @if (count($quotation->gallery) > 0)
+                                                @foreach($quotation->gallery as $gallery)
+                                                    <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
+                                                        <input type="hidden" name="pre_gallery_id[]" value="{{ $gallery->id }}">
+                                                        <input type="file" name="gallery[]" class="dropify" data-default-file="{{ asset($gallery->image) }}" data-show-remove="false">
+                                                        {{-- @if ($loop->iteration > 1) --}}
+                                                            <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
+                                                        {{-- @endif --}}
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
+                                                    <input type="file" name="gallery[]" class="dropify">
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-info btn-sm" onclick="addNewImage()">
+                                                <strong>
+                                                    <span class="me-1"><i class="fa fa-plus"></i></span>
+                                                    Add New Image
+                                                </strong>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="purchase-order-invoice-body-box">
                                 <div class="purchase-order-invoice-body-product-wrap">
                                     <div class="purchase-order-product-header-wrapper d-flex flex-wrap align-items-center">
@@ -114,13 +164,14 @@
                                         </div>
                                     </div>
                                     <div class="purchase-order-product-body-wrapper">
-                                        <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItem.id">
+                                        <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItemIndex">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
-                                                    <input type="hidden" name="invoice_details_id[]" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif v-bind:value="cartItem.invoice_details_id">
-                                                    <input type="hidden" name="product_id[]" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif v-bind:value="cartItem.id">
+                                                    <input type="hidden" name="quotation_details_id[]" v-bind:value="cartItem.quotation_details_id">
+                                                    <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
                                                     <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
-                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-if="cartItem.item_type != 'custom_item'">
+                                                        <input type="hidden" name="item_name[]">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
                                                         </div>
@@ -128,13 +179,18 @@
                                                             <h5>@{{ cartItem.name }}</h5>
                                                         </div>
                                                     </div>
-
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-else>
+                                                        <div class="em-pro-details-box po-product">
+                                                            <input type="text" name="item_name[]" class="form-control" :value="cartItem.name" placeholder="Item Name" required>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
                                                 <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <textarea class="form-control auto-grow-input" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
+                                                                <textarea class="form-control auto-grow-input" name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -143,7 +199,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="number" name="qty[]" min="1" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
+                                                                <input type="number" name="qty[]" min="1" v-model.number="cartItem.qty" v-on:input="updateQty(cartItemIndex)" required class="form-control text-center" placeholder="QTY">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -152,7 +208,7 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <input type="number" min="0" v-model="cartItem.price" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
+                                                                <input type="number" min="0" v-model="cartItem.price" name="price[]" v-on:input="updatePrice(cartItemIndex)" step="any" required class="form-control text-center" placeholder="Price">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -160,13 +216,12 @@
                                                 <div class="purchase-order-product-body-item">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <h4 class="text-end total-amount-product pe-2">
-                                                                {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
+                                                            <h4 class="text-center total-amount-product pe-2">
+                                                            {{ getCurrencySymbol() }} <span class="amount-value">@{{ cartItem.spt_amount_wv }}</span>
                                                             </h4>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="purchase-order-product-body-item sales-po-product-header-item-remove">
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
@@ -176,8 +231,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="purchase-order-product-body-mesurement flex-100">
+                                                <div class="purchase-order-product-body-mesurement flex-100" v-if="cartItem.item_type != 'custom_item'">
                                                     <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
                                                         
                                                         <div class="po-order-product-body-mesurement-item" v-if="cartItem.material_items != null">
@@ -209,15 +263,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="purchase-order-product-body-vat-tax flex-100">
                                                     <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select select-step vat-tax-select2" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <select class="select vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
-                                                                    <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
+                                                                    <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
@@ -226,7 +279,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="purchase-order-product-body-item-inner-content position-relative">
                                                                 <h4 class="text-end total-amount-product pe-2">
-                                                                    {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
+                                                                   {{getCurrencySymbol()}} <span class="vat-amount-value">@{{ cartItem.vat_amount }}</span>
                                                                 </h4>
                                                                 {{--<div class="po-product-delete-icon-box two">
                                                                     <a href="#"><i class="fa fa-times"></i></a>
@@ -239,11 +292,11 @@
                                         </div>
 
                                         <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
-                                            {{-- @if($invoice->paid_amount==0)
-                                            <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
-                                            @endif --}}
+                                            {{-- <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a> --}}
+                                            
                                             <div class="pms-item flex-100">
                                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                                                    <a href="#" @click.prevent="addCustomItem()" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Custom Item</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
@@ -252,7 +305,8 @@
                                                     <a href="#" @click.prevent="openSelectItemModal('set_items')" class="erp-search-btn text-center pp-add-more-btn pp-add-set-item-btn"><i class="la la-plus-circle"></i> Set Item</a>
                                                 </div>
                                             </div>
-                                                <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
+
+                                            <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
                                                     <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
                                                 </div>
@@ -382,108 +436,89 @@
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
-                                                        <label class="col-form-label pt-0">Notes / Terms</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer">{{ $invoice->notes }}</textarea>
+                                                        <label class="col-form-label pt-0">Payment Method and Terms</label>
+                                                        <div class="payment-method-info">
+                                                            <p class="pmi-line">
+                                                                <span class="title">Bank </span>
+                                                                <span class="value"><span class="me-1">:</span> UnionBank</span>
+                                                            </p>
+                                                            <p class="pmi-line">
+                                                                <span class="title">Bank Name </span>
+                                                                <span class="value"><span class="me-1">:</span> AJAX TRADING CORP.</span>
+                                                            </p>
+                                                            <p class="pmi-line">
+                                                                <span class="title">Account No </span>
+                                                                <span class="value"><span class="me-1">:</span> 0023 4001 3295</span>
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="po-order-product-design-box-box">
+                                        <div class="po-order-product-note-terms-box">
+                                            <div class="po-content-box-wrapper">
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        Unloading and installation
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        <input type="number" min="0" name="unloading_cost" v-model="unloading_cost" required>
+                                                    </div>
+                                                </div>
+                                                <div class="po-content-input-box has-border">
+                                                    <div class="first-child">
+                                                        <input class="small-size" type="number" name="down_payment_percent" v-model="down_payment_percent" min="0" max="100" required><p>% Down payment
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ downPaymentAmount }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        Total 1st Down payment:
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ firstDownPaymentAmount }}
+                                                    </div>
+                                                </div>
+                                                <div class="po-content-input-box  ">
+                                                    
+                                                    <div class="first-child">
+                                                        <span>@{{ remainingPaymentPercent }}</span>% Upon Completion
+                                                    </div> 
+                                                    <div class="second-child">PhP</div> 
+                                                    <div class="third-child">
+                                                        @{{ remainingPaymentAmount }}
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                          
+                                        </div>
+                                        
+                                        <div class="po-order-product-payment-status">
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
-                                                        <label class="col-form-label pt-0">Design Upload</label>
-                                                        <div class="designWrapMain">
-                                                                <div class="multiple-design-item flex-5" v-for="(design, designIndex) in designs" :key="design.id">
-                                                                    <div class="input-block erp-step-input-block mb-0">
-                                                                        <span class="text-danger" v-on:click="designRemove(designIndex)"><i class="fa fa-times-circle"></i></span>
-                                                                        <a href="">
-                                                                            <img src="{{ asset('/')}}assets/img/product/documents.png" alt="file">
-                                                                            <h5 class="text-center">@{{ design.design_name }}</h5>
-                                                                            <input type="hidden" name="design_id[]" :value="design.id">
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                        </div>
-                                                        <input type="file" name="design[]" class="form-control" id="fileInput" multiple>
+                                                        <label class="col-form-label pt-0">Terms and Conditions</label>
+                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        {{--<div class="po-order-product-payment-status d-none">
-                                            <div class="po-order-product-payment-status-item">
-                                                <div class="checkbox-wrapper-35">
-                                                    <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
-                                                    <label for="payment_status_checkbox">
-                                                        <span class="switch-x-text">Payment Status </span>
-                                                        <span class="switch-x-toggletext">
-                                                            <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Unpaid</span>
-                                                            <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>Paid</span>
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="po-order-product-payment-status-item" id="payment_status_details" style="display: none;">
-                                                <div class="payment-selection-wrapper d-flex flex-wrap justify-content-between">
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block  mb-0 two">
-                                                            <label class="col-form-label">Payment Method <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
-                                                                <option>Select Payment Method</option>
-                                                                <option>Bank Payment</option>
-                                                                <option>Cash</option>
-                                                                <option>Cheque</option>
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block mb-0">
-                                                            <label class="col-form-label">Payment Date <span class="text-danger">*</span> </label>
-                                                            <div class="cal-icon"><input class="form-control datetimepicker" type="text"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="payment-selection-item">
-                                                        <div class="input-block erp-step-input-block  mb-0 two">
-                                                            <label class="col-form-label">Payment Account <span class="text-danger"> *</span> </label>
-                                                            <select class="select select-step" >
-                                                                <option>Select Payment Account</option>
-                                                                <option>DBBL</option>
-                                                                <option>DBBL Agent Banking</option>
-                                                                <option>EBL Banking</option>
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>--}}
                                     </div>
 
                                 </div>
-                                <div class="purchase-order-product-footer-wrapper">
-                                    <div class="purchase-order-product-footer-header">
-                                        <h2>Invoice Footer</h2>
-                                    </div>
-                                    <div class="purchase-order-product-footer-body">
-                                        <div class="purchase-order-product-footer-body-inner">
-                                            <div class="purchase-order-product-footer-body-item">
-                                                <div class="input-block erp-step-input-block mb-0">
-                                                    <textarea class="form-control" name="invoice_footer" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!">{{ $invoice->invoice_footer }}</textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <div class="purchase-order-product-save-all-wrapper">
                                     <div class="purchase-save-all-btn-box">
-                                        <button type="submit">Save Invoice</button>
+                                        <button type="submit">Save Quotation</button>
                                     </div>
                                 </div>
                             </div>
@@ -576,6 +611,15 @@
             </div>
         </div>
     </div>
+
+    <div class="d-none">
+        <div id="hidden-image-input">
+            <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
+                <input type="file" name="gallery[]" class="dropify">
+                <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('modals')
@@ -589,12 +633,14 @@
 @section('css_plugins')
     <!-- Datetimepicker CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"/>
 @endsection
 
 @section('js_plugins')
     <!-- Datetimepicker JS -->
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
 @endsection
 
 @section('js')
@@ -605,6 +651,7 @@
 
         $(document).ready(function () {
             initializeDatepicker();
+            $('.gallery-wrapper .dropify').dropify();
         });
 
         function initTaxSelect2() {
@@ -614,6 +661,12 @@
             });
         }
 
+        function showCustomerModal() {
+            $("#addCustomerModal").modal('show');
+            setTimeout(function () {
+                $("#addCustomerModal input[name=search_customer]")[0].focus();
+            },300);
+        }
         function showCustomersModal() {
             $("#addCustomerModal").modal('show');
             setTimeout(function () {
@@ -631,6 +684,15 @@
                     previous: 'fa-solid fa-angle-left'
                 }
             });
+        }
+
+        function addNewImage() {
+            let hiddenImageInput = $("#hidden-image-input").html();
+            $("#gallery-wrapper").append(hiddenImageInput);
+            $('.gallery-wrapper .dropify').dropify();
+        }
+        function removeImage(button) {
+            $(button).parent().remove();
         }
 
         var { createApp } = Vue;
@@ -651,10 +713,12 @@
                     customer_search: '',
                     selected_customer:null,
                     open_select_item: false,
-                    discount_type: "{{ $invoice->discount_type }}",
-                    discount_value: "{{ formatNumber($invoice->discount_value) }}",
-                    discount_amount: "{{ formatNumber($invoice->discount_amount) }}",
+                    discount_type: "{{ $quotation->discount_type }}",
+                    discount_value: "{{ formatNumber($quotation->discount_value) }}",
+                    discount_amount: "{{ formatNumber($quotation->discount_amount) }}",
                     paying_amount: 0,
+                    unloading_cost: {{ $quotation->unloading_cost ?? 0 }},
+                    down_payment_percent: {{ $quotation->first_down_payment_percent ?? 0 }},
 
                 }
             },
@@ -699,19 +763,19 @@
                         if(this.discount_type == 0) {
                             //0=percentage
                             this.discount_amount = formatNumber(parseFloat((total_amount * this.discount_value) / 100));
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
+                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount); //-this.invoice.paid_amount
 
                             if(this.discount_amount>due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
-                                this.discount_value = {{ $invoice->discount_value }}
+                                this.discount_value = {{ $quotation->discount_value }}
                             }
                         } else {
                             //fixed
                             this.discount_amount = this.discount_value;
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
+                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount); //-this.invoice.paid_amount
                             if(this.discount_amount>due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
-                                this.discount_value = {{ $invoice->discount_value }}
+                                this.discount_value = {{ $quotation->discount_value }}
                             }
                         }
                     }
@@ -719,6 +783,28 @@
 
                     return formatNumber(parseFloat(total_amount));
                 },
+                downPaymentAmount() {
+                    if(this.down_payment_percent > 100) {
+                        this.down_payment_percent = 100;
+                    } else if(this.down_payment_percent < 0) {
+                        this.down_payment_percent = 0;
+                    }
+                    let total_amount = this.cartGrandTotalAmount;
+                    let down_payment = 0;
+                    if(this.down_payment_percent != 0) {
+                        down_payment = parseFloat(((total_amount * this.down_payment_percent) / 100).toFixed(6));
+                    }
+                    return down_payment;
+                },
+                firstDownPaymentAmount() {
+                    return this.downPaymentAmount + this.unloading_cost;
+                },
+                remainingPaymentPercent() {
+                    return 100 - this.down_payment_percent;
+                },
+                remainingPaymentAmount() {
+                    return (this.cartGrandTotalAmount + this.unloading_cost) - this.firstDownPaymentAmount;
+                }
             },
             methods: {
                 openSelectItemModal(type) {
@@ -782,24 +868,51 @@
                 },
 
                 addItemToCart(item) {
+                    console.log(item.srp)
                     // let exists = this.cartItems.findIndex(o => o.id === item.id);
                     let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
+
                     if (exists >= 0) {
-                        // exists.qty++;
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
                         item.price = formatNumber(parseFloat(item.srp));
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
-                        item.invoice_details_id = "";
                         let ab = this.cartItems.push(item);
                         this.updateCartItemPrice(ab - 1);
+
                     }
                     setTimeout(function () {
                         initTaxSelect2();
                     }, 100);
                     this.open_select_item = !this.open_select_item;
+                },
+
+                addCustomItem() {
+                    let customItem = {
+                        id: 0,
+                        name: '',
+                        code: '',
+                        item_type: 'custom_item',
+                        description: '',
+                        qty: 1,
+                        price: 0,
+                        spt_amount: 0,
+                        spt_amount_wv: 0,
+                        tax: null,
+                        show_image: '{{asset('assets/img/placeholder.jpg')}}',
+                        unit_type: '',
+                        length: 0,
+                        width: 0,
+                        thickness: 0,
+                    };
+
+                    let ab = this.cartItems.push(customItem);
+                    this.updateCartItemPrice(ab - 1);
+                    setTimeout(function () {
+                        initTaxSelect2();
+                    }, 100);
                 },
 
                 itemDetails(index) {
@@ -853,9 +966,9 @@
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = formatNumber(parseFloat(((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100)));
+                        this.cartItems[index].vat_amount = formatNumber(parseFloat(((this.cartItems[index].tax.tax_rate * parseFloat(priceWithoutVat)) / 100)));
                     }
-                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat + this.cartItems[index].vat_amount));
+                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat) + parseFloat(this.cartItems[index].vat_amount));
                 },
 
                 changeDiscountType() {
@@ -878,12 +991,11 @@
                 },
                 getInvoiceData() {
                     axios
-                        .get('{{ route('sales.invoice.get-edit-invoice-data',$invoice->id) }}')
+                        .get('{{ route('sales.quotation.get-edit-quotation-data',$quotation->id) }}')
                         .then(response => {
                             console.log(response)
-                            this.invoice = response.data.invoice;
+                            this.quotation = response.data.quotation;
                             this.cartItems = response.data.cartItem;
-                            this.designs = response.data.designs;
                             this.selected_customer = response.data.customer;
 
                             for (let i in this.cartItems) {
@@ -922,7 +1034,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        window.location.href = "{{route('sales.invoice.index')}}";
+                        window.location.href = "{{route('sales.quotation.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)
