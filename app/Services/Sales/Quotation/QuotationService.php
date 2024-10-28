@@ -16,6 +16,7 @@ use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
 use App\Models\Sales\Quotation;
 use App\Models\Sales\QuotationDetails;
+use App\Models\Sales\QuotationImages;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
@@ -48,35 +49,31 @@ class QuotationService
     //filtered data
     public function indexFilteredData($request)
     {
-        $invoice_id = $request->invoice_id;
+        $quotation_no = $request->quotation_id;
         $status_filter = $request->status_filter;
         $start_date_filtered = $request->start_date_filtered ?? null;
         $end_date_filtered = $request->end_date_filtered ?? null;
-        // $data['invoices'] = Quotation::where('deleted', Invoice::DELETED_NO)
-        //     ->where(function ($q) use ($invoice_id) {
-        //         if ($invoice_id != '') {
-        //             $q->where('invoice_no', 'like', '%' . $invoice_id . '%');
-        //         }
+        $data['quotations'] = Quotation::where('deleted', Invoice::DELETED_NO)
+            ->where(function ($q) use ($quotation_no) {
+                if ($quotation_no != '') {
+                    $q->where('quotation_no', 'like', '%' . $quotation_no . '%');
+                }
+            }) 
+            ->where(function ($q) use ($status_filter) {
+                if ($status_filter != '') {
+                    $q->where('quotation_status', 'like', '%' . $status_filter . '%');
+                }
+            })
+            ->where(function ($q) use ($start_date_filtered, $end_date_filtered) {
+                if ($start_date_filtered != null) {
+                    $q->whereDate('quotation_date', '>=', $start_date_filtered);
+                }
+                if ($end_date_filtered != null) {
+                    $q->whereDate('quotation_date', '<=', $end_date_filtered);
+                }
+            })
+            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
 
-
-        //     })
-        //     ->where(function ($q) use ($status_filter) {
-        //         if ($status_filter != '') {
-        //             $q->where('invoice_status', 'like', '%' . $status_filter . '%');
-        //         }
-
-
-        //     })
-        //     ->where(function ($q) use ($start_date_filtered, $end_date_filtered) {
-        //         if ($start_date_filtered != null) {
-        //             $q->whereDate('invoice_date', '>=', $start_date_filtered);
-        //         }
-        //         if ($end_date_filtered != null) {
-        //             $q->whereDate('invoice_date', '<=', $end_date_filtered);
-        //         }
-        //     })
-        //     ->orderBy('id', 'desc')->paginate($this->paginate_limit);
-        $data['invoices'] = [];
         $data['view'] = view('sales.quotation._index_filtered', $data)->render();
         return $data;
     }
@@ -236,7 +233,7 @@ class QuotationService
     {
         DB::beginTransaction();
         try {
-            dd($request->all());
+            // dd($request->all());
             $checkRefNumber = Quotation::where('ref_no', $request->ref_no)
                 ->where('deleted', Quotation::DELETED_NO)
                 ->first();
@@ -249,17 +246,20 @@ class QuotationService
             $quotation->ref_no = $request->ref_no;
             $quotation->quotation_date = $request->quotation_date;
             $quotation->project_name = $request->project_name;
-            $quotation->description = $request->description;
+            $quotation->description = $request->project_description;
             $quotation->discount_type = $request->discount_type;
             $quotation->discount_value = $request->discount_value;
             $quotation->notes = $request->notes;
-            $quotation->invoice_footer = $request->invoice_footer;
+
+            $quotation->unloading_cost = $request->unloading_cost;
+            $quotation->first_down_payment_percent = $request->down_payment_percent;
+            
             $quotation->created_at = Carbon::now();
             $quotation->created_by = auth()->id();
             $quotation->updated_at = Carbon::now();
             $quotation->updated_by = auth()->id();
             $quotation->save();
-            $quotation->quotation_no = "QT - " . (1000 + $invquotationoice->id);
+            $quotation->quotation_no = "QT - " . (1000 + $quotation->id);
             $quotation->save();
 
             //upload design file
@@ -347,160 +347,27 @@ class QuotationService
             $quotation->vat_amount = $vat_amount;
             $quotation->total_amount = $total_amount + $vat_amount;
             $quotation->discount_amount = $discount_amount;
+            $quotation->payable_amount = $total_amount + $vat_amount - $discount_amount;
             $quotation->save();
 
-            if ($request->hasFile('receipt')) {
-                if (count($request->file('receipt')) > 0) {
-                    foreach ($request->file('receipt') as $key => $file) {
-                        $fileUploadService = new FileUploadService();
-                        $file_path = $fileUploadService->store($request->receipt[$key], 'transaction/invoice-payment-receipt');
-                        $file_path = $file_path['path'];
+            if ($request->hasFile('gallery')) {
+                if (count($request->file('gallery')) > 0) {
+                    foreach ($request->file('gallery') as $key => $file) {
+                        if($request->hasFile('gallery.'.$key)) {
+                            $fileUploadService = new FileUploadService();
+                            $file_path = $fileUploadService->store($request->file('gallery.'.$key), 'quotation/gallery');
+                            $file_path = $file_path['path'];
 
-                        $transaction_receipt = new TransactionReceipt();
-                        $transaction_receipt->transaction_id = $transaction->id;
-                        $transaction_receipt->receipt = $file_path;
-                        $transaction_receipt->status = TransactionReceipt::STATUS_ACTIVE;
-                        $transaction_receipt->save();
+                            $quotationImage = new QuotationImages();
+                            $quotationImage->quotation_id = $quotation->id;
+                            $quotationImage->image = $file_path;
+                            $quotationImage->image_name = $request->file('gallery.'.$key)->getClientOriginalName();
+                            $quotationImage->status = QuotationImages::STATUS_ACTIVE;
+                            $quotationImage->save();
+                        }
                     }
                 }
             }
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw new \Exception($e->getMessage());
-        }
-        DB::commit();
-    }
-
-    //make payment
-    public function makePaymentData($id)
-    {
-        try {
-            $data['invoice'] = Invoice::where('id', $id)
-                ->where('deleted', Invoice::DELETED_NO)
-                ->first();
-
-            if (!$data['invoice']) {
-                throw new \Exception("Invoice not found");
-            }
-
-            if ($data['invoice']->payment_status == Invoice::PAYMENT_STATUS_PAID) {
-                throw new \Exception("Payment already made");
-            }
-
-            $data['payment_methods'] = InvoicePayment::PAYMENT_METHODS;
-
-
-            $data['accounts_sub_categories'] = AccCoaSubCategory::with('accounts')
-                ->where('deleted', AccCoaSubCategory::DELETED_NO)
-                ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
-                ->where('is_account_type', AccCoaSubCategory::IS_ACCOUNT_TYPE_YES)
-                ->get();
-
-            return $data;
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
-
-    }
-
-    // make payment submit
-    public function makePaymentSubmit($request, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $invoice = Invoice::where('id', $id)
-                ->where('deleted', Invoice::DELETED_NO)
-                ->first();
-            if (!$invoice) {
-                throw new \Exception("Invoice not found");
-            }
-
-            if ($invoice->payment_status == Invoice::PAYMENT_STATUS_PAID) {
-                throw new \Exception("Payment already made");
-            }
-
-            $account = AccCoaAccount::where('id', $request->account_id)
-                ->where('deleted', AccCoaAccount::DELETED_NO)
-                ->first();
-            if (!$account) {
-                throw new \Exception("Account not found");
-            }
-
-            // payment amount validation
-            if ($request->amount <= 0) {
-                throw new \Exception("Invalid amount");
-            }
-
-            if ($request->amount > $invoice->due_amount) {
-                throw new \Exception("Payment amount can't be greater than due amount");
-            }
-
-
-            $receivable_category = AccCoaAccount::where('slug', 'accounts-receivable')
-                ->where('deleted', AccCoaAccount::DELETED_NO)
-                ->first();
-            // Create Transaction
-            $transaction = new Transaction();
-            $transaction->paid_type = Transaction::PAID_TYPE_PAID;
-            $transaction->transaction_type = Transaction::TRANSACTION_TYPE_DEPOSIT;
-            $transaction->transaction_date = $request->date;
-            $transaction->account_id = $account->id;
-            $transaction->category_id = $receivable_category->id;
-            $transaction->reference_type = Transaction::REFERENCE_TYPE_INVOICE_PAYMENT;
-            $transaction->reference_id = null;
-            $transaction->reference_description = null;
-            $transaction->net_amount = $request->amount;
-            $transaction->total_vat_amount = 0;
-            $transaction->total_amount = $request->amount;
-            $transaction->description = "Invoice Payment " . $invoice->invoice_no;
-            $transaction->note = $request->note;
-            $transaction->created_at = Carbon::now();
-            $transaction->created_by = auth()->id();
-            $transaction->updated_at = Carbon::now();
-            $transaction->updated_by = auth()->id();
-            $transaction->save();
-
-            $invoice->paid_amount = $invoice->paid_amount + $request->amount;
-            $invoice->due_amount = $invoice->payable_amount - $invoice->paid_amount;
-            if ($invoice->payable_amount == $invoice->paid_amount) {
-                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
-            } elseif ($invoice->payable_amount > $invoice->paid_amount) {
-                $invoice->payment_status = Invoice::PAYMENT_STATUS_PARTIAL_PAID;
-            }
-
-            if ($invoice->invoice_status == $invoice::INVOICE_STATUS_PENDING) {
-                $invoice->invoice_status = $invoice::INVOICE_STATUS_PROCESSING;
-            }
-
-            $invoice->updated_at = Carbon::now();
-            $invoice->updated_by = auth()->id();
-            $invoice->save();
-
-            // create invoice payment
-            $invoice_payment = $this->invoicePaymentService->store($request, $invoice->id, $transaction->id, $account->id);
-            $transaction->reference_id = $invoice_payment->id;
-            $transaction->save();
-
-            // receipt upload
-
-            if ($request->hasFile('receipt')) {
-                if (count($request->file('receipt')) > 0) {
-                    foreach ($request->file('receipt') as $key => $file) {
-                        $fileUploadService = new FileUploadService();
-                        $file_path = $fileUploadService->store($request->receipt[$key], 'transaction/invoice-payment-receipt');
-                        $file_path = $file_path['path'];
-
-                        $transaction_receipt = new TransactionReceipt();
-                        $transaction_receipt->transaction_id = $transaction->id;
-                        $transaction_receipt->receipt = $file_path;
-                        $transaction_receipt->status = TransactionReceipt::STATUS_ACTIVE;
-                        $transaction_receipt->save();
-                    }
-                }
-            }
-
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -512,39 +379,36 @@ class QuotationService
     //Edit Invoice
     public function editData($id)
     {
-        $invoice = Invoice::where('id', $id)
+        $quotation = Quotation::where('id', $id)
             ->where('deleted', 0)
             ->first();
 
-        if (empty($invoice)) {
+        if (empty($quotation)) {
             return null;
         }
         
-        $data['invoice'] = $invoice;
+        $data['quotation'] = $quotation;
         return $data;
     }
 
     //Get Edit Invoice
-    public function getEditInvoiceData($id)
+    public function getEditQuotationData($id)
     {
-        $invoice = Invoice::where('id', $id)
+        $quotation = Quotation::where('id', $id)
             ->where('deleted', 0)
             ->first();
         //customer data
-        $customer = Customer::where('id', $invoice->customer_id)
+        $customer = Customer::where('id', $quotation->customer_id)
             ->where('status', 1)
             ->where('deleted', 0)
             ->first();
         $customer->show_image_full_url = asset($customer->show_image);
         $customer->contact_full_name = $customer->full_name;
-        //invoice design
-        $invoiceDesign = InvoiceDesigns::where('deleted', InvoiceDesigns::DELETED_NO)
-            ->where('status', InvoiceDesigns::STATUS_ACTIVE)
-            ->where('invoice_id', $id)
-            ->get();
+       
+
         //invoice details
-        $cartItems = InvoiceDetails::where('invoice_id', $id)
-            ->where('deleted', InvoiceDetails::DELETED_NO)
+        $cartItems = QuotationDetails::where('quotation_id', $id)
+            ->where('deleted', QuotationDetails::DELETED_NO)
             ->get()
             ->map(function ($item) {
                 if ($item->tax == null) {
@@ -558,27 +422,46 @@ class QuotationService
                 }
 
                 $type = $item->item_type;
-                if($type == InvoiceDetails::TYPE_RAW_MATERIAL){
+                if($type == QuotationDetails::TYPE_RAW_MATERIAL){
                     $product = $item->product_material;
                     $item_type = 'raw_materials';
-                }else if($type == InvoiceDetails::TYPE_RAW_BOARD){
+                }else if($type == QuotationDetails::TYPE_RAW_BOARD){
                     $product = $item->product_material;
                     $item_type = 'raw_boards';
-                }else if($type == InvoiceDetails::TYPE_PAPER){
+                }else if($type == QuotationDetails::TYPE_PAPER){
                     $product = $item->product_material;
                     $item_type = 'papers';
-                }else if($type == InvoiceDetails::TYPE_FINISHED_GOODS){
+                }else if($type == QuotationDetails::TYPE_FINISHED_GOODS){
                     $product = $item->finishedGood;
                     $item_type = 'finished_goods';
-                }else if($type == InvoiceDetails::TYPE_FINISHED_BOARD){
+                }else if($type == QuotationDetails::TYPE_FINISHED_BOARD){
                     $product = $item->finishedGood;
                     $item_type = 'finished_boards';
-                }else if($type == InvoiceDetails::TYPE_SET_ITEM){
+                }else if($type == QuotationDetails::TYPE_SET_ITEM){
                     $product = $item->set_item;
                     $item_type = 'set_items';
+                } else {
+                    $product = null;
+                    
+                    $product = new \stdClass();
+                    $product->id = 0;
+                    $product->name = $item->item_name;
+                    $product->code = '';
+                    $product->item_type = 'custom_item';
+                    $product->show_image = asset('assets/img/placeholder.jpg');
+                    $product->length = 0;
+                    $product->width = 0;
+                    $product->thickness = 0;
+                    $product->unit_type = '';
+                    $product->tax = null;
+                    $product->unit_price = 0;
+                    $product->net_total = 0;
+                    $product->description = $item->description;
+                    $product->set_items = null;
+                    $item_type = 'custom_item';
                 }
 
-                if ($type == InvoiceDetails::TYPE_SET_ITEM && $item?->set_item?->set_items != null) {
+                if ($type == QuotationDetails::TYPE_SET_ITEM && $item?->set_item?->set_items != null) {
                     $material_items = $item?->set_item?->set_items?->map(function($setItem) {
                         return [
                             'name' => $setItem?->productMaterial?->name,
@@ -607,61 +490,62 @@ class QuotationService
                     'item_type' => $item_type,
                     'srp' => formatNumber($item->unit_price),
                     'material_items' => $material_items,
-                    'invoice_details_id' => $item->id
+                    'quotation_details_id' => $item->id
                 ];
             });
-        $data['invoice'] = $invoice;
+        $data['quotation'] = $quotation;
         $data['customer'] = $customer;
-        $data['designs'] = $invoiceDesign;
         $data['cartItem'] = $cartItems;
 
         return $data;
     }
 
-    //Update Invoice
+    //Update Quotation
     public function update($request, $id)
     {
         // dd($request->all());
         DB::beginTransaction();
         try {
 
-            $invoice = Invoice::where('id', $id)
-                ->where('deleted', Invoice::DELETED_NO)
+            $quotation = Quotation::where('id', $id)
+                ->where('deleted', Quotation::DELETED_NO)
                 ->first();
 
-            if (empty($invoice)) {
-                throw new \Exception("Invoice Not Found");
+            if (empty($quotation)) {
+                throw new \Exception("Quotation Not Found");
             }
 
-            $checkOrderNumber = Invoice::where('order_no', $request->order_no)
+            $checkRefNumber = Quotation::where('ref_no', $request->ref_no)
                 ->where('id', '!=', $id)
-                ->where('deleted', Invoice::DELETED_NO)
+                ->where('deleted', Quotation::DELETED_NO)
                 ->first();
-                
-            if (!empty($checkOrderNumber)) {
-                throw new \Exception("Order Number already exists");
+            if (!empty($checkRefNumber)) {
+                throw new \Exception("Ref Number already exists");
             }
             
-            $invoice->customer_id = $request->customer_id;
-            $invoice->order_no = $request->order_no;
-            $invoice->invoice_date = $request->invoice_date;
-            $invoice->payment_date = $request->payment_date;
-            $invoice->discount_type = $request->discount_type;
-            $invoice->discount_value = $request->discount_value;
-            $invoice->notes = $request->notes;
-            $invoice->invoice_footer = $request->invoice_footer;
-            $invoice->updated_at = Carbon::now();
-            $invoice->updated_by = auth()->id();
-            $invoice->save();
+            $quotation->customer_id = $request->customer_id;
+            $quotation->ref_no = $request->ref_no;
+            $quotation->quotation_date = $request->quotation_date;
+            $quotation->project_name = $request->project_name;
+            $quotation->description = $request->project_description;
+            $quotation->discount_type = $request->discount_type;
+            $quotation->discount_value = $request->discount_value;
+            $quotation->notes = $request->notes;
 
-            if (isset($request->product_id) && is_array($request->product_id)) {
-                // $invoice_details_ids = $request->invoice_details_id ?? [];
-                $invoice_details_ids = array_filter($request->invoice_details_id, function ($value) {
+            $quotation->unloading_cost = $request->unloading_cost;
+            $quotation->first_down_payment_percent = $request->down_payment_percent;
+
+            $quotation->updated_at = Carbon::now();
+            $quotation->updated_by = auth()->id();
+            $quotation->save();
+
+            if (isset($request->quotation_details_id) && is_array($request->quotation_details_id)) {
+                $quotation_details_id = array_filter($request->quotation_details_id, function ($value) {
                     return !is_null($value);
                 });
-                $delete_not_exist_product = InvoiceDetails::where('invoice_id', $invoice->id)
-                    ->whereNotIn('id', $invoice_details_ids)
-                    ->where('deleted', InvoiceDetails::DELETED_NO)
+                $delete_not_exist_product = QuotationDetails::where('quotation_id', $quotation->id)
+                    ->whereNotIn('id', $quotation_details_id)
+                    ->where('deleted', QuotationDetails::DELETED_NO)
                     ->delete();
             }
 
@@ -673,6 +557,7 @@ class QuotationService
                     $qty = $request->qty[$key];
                     $price = $request->price[$key];
                     $tax_id = $request->tax[$key];
+                    $item_name = $request->item_name[$key];
 
                     $amount_without_tax = $qty * $price;
                     $amount_with_tax = 0;
@@ -696,120 +581,115 @@ class QuotationService
 
                     $type = $request->item_type[$key];
                     if($type == 'raw_materials'){
-                        $item_type = InvoiceDetails::TYPE_RAW_MATERIAL;
+                        $item_type = QuotationDetails::TYPE_RAW_MATERIAL;
                     }else if($type == 'raw_boards'){
-                        $item_type = InvoiceDetails::TYPE_RAW_BOARD;
+                        $item_type = QuotationDetails::TYPE_RAW_BOARD;
                     }else if($type == 'papers'){
-                        $item_type = InvoiceDetails::TYPE_PAPER;
+                        $item_type = QuotationDetails::TYPE_PAPER;
                     }else if($type == 'finished_goods'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_GOODS;
+                        $item_type = QuotationDetails::TYPE_FINISHED_GOODS;
                     }else if($type == 'finished_boards'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_BOARD;
+                        $item_type = QuotationDetails::TYPE_FINISHED_BOARD;
                     }else if($type == 'set_items'){
-                        $item_type = InvoiceDetails::TYPE_SET_ITEM;
+                        $item_type = QuotationDetails::TYPE_SET_ITEM;
+                    }elseif($type == 'custom_item') {
+                        $item_type = QuotationDetails::TYPE_CUSTOM_ITEM;
                     }
 
-                    $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->id)
+                    $quotationDetails = QuotationDetails::where('quotation_id', $quotation->id)
                         ->where('item_id', $product)
                         ->where('item_type', $item_type)
-                        ->where('deleted', InvoiceDetails::DELETED_NO)
+                        ->where('deleted', QuotationDetails::DELETED_NO)
                         ->first();
 
-                    if (empty($invoiceDetails)) {
-                        $invoiceDetails = new InvoiceDetails();
-                        $invoiceDetails->invoice_id = $invoice->id;
-                        $invoiceDetails->item_id = $product;
-                        $invoiceDetails->created_at = Carbon::now();
-                        $invoiceDetails->created_by = auth()->id();
+                    if (empty($quotationDetails)) {
+                        $quotationDetails = new QuotationDetails();
+                        $quotationDetails->quotation_id = $quotation->id;
+                        $quotationDetails->item_id = $product;
+                        $quotationDetails->created_at = Carbon::now();
+                        $quotationDetails->created_by = auth()->id();
                     }
 
-                    $invoiceDetails->item_type = $item_type;
-                    $invoiceDetails->description = $request->description[$key];
-                    $invoiceDetails->quantity = $qty;
-                    $invoiceDetails->unit_price = $price;
-                    $invoiceDetails->total = $qty * $price;
-                    $invoiceDetails->tax_id = $tax_id;
-                    $invoiceDetails->tax_rate = $tax_rate;
-                    $invoiceDetails->tax_amount = $tax_amount;
-                    $invoiceDetails->net_total = $amount_with_tax;
-                    $invoiceDetails->updated_at = Carbon::now();
-                    $invoiceDetails->updated_by = auth()->id();
-                    $invoiceDetails->save();
+                    $quotationDetails->item_type = $item_type;
+                    $quotationDetails->item_name = $item_name;
+                    $quotationDetails->description = $request->description[$key];
+                    $quotationDetails->quantity = $qty;
+                    $quotationDetails->unit_price = $price;
+                    $quotationDetails->total = $qty * $price;
+                    $quotationDetails->tax_id = $tax_id;
+                    $quotationDetails->tax_rate = $tax_rate;
+                    $quotationDetails->tax_amount = $tax_amount;
+                    $quotationDetails->net_total = $amount_with_tax;
+                    $quotationDetails->updated_at = Carbon::now();
+                    $quotationDetails->updated_by = auth()->id();
+                    $quotationDetails->save();
 
-                    $subtotal_amount += $invoiceDetails->total;
-                    $total_vat_amount += $invoiceDetails->tax_amount;
+                    $subtotal_amount += $quotationDetails->total;
+                    $total_vat_amount += $quotationDetails->tax_amount;
 
                 }
             }
             
-            //invocie design delete
-            $design_ids = $request->design_id ?? [];
-            $deletedDesigns = InvoiceDesigns::where('deleted', InvoiceDesigns::DELETED_NO)
-                ->where('status', InvoiceDesigns::STATUS_ACTIVE)
-                ->where('invoice_id', $invoice->id)
-                ->whereNotIn('id', $design_ids)
-                ->get();
-            foreach ($deletedDesigns as $deletedDesign) {
-                unlink($deletedDesign->design);
-                $deletedDesign->delete();
+            //gallery images delete
+            if(isset($request->pre_gallery_id) && is_array($request->pre_gallery_id)) {
+                $quotationImages = QuotationImages::where('quotation_id', $quotation->id)
+                    ->whereNotIn('id', $request->pre_gallery_id)
+                    ->get();
+                foreach ($quotationImages as $quotationImage) {
+                    unlink($quotationImage->image);
+                    $quotationImage->delete();
+                }
+            } else {
+                $quotationImages = QuotationImages::where('quotation_id', $quotation->id)
+                    ->get();
+                foreach ($quotationImages as $quotationImage) {
+                    unlink($quotationImage->image);
+                    $quotationImage->delete();
+                }
             }
+            
 
             //upload design file
             $image_path = null;
-            if ($request->hasFile('design') && $request->design != null) {
-                $fileUploadService = new FileUploadService();
-                foreach ($request->file('design') as $design) {
-                    $design_name = $design->getClientOriginalName();
-                    $file_path = $fileUploadService->store($design, 'inventory/invoice', $design_name);
-                    $file_name = $file_path['name'];
-                    $file_path = $file_path['path'];
-                    $design = new InvoiceDesigns();
-                    $design->invoice_id = $invoice->id;
-                    $design->design_name = $file_name;
-                    $design->design = $file_path ?? null;
-                    $design->created_by = auth()->id();
-                    $design->created_at = Carbon::now();
-                    $design->updated_by = auth()->id();
-                    $design->updated_at = Carbon::now();
-                    $design->save();
+            if ($request->hasFile('gallery')) {
+                if (count($request->file('gallery')) > 0) {
+                    foreach ($request->file('gallery') as $key => $file) {
+                        if($request->hasFile('gallery.'.$key)) {
+                            $fileUploadService = new FileUploadService();
+                            $file_path = $fileUploadService->store($request->file('gallery.'.$key), 'quotation/gallery');
+                            $file_path = $file_path['path'];
+
+                            if(isset($request->pre_gallery_id[$key]) && ($request->pre_gallery_id[$key] != '')) {
+                                $quotationImage = QuotationDetails::where('id', $request->pre_gallery_id[$key])
+                                    ->where('quotation_id', $quotation->id)
+                                    ->first();
+                            } else {
+                                $quotationImage = new QuotationImages();
+                            }
+                            
+                            $quotationImage->quotation_id = $quotation->id;
+                            $quotationImage->image = $file_path;
+                            $quotationImage->image_name = $request->file('gallery.'.$key)->getClientOriginalName();
+                            $quotationImage->status = QuotationImages::STATUS_ACTIVE;
+                            $quotationImage->save();
+                        }
+                    }
                 }
             }
 
             $total_discount_amount = 0;
-            if ($invoice->discount_type == Invoice::DISCOUNT_TYPE_PERCENTAGE) {
-                $total_discount_amount = (($subtotal_amount + $total_vat_amount) * $request->discount_value) / 100;
+            if ($quotation->discount_type == Quotation::DISCOUNT_TYPE_PERCENTAGE) {
+                $total_discount_amount = (($subtotal_amount + $total_vat_amount) * $quotation->discount_value) / 100;
             } else {
-                $total_discount_amount = $request->discount_value;
+                $total_discount_amount = $quotation->discount_value;
             }
 
-            $invoice->subtotal_amount = $subtotal_amount;
-            $invoice->vat_amount = $total_vat_amount;
-            $invoice->total_amount = $subtotal_amount + $total_vat_amount;
-            $invoice->discount_amount = $total_discount_amount;
-            $invoice->payable_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            $invoice->due_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            if ($invoice->due_amount == 0) {
-                $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
-            }
-            $invoice->save();
-
-            // update transaction
-            $transaction = Transaction::where('deleted', Transaction::DELETED_NO)
-                ->where('reference_id', $invoice->id)
-                ->where('paid_type', Transaction::PAID_TYPE_UNPAID)
-                ->where('transaction_type', Transaction::TRANSACTION_TYPE_DEPOSIT)
-                ->where('reference_type', Transaction::REFERENCE_TYPE_INVOICE_CREATE)
-                ->orderBy('id', 'desc')
-                ->first();
-            if ($transaction) {
-                $transaction->net_amount = $invoice->payable_amount;
-                $transaction->total_vat_amount = 0;
-                $transaction->total_amount = $invoice->payable_amount;
-                $transaction->updated_at = Carbon::now();
-                $transaction->updated_by = auth()->id();
-                $transaction->save();
-                $invoice->save();
-            }
+            $quotation->subtotal_amount = $subtotal_amount;
+            $quotation->vat_amount = $total_vat_amount;
+            $quotation->total_amount = $subtotal_amount + $total_vat_amount;
+            $quotation->discount_amount = $total_discount_amount;
+            $quotation->payable_amount = $subtotal_amount + $total_vat_amount - $total_discount_amount;
+            $quotation->save();
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -849,5 +729,132 @@ class QuotationService
         $design->save();
     }
 
+    public function convertToInvoice($id) {
+        $data['invoice_date'] = Carbon::now();
+        $data['payment_date'] = Carbon::now();
+        $data['payment_methods'] = InvoicePayment::PAYMENT_METHODS;
 
+
+        $data['accounts_sub_categories'] = AccCoaSubCategory::with('accounts')
+            ->where('deleted', AccCoaSubCategory::DELETED_NO)
+            ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
+            ->where('is_account_type', AccCoaSubCategory::IS_ACCOUNT_TYPE_YES)
+            ->get();
+        
+        $data['quotation'] = Quotation::with('details')
+            ->where('id', $id)
+            ->where('deleted', Quotation::DELETED_NO)
+            ->first();
+        return $data;
+    }
+
+     //Get Edit Invoice
+     public function getConvertToInvoiceData($id)
+     {
+         $quotation = Quotation::where('id', $id)
+             ->where('deleted', 0)
+             ->first();
+         //customer data
+         $customer = Customer::where('id', $quotation->customer_id)
+             ->where('status', 1)
+             ->where('deleted', 0)
+             ->first();
+         $customer->show_image_full_url = asset($customer->show_image);
+         $customer->contact_full_name = $customer->full_name;
+        
+ 
+         //invoice details
+         $cartItems = QuotationDetails::where('quotation_id', $id)
+             ->where('deleted', QuotationDetails::DELETED_NO)
+             ->where('item_type', '!=', QuotationDetails::TYPE_CUSTOM_ITEM)
+             ->get()
+             ->map(function ($item) {
+                 if ($item->tax == null) {
+                     $itemTax = (object)[
+                         'id' => null,
+                         'name' => null,
+                         'tax_rate' => 0,
+                     ];
+                 } else {
+                     $itemTax = $item->tax;
+                 }
+ 
+                 $type = $item->item_type;
+                 if($type == QuotationDetails::TYPE_RAW_MATERIAL){
+                     $product = $item->product_material;
+                     $item_type = 'raw_materials';
+                 }else if($type == QuotationDetails::TYPE_RAW_BOARD){
+                     $product = $item->product_material;
+                     $item_type = 'raw_boards';
+                 }else if($type == QuotationDetails::TYPE_PAPER){
+                     $product = $item->product_material;
+                     $item_type = 'papers';
+                 }else if($type == QuotationDetails::TYPE_FINISHED_GOODS){
+                     $product = $item->finishedGood;
+                     $item_type = 'finished_goods';
+                 }else if($type == QuotationDetails::TYPE_FINISHED_BOARD){
+                     $product = $item->finishedGood;
+                     $item_type = 'finished_boards';
+                 }else if($type == QuotationDetails::TYPE_SET_ITEM){
+                     $product = $item->set_item;
+                     $item_type = 'set_items';
+                 } else {
+                     $product = null;
+                     
+                     $product = new \stdClass();
+                     $product->id = 0;
+                     $product->name = $item->item_name;
+                     $product->code = '';
+                     $product->item_type = 'custom_item';
+                     $product->show_image = asset('assets/img/placeholder.jpg');
+                     $product->length = 0;
+                     $product->width = 0;
+                     $product->thickness = 0;
+                     $product->unit_type = '';
+                     $product->tax = null;
+                     $product->unit_price = 0;
+                     $product->net_total = 0;
+                     $product->description = $item->description;
+                     $product->set_items = null;
+                     $item_type = 'custom_item';
+                 }
+ 
+                 if ($type == QuotationDetails::TYPE_SET_ITEM && $item?->set_item?->set_items != null) {
+                     $material_items = $item?->set_item?->set_items?->map(function($setItem) {
+                         return [
+                             'name' => $setItem?->productMaterial?->name,
+                             'code' => $setItem?->productMaterial?->code,
+                             'quantity' => $setItem->quantity,
+                         ];
+                     });
+                 } else {
+                     $material_items = null;
+                 }
+                 
+                 return [
+                     'id' => $product?->id,
+                     'name' => $product?->name,
+                     'code' => $product?->code,
+                     'show_image' => asset($product?->show_image),
+                     'length' => $product?->length,
+                     'width' => $product?->width,
+                     'thickness' => $product?->thickness,
+                     'description' => $item->description,
+                     'qty' => $item->quantity,
+                     'price' => formatNumber($item->unit_price),
+                     'unit_price' => formatNumber($item->unit_price),
+                     'total_price' => formatNumber($item->net_total),
+                     'tax' => $itemTax,
+                     'item_type' => $item_type,
+                     'srp' => formatNumber($item->unit_price),
+                     'material_items' => $material_items,
+                     'quotation_details_id' => $item->id
+                 ];
+             });
+         $data['quotation'] = $quotation;
+         $data['customer'] = $customer;
+         $data['cartItem'] = $cartItems;
+ 
+         return $data;
+     }
 }

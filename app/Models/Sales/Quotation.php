@@ -36,7 +36,7 @@ class Quotation extends BaseModel
         self::QUOTATION_STATUS_PENDING => 'Pending',
         self::QUOTATION_STATUS_PROCESSING => 'Processing',
         self::QUOTATION_STATUS_CANCELLED => 'Cancelled',
-        self::QUOTATION_STATUS_ORDER_CREATED => 'Cancelled',
+        self::QUOTATION_STATUS_ORDER_CREATED => 'Order Created',
     ];
     //Delete status const
     const DELETED_NO = 0;
@@ -84,5 +84,9 @@ class Quotation extends BaseModel
     //relation with quotation details
     public function details(){
         return $this->hasMany(QuotationDetails::class, 'quotation_id', 'id')->where('deleted', QuotationDetails::DELETED_NO);
+    }
+
+    public function gallery(){
+        return $this->hasMany(QuotationImages::class, 'quotation_id', 'id')->where('deleted', QuotationImages::DELETED_NO);
     }
 }

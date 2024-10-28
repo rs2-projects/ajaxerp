@@ -14,6 +14,7 @@ use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDesigns;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
+use App\Models\Sales\Quotation;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
@@ -249,13 +250,29 @@ class InvoiceService
                 throw new \Exception("Order Number already exists");
             }
 
+            $quotation_id = null;
+            if(isset($request->quotation_id)){
+                $quotation = Quotation::where('id', $request->quotation_id)
+                    ->where('deleted', Quotation::DELETED_NO)
+                    ->first();
+                if(!empty($quotation)){
+                    $quotation->quotation_status = Quotation::QUOTATION_STATUS_ORDER_CREATED;
+                    $quotation->save();
+
+                    $quotation_id = $quotation->id;
+                }
+                
+            }
+
             $invoice = new Invoice();
+            $invoice->quotation_id = $quotation_id;
             $invoice->customer_id = $request->customer_id;
             $invoice->order_no = $request->order_no;
             $invoice->invoice_date = $request->invoice_date;
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->created_at = Carbon::now();
@@ -342,12 +359,14 @@ class InvoiceService
                 $discount_amount = $invoice->discount_value;
             }
 
+            $total_amount_with_vat = $total_amount + $vat_amount;
+            $payable_amount = $total_amount_with_vat - $discount_amount + $request->unloading_cost;
             $invoice->subtotal_amount = $total_amount;
             $invoice->vat_amount = $vat_amount;
-            $invoice->total_amount = $total_amount + $vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $discount_amount;
-            $invoice->payable_amount = $total_amount + $vat_amount - $discount_amount;
-            $invoice->due_amount = $total_amount + $vat_amount - $discount_amount;
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $payable_amount;
             $invoice->save();
 
 
@@ -741,6 +760,7 @@ class InvoiceService
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->updated_at = Carbon::now();
@@ -875,13 +895,18 @@ class InvoiceService
                 $total_discount_amount = $request->discount_value;
             }
 
+            $total_amount_with_vat = $subtotal_amount + $total_vat_amount;
+            $payable_amount = $total_amount_with_vat - $total_discount_amount + $request->unloading_cost;
+
+            $due_amount = $payable_amount - $invoice->paid_amount;
+            
             $invoice->subtotal_amount = $subtotal_amount;
             $invoice->vat_amount = $total_vat_amount;
-            $invoice->total_amount = $subtotal_amount + $total_vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $total_discount_amount;
-            $invoice->payable_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            $invoice->due_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            if ($invoice->due_amount == 0) {
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $due_amount;
+            if ($invoice->due_amount <= 0) {
                 $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
             }
             $invoice->save();

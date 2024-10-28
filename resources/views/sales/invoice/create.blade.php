@@ -303,6 +303,17 @@
                                             <div class="po-order-prudct-grand-total-inner">
                                                 <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                     <div class="po-vat-tax-item grand-total-item">
+                                                        <h3>Unloading Cost</h3>
+                                                    </div>
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
+                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
+                                                    <div class="po-vat-tax-item grand-total-item">
                                                         <h3>Sub Total</h3>
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
@@ -687,7 +698,7 @@
                     discount_value: 0,
                     discount_amount: 0,
                     paying_amount: 0,
-
+                    unloading_cost: 0
                 }
             },
             computed: {
@@ -730,13 +741,15 @@
                     if(this.discount_value != 0) {
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = parseFloat(((total_amount * this.discount_value) / 100).toFixed(6));
+                            this.discount_amount = parseFloat(((total_amount * parseFloat(this.discount_value)) / 100).toFixed(6));
                         } else {
                             //fixed
-                            this.discount_amount = parseFloat(this.discount_value.toFixed(6));
+                            this.discount_amount = parseFloat(this.discount_value).toFixed(6);
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
+                    
+                    total_amount = total_amount - parseFloat(this.discount_amount);
+                    total_amount = total_amount + parseFloat(this.unloading_cost);
                     return parseFloat(total_amount.toFixed(6));
                 },
             },

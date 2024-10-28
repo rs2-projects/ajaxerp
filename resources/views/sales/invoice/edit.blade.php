@@ -305,6 +305,17 @@
                                             <div class="po-order-prudct-grand-total-inner">
                                                 <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                     <div class="po-vat-tax-item grand-total-item">
+                                                        <h3>Unloading Cost</h3>
+                                                    </div>
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
+                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
+                                                    <div class="po-vat-tax-item grand-total-item">
                                                         <h3>Sub Total</h3>
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
@@ -655,6 +666,7 @@
                     discount_value: "{{ formatNumber($invoice->discount_value) }}",
                     discount_amount: "{{ formatNumber($invoice->discount_amount) }}",
                     paying_amount: 0,
+                    unloading_cost: "{{ formatNumber($invoice->unloading_cost) }}",
 
                 }
             },
@@ -696,11 +708,17 @@
                     }
                     this.discount_amount = 0;
                     if(this.discount_value != 0) {
+                        let due = 0;
+                        if(this.invoice != null) {
+                            due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
+                        } else {
+                            due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount);
+                        }
+                        
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = formatNumber(parseFloat((total_amount * this.discount_value) / 100));
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
-
+                            this.discount_amount = formatNumber((parseFloat(total_amount) * parseFloat(this.discount_value)) / 100);
+                            
                             if(this.discount_amount>due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
                                 this.discount_value = {{ $invoice->discount_value }}
@@ -708,15 +726,14 @@
                         } else {
                             //fixed
                             this.discount_amount = this.discount_value;
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
-                            if(this.discount_amount>due){
+                            if(this.discount_amount > due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
                                 this.discount_value = {{ $invoice->discount_value }}
                             }
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
-
+                    total_amount = total_amount - parseFloat(this.discount_amount);
+                    total_amount = total_amount + parseFloat(this.unloading_cost);
                     return formatNumber(parseFloat(total_amount));
                 },
             },
@@ -855,7 +872,7 @@
                     } else {
                         this.cartItems[index].vat_amount = formatNumber(parseFloat(((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100)));
                     }
-                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat + this.cartItems[index].vat_amount));
+                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat + parseFloat(this.cartItems[index].vat_amount)));
                 },
 
                 changeDiscountType() {

@@ -42,7 +42,8 @@ class InvoiceController extends BackendController
 
     //Create Invoice
     public function create()
-    {$this->setPageTitle("New Invoice");
+    {
+        $this->setPageTitle("New Invoice");
         $this->setActiveMenu('sales.invoice.index');
         $data = $this->service->createData();
         return $this->view('sales.invoice.create')->with($data);

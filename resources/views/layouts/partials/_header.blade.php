@@ -96,7 +96,7 @@
                     <ul class="notification-list">
                         @foreach ($newerPickedItems as $newerPickedItem)
                             <li class="notification-message">
-                                <a href="activities.html">
+                                <a href="{{ route('inventory.material-request.newer-picked-materials') }}">
                                     <div class="chat-block d-flex">
                                         <span class="avatar flex-shrink-0">
                                             <img src="{{ asset('assets') }}/img/profiles/avatar-02.jpg" alt="User Image">

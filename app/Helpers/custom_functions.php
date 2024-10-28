@@ -160,6 +160,12 @@ if (!function_exists('formatNumber')) {
     }
 }
 
+if (!function_exists('strToClassName')) {
+    function formatNstrToClassNameumber($string) {
+        return str_replace(' ', '-', strtolower($string));
+    }
+}
+
 
 
 

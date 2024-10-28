@@ -3,7 +3,8 @@
     <!-- Start::row-1 -->
     <div class="row justify-content-center" id="VueApp">
         <div class="col-md-12">
-            <form class="mb-5" action="{{ route('sales.quotation.update',$quotation->id) }}" id="invoiceUpdateForm" method="post" @submit="checkValidation">
+            <form class="mb-5" action="{{ route('sales.invoice.store') }}" id="invoiceStoreForm" method="post" @submit="checkValidation">
+                <input type="hidden" name="quotation_id" value="{{ $quotation->id }}">
                 @csrf
                 <div class="erp-employee-list-wrapper purchase-order-in-main">
                     <div class="erp-main-filter-wrapper bg-card attd-table">
@@ -74,76 +75,26 @@
                                         <div class="purchase-supplier-invoice-box">
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">REF NO. </label>
-                                                    <div ><input class="form-control " required  name="ref_no" value="{{ $quotation->ref_no }}" type="text"></div>
+                                                    <label class="col-form-label">Store Order No. </label>
+                                                    <div ><input class="form-control " required value="{{ $quotation->ref_no }}" name="order_no" type="text"></div>
                                                 </div>
                                             </div>
                                             <div class="supplier-invoice-input-box">
                                                 <div class="input-block erp-step-input-block mb-0">
-                                                    <label class="col-form-label">Date </label>
-                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $quotation->quotation_date }}" name="quotation_date" type="text"></div>
+                                                    <label class="col-form-label">Invoice Date </label>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $invoice_date }}" name="invoice_date" type="text"></div>
+                                                </div>
+                                            </div>
+                                            <div class="supplier-invoice-input-box">
+                                                <div class="input-block erp-step-input-block mb-0">
+                                                    <label class="col-form-label">Payment Date </label>
+                                                    <div class="cal-icon"><input class="form-control datetimepicker"  value="{{ $payment_date }}" name="payment_date" type="text"></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="purchase-order-invoice-top-box">
-                                <div class="poitb-item">
-                                    <div class="poitb-header">
-                                        <h4 class="title">Project Name</h4>
-                                    </div>
-                                    <div class="poitb-body">
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="project_name" placeholder="Enter Project Name" value="{{ $quotation->project_name }}" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="poitb-item">
-                                    <div class="poitb-header">
-                                        <h4 class="title">Description - Scope of Work</h4>
-                                    </div>
-                                    <div class="poitb-body">
-                                        <div class="form-group">
-                                            <textarea class="form-control" name="project_description" rows="3" placeholder="Enter Description" required>{!! $quotation->description !!}</textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="poitb-item">
-                                    <div class="poitb-header">
-                                        <h4 class="title">Gallery</h4>
-                                    </div>
-                                    <div class="poitb-body">
-                                        <div class="gallery-wrapper row " id="gallery-wrapper">
-                                            @if (count($quotation->gallery) > 0)
-                                                @foreach($quotation->gallery as $gallery)
-                                                    <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
-                                                        <input type="hidden" name="pre_gallery_id[]" value="{{ $gallery->id }}">
-                                                        <input type="file" name="gallery[]" class="dropify" data-default-file="{{ asset($gallery->image) }}" data-show-remove="false">
-                                                        {{-- @if ($loop->iteration > 1) --}}
-                                                            <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
-                                                        {{-- @endif --}}
-                                                    </div>
-                                                @endforeach
-                                            @else
-                                                <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
-                                                    <input type="file" name="gallery[]" class="dropify">
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div class="text-center mt-3">
-                                            <button type="button" class="btn btn-info btn-sm" onclick="addNewImage()">
-                                                <strong>
-                                                    <span class="me-1"><i class="fa fa-plus"></i></span>
-                                                    Add New Image
-                                                </strong>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div class="purchase-order-invoice-body-box">
                                 <div class="purchase-order-invoice-body-product-wrap">
                                     <div class="purchase-order-product-header-wrapper d-flex flex-wrap align-items-center">
@@ -167,11 +118,9 @@
                                         <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItemIndex">
                                             <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
-                                                    <input type="hidden" name="quotation_details_id[]" v-bind:value="cartItem.quotation_details_id">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
                                                     <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
-                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-if="cartItem.item_type != 'custom_item'">
-                                                        <input type="hidden" name="item_name[]">
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
                                                         </div>
@@ -179,11 +128,8 @@
                                                             <h5>@{{ cartItem.name }}</h5>
                                                         </div>
                                                     </div>
-                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-else>
-                                                        <div class="em-pro-details-box po-product">
-                                                            <input type="text" name="item_name[]" class="form-control" :value="cartItem.name" placeholder="Item Name" required>
-                                                        </div>
-                                                    </div>
+
+
                                                 </div>
 
                                                 <div class="purchase-order-product-body-item">
@@ -231,7 +177,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="purchase-order-product-body-mesurement flex-100" v-if="cartItem.item_type != 'custom_item'">
+                                                <div class="purchase-order-product-body-mesurement flex-100">
                                                     <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
                                                         
                                                         <div class="po-order-product-body-mesurement-item" v-if="cartItem.material_items != null">
@@ -268,7 +214,7 @@
                                                         <div class="po-vat-tax-item">
                                                             <div class="input-block erp-step-input-block  mb-0 two d-flex align-items-center gap-3">
                                                                 <label class="col-form-label">Vat </label>
-                                                                <select class="select vat-tax-select2" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
+                                                                <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
                                                                         @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
@@ -296,7 +242,6 @@
                                             
                                             <div class="pms-item flex-100">
                                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
-                                                    <a href="#" @click.prevent="addCustomItem()" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Custom Item</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
@@ -357,6 +302,16 @@
                                         </div>
                                         <div class="po-order-prudct-grand-total-box">
                                             <div class="po-order-prudct-grand-total-inner">
+                                                <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <h3>Unloading Cost</h3>
+                                                    </div>
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
+                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <h3>Sub Total</h3>
@@ -436,89 +391,119 @@
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
-                                                        <label class="col-form-label pt-0">Payment Method and Terms</label>
-                                                        <div class="payment-method-info">
-                                                            <p class="pmi-line">
-                                                                <span class="title">Bank </span>
-                                                                <span class="value"><span class="me-1">:</span> UnionBank</span>
-                                                            </p>
-                                                            <p class="pmi-line">
-                                                                <span class="title">Bank Name </span>
-                                                                <span class="value"><span class="me-1">:</span> AJAX TRADING CORP.</span>
-                                                            </p>
-                                                            <p class="pmi-line">
-                                                                <span class="title">Account No </span>
-                                                                <span class="value"><span class="me-1">:</span> 0023 4001 3295</span>
-                                                            </p>
+                                                        <label class="col-form-label pt-0">Notes / Terms</label>
+                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter notes or terms of service that you are visible to your customer">{!! $quotation->notes !!}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="po-order-product-design-box-box">
+                                            <div class="po-order-product-note-terms-inner">
+                                                <div class="po-order-product-note-terms-item">
+                                                    <div class="input-block erp-step-input-block mb-0">
+                                                        <label class="col-form-label pt-0">Design Upload</label>
+                                                        <input type="file" name="design[]" class="form-control" accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if(hasPermission('make-payment'))
+                                            <div class="po-order-product-payment-status">
+                                                <div class="po-order-product-payment-status-item">
+                                                    <div class="checkbox-wrapper-35">
+                                                        <input value="private" name="switch" id="payment_status_checkbox" type="checkbox" class="switch">
+                                                        <label for="payment_status_checkbox">
+                                                            <span class="switch-x-text">Payment Status </span>
+                                                            <span class="switch-x-toggletext">
+                                                                <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Unpaid</span>
+                                                                <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>Paid</span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="po-order-product-payment-status-item" id="payment_status_details" style="display: none;">
+                                                    <div class="payment-selection-wrapper d-flex flex-wrap justify-content-between">
+                                                        <div class="payment-selection-item">
+                                                            <div class="input-block erp-step-input-block  mb-0 two">
+                                                                <label class="col-form-label">Payment Method <span class="text-danger"> *</span> </label>
+                                                                <select class="select select-step" name="payment_method" id="payment_method">
+                                                                    <option value="">Select Payment Method</option>
+                                                                    @foreach($payment_methods as $key=>$payment_method)
+                                                                        <option value="{{ $key }}">{{ $payment_method }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="payment-selection-item">
+                                                            <div class="input-block erp-step-input-block mb-0">
+                                                                <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
+                                                                <input type="number" step="any" class="form-control"  min="0.01" id="amount"  name="amount">
+                                                            </div>
+                                                        </div>
+                                                        <div class="payment-selection-item">
+                                                            <div class="input-block erp-step-input-block mb-0">
+                                                                <label class="col-form-label">Payment Date <span class="text-danger">*</span> </label>
+                                                                <div class="cal-icon">
+                                                                    <input class="form-control datetimepicker"  value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" name="date" type="text" >
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="payment-selection-item">
+                                                            <div class="input-block erp-step-input-block  mb-0 two">
+                                                                <label class="col-form-label">Payment Account <span class="text-danger"> *</span> </label>
+                                                                <select class="select select-step" name="account_id"  id="account_id">
+                                                                    <option>Select Payment Account</option>
+                                                                    @if(!empty($accounts_sub_categories))
+                                                                        @foreach($accounts_sub_categories as $accounts_sub_category)
+                                                                            @if(count($accounts_sub_category->accounts) > 0)
+                                                                                <optgroup label="{{ $accounts_sub_category->name }}">
+                                                                                    @foreach($accounts_sub_category->accounts as $account)
+                                                                                        <option value="{{ $account->id }}" {{ ($account->is_default == $account::IS_DEFAULT_YES)?'selected':'' }}>{{ $account->name }}</option>
+                                                                                    @endforeach
+                                                                                </optgroup>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    @endif
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="erp-filter-item flex-100">
+                                                            <div class="input-block erp-step-input-block mb-0">
+                                                                <label class="col-form-label">Note </label>
+                                                                <textarea class="form-control" name="note" rows="2"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="payment-selection-item flex-100">
+                                                            <div class="input-block erp-step-input-block mb-0">
+                                                                <label class="col-form-label">Upload Receipt <span class="text-danger">*</span> </label>
+                                                                <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="po-order-product-note-terms-box">
-                                            <div class="po-content-box-wrapper">
-                                                <div class="po-content-input-box  ">
-                                                    
-                                                    <div class="first-child">
-                                                        Unloading and installation
-                                                    </div> 
-                                                    <div class="second-child">PhP</div> 
-                                                    <div class="third-child">
-                                                        <input type="number" min="0" name="unloading_cost" v-model="unloading_cost" required>
-                                                    </div>
-                                                </div>
-                                                <div class="po-content-input-box has-border">
-                                                    <div class="first-child">
-                                                        <input class="small-size" type="number" name="down_payment_percent" v-model="down_payment_percent" min="0" max="100" required><p>% Down payment
-                                                    </div> 
-                                                    <div class="second-child">PhP</div> 
-                                                    <div class="third-child">
-                                                        @{{ downPaymentAmount }}
-                                                    </div>
-                                                </div>
+                                        @endif
+                                    </div>
 
-                                                <div class="po-content-input-box  ">
-                                                    
-                                                    <div class="first-child">
-                                                        Total 1st Down payment:
-                                                    </div> 
-                                                    <div class="second-child">PhP</div> 
-                                                    <div class="third-child">
-                                                        @{{ firstDownPaymentAmount }}
-                                                    </div>
-                                                </div>
-                                                <div class="po-content-input-box  ">
-                                                    
-                                                    <div class="first-child">
-                                                        <span>@{{ remainingPaymentPercent }}</span>% Upon Completion
-                                                    </div> 
-                                                    <div class="second-child">PhP</div> 
-                                                    <div class="third-child">
-                                                        @{{ remainingPaymentAmount }}
-                                                    </div>
-                                                </div>
-                                                
-                                            </div>
-                                          
-                                        </div>
-                                        
-                                        <div class="po-order-product-payment-status">
-                                            <div class="po-order-product-note-terms-inner">
-                                                <div class="po-order-product-note-terms-item">
-                                                    <div class="input-block erp-step-input-block mb-0">
-                                                        <label class="col-form-label pt-0">Terms and Conditions</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
-                                                    </div>
+                                </div>
+                                <div class="purchase-order-product-footer-wrapper">
+                                    <div class="purchase-order-product-footer-header">
+                                        <h2>Invoice Footer</h2>
+                                    </div>
+                                    <div class="purchase-order-product-footer-body">
+                                        <div class="purchase-order-product-footer-body-inner">
+                                            <div class="purchase-order-product-footer-body-item">
+                                                <div class="input-block erp-step-input-block mb-0">
+                                                    <textarea class="form-control" name="invoice_footer" rows="2" placeholder="Just wanted to say thank you for your purchase. We are so lucky to have customers like you!"></textarea>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-                                
                                 <div class="purchase-order-product-save-all-wrapper">
                                     <div class="purchase-save-all-btn-box">
-                                        <button type="submit">Save Quotation</button>
+                                        <button type="submit">Save Invoice</button>
                                     </div>
                                 </div>
                             </div>
@@ -542,7 +527,7 @@
                         <div class="erp-modal-body-content">
                             <div class="selected-loot-product d-flex align-items-center" v-if="selected_customer !==null">
                                 <div class="slp-img-box me-2">
-                                    <img :src="selected_customer?.show_image_full_url" alt="">
+                                    <img :src="selected_customer.show_image_full_url" alt="">
                                 </div>
                                 <div class="slp-details-box">
                                     <h5>@{{ selected_customer.business_name }}</h5>
@@ -559,7 +544,7 @@
                                 <div class="sl-search-list-view custom-card-scroll-2">
                                     <a href="javascript:void(0)" class="sl-search-list-view-item d-flex align-items-center" v-for="(customer, customerIndex) in customers" :key="customer.id" @click="changeCustomer(customerIndex)">
                                         <div class="slp-img-box me-2">
-                                            <img :src="customer?.show_image_full_url" alt="">
+                                            <img :src="customer.show_image_full_url" alt="">
                                         </div>
                                         <div class="slp-details-box">
                                             <h5>@{{ customer.business_name }}</h5>
@@ -575,7 +560,7 @@
             </div>
         </div>
         <!-- /Customer Modal -->
-        
+
         {{-- item details modal --}}
         <div id="itemDetailsModal" class="modal custom-modal fade" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -610,16 +595,9 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="d-none">
-        <div id="hidden-image-input">
-            <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
-                <input type="file" name="gallery[]" class="dropify">
-                <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
-            </div>
-        </div>
     </div>
+    <!--End::row-1 -->
 @endsection
 
 @section('modals')
@@ -633,14 +611,12 @@
 @section('css_plugins')
     <!-- Datetimepicker CSS -->
     <link rel="stylesheet" href="{{asset('assets/css/bootstrap-datetimepicker.min.css')}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.min.css"/>
 @endsection
 
 @section('js_plugins')
     <!-- Datetimepicker JS -->
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
 @endsection
 
 @section('js')
@@ -651,11 +627,32 @@
 
         $(document).ready(function () {
             initializeDatepicker();
-            $('.gallery-wrapper .dropify').dropify();
+            $("#payment_status_checkbox").on('change', function() {
+                if(this.checked) {
+                    $("#payment_status_details").slideDown();
+                    $("#amount").prop('required', true);
+                    $("#account_id").prop('required', true);
+                    $("#payment_method").prop('required', true);
+                    initPaymentMethodSelect2()
+                } else {
+                    $("#payment_status_details").slideUp();
+                    $("#amount").prop('required', false);
+                    $("#account_id").prop('required', false);
+                    $("#payment_method").prop('required', false);
+                    initPaymentMethodSelect2()
+                }
+            });
         });
 
+        function initPaymentMethodSelect2() {
+            $("#payment_method").select2({
+                minimumResultsForSearch: -1,
+                width: '100%',
+            });
+        }
+
         function initTaxSelect2() {
-            $('.vat-tax-select2').select2({
+            $('.select-step').select2({
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
@@ -667,12 +664,7 @@
                 $("#addCustomerModal input[name=search_customer]")[0].focus();
             },300);
         }
-        function showCustomersModal() {
-            $("#addCustomerModal").modal('show');
-            setTimeout(function () {
-                $("#addCustomerModal input[name=search_customer]")[0].focus();
-            },300);
-        }
+
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
                 //format: 'DD/MM/YYYY',
@@ -686,15 +678,6 @@
             });
         }
 
-        function addNewImage() {
-            let hiddenImageInput = $("#hidden-image-input").html();
-            $("#gallery-wrapper").append(hiddenImageInput);
-            $('.gallery-wrapper .dropify').dropify();
-        }
-        function removeImage(button) {
-            $(button).parent().remove();
-        }
-
         var { createApp } = Vue;
 
         var vueApp = createApp({
@@ -706,8 +689,6 @@
                     item_search: '',
                     current_item_type: '',
                     cartItems:[],
-                    invoice:null,
-                    designs:[],
                     system_tax_items:[],
                     customers:[],
                     customer_search: '',
@@ -719,7 +700,7 @@
                     paying_amount: 0,
                     unloading_cost: {{ $quotation->unloading_cost ?? 0 }},
                     down_payment_percent: {{ $quotation->first_down_payment_percent ?? 0 }},
-
+                    quotation: null
                 }
             },
             computed: {
@@ -762,49 +743,17 @@
                     if(this.discount_value != 0) {
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = formatNumber(parseFloat((total_amount * this.discount_value) / 100));
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount); //-this.invoice.paid_amount
-
-                            if(this.discount_amount>due){
-                                showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
-                                this.discount_value = {{ $quotation->discount_value }}
-                            }
+                            this.discount_amount = parseFloat(((total_amount * parseFloat(this.discount_value)) / 100).toFixed(6));
                         } else {
                             //fixed
-                            this.discount_amount = this.discount_value;
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount); //-this.invoice.paid_amount
-                            if(this.discount_amount>due){
-                                showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
-                                this.discount_value = {{ $quotation->discount_value }}
-                            }
+                            this.discount_amount = parseFloat(this.discount_value).toFixed(6);
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
-
-                    return formatNumber(parseFloat(total_amount));
+                    
+                    total_amount = total_amount - parseFloat(this.discount_amount);
+                    total_amount = total_amount + parseFloat(this.unloading_cost);
+                    return parseFloat(total_amount.toFixed(6));
                 },
-                downPaymentAmount() {
-                    if(this.down_payment_percent > 100) {
-                        this.down_payment_percent = 100;
-                    } else if(this.down_payment_percent < 0) {
-                        this.down_payment_percent = 0;
-                    }
-                    let total_amount = this.cartGrandTotalAmount;
-                    let down_payment = 0;
-                    if(this.down_payment_percent != 0) {
-                        down_payment = parseFloat(((total_amount * this.down_payment_percent) / 100).toFixed(6));
-                    }
-                    return down_payment;
-                },
-                firstDownPaymentAmount() {
-                    return this.downPaymentAmount + this.unloading_cost;
-                },
-                remainingPaymentPercent() {
-                    return 100 - this.down_payment_percent;
-                },
-                remainingPaymentAmount() {
-                    return (this.cartGrandTotalAmount + this.unloading_cost) - this.firstDownPaymentAmount;
-                }
             },
             methods: {
                 openSelectItemModal(type) {
@@ -812,7 +761,8 @@
                     this.item_search = '';
                     this.current_item_type = type;
                     this.getItems(type);
-                 },
+                },
+
                 checkValidation(e) {
                     e.preventDefault();
                     if (($("#selected_customer_id").val() === undefined) || ($("#selected_customer_id").val() == null) || ($("#selected_customer_id").val() == '')) {
@@ -820,7 +770,7 @@
                     } else if(this.cartItems.length <= 0) {
                         showInfoAlert('Opps!', 'Please add at-least 1 Product!');
                     } else {
-                        invoiceUpdateFormSubmit();
+                        invoiceStoreFormSubmit();
                     }
                 },
                 // getSearchedItems() {
@@ -836,7 +786,7 @@
                             this.allItems = response.data;
                         });
                     },
-               getTaxItems() {
+                getTaxItems() {
                     axios
                         .get('{{ route('sales.invoice.get-all-taxes') }}')
                         .then(response => (this.system_tax_items = response.data));
@@ -889,32 +839,6 @@
                     this.open_select_item = !this.open_select_item;
                 },
 
-                addCustomItem() {
-                    let customItem = {
-                        id: 0,
-                        name: '',
-                        code: '',
-                        item_type: 'custom_item',
-                        description: '',
-                        qty: 1,
-                        price: 0,
-                        spt_amount: 0,
-                        spt_amount_wv: 0,
-                        tax: null,
-                        show_image: '{{asset('assets/img/placeholder.jpg')}}',
-                        unit_type: '',
-                        length: 0,
-                        width: 0,
-                        thickness: 0,
-                    };
-
-                    let ab = this.cartItems.push(customItem);
-                    this.updateCartItemPrice(ab - 1);
-                    setTimeout(function () {
-                        initTaxSelect2();
-                    }, 100);
-                },
-
                 itemDetails(index) {
                     if (this.cartItems[index] && this.cartItems[index].material_items) {
                         let items = this.cartItems[index].material_items;
@@ -938,6 +862,7 @@
                     if(qty <= 0) {
                         this.cartItems[index].qty = 0;
                     } else {
+
                         this.cartItems[index].qty = parseInt(qty);
                     }
                     this.updateCartItemPrice(index);
@@ -951,24 +876,23 @@
                     this.updateCartItemPrice(index);
                 },
                 removeItem(index) {
-                    if(this.cartItems.length <= 1) {
-                        showInfoAlert('Opps!', 'You can\'t remove all products!');
-                    }else{
-                        this.cartItems.splice(index,1);
-                    }
+                    this.cartItems.splice(index,1);
                 },
                 updatePrice(index) {
                     this.updateCartItemPrice(index);
                 },
+                
                 updateCartItemPrice(index) {
-                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
-                    this.cartItems[index].spt_amount_wv = formatNumber(parseFloat(priceWithoutVat));
+                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6));
+                    this.cartItems[index].spt_amount_wv = priceWithoutVat;
+
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = formatNumber(parseFloat(((this.cartItems[index].tax.tax_rate * parseFloat(priceWithoutVat)) / 100)));
+                        let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
+                        this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
                     }
-                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat) + parseFloat(this.cartItems[index].vat_amount));
+                    this.cartItems[index].spt_amount = parseFloat((priceWithoutVat + this.cartItems[index].vat_amount).toFixed(6));
                 },
 
                 changeDiscountType() {
@@ -979,7 +903,6 @@
                     $("#addCustomerModal").modal('hide');
                 },
                 changeTax(cartItemIndex, new_tax_id) {
-
                     if(new_tax_id == 0) {
                         this.cartItems[cartItemIndex].tax = null;
                         this.updateCartItemPrice(cartItemIndex);
@@ -991,7 +914,7 @@
                 },
                 getInvoiceData() {
                     axios
-                        .get('{{ route('sales.quotation.get-edit-quotation-data',$quotation->id) }}')
+                        .get('{{ route('sales.quotation.get-convert-to-invoice-data',$quotation->id) }}')
                         .then(response => {
                             console.log(response)
                             this.quotation = response.data.quotation;
@@ -1009,10 +932,9 @@
             },
             mounted () {
                 this.getAllProducts();
-                 this.getTaxItems();
+                this.getTaxItems();
                 this.getCustomers();
                 this.getInvoiceData();
-
             }
 
         }).mount('#VueApp');
@@ -1023,9 +945,9 @@
             vueApp.changeTax(cartItemIndex, new_tax_id);
         }
 
-        function invoiceUpdateFormSubmit(){
+        function invoiceStoreFormSubmit(){
 
-            var self = $("#invoiceUpdateForm");
+            var self = $("#invoiceStoreForm");
             var formData = new FormData($(self)[0]);
             $(".ie-span").text("").hide();
             var url = $(self).attr('action');
@@ -1034,7 +956,7 @@
                 if(res.status == 200){
                     showSuccessAlert('Success',res.message)
                     setTimeout(function () {
-                        window.location.href = "{{route('sales.quotation.index')}}";
+                        window.location.href = "{{route('sales.invoice.index')}}";
                     }, 1000);
                 }else{
                     showErrorAlert('Error',res.message)

@@ -60,4 +60,16 @@ Route::prefix('quotation')->group(function(){
     //create invoice data
     Route::get('/create',[QuotationController::class,'create'])->name('sales.quotation.create')->middleware('permission:manage-invoices');
     Route::post('/create',[QuotationController::class,'store'])->name('sales.quotation.store')->middleware('permission:manage-invoices');
+
+    //Edit invoice data
+    Route::get('/{id}/edit',[QuotationController::class,'edit'])->name('sales.quotation.edit')->middleware('permission:manage-invoices');
+    Route::get('/{id}/get-edit-quotation-data',[QuotationController::class,'getEditQuotationData'])->name('sales.quotation.get-edit-quotation-data')->middleware('permission:manage-invoices');
+    //update invoice data
+    Route::post('/{id}/update',[QuotationController::class,'update'])->name('sales.quotation.update')->middleware('permission:manage-invoices');
+    //Delete invoice
+    Route::get('/{id}/delete',[QuotationController::class,'delete'])->name('sales.quotation.delete')->middleware('permission:manage-invoices');
+
+    Route::get('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoice'])->name('sales.quotation.convert-to-invoice')->middleware('permission:manage-invoices');
+    Route::get('{id}/get-convert-to-invoice-data',[QuotationController::class,'getConvertToInvoiceData'])->name('sales.quotation.get-convert-to-invoice-data')->middleware('permission:manage-invoices');
+    Route::post('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoiceStore'])->name('sales.quotation.convert-to-invoice-store')->middleware('permission:manage-invoices');
 });
