@@ -95,4 +95,24 @@ class QuotationController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
+
+    public function convertToInvoice($id)
+    {
+        try {
+            $this->setPageTitle("Convert To Invoice");
+            $this->setActiveMenu('sales.quotation.index');
+
+            $data = $this->service->convertToInvoice($id);
+            
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+
+        return $this->view('sales.quotation.create-invoice')->with($data);
+    }
+
+    public function getConvertToInvoiceData($id) {
+        $data = $this->service->getConvertToInvoiceData($id);
+        return response()->json($data);
+    }
 }

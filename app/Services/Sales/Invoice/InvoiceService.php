@@ -14,6 +14,7 @@ use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDesigns;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
+use App\Models\Sales\Quotation;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
@@ -249,7 +250,22 @@ class InvoiceService
                 throw new \Exception("Order Number already exists");
             }
 
+            $quotation_id = null;
+            if(isset($request->quotation_id)){
+                $quotation = Quotation::where('id', $request->quotation_id)
+                    ->where('deleted', Quotation::DELETED_NO)
+                    ->first();
+                if(!empty($quotation)){
+                    $quotation->quotation_status = Quotation::QUOTATION_STATUS_ORDER_CREATED;
+                    $quotation->save();
+
+                    $quotation_id = $quotation->id;
+                }
+                
+            }
+
             $invoice = new Invoice();
+            $invoice->quotation_id = $quotation_id;
             $invoice->customer_id = $request->customer_id;
             $invoice->order_no = $request->order_no;
             $invoice->invoice_date = $request->invoice_date;

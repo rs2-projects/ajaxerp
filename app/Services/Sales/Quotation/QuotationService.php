@@ -724,5 +724,132 @@ class QuotationService
         $design->save();
     }
 
+    public function convertToInvoice($id) {
+        $data['invoice_date'] = Carbon::now();
+        $data['payment_date'] = Carbon::now();
+        $data['payment_methods'] = InvoicePayment::PAYMENT_METHODS;
 
+
+        $data['accounts_sub_categories'] = AccCoaSubCategory::with('accounts')
+            ->where('deleted', AccCoaSubCategory::DELETED_NO)
+            ->where('status', AccCoaSubCategory::STATUS_ACTIVE)
+            ->where('is_account_type', AccCoaSubCategory::IS_ACCOUNT_TYPE_YES)
+            ->get();
+        
+        $data['quotation'] = Quotation::with('details')
+            ->where('id', $id)
+            ->where('deleted', Quotation::DELETED_NO)
+            ->first();
+        return $data;
+    }
+
+     //Get Edit Invoice
+     public function getConvertToInvoiceData($id)
+     {
+         $quotation = Quotation::where('id', $id)
+             ->where('deleted', 0)
+             ->first();
+         //customer data
+         $customer = Customer::where('id', $quotation->customer_id)
+             ->where('status', 1)
+             ->where('deleted', 0)
+             ->first();
+         $customer->show_image_full_url = asset($customer->show_image);
+         $customer->contact_full_name = $customer->full_name;
+        
+ 
+         //invoice details
+         $cartItems = QuotationDetails::where('quotation_id', $id)
+             ->where('deleted', QuotationDetails::DELETED_NO)
+             ->where('item_type', '!=', QuotationDetails::TYPE_CUSTOM_ITEM)
+             ->get()
+             ->map(function ($item) {
+                 if ($item->tax == null) {
+                     $itemTax = (object)[
+                         'id' => null,
+                         'name' => null,
+                         'tax_rate' => 0,
+                     ];
+                 } else {
+                     $itemTax = $item->tax;
+                 }
+ 
+                 $type = $item->item_type;
+                 if($type == QuotationDetails::TYPE_RAW_MATERIAL){
+                     $product = $item->product_material;
+                     $item_type = 'raw_materials';
+                 }else if($type == QuotationDetails::TYPE_RAW_BOARD){
+                     $product = $item->product_material;
+                     $item_type = 'raw_boards';
+                 }else if($type == QuotationDetails::TYPE_PAPER){
+                     $product = $item->product_material;
+                     $item_type = 'papers';
+                 }else if($type == QuotationDetails::TYPE_FINISHED_GOODS){
+                     $product = $item->finishedGood;
+                     $item_type = 'finished_goods';
+                 }else if($type == QuotationDetails::TYPE_FINISHED_BOARD){
+                     $product = $item->finishedGood;
+                     $item_type = 'finished_boards';
+                 }else if($type == QuotationDetails::TYPE_SET_ITEM){
+                     $product = $item->set_item;
+                     $item_type = 'set_items';
+                 } else {
+                     $product = null;
+                     
+                     $product = new \stdClass();
+                     $product->id = 0;
+                     $product->name = $item->item_name;
+                     $product->code = '';
+                     $product->item_type = 'custom_item';
+                     $product->show_image = asset('assets/img/placeholder.jpg');
+                     $product->length = 0;
+                     $product->width = 0;
+                     $product->thickness = 0;
+                     $product->unit_type = '';
+                     $product->tax = null;
+                     $product->unit_price = 0;
+                     $product->net_total = 0;
+                     $product->description = $item->description;
+                     $product->set_items = null;
+                     $item_type = 'custom_item';
+                 }
+ 
+                 if ($type == QuotationDetails::TYPE_SET_ITEM && $item?->set_item?->set_items != null) {
+                     $material_items = $item?->set_item?->set_items?->map(function($setItem) {
+                         return [
+                             'name' => $setItem?->productMaterial?->name,
+                             'code' => $setItem?->productMaterial?->code,
+                             'quantity' => $setItem->quantity,
+                         ];
+                     });
+                 } else {
+                     $material_items = null;
+                 }
+                 
+                 return [
+                     'id' => $product?->id,
+                     'name' => $product?->name,
+                     'code' => $product?->code,
+                     'show_image' => asset($product?->show_image),
+                     'length' => $product?->length,
+                     'width' => $product?->width,
+                     'thickness' => $product?->thickness,
+                     'description' => $item->description,
+                     'qty' => $item->quantity,
+                     'price' => formatNumber($item->unit_price),
+                     'unit_price' => formatNumber($item->unit_price),
+                     'total_price' => formatNumber($item->net_total),
+                     'tax' => $itemTax,
+                     'item_type' => $item_type,
+                     'srp' => formatNumber($item->unit_price),
+                     'material_items' => $material_items,
+                     'quotation_details_id' => $item->id
+                 ];
+             });
+         $data['quotation'] = $quotation;
+         $data['customer'] = $customer;
+         $data['cartItem'] = $cartItems;
+ 
+         return $data;
+     }
 }
