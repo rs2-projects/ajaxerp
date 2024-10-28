@@ -67,6 +67,7 @@ class Invoice extends BaseModel
         'discount_type',
         'discount_value',
         'discount_amount',
+        'unloading_cost',
         'payable_amount',
         'paid_amount',
         'due_amount',

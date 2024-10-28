@@ -256,6 +256,7 @@ class InvoiceService
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->created_at = Carbon::now();
@@ -342,12 +343,14 @@ class InvoiceService
                 $discount_amount = $invoice->discount_value;
             }
 
+            $total_amount_with_vat = $total_amount + $vat_amount;
+            $payable_amount = $total_amount_with_vat - $discount_amount + $request->unloading_cost;
             $invoice->subtotal_amount = $total_amount;
             $invoice->vat_amount = $vat_amount;
-            $invoice->total_amount = $total_amount + $vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $discount_amount;
-            $invoice->payable_amount = $total_amount + $vat_amount - $discount_amount;
-            $invoice->due_amount = $total_amount + $vat_amount - $discount_amount;
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $payable_amount;
             $invoice->save();
 
 
@@ -741,6 +744,7 @@ class InvoiceService
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->updated_at = Carbon::now();
@@ -875,13 +879,18 @@ class InvoiceService
                 $total_discount_amount = $request->discount_value;
             }
 
+            $total_amount_with_vat = $subtotal_amount + $total_vat_amount;
+            $payable_amount = $total_amount_with_vat - $total_discount_amount + $request->unloading_cost;
+
+            $due_amount = $payable_amount - $invoice->paid_amount;
+            
             $invoice->subtotal_amount = $subtotal_amount;
             $invoice->vat_amount = $total_vat_amount;
-            $invoice->total_amount = $subtotal_amount + $total_vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $total_discount_amount;
-            $invoice->payable_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            $invoice->due_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            if ($invoice->due_amount == 0) {
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $due_amount;
+            if ($invoice->due_amount <= 0) {
                 $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
             }
             $invoice->save();
