@@ -796,7 +796,7 @@
                     return 100 - this.down_payment_percent;
                 },
                 remainingPaymentAmount() {
-                    return (this.cartGrandTotalAmount + this.unloading_cost) - this.firstDownPaymentAmount;
+                    return (parseFloat(this.cartGrandTotalAmount) + this.unloading_cost) - this.firstDownPaymentAmount;
                 }
             },
             methods: {

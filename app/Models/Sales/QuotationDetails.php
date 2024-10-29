@@ -62,6 +62,24 @@ class QuotationDetails extends BaseModel
 
     ];
 
+    public function itemName() {
+        if($this->item_type == self::TYPE_RAW_MATERIAL) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_RAW_BOARD) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_PAPER) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_FINISHED_GOODS) {
+            return $this->finishedGood->name;
+        } elseif($this->item_type == self::TYPE_FINISHED_BOARD) {
+            return $this->finishedGood->name;
+        } elseif($this->item_type == self::TYPE_SET_ITEM) {
+            return $this->set_item->name;
+        } elseif($this->item_type == self::TYPE_CUSTOM_ITEM) {
+            return $this->item_name;
+        }
+    }
+
     public function finishedGood()
     {
         return $this->belongsTo(FinishedGoods::class, 'item_id', 'id');

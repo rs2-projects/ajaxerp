@@ -89,4 +89,19 @@ class Quotation extends BaseModel
     public function gallery(){
         return $this->hasMany(QuotationImages::class, 'quotation_id', 'id')->where('deleted', QuotationImages::DELETED_NO);
     }
+
+    public function getFirstDownPaymentAmountAttribute()
+    {
+        return $this->first_down_payment_percent * ($this->total_amount - $this->discount_amount) / 100;
+    }
+
+    public function getTotalFirstDownPaymentAmountAttribute()
+    {
+        return $this->first_down_payment_amount + $this->unloading_cost;
+    }
+
+    public function getCompletionPaymentAmountAttribute()
+    {
+        return (100 - $this->first_down_payment_percent) * ($this->total_amount - $this->discount_amount) / 100;
+    }
 }

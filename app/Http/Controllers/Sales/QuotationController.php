@@ -7,6 +7,7 @@ use App\Http\Requests\Sales\StoreQuotationRequest;
 use App\Http\Requests\Sales\UpdateQuotationRequest;
 use App\Services\Sales\Quotation\QuotationService;
 use Illuminate\Http\Request;
+use PDF;
 
 class QuotationController extends BackendController
 {
@@ -119,5 +120,26 @@ class QuotationController extends BackendController
     public function getConvertToInvoiceData($id) {
         $data = $this->service->getConvertToInvoiceData($id);
         return response()->json($data);
+    }
+
+    public function downloadPdf($id)
+    {
+        // try {
+            $data = $this->service->getDownloadPdfData($id);
+
+            // return view('sales.quotation.pdf', $data);
+            $pdf = PDF::loadView('sales.quotation.pdf', $data);
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('margin-bottom', 15);
+            $pdf->setOption('margin-top', 15);
+            // $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            return $pdf->inline('Quotation-'.$data['quotation']->ref_no.'.pdf');
+
+        // }catch (\Exception $e) {
+        //     dd($e->getMessage());
+        //     return redirect()->back()->with(['failed' => $e->getMessage()]);
+        // }
+
     }
 }

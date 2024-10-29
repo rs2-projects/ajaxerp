@@ -857,4 +857,19 @@ class QuotationService
  
          return $data;
      }
+
+
+     public function getDownloadPdfData($id) {
+        $data['quotation'] = Quotation::where('id', $id)
+            ->where('deleted', Quotation::DELETED_NO)
+            ->first();
+        $data['customer'] = Customer::where('id', $data['quotation']->customer_id)
+            ->where('status', Customer::STATUS_ACTIVE)
+            ->where('deleted', Customer::DELETED_NO)
+            ->first();
+        $data['quotationDetails'] = QuotationDetails::where('quotation_id', $id)
+            ->where('deleted', QuotationDetails::DELETED_NO)
+            ->get();
+        return $data;
+     }
 }
