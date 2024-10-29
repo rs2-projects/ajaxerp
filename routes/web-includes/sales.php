@@ -72,4 +72,6 @@ Route::prefix('quotation')->group(function(){
     Route::get('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoice'])->name('sales.quotation.convert-to-invoice')->middleware('permission:manage-invoices');
     Route::get('{id}/get-convert-to-invoice-data',[QuotationController::class,'getConvertToInvoiceData'])->name('sales.quotation.get-convert-to-invoice-data')->middleware('permission:manage-invoices');
     Route::post('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoiceStore'])->name('sales.quotation.convert-to-invoice-store')->middleware('permission:manage-invoices');
+
+    Route::get('{id}/download-pdf',[QuotationController::class,'downloadPdf'])->name('sales.quotation.download-pdf')->middleware('permission:view-invoices');
 });
