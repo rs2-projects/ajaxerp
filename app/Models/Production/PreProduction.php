@@ -179,6 +179,10 @@ class PreProduction extends BaseModel
             ->count();
     }
 
+    public function productionMachines() {
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_id', 'id');
+    }
+
     public function countRawMaterials(){
         $materialCount = $this->production_material()->count();
         $boardCount = $this->board_material()->count();
