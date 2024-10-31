@@ -311,6 +311,11 @@
                             <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
                         </li>
                     @endif
+                    @if(hasPermission('view-production','manage-processes','receive-production-materials','dispatch-production-materials'))
+                        <li>
+                            <a href="{{route('production.production.monitoring')}}" class="{{ ($activeMenu == 'production.production.monitoring') ? 'active' : '' }}"><i class="la la-cogs"></i> <span>Production Monitor</span></a>
+                        </li>
+                    @endif
                 @endif
 
                 @if(hasPermission( 'view-warehouse','manage-warehouse'))

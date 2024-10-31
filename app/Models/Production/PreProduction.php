@@ -16,6 +16,7 @@ class PreProduction extends BaseModel
     //type
     const TYPE_OTHERS = 0;
     const TYPE_BOARD = 1;
+    
     const VERIFIED_NO = 0;
     const VERIFIED_YES = 1;
     const VERIFIED_REVISION = 2;
@@ -90,6 +91,8 @@ class PreProduction extends BaseModel
     protected $fillable = [
         'type',
         'date',
+        'board_pre_production_id',
+        'invoice_id',
         'pre_production_no',
         'pre_production_batch_no',
         'order_details',
@@ -179,10 +182,18 @@ class PreProduction extends BaseModel
             ->count();
     }
 
+    public function productionMachines() {
+        return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_id', 'id');
+    }
+
     public function countRawMaterials(){
         $materialCount = $this->production_material()->count();
         $boardCount = $this->board_material()->count();
         return $materialCount + $boardCount;
+    }
+
+    public function invoice() {
+        return $this->belongsTo(\App\Models\Sales\Invoice::class, 'invoice_id', 'id');
     }
 
     public function showStatus($type = 'default')

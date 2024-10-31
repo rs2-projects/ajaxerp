@@ -26,6 +26,8 @@ Route::group(['prefix' => 'production'], function () {
     Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data')->middleware('permission:dispatch-production-materials');
     Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store')->middleware('permission:dispatch-production-materials');
     Route::get('/{id}/print-barcode/{type}', [ProductionController::class, 'printBarcode'])->name('production.production.print-barcode')->middleware('permission:production-print-barcode');
+
+    Route::get('monitoring-per-day', [ProductionController::class, 'monitoringPerDay'])->name('production.production.monitoring')->middleware('permission:view-production');
     // });
 
     Route::group(['prefix' => 'machine'], function () {
@@ -52,6 +54,8 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
+
+        Route::get('get-invoice-list-data', [PreProductionController::class, 'getInvoiceListData'])->name('production.pre-production.get-invoice-list-data')->middleware('permission:manage-pre-productions');
     });
 
     // board pre production

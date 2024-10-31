@@ -429,3 +429,51 @@
     margin: 0; 
 }
 /* quotation page end */
+
+/* Production Monitoring start*/
+.monitoring-table {
+    
+}
+.monitoring-table .erp-tbody .erp-tbody-tr:nth-child(even) {
+    background: #fff;
+}
+.monitoring-table thead tr {
+    background-color: #166bc1;
+}
+.monitoring-table thead tr th {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 900;
+    padding: 10px 15px !important;
+    border-right: 1px solid #ffffff52;
+}
+.monitoring-table tbody tr td:first-child {
+    background-color: #166bc1;
+    color: #fff;
+}
+.monitoring-table tbody tr td {
+    padding: 10px 15px !important;
+    border: 1px solid #00000014 !important;
+    font-weight: 600;
+}
+
+.monitoring-table tbody tr td:first-child .title {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.monitoring-table tbody tr td.status.done {
+    background-color: #5c9b24;
+    color: #fff;
+}
+.monitoring-table tbody tr td.status.on-going {
+    background-color: #fec832;
+    color: #000;
+}
+/* Production Monitoring end*/
+
+.production-status-wrapper ul{
+    list-style: circle;
+}
