@@ -30,6 +30,7 @@ class Machine extends BaseModel
         'production_cost',
         'image',
         'model',
+        'machine_code',
         'color',
         'description',
         'status',
