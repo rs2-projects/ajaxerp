@@ -31,10 +31,18 @@
                                 <input class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
-                        <div class="pgib-item flex-36">
+                        <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Design Of Documents</label>
                                 <input class="form-control" name="design_of_documents" type="file" multiple>
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-25">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Invoice</label>
+                                <select class="form-control" name="invoice_id" id="invoice_id">
+                                    <option value="">Select Invoice</option>
+                                </select>
                             </div>
                         </div>
                         <div class="pgib-item flex-100">
@@ -494,6 +502,18 @@
                 }
             });
         }
+
+        $(document).ready(function () {
+            $("#invoice_id").select2({
+                placeholder: 'Select Invoice',
+                width: '100%',
+                ajax: {
+                    delay: 500,
+                    url: "{{ route('production.pre-production.get-invoice-list-data') }}",
+                    dataType: 'json'
+                }
+            });
+        });
     </script>
 @endsection
 

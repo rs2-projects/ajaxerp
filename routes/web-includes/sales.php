@@ -45,11 +45,16 @@ Route::prefix('invoice')->group(function(){
     Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload')->middleware('permission:manage-invoices');
     //Design delete
     Route::get('/{id}/delete-design',[InvoiceController::class,'deleteDesign'])->name('sales.invoice.design.delete')->middleware('permission:manage-invoices');
+
+    Route::get('/{id}/production-status',[InvoiceController::class,'getProductionStatus'])->name('sales.invoice.production-status')->middleware('permission:view-invoices');
+
+    
     //Invoice delivered
     Route::get('/{id}/deliver', [InvoiceDeliveredController::class, 'deliver'])->name('sales.invoice.deliver')->middleware('permission:deliver-items');
     Route::post('/{id}/deliver', [InvoiceDeliveredController::class, 'deliverStore'])->name('sales.invoice.deliver.store')->middleware('permission:deliver-items');
     Route::get('/{id}/finished-goods', [InvoiceDeliveredController::class, 'getFinishedGoods'])->name('sales.invoice.deliver.get-all-finished-goods')->middleware('permission:deliver-items');
     Route::get('/{id}/deliver/{barcode}/{count}', [InvoiceDeliveredController::class, 'checkBarCode'])->name('sales.invoice.deliver.check-barcode')->middleware('permission:deliver-items');
+
 
 });
 

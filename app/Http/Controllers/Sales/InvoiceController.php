@@ -162,4 +162,10 @@ class InvoiceController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
+
+    public function getProductionStatus($id)
+    {
+        $data = $this->service->getProductionStatus($id);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetched Successfully');
+    }
 }

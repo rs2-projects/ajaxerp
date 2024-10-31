@@ -17,6 +17,7 @@ use App\Models\Production\PreProductionProcessBoard;
 use App\Models\Production\PreProductionProcessPreviousProcess;
 use App\Models\Production\ProductionStaff;
 use App\Models\Products\FinishedGoodsCategory;
+use App\Models\Sales\Invoice;
 use App\Services\Common\ImageUploadService;
 use App\Services\Common\FileUploadService;
 use Carbon\Carbon;
@@ -221,6 +222,7 @@ class PreProductionService
 
             $pre_production = new PreProduction();
             $pre_production->date = $request->date;
+            $pre_production->invoice_id = $request->invoice_id ?? null;
             $pre_production->order_details = $request->order_details;
             $pre_production->pre_production_no = '';
             $pre_production->pre_production_batch_no = $request->pre_production_batch_no;
@@ -982,6 +984,29 @@ class PreProductionService
             throw new \Exception('Pre Production not found');
         }
         $data['pre_production'] = $pre_production;
+
+        return $data;
+    }
+
+    public function getInvoiceListData($request) {
+        $data['results'] = Invoice::select('id', 'invoice_no')
+            ->where('deleted', Invoice::DELETED_NO)
+            ->where('status', Invoice::STATUS_ACTIVE)
+            ->where(function($q) use($request) {
+                if ($request->has('q')) {
+                    $q->where('invoice_no', 'like', '%'.$request->q.'%')
+                        ->orWhere('order_no', 'like', '%'.$request->q.'%');
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->take(10)
+            ->get()
+            ->map(function ($invoice) {
+                return [
+                    'id' => $invoice->id,
+                    'text' => $invoice->invoice_no,
+                ];
+            });
 
         return $data;
     }

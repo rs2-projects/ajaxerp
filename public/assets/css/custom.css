@@ -473,3 +473,7 @@
     color: #000;
 }
 /* Production Monitoring end*/
+
+.production-status-wrapper ul{
+    list-style: circle;
+}

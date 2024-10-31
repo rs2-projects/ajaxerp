@@ -6,6 +6,8 @@ use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionReceipt;
+use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionProcess;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialSet;
@@ -965,6 +967,51 @@ class InvoiceService
         $design->deleted_at = Carbon::now();
         $design->deleted_by = auth()->id();
         $design->save();
+    }
+
+    public function     getProductionStatus($id)
+    {
+        $data['invoice'] = Invoice::where('id', $id)
+            ->where('deleted', Invoice::DELETED_NO)
+            ->first();
+        if (!$data['invoice']) {
+            throw new \Exception('Invalid Invoice!');
+        }
+        
+        $data['prouctions'] = PreProduction::where('invoice_id', $id)
+            ->where('deleted', PreProduction::DELETED_NO)
+            ->get()
+            ->map(function ($item) {
+                $item->show_image_full_url = asset($item->show_image);
+                $item->process_name = 'Unknown';
+                if($item->is_verified == PreProduction::VERIFIED_NO){
+                    $item->production_status = 'design_stage';
+                } else {
+                    if($item->process_status == PreProduction::PROCESS_STATUS_PENDING){
+                        $item->production_status = 'pending_production';
+                    } else if($item->process_status == PreProduction::PROCESS_STATUS_PROCESSING){
+                        $item->production_status = 'processing_production';
+
+                        $last_processing_process = PreProductionProcess::where('pre_production_id', $item->id)
+                            ->where('process_status', PreProductionProcess::PROCESS_STATUS_PROCESSING)
+                            ->where('deleted', PreProductionProcess::DELETED_NO)
+                            ->orderBy('id', 'desc')
+                            ->first();
+                        if($last_processing_process){
+                            $item->process_name = $last_processing_process->processMachines?->first()?->machine?->name;
+                        }
+
+                    } else if($item->process_status == PreProduction::PROCESS_STATUS_COMPLETED){
+                        $item->production_status = 'completed_production';
+                    }
+                }
+                
+                return $item;
+            });
+        
+        $data['view'] = view('sales.invoice.__production_status_data', $data)->render();
+        
+        return $data;
     }
 
 

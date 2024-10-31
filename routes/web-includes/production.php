@@ -54,6 +54,8 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
+
+        Route::get('get-invoice-list-data', [PreProductionController::class, 'getInvoiceListData'])->name('production.pre-production.get-invoice-list-data')->middleware('permission:manage-pre-productions');
     });
 
     // board pre production
