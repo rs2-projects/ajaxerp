@@ -10,7 +10,7 @@ use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Services\Procurement\ProductMaterial\ProductMaterialPurchaseService;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductMaterialPurchaseController extends BackendController
 {
