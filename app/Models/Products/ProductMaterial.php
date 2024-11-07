@@ -167,6 +167,13 @@ class ProductMaterial extends BaseModel
     public function purchaseDetails(){
     }
 
+    public function availablePurchaseDetails(){
+        return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_id', 'id')
+            ->where('available_qty', '>', 0)
+            ->where('deleted', self::DELETED_NO)
+            ->where('status', self::STATUS_ACTIVE);
+    }
+
     public function materialSupplier(){
         return $this->hasMany(SupplierProductMaterial::class, 'product_material_id', 'id');
     }

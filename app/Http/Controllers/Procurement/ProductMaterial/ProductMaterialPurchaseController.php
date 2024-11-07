@@ -10,7 +10,7 @@ use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Services\Procurement\ProductMaterial\ProductMaterialPurchaseService;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductMaterialPurchaseController extends BackendController
 {
@@ -210,7 +210,7 @@ class ProductMaterialPurchaseController extends BackendController
                     $purchaseDetailsIdsWithQty[$purchaseDetailId] = $request->qty[$index];
                 }
             }
-            $purchae_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+            $purchae_details = ProductMaterialPurchaseDetails::with('productMaterial','materialPurchase')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
                 ->whereIn('id', array_keys($purchaseDetailsIdsWithQty))
                 ->get()
@@ -222,6 +222,8 @@ class ProductMaterialPurchaseController extends BackendController
                         'qty' => $purchaseDetailsIdsWithQty[$item['id']],
                         'unit_price' => $item['unit_price'],
                         'name' => $item->productMaterial->name,
+                        'product_code' => $item->productMaterial->code,
+                        'batch_number' => $item->materialPurchase->batch_number,
                     ];
                 });
 
@@ -237,13 +239,17 @@ class ProductMaterialPurchaseController extends BackendController
                 ));
             }
 
-            $pdf = PDF::loadView('procurement.product-material-purchase.print-barcode.print-barcode-pdf', compact(
+            $pdf = PDF::loadView('procurement.product-material-purchase.print-barcode.print-qrcode-pdf', compact(
                 'code_generator',
                 'purchae_details'
             ));
+            // $pdf = PDF::loadView('procurement.product-material-purchase.print-barcode.print-barcode-pdf', compact(
+            //     'code_generator',
+            //     'purchae_details'
+            // ));
             $pdf->setPaper('a4');
             $pdf->setOrientation('portrait');
-            $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
             return $pdf->inline();
 
 //        } catch (\Exception $exception) {
