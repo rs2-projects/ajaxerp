@@ -3,6 +3,7 @@
 namespace App\Models\Production;
 
 use App\Models\BaseModel;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PreProductionMaterialDeliveryDetailsItems extends BaseModel
@@ -26,6 +27,25 @@ class PreProductionMaterialDeliveryDetailsItems extends BaseModel
         self::SCANNED_YES => 'Yes',
     ];
 
+    const RECEIVED_STATUS_PENDING = 0;
+    const RECEIVED_STATUS_RECEIVED = 1;
+    const RECEIVED_STATUS_PARTIAL = 2;
+    const RECEIVED_STATUSES = [
+        self::RECEIVED_STATUS_PENDING => 'Pending',
+        self::RECEIVED_STATUS_RECEIVED => 'Received',
+        self::RECEIVED_STATUS_PARTIAL => 'Partial',
+    ];
+
+    const SCAN_STATUS_PENDING = 0;
+    const SCAN_STATUS_SCANNED = 1;
+    const SCAN_STATUS_PARTIAL = 2;
+    const SCAN_STATUSES = [
+        self::SCAN_STATUS_PENDING => 'Pending',
+        self::SCAN_STATUS_SCANNED => 'Scanned',
+        self::SCAN_STATUS_PARTIAL => 'Partial',
+    ];
+
+
     protected $fillable = [
         'pre_production_id',
         'pre_production_material_delivery_id',
@@ -42,4 +62,8 @@ class PreProductionMaterialDeliveryDetailsItems extends BaseModel
         'received',
         'scanned'
     ];
+
+    public function purchase_details() {
+        return $this->belongsTo(ProductMaterialPurchaseDetails::class, 'product_material_purchase_details_id', 'id');
+    }
 }

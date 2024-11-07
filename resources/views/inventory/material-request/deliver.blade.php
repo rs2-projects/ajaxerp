@@ -230,6 +230,28 @@
 			</div>
 		</div>
 
+		<!-- Scan Modal -->
+		<div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="scanModalLabel">Scan Item</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body" v-if="selected_material_index != null">
+						<div class="form-group">
+							<label class="mb-2" for="scanning_qrcode">Scan QrCode</label>
+							<input type="text" class="form-control" id="scanning_qrcode" v-model="scanning_qrcode" placeholder="Scan QrCode">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" v-on:click="scanItem()">Check</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
     <!--End::row-1 -->
 </div>
@@ -254,6 +276,11 @@
 
 @section('js')
 <script>
+	$(document).ready(function () {
+		$('#scanModal').modal().on('shown.bs.modal', function() {
+			$('#scanning_qrcode').focus()
+		});
+	});
     var { createApp } = Vue;
     var vueApp = createApp({
         data() {
@@ -261,6 +288,7 @@
                 materials: [],
 				selected_material_index:null,
 				delivered_items: [],
+				scanning_qrcode: '',
             };
         },
         methods: {
@@ -344,7 +372,7 @@
 					showErrorAlert('Error', 'All items are delivered');
 				}else{
 					this.selected_material_index = materialIndex;
-					$('#deliverModal').modal('show');
+					$('#scanModal').modal('show');
 				}
 			},
 
@@ -411,6 +439,19 @@
 					deliverStoreForm();
 				}
 			},
+
+			scanItem() {
+				let material = this.materials[this.selected_material_index].material;
+				let barcodeValue = this.scanning_qrcode;
+				if (material.product.code == barcodeValue) {
+					$("#scanModal").modal('hide');
+					$("#deliverModal").modal('show');
+					this.scanning_qrcode = '';
+				} else {
+					showErrorAlert('Error', 'Invalid Item');
+					this.scanning_qrcode = '';
+				}
+			}
         },
         mounted() {
             this.getMaterials();
