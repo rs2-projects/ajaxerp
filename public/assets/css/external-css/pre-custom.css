@@ -437,3 +437,11 @@ span.pp-icon {
     font-size: 15px;
 }
 /* Add Expense Calculation End */
+
+
+.pd-recived-product-item {
+    justify-content: space-between;
+}
+.pd-recived-product-item p {
+    margin-bottom: 0;
+}

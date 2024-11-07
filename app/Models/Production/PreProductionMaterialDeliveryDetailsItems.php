@@ -33,6 +33,11 @@ class PreProductionMaterialDeliveryDetailsItems extends BaseModel
         'pre_production_material_id',
         'product_material_id',
         'product_material_purchase_details_id',
+        'quantity',
+        'received_qty',
+        'received_status',
+        'scanned_qty',
+        'scan_status',
         'barcode',
         'received',
         'scanned'

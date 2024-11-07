@@ -32,6 +32,12 @@ class PreProductionBoardDeliveryDetailsItem extends BaseModel
         'pre_production_board_delivery_details_id',
         'pre_production_board_id',
         'finished_board_id',
+        'lot_production_id',
+        'quantity',
+        'received_qty',
+        'received_status',
+        'scanned_qty',
+        'scan_status',
         'barcode',
         'received',
         'scanned'

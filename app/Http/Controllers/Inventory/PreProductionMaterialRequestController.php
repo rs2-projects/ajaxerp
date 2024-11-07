@@ -90,15 +90,20 @@ class PreProductionMaterialRequestController extends BackendController
         $data = $this->service->barcodeDetails($id);
 
         $code_generator = new BarcodeGeneratorPNG();
-        // return $this->view('inventory.material-request.barcode_details')->with($data);
         $product_materials = $data['product_materials'];
-        $pdf = PDF::loadView('inventory.material-request.barcode_print', compact(
+        $finished_boards = $data['finished_boards'];
+        // return view('inventory.material-request.qrcode_print', compact(
+        //     'product_materials',
+        //     'code_generator'
+        // ));
+        $pdf = PDF::loadView('inventory.material-request.qrcode_print', compact(
             'product_materials',
-            'code_generator'
+            'code_generator',
+            'finished_boards'
         ));
         $pdf->setPaper('a4');
         $pdf->setOrientation('portrait');
-        $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+        $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
         return $pdf->inline();
     }
 
