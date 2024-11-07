@@ -255,6 +255,30 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Scan Modal -->
+    <div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scanModalLabel">Scan Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="selected_delviery_index != null">
+                    <div class="form-group">
+                        <label class="mb-2" for="scanning_qrcode">Scan QrCode</label>
+                        <input type="text" class="form-control" id="scanning_qrcode" v-model="scanning_qrcode" placeholder="Scan QrCode">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" v-on:click="scanItem()">Check</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -281,6 +305,11 @@
 
 @section('js')
     <script>
+        $(document).ready(function () {
+            $('#scanModal').modal().on('shown.bs.modal', function() {
+                $('#scanning_qrcode').focus()
+            });
+        });
         var { createApp } = Vue;
             var vueApp = createApp({
                 data() {
@@ -288,6 +317,7 @@
                         deliveries: [],
                         selected_delviery_index:null,
                         selected_delviery_details_index:null,
+                        scanning_qrcode: '',
                     };
                 },
                 methods: {
@@ -428,7 +458,7 @@
                         }else{
                             this.selected_delviery_index = deliverIndex;
                             this.selected_delviery_details_index = detailsIndex;
-                            $('#receiveModal').modal('show');
+                            $('#scanModal').modal('show');
                         }
                     },
 
@@ -494,6 +524,32 @@
                         });
                         return total;
                     },
+
+                    scanItem() {
+                        let delivery = this.deliveries[this.selected_delviery_index];
+                        let delivery_details = delivery.delivery_details[this.selected_delviery_details_index];
+                        let barcodeValue = this.scanning_qrcode;
+
+                        if(delivery.type == 'other') {
+                            if (delivery_details.material.product.code == barcodeValue) {
+                                $("#scanModal").modal('hide');
+                                $("#receiveModal").modal('show');
+                                this.scanning_qrcode = '';
+                            } else {
+                                showErrorAlert('Error', 'Invalid Item');
+                                this.scanning_qrcode = '';
+                            }
+                        } else {
+                            if (delivery_details.board.product.code == barcodeValue) {
+                                $("#scanModal").modal('hide');
+                                $("#receiveModal").modal('show');
+                                this.scanning_qrcode = '';
+                            } else {
+                                showErrorAlert('Error', 'Invalid Item');
+                                this.scanning_qrcode = '';
+                            }
+                        }
+                    }
 
                 },
                 mounted() {
