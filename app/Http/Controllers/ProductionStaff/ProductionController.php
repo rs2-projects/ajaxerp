@@ -76,16 +76,22 @@ class ProductionController extends BackendController
         return $this->view('production-staff.production._receive')->with($data);
     }
 
-    public function barcodeDetails($id){
-        $data = $this->service->barcodeDetails($id);
+    public function barcodeDetails(Request $request, $id){
+        $data = $this->service->barcodeDetails($id, $request->type);
 
         $code_generator = new BarcodeGeneratorPNG();
         // return $this->view('inventory.material-request.barcode_details')->with($data);
         $product_materials = $data['product_materials'];
-        $pdf = PDF::loadView('production-staff.production.barcode_print', compact(
+        $finished_boards = $data['finished_boards'];
+        $pdf = PDF::loadView('production-staff.production.qrcode_print', compact(
             'product_materials',
-            'code_generator'
+            'code_generator',
+            'finished_boards'
         ));
+        // $pdf = PDF::loadView('production-staff.production.barcode_print', compact(
+        //     'product_materials',
+        //     'code_generator'
+        // ));
         $pdf->setPaper('a4');
         $pdf->setOrientation('portrait');
         $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
@@ -93,14 +99,14 @@ class ProductionController extends BackendController
     }
 
     public function receiveStore(StoreProductionReceiveRequest $request, $id){
-        try {
+        // try {
             $this->service->receiveStoreData($request, $id);
             $data = $this->service->getDeliveryData($id);
             session()->flash('success', "Received successfully");
             $data['redirectUri'] = route('production-staff.production.production.index');
-        }catch (\Exception $e) {
-            return $this->returnAjaxError([],$e->getMessage());
-        }
+        // }catch (\Exception $e) {
+        //     return $this->returnAjaxError([],$e->getMessage());
+        // }
         return $this->returnAjaxSuccess($data, 'Received successfully');
     }
 

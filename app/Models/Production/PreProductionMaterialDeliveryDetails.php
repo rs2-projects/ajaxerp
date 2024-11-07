@@ -81,13 +81,13 @@ class PreProductionMaterialDeliveryDetails extends BaseModel
     public function pending_items()
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
-        ->where('received',  PreProductionMaterialDeliveryDetailsItems::RECEIVED_NO);
+            ->where('received_status', '!=', PreProductionMaterialDeliveryDetailsItems::RECEIVED_STATUS_RECEIVED);
     }
 
     public function pending_scans()
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetailsItems::class, 'pre_production_material_delivery_details_id', 'id')
-            ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-            ->where('received',  PreProductionMaterialDeliveryDetailsItems::RECEIVED_YES);
+            ->where('scan_status', '!=', PreProductionMaterialDeliveryDetailsItems::SCAN_STATUS_SCANNED)
+            ->where('received_status', '!=',  PreProductionMaterialDeliveryDetailsItems::RECEIVED_STATUS_RECEIVED);
     }
 }
