@@ -38,6 +38,7 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/edit', [MachineController::class, 'edit'])->name('production.machine.edit')->middleware('permission:manage-machines');
         Route::post('/{id}/update', [MachineController::class, 'update'])->name('production.machine.update')->middleware('permission:manage-machines');
         Route::get('/{id}/delete', [MachineController::class, 'delete'])->name('production.machine.delete')->middleware('permission:manage-machines');
+        Route::get('/{id}/print-qrcode', [MachineController::class, 'printQrCode'])->name('production.machine.print-qrcode')->middleware('permission:view-machines');
     });
 
     Route::group(['prefix' => 'pre-production'], function () {

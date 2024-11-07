@@ -43,6 +43,7 @@
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$machine->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('production.machine.delete',$machine->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                        <a class="dropdown-item" href="{{ route('production.machine.print-qrcode', $machine->id) }}" target="_blank"><i class="fa-solid fa-print m-r-5"></i> Print QrCode (PDF)</a>
                                 </div>
                                 </div>
                             </div>

@@ -125,4 +125,15 @@ class MachineService
         $machine->deleted_at = now();
         $machine->save();
     }
+
+    public function getMachine($id)
+    {
+        $machine = Machine::where('id', $id)
+            ->where('deleted', Machine::DELETED_NO)
+            ->first();
+        if (!$machine) {
+            throw new \Exception('Machine not found');
+        }
+        return $machine;
+    }
 }
