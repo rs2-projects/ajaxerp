@@ -249,7 +249,7 @@ class ProductMaterialPurchaseController extends BackendController
             // ));
             $pdf->setPaper('a4');
             $pdf->setOrientation('portrait');
-            $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            // $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
             return $pdf->inline();
 
 //        } catch (\Exception $exception) {
