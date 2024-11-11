@@ -51,13 +51,13 @@
                                             <span>
                                                 Material Delivery: <span class="bold">@{{ formatDate(deliverData.delivery.delivery_date) }}</span>
                                             </span>
-                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary btn-sm">Print Qrcode</a>
+                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary btn-sm">Print QR code</a>
                                         </div>
                                         <div v-if="deliverData.type == 'board'" class="align-center d-flex justify-content-between">
                                             <span>
                                                 Board Delivery: <span class="bold">@{{ formatDate(deliverData.delivery.delivery_date) }}</span>
                                             </span>
-                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary">Print Qrcode</a>
+                                            <a :href="deliverData.barcodeDetailsLink" target="_blank" class="btn btn-primary btn-sm">Print QR code</a>
                                         </div>
                                     </div>
                                     <div class="my-attendance-report-wrapper">
