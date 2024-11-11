@@ -341,35 +341,43 @@ class ProductionService
                 throw new \Exception('Invalid Delivery!');
             }
 
-            $product_material_ids = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
+            $delivery_details = PreProductionMaterialDeliveryDetails::where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
                 ->where('pre_production_material_delivery_id', $id)
+                ->get();
+            $product_material_ids = $delivery_details
                 ->pluck('product_material_id')
                 ->toArray();
             
             $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
                 ->whereIn('id', $product_material_ids)
                 ->get()
-                ->map(function ($product_material) use ($id) {
+                ->map(function ($product_material) use ($id, $delivery_details) {
                     //get delivered purchase detail ids
-                    $purchaseDetailIds = PreProductionMaterialDeliveryDetailsItems::where('pre_production_material_delivery_id', $id)
+                    $deliveryDetailsItems = PreProductionMaterialDeliveryDetailsItems::where('pre_production_material_delivery_id', $id)
                         ->where('product_material_id', $product_material->id)
+                        ->get();
+                    $purchaseDetailIds = $deliveryDetailsItems
                         ->pluck('product_material_purchase_details_id')
                         ->toArray();
                     //get purchase details
+                    // dd($deliveryDetailsItems);
                     $purchase_details = ProductMaterialPurchaseDetails::with('materialPurchase')
                         ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                         ->whereIn('id', $purchaseDetailIds)
                         ->get();
                     $product_material->purchase_details = $purchase_details;
+                    $product_material->delivery_details = $delivery_details->where('product_material_id', $product_material->id)->first();
                     return $product_material;
                 });
             $data['finished_boards'] = [];
         } else {
 
-            $finished_borad_ids = PreProductionBoardDeliveryDetails::where('deleted', PreProductionBoardDeliveryDetails::DELETED_NO)
+            $delivery_details = PreProductionBoardDeliveryDetails::where('deleted', PreProductionBoardDeliveryDetails::DELETED_NO)
             ->where('pre_production_board_delivery_id', $id)
-            ->pluck('finished_board_id')
-            ->toArray();
+            ->get();
+            $finished_borad_ids = $delivery_details
+                ->pluck('finished_board_id')
+                ->toArray();
 
         // $finished_borad_ids = PreProductionBoard::where('deleted', PreProductionBoard::DELETED_NO)
         //     ->where('pre_production_id', $id)
@@ -379,7 +387,7 @@ class ProductionService
             $data['finished_boards'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
                 ->whereIn('id', $finished_borad_ids)
                 ->get()
-                ->map(function ($finished_board) {
+                ->map(function ($finished_board) use ($id, $delivery_details) {
                     //get purchase details
                     $availableProductions = PreProduction::where('deleted', PreProduction::DELETED_NO)
                         ->where('finished_goods_id', $finished_board->id)
@@ -389,6 +397,7 @@ class ProductionService
                         ->where('status', PreProduction::STATUS_ACTIVE)
                         ->get();
                     $finished_board->purchase_details = $availableProductions;
+                    $finished_board->delivery_details = $delivery_details->where('finished_board_id', $finished_board->id)->first();
                     return $finished_board;
                 });
             $data['product_materials'] = [];
