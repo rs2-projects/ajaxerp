@@ -11,7 +11,7 @@ use App\Http\Requests\ProductionStaff\Production\StoreProductionScanRequest;
 use App\Models\Production\PreProduction;
 use App\Services\ProductionStaff\ProductionService;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductionController extends BackendController
 {

@@ -566,15 +566,18 @@ class PreProductionMaterialRequestService
             throw new \Exception('Invalid Pre Production!');
         }
 
-        $product_material_ids = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
+        $pre_production_product_materials = PreProductionMaterial::where('deleted', PreProductionMaterial::DELETED_NO)
             ->where('pre_production_id', $id)
+            ->get();
+        $product_material_ids = $pre_production_product_materials
             ->pluck('product_material_id')
             ->toArray();
         
-        $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+        $data['product_materials'] = ProductMaterial::with('category')
+            ->where('deleted', ProductMaterial::DELETED_NO)
             ->whereIn('id', $product_material_ids)
             ->get()
-            ->map(function ($product_material) {
+            ->map(function ($product_material) use ($pre_production_product_materials) {
                 //get purchase details
                 $purchase_details = ProductMaterialPurchaseDetails::with('materialPurchase')
                     ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
@@ -582,18 +585,24 @@ class PreProductionMaterialRequestService
                     ->where('available_qty', '>', 0)
                     ->get();
                 $product_material->purchase_details = $purchase_details;
+                $product_material->pre_production_material = $pre_production_product_materials->where('product_material_id', $product_material->id)->first();
                 return $product_material;
             });
         
-        $finished_borad_ids = PreProductionBoard::where('deleted', PreProductionBoard::DELETED_NO)
+        
+        $pre_production_boards = PreProductionBoard::where('deleted', PreProductionBoard::DELETED_NO)
             ->where('pre_production_id', $id)
+            ->get();
+            
+        $finished_borad_ids = $pre_production_boards
             ->pluck('finished_board_id')
             ->toArray();
         
-        $data['finished_boards'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+        $data['finished_boards'] = FinishedGoods::with('finishedGoodsCategory')
+            ->where('deleted', FinishedGoods::DELETED_NO)
             ->whereIn('id', $finished_borad_ids)
             ->get()
-            ->map(function ($finished_board) {
+            ->map(function ($finished_board) use ($pre_production_boards) {
                 //get purchase details
                 $availableProductions = PreProduction::where('deleted', PreProduction::DELETED_NO)
                     ->where('finished_goods_id', $finished_board->id)
@@ -603,6 +612,7 @@ class PreProductionMaterialRequestService
                     ->where('status', PreProduction::STATUS_ACTIVE)
                     ->get();
                 $finished_board->purchase_details = $availableProductions;
+                $finished_board->pre_production_board = $pre_production_boards->where('finished_board_id', $finished_board->id)->first();
                 return $finished_board;
             });
         

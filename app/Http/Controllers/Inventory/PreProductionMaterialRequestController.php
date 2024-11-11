@@ -6,7 +6,7 @@ use App\Services\Inventory\PreProductionMaterialRequestService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Inventory\MaterialRequest\StoreMaterialRequest;
 use Illuminate\Http\Request;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class PreProductionMaterialRequestController extends BackendController
