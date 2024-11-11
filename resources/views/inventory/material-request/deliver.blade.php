@@ -37,7 +37,7 @@
 							<span>
 								<i class="fa fa-print"></i>
 							</span>
-							Print Barcodes
+							Print QR code
 						</a>
 					</div>
 					<div class="pd-table-box">
