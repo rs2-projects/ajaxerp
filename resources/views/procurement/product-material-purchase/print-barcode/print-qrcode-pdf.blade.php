@@ -42,7 +42,8 @@
                     {{-- <p>{{ $data->barcode }}</p> --}}
                     <p>{{$data->name}}</p>
                     {{-- <p>MRP: {{getCurrencySymbol()}} {{ formatNumber($data->unit_price) }}</p> --}}
-                    <p>Batch# {{ $data->batch_number }}</p>
+                    <p>Batch: {{ $data->batch_number }}</p>
+                    <p>Code: {{ $data->product_code }}</p>
                 </div>
             @endfor
         </div>

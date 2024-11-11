@@ -23,7 +23,7 @@
             </tbody>
         </table>
         <div class="submit-section mt-2">
-            <button class="btn btn-primary submit-btn" type="submit">Generate Barcode</button>
+            <button class="btn btn-primary submit-btn" type="submit">Generate Qr Code</button>
         </div>
     </div>
 </form>
