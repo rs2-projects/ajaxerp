@@ -67,7 +67,11 @@
                                         <a href="#" @click.prevent="scanRawMaterialModal()" class="raw-material-scan-btn">Scan Raw Materials</a>
                                     @endif
                                     @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                        <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @if(count($processData->processMachines) > 0)
+                                            <a href="javascript:void(0)" data-machine-id="{{ $processData->processMachines->first()->machine->machine_code }}" onclick="startProcess(this, '{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @else
+                                            <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @endif
                                     @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                         <a href="javascript:void(0)" pre_production_id="{{$pre_production->id}}" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
                                     @else
@@ -299,6 +303,7 @@
 
 @section('modals')
     @include('production-staff.production._verify_output_modal')
+    @include('production-staff.production._verify_machine_modal')
     @include('production-staff.production._re_requisiton_modal')
 @endsection
 
@@ -414,34 +419,61 @@
 
 @section('js')
     <script>
+        $(document).ready(function () {
+            $('#verifyMachineModal').modal().on('shown.bs.modal', function() {
+                $('#scanning_machine_code').focus()
+            });
+        });
+        $(document).on("submit", "#verifyMachineForm", function (e) {
+            e.preventDefault();
+            verifyMachine();
+        });
+        var selected_machine_id = '';
+        var machine_start_uri = '';
+        function startProcess(element, uri) {
+            selected_machine_id = $(element).attr('data-machine-id');
+            machine_start_uri = uri;
+            $("#verifyMachineModal").modal('show');
+            $("#scanning_machine_code").focus();
+        }
+        function verifyMachine () {
+            let scannedCode = $("#scanning_machine_code").val();
+            if(scannedCode == selected_machine_id){
+                $("#verifyMachineModal").modal('hide');
+                changeStatus(machine_start_uri);
+            }else{
+                showErrorAlert('Invalid Machine');
+            }
+        }
         function changeStatus(uri) {
-           console.log(uri);
-            Swal.fire({
-                title: '',
-                html: 'Are you sure to update process status?',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: `No`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    ajaxGet(
-                        uri,
-                        {},
-                        function (response) {
-                          if (response.status == 200){
-                            toastr.success(response.message);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
-                          }else{
-                            toastr.error(response.message);
-                          }
-                        }
-                    );
-                } else if (result.isDenied) {
+        //    console.log(uri);
+            // Swal.fire({
+            //     title: '',
+            //     html: 'Are you sure to update process status?',
+            //     showDenyButton: true,
+            //     confirmButtonText: 'Yes',
+            //     denyButtonText: `No`,
+            // }).then((result) => {
+            //     if (result.isConfirmed) {
+                    
+            //     } else if (result.isDenied) {
 
+            //     }
+            // })
+            ajaxGet(
+                uri,
+                {},
+                function (response) {
+                    if (response.status == 200){
+                    toastr.success(response.message);
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                    }else{
+                    toastr.error(response.message);
+                    }
                 }
-            })
+            );
         }
 
         let currentProcessBtn = '';

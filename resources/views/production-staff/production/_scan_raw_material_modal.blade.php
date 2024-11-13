@@ -41,8 +41,9 @@
                                                     </thead>
                                                     <tbody class="erp-tbody">
                                                         <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
-                                                            <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                             <td class="erp-tbody-td text-start">
+                                                                <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                                
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
                                                                 <h4 class="text-start d-table-title scan-material-category" v-if="deliverData.type == 'other'">@{{detailsData.material.category.name}}</h4>
