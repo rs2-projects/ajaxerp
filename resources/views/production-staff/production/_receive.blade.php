@@ -67,8 +67,8 @@
                                                     <table class="table mb-0 erp-table">
                                                         <thead class="erp-thead">
                                                             <tr class="erp-tr">
-                                                                <th class="erp-th">Category </th>
-                                                                <th class="erp-th text-center">Item Name </th>
+                                                                <th class="erp-th max-td-width-150">Category </th>
+                                                                <th class="erp-th text-center max-td-width-150">Item Name </th>
                                                                 <th class="erp-th text-center">Qty </th>
                                                                 <th class="erp-th text-center">Delivery Qty</th>
                                                                 <th class="erp-th text-center">Received Qty</th>
@@ -80,12 +80,12 @@
                                                         <tbody class="erp-tbody">
                                                             <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
                                                                 
-                                                                <td class="erp-tbody-td text-start">
+                                                                <td class="erp-tbody-td text-start max-td-width-150">
                                                                     <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                                     <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.category.name}}</h4>
                                                                     <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.category.name}}</h4>
                                                                 </td>
-                                                                <td class="erp-tbody-td text-center">
+                                                                <td class="erp-tbody-td text-center max-td-width-150">
                                                                     <h4 class="text-center d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
                                                                     <h4 class="text-center d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
                                                                 </td>
