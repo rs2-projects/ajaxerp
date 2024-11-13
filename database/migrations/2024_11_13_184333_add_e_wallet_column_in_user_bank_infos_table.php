@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_bank_infos', function (Blueprint $table) {
-            $table->string('e_wallet')->nullable()->after('bank_account_number');
+            $table->string('e_wallet')->nullable()->after('account_number');
         });
     }
 
