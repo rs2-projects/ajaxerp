@@ -312,7 +312,12 @@
                                                         <input class="form-control " value="{{ $bank->note }}" name="note[]" type="text" >
                                                     </div>
                                                 </div>
-                                                <div class="erp-em-reg-step-item flex-48"></div>
+                                                <div class="erp-em-reg-step-item flex-48">
+                                                    <div class="input-block erp-step-input-block ">
+                                                        <label class="col-form-label">E-Wallet (Gcash/Maya): </label>
+                                                        <input class="form-control " value="{{ $bank->e_wallet }}" name="e_wallet[]" type="text" >
+                                                    </div>
+                                                </div>
                                             </div>
                                         @endforeach
                                     @endif
