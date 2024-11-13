@@ -701,6 +701,7 @@ class EmployeeService
                             $bank_info->branch_name = $request->branch_name[$key];
                             $bank_info->account_name = $request->account_name[$key];
                             $bank_info->account_number = $request->account_number[$key];
+                            $bank_info->e_wallet = $request->e_wallet[$key];
                             $bank_info->routing_number = $request->routing_number[$key];
                             $bank_info->swift_code = $request->swift_code[$key];
                             $bank_info->note = $request->note[$key];
@@ -716,6 +717,7 @@ class EmployeeService
                         $bank_info->branch_name = $request->branch_name[$key];
                         $bank_info->account_name = $request->account_name[$key];
                         $bank_info->account_number = $request->account_number[$key];
+                        $bank_info->e_wallet = $request->e_wallet[$key];
                         $bank_info->routing_number = $request->routing_number[$key];
                         $bank_info->swift_code = $request->swift_code[$key];
                         $bank_info->note = $request->note[$key];

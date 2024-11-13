@@ -185,6 +185,10 @@
                                                     <div class="title">Note :</div>
                                                     <div class="text">{{ $bankInfo->note??'N/A' }}</div>
                                                 </li>
+                                                <li>
+                                                    <div class="title">E-Wallet (Gcash/Maya) :</div>
+                                                    <div class="text">{{ $bankInfo->e_wallet??'N/A' }}</div>
+                                                </li>
                                             </ul>
                                         @endforeach
                                     @endif
