@@ -17,6 +17,7 @@ class UserExperienceInfo extends BaseModel
         'designation',
         'start_date',
         'end_date',
+        'description',
         'created_by',
         'updated_by',
         'deleted_by',

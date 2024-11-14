@@ -143,6 +143,12 @@
                     <div class="cal-icon"><input class="form-control datetimepicker"  name="end_date[]" type="text" ></div>
                 </div>
             </div>
+            <div class="erp-em-reg-step-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Description: </label>
+                    <textarea name="description[]" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
         </div>
     </div>
 

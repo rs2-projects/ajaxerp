@@ -851,6 +851,7 @@ class EmployeeService
                             $exp_info->designation = $request->designation[$key];
                             $exp_info->start_date = $request->start_date[$key];
                             $exp_info->end_date = $request->end_date[$key];
+                            $exp_info->description = $request->description[$key];
                             $exp_info->updated_by = auth()->id();
                             $exp_info->updated_at = Carbon::now();
                             $exp_info->save();
@@ -863,6 +864,7 @@ class EmployeeService
                         $exp_info->designation = $request->designation[$key];
                         $exp_info->start_date = $request->start_date[$key];
                         $exp_info->end_date = $request->end_date[$key];
+                        $exp_info->description = $request->description[$key];
                         $exp_info->created_by = auth()->id();
                         $exp_info->created_at = Carbon::now();
                         $exp_info->updated_by = auth()->id();
