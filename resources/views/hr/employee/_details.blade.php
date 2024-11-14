@@ -104,12 +104,28 @@
                                 <div class="ed-box-body-inner">
                                     <ul class="personal-info ">
                                         <li>
-                                            <div class="title">NID No :</div>
+                                            <div class="title">Government ID :</div>
                                             <div class="text">{{ $employee->nid_no?? 'N/A' }}</div>
                                         </li>
                                         <li>
                                             <div class="title">Passport No :</div>
                                             <div class="text">{{ $employee->passport_no }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">TIN Number :</div>
+                                            <div class="text">{{ $employee->tin_number }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">SSS Number :</div>
+                                            <div class="text">{{ $employee->sss_number }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">PHIC :</div>
+                                            <div class="text">{{ $employee->phic }}</div>
+                                        </li>
+                                        <li>
+                                            <div class="title">Pag-Ibig :</div>
+                                            <div class="text">{{ $employee->pag_ibig }}</div>
                                         </li>
                                         <li>
                                             <div class="title">Passport Exp. Date :</div>
@@ -184,6 +200,10 @@
                                                 <li>
                                                     <div class="title">Note :</div>
                                                     <div class="text">{{ $bankInfo->note??'N/A' }}</div>
+                                                </li>
+                                                <li>
+                                                    <div class="title">E-Wallet (Gcash/Maya) :</div>
+                                                    <div class="text">{{ $bankInfo->e_wallet??'N/A' }}</div>
                                                 </li>
                                             </ul>
                                         @endforeach

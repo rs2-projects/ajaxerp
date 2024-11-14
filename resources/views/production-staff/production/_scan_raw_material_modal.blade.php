@@ -41,8 +41,9 @@
                                                     </thead>
                                                     <tbody class="erp-tbody">
                                                         <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
-                                                            <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                             <td class="erp-tbody-td text-start">
+                                                                <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                                
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
                                                                 <h4 class="text-start d-table-title scan-material-category" v-if="deliverData.type == 'other'">@{{detailsData.material.category.name}}</h4>
@@ -52,7 +53,7 @@
                                                                 <h4 class="text-center d-table-title">@{{detailsData.total_quantity}}</h4>
                                                             </td>
                                                             <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">@{{detailsData.quantity}}</h4>
+                                                                <h4 class="text-center d-table-title">@{{detailsData.received_qty}}</h4>
                                                             </td>
                                                             <td class="erp-tbody-td text-center">
                                                                 <h4 class="text-center d-table-title">@{{detailsData.scanned_qty}}</h4>
@@ -63,11 +64,22 @@
                                                                         <span>@{{detailsData.pending_scans?.length}}</span>
                                                                     </div>
                                                                     <div class="pd-recived-product-scrol-box">
-                                                                        <div v-for="(item, itemIndex) in detailsData.pending_scans" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2">
-                                                                            <div class="pd-recived-product-c-item">
-                                                                                <p class="mb-0">@{{item.barcode}}</p>
-                                                                            </div>
+                                                                        <div v-for="(item, itemIndex) in detailsData.pending_scans" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2" v-if="deliverData.type == 'other'">
+                                                                            <p>
+                                                                                @{{ item.purchase_details.material_purchase.batch_number }}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>@{{ item.received_qty - item.scanned_qty }}</strong>
+                                                                            </p>
                                                                         </div>
+                                                                        {{-- <div v-for="(item, itemIndex) in detailsData.pending_items" :key="itemIndex" class="pd-recived-product-item d-flex align-items-center gap-2" v-if="deliverData.type == 'board'">
+                                                                            <p>
+                                                                                @{{ item.production.pre_production_batch_no }}
+                                                                            </p>
+                                                                            <p>
+                                                                                <strong>@{{ item.quantity }}</strong>
+                                                                            </p>
+                                                                        </div> --}}
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -77,12 +89,13 @@
                                                                     <h4 class="text-center d-table-title approved-status">Scanned</h4>
                                                                 </div>
                                                                 <div class="pd-input-box" v-else>
-                                                                    <input
+                                                                    {{-- <input
                                                                         class="form-control text-center bar-code-input"
                                                                         type="text"
                                                                         placeholder="Scan QR / Bar Code"
                                                                         @keydown.enter.prevent="handleBarcodeScan($event, deliverData.delivery.id, detailsData.id, deliverIndex, detailsIndex)"
-                                                                        />
+                                                                        /> --}}
+                                                                        <button type="button" v-on:click="openScanModal(deliverIndex, detailsIndex)" class="btn btn-primary btn-sm">Scan</button>
                                                                 </div>
                                                                 {{-- otherwise show fully received text --}}
                                                             </td>
@@ -93,15 +106,19 @@
                                                                     <div class="pd-recived-product-scrol-box">
                                                                     <div
                                                                         class="pd-recived-product-item d-flex align-items-center gap-2"
-                                                                        v-for="(barCode, barCodeIndex) in detailsData.scannedBarcodes"
-                                                                        :key="barCodeIndex"
+                                                                        v-for="(selectedItem, selectedItemIndex) in detailsData.scan_items" :key="selectedItemIndex" 
+                                                                        v-if="deliverData.type == 'other'"
                                                                     >
+                                                                        <input type="hidden" :name="'selected_qty['+deliverIndex+'][]'" :value="selectedItem.selected_qty">
+                                                                        <input type="hidden" :name="'delivery_items['+deliverIndex+'][]'" :value="selectedItem.id">
+                                                                        <p>
+                                                                            @{{ selectedItem.purchase_details.material_purchase.batch_number }}
+                                                                        </p>
+                                                                        <p>
+                                                                            @{{ selectedItem.selected_qty }}
+                                                                        </p>
                                                                         <div class="pd-recived-product-c-item">
-                                                                            <input type="hidden" :name="'code['+detailsIndex+'][]'" :value="barCode"/>
-                                                                            <p class="mb-0">@{{ barCode }}</p>
-                                                                        </div>
-                                                                        <div class="pd-recived-product-c-item">
-                                                                            <a href="#" @click.prevent="removeBarcode(deliverIndex, detailsIndex, barCodeIndex)"><i class="fa-solid fa-xmark"></i></a>
+                                                                            <a href="#" @click.prevent="removeBarcode(deliverIndex, detailsIndex)"><i class="fa-solid fa-xmark"></i></a>
                                                                         </div>
                                                                     </div>
                                                                     </div>

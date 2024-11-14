@@ -477,3 +477,7 @@
 .production-status-wrapper ul{
     list-style: circle;
 }
+.max-td-width-150 {
+    max-width: 150px;
+    white-space: break-spaces !important;
+}
