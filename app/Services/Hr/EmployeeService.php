@@ -170,6 +170,10 @@ class EmployeeService
             $user->password = bcrypt($request->password);
             $user->nid_no = $request->nid_no??null;
             $user->nid_image = $nid_image_path??null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no??null;
             $user->passport_expiry_date = $request->passport_expiry_date??null;
             $user->passport_image = $passport_image_path??null;
@@ -349,6 +353,10 @@ class EmployeeService
             $user->contractor_id = $contractorId??null;
             $user->nid_no = $request->nid_no ?? null;
             $user->nid_image = $nid_image_path ?? null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no ?? null;
             $user->passport_expiry_date = $request->passport_expiry;
             $user->passport_image = $passport_image_path ?? null;
@@ -646,6 +654,10 @@ class EmployeeService
 
             $user->nid_no = $request->nid_no ?? null;
             $user->nid_image = $nid_image_path ?? null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no ?? null;
             $user->passport_expiry_date = $request->passport_expiry_date ?? null;
             $user->passport_image = $passport_image_path ?? null;
