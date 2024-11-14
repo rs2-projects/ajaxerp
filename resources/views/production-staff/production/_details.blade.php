@@ -220,6 +220,88 @@
             </div>
         </div>
         @include('production-staff.production._scan_raw_material_modal')
+
+
+
+        <!-- Scan Modal -->
+        <div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="scanModalLabel">Scan Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" v-if="selected_delviery_index != null">
+                        <div class="form-group">
+                            <label class="mb-2" for="scanning_qrcode">Scan QrCode</label>
+                            <input type="text" class="form-control" id="scanning_qrcode" v-model="scanning_qrcode" placeholder="Scan QrCode">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="scanItem()">Check</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receive Modal -->
+        <div class="modal fade" id="receiveModal" tabindex="-1" aria-labelledby="receiveModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="receiveModalLabel">Scan Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" v-if="selected_delviery_index != null">
+                        <h4 >Remaining Scan Quantity: @{{ remainingScanQty(selected_delviery_index,selected_delviery_details_index) }}</h4>
+                        <table class="table table-bordered table-striped table-hover" v-if="deliveries[selected_delviery_index].type == 'other'">
+                            <thead>
+                                <tr>
+                                    <th>Purchase ID</th>
+                                    <th>Pending Qty</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <tr v-for="(pendingScan, index) in deliveries[selected_delviery_index].delivery_details[selected_delviery_details_index].pending_scans">
+                                    <td>@{{ pendingScan.purchase_details.material_purchase.batch_number }}</td>
+                                    <td class="text-center">@{{ pendingScan.received_qty - pendingScan.scanned_qty }}</td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="Enter Qty" v-model="pendingScan.selected_qty" :max="pendingScan.received_qty - pendingScan.scanned_qty">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {{-- <table class="table table-bordered table-striped table-hover" v-else>
+                            <thead>
+                                <tr>
+                                    <th>Production ID</th>
+                                    <th>Batch</th>
+                                    <th>Available Qty</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <tr v-for="(pendingItem, index) in deliveries[selected_delviery_index].delivery_details[selected_delviery_details_index].pending_items">
+                                    <td>@{{ pendingItem.production.pre_production_no }}</td>
+                                    <td>@{{ pendingItem.production.pre_production_batch_no }}</td>
+                                    <td class="text-center">@{{ pendingItem.quantity - pendingItem.received_qty }}</td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="Enter Qty" v-model="pendingItem.selected_qty" :max="pendingItem.quantity - pendingItem.received_qty">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> --}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="selectScanItem()">Receive</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!--End::row-1 -->
@@ -302,6 +384,8 @@
 @endsection
 
 @section('modals')
+
+
     @include('production-staff.production._verify_output_modal')
     @include('production-staff.production._verify_machine_modal')
     @include('production-staff.production._re_requisiton_modal')
@@ -659,12 +743,20 @@
             }, 'show_input_error');
         });
 
+        $(document).ready(function () {
+            $('#scanModal').modal().on('shown.bs.modal', function() {
+                $('#scanning_qrcode').focus()
+            });
+        });
         // scan raw materials....
         var { createApp } = Vue;
         var vueApp = createApp({
             data() {
                 return {
                     deliveries: [],
+                    selected_delviery_index:null,
+                    selected_delviery_details_index:null,
+                    scanning_qrcode: '',
                 };
             },
             methods: {
@@ -739,6 +831,7 @@
                                             ...detail,
                                             scannedBarcodes: [],
                                             barcodeCounts: 0,
+                                            scan_items: [],
                                         };
                                     })
                                 };
@@ -753,7 +846,7 @@
                 checkValidation(e, deliveryIndex) {
                     e.preventDefault();
                     const delivery = this.deliveries[deliveryIndex];
-                    if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
+                    if (delivery.delivery_details.every(detail => detail.scan_items.length === 0)) {
                         showErrorAlert('Oops!', 'Please add scanned items!');
                     } else {
                         scanStoreForm(delivery.delivery.id, deliveryIndex);
@@ -790,7 +883,101 @@
                             })
                         };
                     });
-                }
+                },
+
+                openScanModal(deliverIndex, detailsIndex){
+                    
+                    let delivery_details = this.deliveries[deliverIndex].delivery_details[detailsIndex];
+                    if(delivery_details.scan_status == '1'){
+                        showErrorAlert('Error', 'All items are scanned');
+                    }else{
+                        this.selected_delviery_index = deliverIndex;
+                        this.selected_delviery_details_index = detailsIndex;
+                        $('#scanModal').modal('show');
+                    }
+                },
+
+                scanItem() {
+                    let delivery = this.deliveries[this.selected_delviery_index];
+                    let delivery_details = delivery.delivery_details[this.selected_delviery_details_index];
+                    let barcodeValue = this.scanning_qrcode;
+
+                    if(delivery.type == 'other') {
+                        if (delivery_details.material.product.code == barcodeValue) {
+                            $("#scanModal").modal('hide');
+                            $("#receiveModal").modal('show');
+                            this.scanning_qrcode = '';
+                        } else {
+                            showErrorAlert('Error', 'Invalid Item');
+                            this.scanning_qrcode = '';
+                        }
+                    } else {
+                        if (delivery_details.board.product.code == barcodeValue) {
+                            $("#scanModal").modal('hide');
+                            $("#receiveModal").modal('show');
+                            this.scanning_qrcode = '';
+                        } else {
+                            showErrorAlert('Error', 'Invalid Item');
+                            this.scanning_qrcode = '';
+                        }
+                    }
+                },
+
+                remainingScanQty(deliveryIndex, detailsIndex){
+                    // console.log(deliveryIndex, detailsIndex);
+                    let delivery = this.deliveries[deliveryIndex].delivery_details[detailsIndex];
+                    return delivery.received_qty - delivery.scanned_qty;
+                },
+
+                selectScanItem() {
+                    let delivery = this.deliveries[this.selected_delviery_index];
+                    let delivery_details = this.deliveries[this.selected_delviery_index].delivery_details[this.selected_delviery_details_index];
+                    let total_selected_qty = 0;
+                    let scan_items = [];
+                    if(delivery.type == 'other'){
+                        for(let i=0; i<delivery_details.pending_scans.length; i++) {
+                            let pendingItem = delivery_details.pending_scans[i];
+                            if(pendingItem.selected_qty == undefined){
+                                pendingItem.selected_qty = 0;
+                            }
+                            if(pendingItem.selected_qty > (pendingItem.received_qty - pendingItem.scanned_qty)){
+                                showErrorAlert('Error', 'Items Exceeding Received Quantity');
+                                return false;
+                            }
+                            total_selected_qty += parseInt(pendingItem.selected_qty);
+                            if(pendingItem.selected_qty > 0){
+                                scan_items.push(pendingItem);
+                            }
+                        }
+                    } else {
+                        for(let i=0; i<delivery_details.pending_scans.length; i++) {
+                            let pendingItem = delivery_details.pending_scans[i];
+                            if(pendingItem.selected_qty == undefined){
+                                pendingItem.selected_qty = 0;
+                            }
+                            if(pendingItem.selected_qty > (pendingItem.received_qty - pendingItem.scanned_qty)){
+                                showErrorAlert('Error', 'Items Exceeding Received Quantity');
+                                return false;
+                            }
+                            total_selected_qty += parseInt(pendingItem.selected_qty);
+                            if(pendingItem.selected_qty > 0){
+                                scan_items.push(pendingItem);
+                            }
+                        }
+
+                    }
+                    
+                    if(total_selected_qty > this.remainingScanQty(this.selected_delviery_index, this.selected_delviery_details_index)){
+                        showErrorAlert('Error', 'Items Exceeding Received Quantity.');
+                    }else{
+                        // material.material.delivered_qty += total_selected_qty;
+                        delivery_details.scan_items = scan_items;
+                        this.selected_delviery_index = null;
+                        this.selected_delviery_details_index = null;
+                        $('#receiveModal').modal('hide');
+                        $("#scanRawMaterialModal").modal('show');
+                    }
+                },
 
             },
             mounted() {
@@ -800,7 +987,7 @@
 
         $('#scanRawMaterialModal').on('hidden.bs.modal', function () {
             setTimeout(function () {
-                location.reload();
+                // location.reload();
             }, 100);
         })
         function scanStoreForm(deliveryID, deliveryIndex){

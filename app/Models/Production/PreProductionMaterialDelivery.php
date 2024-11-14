@@ -69,6 +69,6 @@ class PreProductionMaterialDelivery extends BaseModel
     {
         return $this->hasMany(PreProductionMaterialDeliveryDetails::class, 'pre_production_material_delivery_id', 'id')
             ->where('deleted', PreProductionMaterialDeliveryDetails::DELETED_NO)
-            ->where('received_status', '!=', PreProductionMaterialDeliveryDetails::RECEIVED_STATUS_PENDING);
+            ->where('scan_status', '!=', PreProductionMaterialDeliveryDetailsItems::SCAN_STATUS_SCANNED);
     }
 }
