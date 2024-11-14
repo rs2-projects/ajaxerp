@@ -12757,13 +12757,18 @@ th.width-64 {
   margin-bottom: 0;
   font-weight: 700;
   font-size: 13px;
-  overflow: hidden;
+ /*  overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
-  -webkit-box-orient: vertical;
+  -webkit-box-orient: vertical; */
   width: 98%;
+  white-space: break-spaces;
 }
+/* .max-width-150px {
+  max-width: 150px;
+  white-space: pre-line !important;
+} */
 
 .em-id {
   font-size: 12px;
