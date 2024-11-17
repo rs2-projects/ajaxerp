@@ -389,6 +389,7 @@
     @include('production-staff.production._verify_output_modal')
     @include('production-staff.production._verify_machine_modal')
     @include('production-staff.production._re_requisiton_modal')
+    @include('production-staff.production._output_damage_modal')
 @endsection
 
 @section('css')
@@ -489,6 +490,16 @@
             font-size: 11px;
             font-weight: 500;
         }
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        .reuseDetails {
+            border: 1px dashed #ddd;
+            margin-top: 15px;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
  </style>
 @endsection
 
@@ -577,6 +588,67 @@
             }, 'default');
         }
 
+        function openReuse() {
+            $("#reuseDetails").slideDown();
+        }
+
+        function damageOutput(btn, output_id) {
+            let uri = "{{ route('production-staff.production.production.verify-output.update', [':output_id', 2]) }}";
+            uri = uri.replace(':output_id', output_id);
+            $("#outputDamageForm").attr('action', uri);
+            $("#outputDamageModal").modal('show');
+        }
+
+        function submitDamageOutput(type) {
+            let request_data = {damage_type: type};
+            if(type == 'reuse') {
+                let reuse_length = $("#reuse_length").val();
+                let reuse_width = $("#reuse_width").val();
+                let reuse_thickness = $("#reuse_thickness").val();
+                if(!reuse_length) {
+                    toastr.error('Please enter length');
+                    $("#reuse_length").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_length").removeClass("is-invalid");
+                }
+                if(!reuse_width) {
+                    toastr.error('Please enter width');
+                    $("#reuse_width").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_width").removeClass("is-invalid");
+                }
+                if(!reuse_thickness) {
+                    toastr.error('Please enter thickness');
+                    $("#reuse_thickness").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_thickness").removeClass("is-invalid");
+                }
+
+                request_data.reuse_length = reuse_length;
+                request_data.reuse_width = reuse_width;
+                request_data.reuse_thickness = reuse_thickness;
+            }
+            let uri = $("#outputDamageForm").attr('action');
+            ajaxGet(
+                uri,
+                request_data,
+                function (response) {
+                    if (response.status == 200){
+                        showSuccessAlert('',response.message);
+                        $("#outputDamageModal").modal('hide');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 500);
+                    }else{
+                        toastr.error(response.message);
+                    }
+                }
+            );
+        }
+
         function verifyOutput(uri, btn, type) {
             Swal.fire({
                 title: '',
@@ -598,7 +670,6 @@
                                 currentProcessBtn.classList.remove('complete-process-btn');
                                 currentProcessBtn.classList.add('rs-pre-completed-process');
                                 currentProcessBtn.textContent = 'Completed Process';
-
                             }
                             if(type == 'perfect' ){
                                 btn.closest('tr').classList.add('perfect-qc-tr');

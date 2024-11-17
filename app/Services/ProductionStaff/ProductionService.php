@@ -2,6 +2,8 @@
 
 namespace App\Services\ProductionStaff;
 
+use App\Models\Inventory\CutOutBoard;
+use App\Models\Inventory\CutOutBoardInventory;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionBoard;
@@ -1348,7 +1350,7 @@ class ProductionService
         return $data;
     }
 
-    public function updateVerifyOutput($id, $type){
+    public function updateVerifyOutput($request, $id, $type){
         DB::beginTransaction();
         $process_status = PreProductionProcess::PROCESS_STATUS_PROCESSING;
         try {
@@ -1422,6 +1424,60 @@ class ProductionService
                 $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
                 $pre_production->updated_at = now();
                 $pre_production->save();
+            }
+
+            if(($type == 2) && ($request->damage_type == "reuse")) {
+                $damage_qty = 1;
+                //find cutoutboard
+                $cutOutBoard = CutOutBoard::where('name', $estimatedOutput->name)
+                    ->where('status', CutOutBoard::STATUS_ACTIVE)
+                    ->first();
+                if(empty($cutOutBoard)){
+                    $cutOutBoard = new CutOutBoard();
+                    $cutOutBoard->name = $estimatedOutput->name;
+                    $cutOutBoard->status = CutOutBoard::STATUS_ACTIVE;
+                    $cutOutBoard->created_by = auth()->guard('production-staff')->id();
+                    $cutOutBoard->created_at = now();
+                    $cutOutBoard->updated_by = auth()->guard('production-staff')->id();
+                    $cutOutBoard->updated_at = now();
+                    $cutOutBoard->save();
+                }
+
+                //find cutoutboardinventory
+                $cutOutBoardInventory = CutOutBoardInventory::where('cut_out_board_id', $cutOutBoard->id)
+                    ->where('damage_pre_production_id', $pre_production_id)
+                    ->where('damage_pre_production_process_estimated_output_id', $estimatedOutput->id)
+                    ->where('length', $request->reuse_length)
+                    ->where('width', $request->reuse_width)
+                    ->where('thickness', $request->reuse_thickness)
+                    ->where('status', CutOutBoardInventory::STATUS_ACTIVE)
+                    ->first();
+                
+                if(empty($cutOutBoardInventory)){
+                    $cutOutBoardInventory = new CutOutBoardInventory();
+                    $cutOutBoardInventory->cut_out_board_id = $cutOutBoard->id;
+                    $cutOutBoardInventory->length = $request->reuse_length;
+                    $cutOutBoardInventory->width = $request->reuse_width;
+                    $cutOutBoardInventory->thickness = $request->reuse_thickness;
+                    $cutOutBoardInventory->total_qty = $damage_qty;
+                    $cutOutBoardInventory->available_qty = $damage_qty;
+                    $cutOutBoardInventory->damage_pre_production_id = $pre_production_id;
+                    $cutOutBoardInventory->damage_pre_production_process_estimated_output_id = $estimatedOutput->id;
+                    $cutOutBoardInventory->status = CutOutBoardInventory::STATUS_ACTIVE;
+                    $cutOutBoardInventory->created_by = auth()->guard('production-staff')->id();
+                    $cutOutBoardInventory->created_at = now();
+                } else {
+                    $cutOutBoardInventory->total_qty += $damage_qty;
+                    $cutOutBoardInventory->available_qty += $damage_qty;
+                }
+                
+                $cutOutBoardInventory->updated_by = auth()->guard('production-staff')->id();
+                $cutOutBoardInventory->updated_at = now();
+                $cutOutBoardInventory->save();
+
+                $cutOutBoard->available_qty += $damage_qty;
+                $cutOutBoard->save();
+
             }
 
         }catch (\Exception $e) {

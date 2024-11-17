@@ -30,7 +30,8 @@
                                     <td class="erp-tbody-td text-left">
                                         <div class="qc-btn-wrap">
                                             <a href="javascript:void(0)" class="qc-btn qc-perfect" onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 1]) }}' , this, 'perfect')">Perfect </a>
-                                            <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 2]) }}' , this, 'damage')">Damage </a>
+                                            {{-- <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 2]) }}' , this, 'damage')">Damage </a> --}}
+                                            <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="damageOutput(this,{{ $data->id }})">Damage </a>
                                         </div>
                                     </td>
                                 </tr>
