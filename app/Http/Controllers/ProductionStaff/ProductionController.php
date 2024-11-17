@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\ProductionStaff;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\ProductionStaff\Production\StoreProductionDispatchRequest;
