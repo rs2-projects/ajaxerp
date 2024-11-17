@@ -175,6 +175,12 @@
                     <li class="menu-title">
                         <span>Inventory</span>
                     </li>
+                    
+                    @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
+                        <li>
+                            <a href="{{route('inventory.reuse-items.index')}}"  class="{{ ($activeMenu == 'inventory.reuse-items.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Reuse Items</span></a>
+                        </li>
+                    @endif
                     @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
                         <li>
                             <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
