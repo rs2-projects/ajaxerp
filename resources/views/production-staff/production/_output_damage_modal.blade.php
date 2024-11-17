@@ -12,7 +12,7 @@
                 <form action="" method="GET" id="outputDamageForm">
                 </form>
 
-                <div class="row">
+                <div class="row damageOptionButtons">
                     <div class="col-md-6">
                         <button type="button" class="btn btn-primary btn-block" onclick="openReuse()">Re-Use</button>
                         {{-- <input type="button" name="damage_type" value="Reuse" class="btn btn-primary btn-block"> --}}
@@ -25,6 +25,7 @@
 
                 <div class="reuseDetails" id="reuseDetails" style="display: none;">
                     <h4>Re-Use Details:</h4>
+                    <input type="hidden" name="reuse_type" id="hidden_reuse_type" value="only_reuse">
                     <div class="row">
                         <div class="col-md-4 mt-2">
                             <label for="reuse_length" class="form-label">Length</label>

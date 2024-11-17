@@ -592,11 +592,30 @@
             $("#reuseDetails").slideDown();
         }
 
+        function addReuseItem(btn, output_id) {
+            let uri = "{{ route('production-staff.production.production.verify-output.update', [':output_id', 2]) }}";
+            uri = uri.replace(':output_id', output_id);
+
+            let damageModal = $("#outputDamageModal");
+            $("#outputDamageForm").attr('action', uri);
+            damageModal.find('.modal-title').text('Re-Use Item');
+            damageModal.find("#hidden_reuse_type").val('only_reuse');
+            damageModal.find('.damageOptionButtons').hide();
+            damageModal.find("#reuseDetails").show();
+            damageModal.modal('show');
+        }
+
         function damageOutput(btn, output_id) {
             let uri = "{{ route('production-staff.production.production.verify-output.update', [':output_id', 2]) }}";
             uri = uri.replace(':output_id', output_id);
+
+            let damageModal = $("#outputDamageModal");
             $("#outputDamageForm").attr('action', uri);
-            $("#outputDamageModal").modal('show');
+            damageModal.find('.modal-title').text('Damage Output?');
+            damageModal.find("#hidden_reuse_type").val('damage');
+            damageModal.find('.damageOptionButtons').show();
+            damageModal.find("#reuseDetails").hide();
+            damageModal.modal('show');
         }
 
         function submitDamageOutput(type) {
@@ -605,6 +624,7 @@
                 let reuse_length = $("#reuse_length").val();
                 let reuse_width = $("#reuse_width").val();
                 let reuse_thickness = $("#reuse_thickness").val();
+                let reuse_type = $("#hidden_reuse_type").val();
                 if(!reuse_length) {
                     toastr.error('Please enter length');
                     $("#reuse_length").addClass("is-invalid").focus();
@@ -630,6 +650,7 @@
                 request_data.reuse_length = reuse_length;
                 request_data.reuse_width = reuse_width;
                 request_data.reuse_thickness = reuse_thickness;
+                request_data.reuse_type = reuse_type;
             }
             let uri = $("#outputDamageForm").attr('action');
             ajaxGet(

@@ -1361,70 +1361,75 @@ class ProductionService
             if(!$estimatedOutput){
                 throw new \Exception('Estimated Output not found');
             }
-
-            if($type == 1){
-                $estimatedOutput->verified_qty = $estimatedOutput->verified_qty + 1;
-            } else if($type == 2){
-                $estimatedOutput->damage_qty = $estimatedOutput->damage_qty + 1;
-            } else if($type == 3){
-                $estimatedOutput->verified_qty = $estimatedOutput->quantity;
-            }
-
-            $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
-            $estimatedOutput->updated_at = now();
-            $estimatedOutput->save();
-
             $pre_production_id = $estimatedOutput->pre_production_id;
-            $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
-                ->where('id', $pre_production_id)
-                ->first();
 
-            $processId = $estimatedOutput->pre_production_process_id;
-            $process = PreProductionProcess::where('id', $processId)
-                ->where('deleted', PreProductionProcess::DELETED_NO)
-                ->where('status', PreProductionProcess::STATUS_ACTIVE)
-                ->first();
+            if(isset($request->reuse_type) && ($request->reuse_type == 'only_reuse')) {
 
-            $total_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
-                ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
-                ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
-                ->count();
-
-            $verified_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
-                ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
-                ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
-                ->whereColumn('quantity', 'verified_qty')
-                ->count();
-
-            if ($total_outputs == $verified_outputs) {
-                $process->process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
-                $process->updated_by = auth()->guard('production-staff')->user()->id;
-                $process->updated_at = now();
-                $process->save();
-                $process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
+            } else {
+                if($type == 1){
+                    $estimatedOutput->verified_qty = $estimatedOutput->verified_qty + 1;
+                } else if($type == 2){
+                    $estimatedOutput->damage_qty = $estimatedOutput->damage_qty + 1;
+                } else if($type == 3){
+                    $estimatedOutput->verified_qty = $estimatedOutput->quantity;
+                }
+    
+                $estimatedOutput->updated_by = auth()->guard('production-staff')->user()->id;
+                $estimatedOutput->updated_at = now();
+                $estimatedOutput->save();
+    
+                $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
+                    ->where('id', $pre_production_id)
+                    ->first();
+    
+                $processId = $estimatedOutput->pre_production_process_id;
+                $process = PreProductionProcess::where('id', $processId)
+                    ->where('deleted', PreProductionProcess::DELETED_NO)
+                    ->where('status', PreProductionProcess::STATUS_ACTIVE)
+                    ->first();
+    
+                $total_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
+                    ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+                    ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+                    ->count();
+    
+                $verified_outputs = PreProductionProcessEstimatedOutput::where('pre_production_process_id', $processId)
+                    ->where('deleted', PreProductionProcessEstimatedOutput::DELETED_NO)
+                    ->where('status', PreProductionProcessEstimatedOutput::STATUS_ACTIVE)
+                    ->whereColumn('quantity', 'verified_qty')
+                    ->count();
+    
+                if ($total_outputs == $verified_outputs) {
+                    $process->process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
+                    $process->updated_by = auth()->guard('production-staff')->user()->id;
+                    $process->updated_at = now();
+                    $process->save();
+                    $process_status = PreProductionProcess::PROCESS_STATUS_COMPLETED;
+                }
+    
+                $count_completed = PreProductionProcess::where('pre_production_id', $pre_production_id)
+                    ->where('deleted', PreProductionProcess::DELETED_NO)
+                    ->where('status', PreProductionProcess::STATUS_ACTIVE)
+                    ->where('process_status', '!=' , PreProductionProcess::PROCESS_STATUS_COMPLETED)
+                    ->count();
+    
+                if($count_completed == 0){
+                    if($pre_production->delivery_status != PreProduction::DELIVERY_STATUS_DELIVERED){
+                        throw new \Exception('All Production Materials not delivered!');
+                    }
+                    if($pre_production->received_status != PreProduction::RECEIVED_STATUS_DELIVERED){
+                        throw new \Exception('All Production Materials not received!');
+                    }
+                    if($pre_production->scan_status != PreProduction::SCAN_STATUS_SCANNED){
+                        throw new \Exception('All Production Materials not scanned!');
+                    }
+                    $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
+                    $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
+                    $pre_production->updated_at = now();
+                    $pre_production->save();
+                }
             }
-
-            $count_completed = PreProductionProcess::where('pre_production_id', $pre_production_id)
-                ->where('deleted', PreProductionProcess::DELETED_NO)
-                ->where('status', PreProductionProcess::STATUS_ACTIVE)
-                ->where('process_status', '!=' , PreProductionProcess::PROCESS_STATUS_COMPLETED)
-                ->count();
-
-            if($count_completed == 0){
-                if($pre_production->delivery_status != PreProduction::DELIVERY_STATUS_DELIVERED){
-                    throw new \Exception('All Production Materials not delivered!');
-                }
-                if($pre_production->received_status != PreProduction::RECEIVED_STATUS_DELIVERED){
-                    throw new \Exception('All Production Materials not received!');
-                }
-                if($pre_production->scan_status != PreProduction::SCAN_STATUS_SCANNED){
-                    throw new \Exception('All Production Materials not scanned!');
-                }
-                $pre_production->process_status = PreProduction::PROCESS_STATUS_COMPLETED;
-                $pre_production->updated_by = auth()->guard('production-staff')->user()->id;
-                $pre_production->updated_at = now();
-                $pre_production->save();
-            }
+            
 
             if(($type == 2) && ($request->damage_type == "reuse")) {
                 $damage_qty = 1;
