@@ -11,6 +11,7 @@ use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Inventory\BoardsController;
 use App\Http\Controllers\Inventory\ProductMaterialCartController;
 use App\Http\Controllers\Inventory\ProductMaterialSetController;
+use App\Http\Controllers\Inventory\ReuseItemController;
 use Illuminate\Support\Facades\Route;
 
 // inventory route start
@@ -160,6 +161,12 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/update', [ProductMaterialSetController::class, 'update'])->name('inventory.product-material-set.update');
         Route::get('/{id}/delete', [ProductMaterialSetController::class, 'delete'])->name('inventory.product-material-set.delete');
         Route::get('/{id}/details', [ProductMaterialSetController::class, 'details'])->name('inventory.product-material-set.details');
+    });
+
+    Route::group(['prefix' => 'reuse-items'], function () {
+        Route::get('/', [ReuseItemController::class, 'index'])->name('inventory.reuse-items.index');
+        Route::post('/filtered', [ReuseItemController::class, 'indexFiltered'])->name('inventory.reuse-items.filtered');
+        Route::get('/{id}/details', [ReuseItemController::class, 'details'])->name('inventory.reuse-items.details');
     });
 });
 // inventory route end
