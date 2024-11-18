@@ -57,4 +57,27 @@ class ProductRequisitionController extends BackendController
 
         return $this->view('production-staff.requisition.details')->with($data);
     }
+
+    public function showReceive($id) {
+        $this->setPageTitle('Requisition Receive');
+        $this->setActiveMenu('production-staff.requisition.index');
+
+        $data = $this->service->showReceive($id);
+
+        return $this->view('production-staff.requisition.receive')->with($data);
+    }
+
+    public function storeReceive(Request $request, $id) {
+        try {
+            $data = $this->service->storeReceive($request, $id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess($data, 'Requisition Receive successfully');
+    }
+
+    public function getDeliveryData($id) {
+        $data = $this->service->getDeliveryData($id);
+        return $this->returnAjaxSuccess($data, 'Data Fetch Successfully');
+    }
 }

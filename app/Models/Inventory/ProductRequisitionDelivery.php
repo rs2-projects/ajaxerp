@@ -39,4 +39,9 @@ class ProductRequisitionDelivery extends BaseModel
         'deleted_by',
     ];
 
+    public function details()
+    {
+        return $this->hasMany(ProductRequisitionDeliveryDetails::class, 'product_requisition_delivery_id', 'id');
+    }
+
 }

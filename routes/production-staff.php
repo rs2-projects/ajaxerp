@@ -44,9 +44,13 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::get('/{id}/details', [ProductRequisitionController::class, 'details'])->name('production-staff.requisition.details');
         Route::get('create', [ProductRequisitionController::class, 'create'])->name('production-staff.requisition.create');
         Route::post('store', [ProductRequisitionController::class, 'store'])->name('production-staff.requisition.store');
-        Route::get('/{id}/edit', [ProductRequisitionController::class, 'edit'])->name('production-staff.requisition.edit');
-        Route::post('/{id}/update', [ProductRequisitionController::class, 'update'])->name('production-staff.requisition.update');
-        Route::get('/{id}/delete', [ProductRequisitionController::class, 'delete'])->name('production-staff.requisition.delete');
+
+        Route::get('{id}/receive', [ProductRequisitionController::class, 'showReceive'])->name('production-staff.requisition.receive');
+        Route::post('{id}/receive', [ProductRequisitionController::class, 'storeReceive'])->name('production-staff.requisition.receive.store');
+        Route::get('{id}/delivery-data', [ProductRequisitionController::class, 'getDeliveryData'])->name('production-staff.requisition.delivery-data');
+        // Route::get('/{id}/edit', [ProductRequisitionController::class, 'edit'])->name('production-staff.requisition.edit');
+        // Route::post('/{id}/update', [ProductRequisitionController::class, 'update'])->name('production-staff.requisition.update');
+        // Route::get('/{id}/delete', [ProductRequisitionController::class, 'delete'])->name('production-staff.requisition.delete');
         
     });
 

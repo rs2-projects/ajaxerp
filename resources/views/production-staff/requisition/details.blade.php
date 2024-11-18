@@ -9,7 +9,7 @@
                     @if($requisition->hasPendingReceived())
                         <div class="erp-add-employee-wrapper mb-3 flex-100">
                             <div class="erp-add-employee">
-                                <a href="{{ route('inventory.material-request.deliver', $requisition->id) }}" class="btn add-btn erp-add-employee"><i class="la la-hand-o-right m-r-5"></i> Receive</a>
+                                <a href="{{ route('production-staff.requisition.receive', $requisition->id) }}" class="btn add-btn erp-add-employee"><i class="la la-hand-o-right m-r-5"></i> Receive</a>
                             </div>
                         </div>
                     @endif

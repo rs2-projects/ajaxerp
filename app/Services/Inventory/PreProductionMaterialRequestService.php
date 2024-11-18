@@ -5,6 +5,7 @@ namespace App\Services\Inventory;
 use App\Models\Inventory\ProductRequisition;
 use App\Models\Inventory\ProductRequisitionDelivery;
 use App\Models\Inventory\ProductRequisitionDeliveryDetails;
+use App\Models\Inventory\ProductRequisitionDeliveryDetailsItem;
 use App\Models\Inventory\ProductRequisitionDetails;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\NewerPickedProductHistory;
@@ -692,6 +693,22 @@ class PreProductionMaterialRequestService
 
                 foreach($request->purchase_details_id as $index => $purchase_details_ids) {
                     $itemDeliveredQty = 0;
+
+                    $delivery_details = new ProductRequisitionDeliveryDetails();
+                    $delivery_details->product_requisition_delivery_id = $delivery->id;
+                    $delivery_details->product_requisition_id = $requisition->id;
+                    $delivery_details->product_requisition_detail_id = $request->requisition_details_id[$index];
+                    $delivery_details->product_id = $request->product_material_id[$index];
+                    $delivery_details->delivered_qty = $itemDeliveredQty;
+                    $delivery_details->received_qty = 0;
+                    $delivery_details->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PENDING;
+                    $delivery_details->status = ProductRequisitionDeliveryDetails::STATUS_ACTIVE;
+                    $delivery_details->created_at = Carbon::now();
+                    $delivery_details->created_by = auth()->user()->id;
+                    $delivery_details->updated_at = Carbon::now();
+                    $delivery_details->updated_by = auth()->user()->id;
+                    $delivery_details->save();
+
                     foreach($purchase_details_ids as $innerIndex => $purchase_details_id) {
                         $qty = $request->selected_qty[$index][$innerIndex];
 
@@ -703,26 +720,30 @@ class PreProductionMaterialRequestService
                             $purchase_details->available_qty = $purchase_details->available_qty - $qty;
                             $purchase_details->save();
 
-                            $delivery_details = new ProductRequisitionDeliveryDetails();
-                            $delivery_details->product_requisition_delivery_id = $delivery->id;
-                            $delivery_details->product_requisition_id = $requisition->id;
-                            $delivery_details->product_requisition_detail_id = $request->requisition_details_id[$index];
-                            $delivery_details->product_material_purchase_detail_id = $purchase_details_id;
-                            $delivery_details->product_id = $request->product_material_id[$index];
-                            $delivery_details->delivered_qty = $qty;
-                            $delivery_details->received_qty = 0;
-                            $delivery_details->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PENDING;
-                            $delivery_details->status = ProductRequisitionDeliveryDetails::STATUS_ACTIVE;
-                            $delivery_details->created_at = Carbon::now();
-                            $delivery_details->created_by = auth()->user()->id;
-                            $delivery_details->updated_at = Carbon::now();
-                            $delivery_details->updated_by = auth()->user()->id;
-                            $delivery_details->save();
+                            $delivery_details_item = new ProductRequisitionDeliveryDetailsItem();
+                            $delivery_details_item->product_requisition_delivery_id = $delivery->id;
+                            $delivery_details_item->product_requisition_delivery_details_id = $delivery_details->id;
+                            $delivery_details_item->product_requisition_id = $requisition->id;
+                            $delivery_details_item->product_requisition_detail_id = $request->requisition_details_id[$index];
+                            $delivery_details_item->product_material_purchase_detail_id = $purchase_details_id;
+                            $delivery_details_item->product_id = $request->product_material_id[$index];
+                            $delivery_details_item->delivered_qty = $qty;
+                            $delivery_details_item->received_qty = 0;
+                            $delivery_details_item->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PENDING;
+                            $delivery_details_item->status = ProductRequisitionDeliveryDetails::STATUS_ACTIVE;
+                            $delivery_details_item->created_at = Carbon::now();
+                            $delivery_details_item->created_by = auth()->user()->id;
+                            $delivery_details_item->updated_at = Carbon::now();
+                            $delivery_details_item->updated_by = auth()->user()->id;
+                            $delivery_details_item->save();
 
                             $itemDeliveredQty += $qty;
                         }
 
                     }
+
+                    $delivery_details->delivered_qty = $itemDeliveredQty;
+                    $delivery_details->save();
 
                     $requisition_details = ProductRequisitionDetails::where('deleted', ProductRequisitionDetails::DELETED_NO)
                         ->where('id', $request->requisition_details_id[$index])

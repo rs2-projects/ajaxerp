@@ -3,6 +3,8 @@
 namespace App\Services\ProductionStaff;
 
 use App\Models\Inventory\ProductRequisition;
+use App\Models\Inventory\ProductRequisitionDelivery;
+use App\Models\Inventory\ProductRequisitionDeliveryDetails;
 use App\Models\Inventory\ProductRequisitionDetails;
 use App\Models\Products\FinishedGoodsCategory;
 use App\Models\Products\ProductMaterialCategory;
@@ -103,5 +105,90 @@ class RequisitionService
         return $data;
     }
 
+    public function showReceive($id)
+    {
+        $data['requisition'] = ProductRequisition::where('id', $id)
+            ->where('status', ProductRequisition::STATUS_ACTIVE)
+            ->first();
+
+        return $data;
+    }
+
+    public function storeReceive($request, $id) {
+        dd($request->all());
+        DB::beginTransaction();
+        try {
+            $authUser = auth()->guard('production-staff')->user();
+
+            $requisition = ProductRequisition::where('id', $id)
+                ->where('status', ProductRequisition::STATUS_ACTIVE)
+                ->first();
+
+            if(!$requisition) {
+                throw new \Exception("Requisition not found");
+            }
+
+            $delivery = ProductRequisitionDelivery::where('product_requisition_id', $id)
+                ->where('id', $request->delivery_id)
+                ->where('status', ProductRequisitionDelivery::STATUS_ACTIVE)
+                ->first();
+            
+            if(!$delivery) {
+                throw new \Exception("Delivery not found");
+            }
+
+            if(isset($request->selected_qty) && (is_array($request->selected_qty) && (count($request->selected_qty) > 0))) {
+                foreach($request->selected_qty as $detailIndex => $selected_qty_arr) {
+                    $deliveryDetails = ProductRequisitionDeliveryDetails::where('product_requisition_delivery_id', $delivery->id)
+                        ->where('id', $request->delivery_details_id[$detailIndex])
+                        ->where('status', ProductRequisitionDeliveryDetails::STATUS_ACTIVE)
+                        ->first();
+
+                    if(isset($selected_qty_arr) && (is_array($selected_qty_arr) && (count($selected_qty_arr) > 0))) {
+                        foreach($selected_qty_arr as $itemIndex => $selected_qty) {
+                            if($selected_qty <= 0) {
+                                continue;
+                            }
+
+                            
+                        }
+                    }
+                }
+            }
+
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+        return ['redirectUri' => route('production-staff.requisition.index')];
+    }
+
+    public function getDeliveryData($id)
+    {
+        $data['requisition'] = ProductRequisition::where('id', $id)
+            ->where('status', ProductRequisition::STATUS_ACTIVE)
+            ->first();
+
+        $data['details'] = ProductRequisitionDetails::with('product')
+            ->where('product_requisition_id', $id)
+            ->where('status', ProductRequisitionDetails::STATUS_ACTIVE)
+            ->get();
+
+        $data['deliveries'] = ProductRequisitionDelivery::with([
+                'details',
+                'details.pendingItems',
+                'details.pendingItems.purchaseDetail',
+                'details.pendingItems.purchaseDetail.materialPurchase',
+                'details.product',
+                'details.product.category',
+            ])
+            ->where('product_requisition_id', $id)
+            ->where('status', ProductRequisitionDelivery::STATUS_ACTIVE)
+            ->get();
+
+        return $data;
+    }
 
 }
