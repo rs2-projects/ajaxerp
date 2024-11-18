@@ -24,6 +24,11 @@ class ProductRequisitionDetails extends Model
     const RECEIVED_STATUS_PENDING = 0;
     const RECEIVED_STATUS_RECEIVED = 1;
     const RECEIVED_STATUS_PARTIALLY_RECEIVED = 2;
+    const RECEIVED_STATUSES = [
+        self::RECEIVED_STATUS_PENDING => 'Pending',
+        self::RECEIVED_STATUS_RECEIVED => 'Received',
+        self::RECEIVED_STATUS_PARTIALLY_RECEIVED => 'Partial',
+    ];
 
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;

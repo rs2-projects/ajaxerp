@@ -4,6 +4,7 @@ namespace App\Models\Inventory;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ProductRequisition extends Model
 {
@@ -55,5 +56,11 @@ class ProductRequisition extends Model
     public function details()
     {
         return $this->hasMany(ProductRequisitionDetails::class, 'product_requisition_id', 'id');
+    }
+
+    public function hasPendingReceived() {
+        return ProductRequisitionDetails::where('product_requisition_id', $this->id)
+            ->where(DB::raw('delivered_qty'), '>', DB::raw('received_qty'))
+            ->exists();
     }
 }

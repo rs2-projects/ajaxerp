@@ -48,4 +48,13 @@ class ProductRequisitionController extends BackendController
         }
         return $this->returnAjaxSuccess($data, 'Requisition Store successfully');
     }
+
+    public function details($id) {
+        $this->setPageTitle('Requisition Details');
+        $this->setActiveMenu('production-staff.requisition.index');
+
+        $data = $this->service->details($id);
+
+        return $this->view('production-staff.requisition.details')->with($data);
+    }
 }

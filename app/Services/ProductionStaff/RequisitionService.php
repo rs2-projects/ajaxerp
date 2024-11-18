@@ -94,5 +94,14 @@ class RequisitionService
         
     }
 
+    public function details($id)
+    {
+        $data['requisition'] = ProductRequisition::with(['details','details.product'])
+            ->where('id', $id)
+            ->where('status', ProductRequisition::STATUS_ACTIVE)
+            ->first();
+        return $data;
+    }
+
 
 }
