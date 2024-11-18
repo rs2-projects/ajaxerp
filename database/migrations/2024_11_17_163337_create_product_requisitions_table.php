@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('product_requisitions', function (Blueprint $table) {
             $table->id();
 
-            $table->string('requisition_no', 32);
+            $table->string('requisition_no', 32)->nullable();
             $table->unsignedBigInteger('production_staff_id');
             $table->text('description')->nullable();
 

@@ -40,7 +40,7 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
 
     Route::group(['prefix' => 'requisition'], function () {
         Route::get('/', [ProductRequisitionController::class, 'index'])->name('production-staff.requisition.index');
-        Route::get('filtered', [ProductRequisitionController::class, 'indexFiltered'])->name('production-staff.requisition.filtered');
+        Route::post('filtered', [ProductRequisitionController::class, 'indexFiltered'])->name('production-staff.requisition.filtered');
         Route::get('/{id}/details', [ProductRequisitionController::class, 'details'])->name('production-staff.requisition.details');
         Route::get('create', [ProductRequisitionController::class, 'create'])->name('production-staff.requisition.create');
         Route::post('store', [ProductRequisitionController::class, 'store'])->name('production-staff.requisition.store');

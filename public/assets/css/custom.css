@@ -481,3 +481,23 @@
     max-width: 150px;
     white-space: break-spaces !important;
 }
+
+.delivery-status {
+    background-color: red;
+    padding: 4px 12px;
+    border-radius: 7px;
+    font-size: 90%;
+    color: #fff;
+}
+.delivery-status.status-pending {
+    background-color: #ffebcc;
+    color: #ff9800;
+}
+.delivery-status.status-delivered {
+    background-color: #dcefdc;
+    color: #4caf50;
+}
+.delivery-status.status-partial {
+    background-color: #ccf9ff;
+    color: #00bcd4;
+}

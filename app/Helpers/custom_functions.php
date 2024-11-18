@@ -161,7 +161,7 @@ if (!function_exists('formatNumber')) {
 }
 
 if (!function_exists('strToClassName')) {
-    function formatNstrToClassNameumber($string) {
+    function strToClassName($string) {
         return str_replace(' ', '-', strtolower($string));
     }
 }

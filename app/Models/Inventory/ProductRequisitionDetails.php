@@ -12,6 +12,9 @@ class ProductRequisitionDetails extends Model
     protected $table = 'product_requisition_details';
     public $timestamps = false;
 
+    const PRODUCT_TYPE_OTHERS = 0;
+    const PRODUCT_TYPE_BOARD = 1;
+
     const DELIVERY_STATUS_PENDING = 0;
     const DELIVERY_STATUS_DELIVERED = 1;
     const DELIVERY_STATUS_PARTIALLY_DELIVERED = 2;
@@ -19,6 +22,13 @@ class ProductRequisitionDetails extends Model
     const RECEIVED_STATUS_PENDING = 0;
     const RECEIVED_STATUS_RECEIVED = 1;
     const RECEIVED_STATUS_PARTIALLY_RECEIVED = 2;
+
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+
+    const DELETED_NO = 0;
+    const DELETED_YES = 1;
+    
 
     protected $fillable = [
         'product_requisition_id',
