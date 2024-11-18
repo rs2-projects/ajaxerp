@@ -120,6 +120,7 @@ Route::group(['prefix' => 'board-production'], function () {
 Route::group(['prefix' => 'material-request'], function () {
     Route::get('/', [PreProductionMaterialRequestController::class, 'index'])->name('inventory.material-request.index')->middleware('permission:view-material-requests');
     Route::post('/filtered', [PreProductionMaterialRequestController::class, 'indexFiltered'])->name('inventory.material-request.filtered')->middleware('permission:view-material-requests');
+    Route::post('/filtered-product-requisitions', [PreProductionMaterialRequestController::class, 'productRequisitionFiltered'])->name('inventory.material-request.filtered-product-requisitions')->middleware('permission:view-material-requests');
     Route::get('/{id}/details', [PreProductionMaterialRequestController::class, 'details'])->name('inventory.material-request.details')->middleware('permission:view-material-requests');
     Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/barcode-details', [PreProductionMaterialRequestController::class, 'barcodeDetails'])->name('inventory.material-request.barcode-details')->middleware('permission:deliver-requested-materials');
@@ -127,6 +128,11 @@ Route::group(['prefix' => 'material-request'], function () {
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/deliver/{barcode}/{count}/{type}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document')->middleware('permission:view-material-requests');
+
+    Route::get('product-requisition/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverProductRequisition'])->name('inventory.material-request.product-requisition.deliver')->middleware('permission:deliver-requested-materials');
+    Route::post('product-requisition/{id}/deliver', [PreProductionMaterialRequestController::class, 'storeDeliverProductRequisition'])->name('inventory.material-request.product-requisition.deliver.store')->middleware('permission:deliver-requested-materials');
+    Route::get('product-requisition/{id}/print-barcode', [PreProductionMaterialRequestController::class, 'productRequisitionBarcodePrint'])->name('inventory.material-request.product-requisition.barcode-print')->middleware('permission:deliver-requested-materials');
+    Route::get('product-requisition/{id}/materials', [PreProductionMaterialRequestController::class, 'getProductRequisitionMaterials'])->name('inventory.material-request.product-requisition.get-materials')->middleware('permission:deliver-requested-materials');
 });
 
 Route::get('newer-picked-materials', [PreProductionMaterialRequestController::class, 'newerPickedMaterials'])->name('inventory.material-request.newer-picked-materials')->middleware('permission:view-material-requests');

@@ -2,6 +2,8 @@
 
 namespace App\Models\Inventory;
 
+use App\Models\Products\FinishedGoods;
+use App\Models\Products\ProductMaterial;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,4 +50,12 @@ class ProductRequisitionDetails extends Model
         'deleted_at',
         'deleted_by',
     ];
+
+    public function product() {
+        if($this->product_type == self::PRODUCT_TYPE_BOARD) {
+            return $this->belongsTo(FinishedGoods::class, 'product_id', 'id');
+        } else {
+            return $this->belongsTo(ProductMaterial::class, 'product_id', 'id');
+        }
+    }
 }

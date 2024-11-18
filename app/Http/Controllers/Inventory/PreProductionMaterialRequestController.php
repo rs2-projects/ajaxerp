@@ -37,6 +37,15 @@ class PreProductionMaterialRequestController extends BackendController
         return $this->returnAjaxSuccess(['view' => $view]);
     }
 
+    public function productRequisitionFiltered(Request $request)
+    {
+        $data = $this->service->productRequisitionFilteredData($request);
+        $view = $this->view('inventory.material-request._product_requisition_filtered')
+            ->with($data)
+            ->render();
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
     public function getDocument($id)
     {
         try {
@@ -115,4 +124,28 @@ class PreProductionMaterialRequestController extends BackendController
         
         return $this->view('inventory.material-request.newer_picked_materials')->with($data);
     }
+    
+    public function deliverProductRequisition($id)
+    {
+        $this->setPageTitle("Deliver Material Request (Product Requisition)");
+        $this->setActiveMenu('inventory.material-request.deliver');
+        $data = $this->service->productMaterialDeliveryData($id);
+        return $this->view('inventory.material-request.deliver_product_requisition')->with($data);
+    }
+
+    public function storeDeliverProductRequisition(Request $request, $id) 
+    {
+        try {
+            $this->service->storeDeliverProductRequisition($request, $id);
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([], $e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Delivered successfully');
+    }
+
+    public function getProductRequisitionMaterials($id) {
+        $data = $this->service->getProductRequisitionMaterials($id);
+        return $this->returnAjaxSuccess($data);
+    }
+
 }
