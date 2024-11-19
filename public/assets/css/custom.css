@@ -497,6 +497,10 @@
     background-color: #dcefdc;
     color: #4caf50;
 }
+.delivery-status.status-received {
+    background-color: #dcefdc;
+    color: #4caf50;
+}
 .delivery-status.status-partial {
     background-color: #ccf9ff;
     color: #00bcd4;
