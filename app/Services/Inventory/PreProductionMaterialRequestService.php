@@ -58,11 +58,11 @@ class PreProductionMaterialRequestService
         $data['requisitions'] = ProductRequisition::where('deleted', ProductRequisition::DELETED_NO)
             ->where(function ($q) use($delivery_status){
                 if($delivery_status == 'pending'){
-                    $q->where('status', ProductRequisition::DELIVERY_STATUS_PENDING);
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_PENDING);
                 }else if($delivery_status == 'partial'){
-                    $q->where('status', ProductRequisition::RECEIVED_STATUS_PARTIALLY_RECEIVED);
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_PARTIALLY_DELIVERED);
                 }else if($delivery_status == 'delivered'){
-                    $q->where('status', ProductRequisition::DELIVERY_STATUS_DELIVERED);
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_DELIVERED);
                 }
             })
             ->orderBy('id', 'desc')
