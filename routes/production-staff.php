@@ -4,6 +4,7 @@ use App\Http\Controllers\ProductionStaff\DashboardController;
 use App\Http\Controllers\ProductionStaff\LogoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductionStaff\ProductionController;
+use App\Http\Controllers\ProductionStaff\ProductRequisitionController;
 
 Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'], function () {
 
@@ -34,6 +35,22 @@ Route::group(['middleware' => 'production_staff', 'prefix' => 'production-staff'
         Route::get('/{id}/get-scan-deliveries', [ProductionController::class, 'getScanDeliveries'])->name('production-staff.production.production.get-delivery-details.scan');
         Route::get('/{id}/check-scan-barcode-validity', [ProductionController::class, 'checkScanBarCode'])->name('production-staff.production.production.check-barcode.scan');
         Route::post('/{id}/scan-store', [ProductionController::class, 'scanStore'])->name('production-staff.production.production.scan.store');
+        
+    });
+
+    Route::group(['prefix' => 'requisition'], function () {
+        Route::get('/', [ProductRequisitionController::class, 'index'])->name('production-staff.requisition.index');
+        Route::post('filtered', [ProductRequisitionController::class, 'indexFiltered'])->name('production-staff.requisition.filtered');
+        Route::get('/{id}/details', [ProductRequisitionController::class, 'details'])->name('production-staff.requisition.details');
+        Route::get('create', [ProductRequisitionController::class, 'create'])->name('production-staff.requisition.create');
+        Route::post('store', [ProductRequisitionController::class, 'store'])->name('production-staff.requisition.store');
+
+        Route::get('{id}/receive', [ProductRequisitionController::class, 'showReceive'])->name('production-staff.requisition.receive');
+        Route::post('{id}/receive', [ProductRequisitionController::class, 'storeReceive'])->name('production-staff.requisition.receive.store');
+        Route::get('{id}/delivery-data', [ProductRequisitionController::class, 'getDeliveryData'])->name('production-staff.requisition.delivery-data');
+        // Route::get('/{id}/edit', [ProductRequisitionController::class, 'edit'])->name('production-staff.requisition.edit');
+        // Route::post('/{id}/update', [ProductRequisitionController::class, 'update'])->name('production-staff.requisition.update');
+        // Route::get('/{id}/delete', [ProductRequisitionController::class, 'delete'])->name('production-staff.requisition.delete');
         
     });
 

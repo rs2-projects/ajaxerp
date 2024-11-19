@@ -2,6 +2,11 @@
 
 namespace App\Services\Inventory;
 
+use App\Models\Inventory\ProductRequisition;
+use App\Models\Inventory\ProductRequisitionDelivery;
+use App\Models\Inventory\ProductRequisitionDeliveryDetails;
+use App\Models\Inventory\ProductRequisitionDeliveryDetailsItem;
+use App\Models\Inventory\ProductRequisitionDetails;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\NewerPickedProductHistory;
 use App\Models\Production\PreProduction;
@@ -45,6 +50,25 @@ class PreProductionMaterialRequestService
                 return $this->getDeliveredPreProductions($request);
                 break;
         }
+    }
+
+    public function productRequisitionFilteredData($request)
+    {
+        $delivery_status = $request->status_filtered;
+        $data['requisitions'] = ProductRequisition::where('deleted', ProductRequisition::DELETED_NO)
+            ->where(function ($q) use($delivery_status){
+                if($delivery_status == 'pending'){
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_PENDING);
+                }else if($delivery_status == 'partial'){
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_PARTIALLY_DELIVERED);
+                }else if($delivery_status == 'delivered'){
+                    $q->where('delivery_status', ProductRequisition::DELIVERY_STATUS_DELIVERED);
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($this->paginate_limit);
+        
+        return $data;
     }
 
     public function getAllPreProductions($request){
@@ -624,6 +648,148 @@ class PreProductionMaterialRequestService
             ->where('deleted', NewerPickedProductHistory::DELETED_NO)
             ->where('status', NewerPickedProductHistory::STATUS_ACTIVE)
             ->orderBy('id', 'DESC')
+            ->get();
+
+        return $data;
+    }
+
+    public function productMaterialDeliveryData($id) {
+        $data['requisition'] = ProductRequisition::with('details')
+            ->where('deleted', ProductRequisition::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function storeDeliverProductRequisition($request, $id) {
+        // dd($request->all());
+        DB::beginTransaction();
+        try {
+            $requisition = ProductRequisition::where('deleted', ProductRequisition::DELETED_NO)
+                ->where('id', $id)
+                ->first();
+
+            if(!$requisition){
+                throw new \Exception('Invalid Product Requisition!');
+            }
+
+            if(isset($request->purchase_details_id) && (is_array($request->purchase_details_id)) && (count($request->purchase_details_id) > 0)) {
+
+                $delivery = new ProductRequisitionDelivery();
+                $delivery->product_requisition_id = $requisition->id;
+                $delivery->delivery_date = Carbon::now();
+                $delivery->delivered_by = auth()->user()->id;
+                $delivery->delivered_at = Carbon::now();
+                $delivery->received_status = ProductRequisitionDelivery::RECEIVED_STATUS_PENDING;
+                $delivery->status = ProductRequisitionDelivery::STATUS_ACTIVE;
+                $delivery->created_at = Carbon::now();
+                $delivery->created_by = auth()->user()->id;
+                $delivery->updated_at = Carbon::now();
+                $delivery->updated_by = auth()->user()->id;
+                $delivery->save();
+                $delivery->delivery_no = 1000 + $delivery->id;
+                $delivery->save();
+
+                foreach($request->purchase_details_id as $index => $purchase_details_ids) {
+                    $itemDeliveredQty = 0;
+
+                    $delivery_details = new ProductRequisitionDeliveryDetails();
+                    $delivery_details->product_requisition_delivery_id = $delivery->id;
+                    $delivery_details->product_requisition_id = $requisition->id;
+                    $delivery_details->product_requisition_detail_id = $request->requisition_details_id[$index];
+                    $delivery_details->product_id = $request->product_material_id[$index];
+                    $delivery_details->delivered_qty = $itemDeliveredQty;
+                    $delivery_details->received_qty = 0;
+                    $delivery_details->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PENDING;
+                    $delivery_details->status = ProductRequisitionDeliveryDetails::STATUS_ACTIVE;
+                    $delivery_details->created_at = Carbon::now();
+                    $delivery_details->created_by = auth()->user()->id;
+                    $delivery_details->updated_at = Carbon::now();
+                    $delivery_details->updated_by = auth()->user()->id;
+                    $delivery_details->save();
+
+                    foreach($purchase_details_ids as $innerIndex => $purchase_details_id) {
+                        $qty = $request->selected_qty[$index][$innerIndex];
+
+                        $purchase_details = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
+                            ->where('id', $purchase_details_id)
+                            ->first();
+                        if($purchase_details){
+                            $purchase_details->used_qty = $purchase_details->used_qty + $qty;
+                            $purchase_details->available_qty = $purchase_details->available_qty - $qty;
+                            $purchase_details->save();
+
+                            $delivery_details_item = new ProductRequisitionDeliveryDetailsItem();
+                            $delivery_details_item->product_requisition_delivery_id = $delivery->id;
+                            $delivery_details_item->product_requisition_delivery_details_id = $delivery_details->id;
+                            $delivery_details_item->product_requisition_id = $requisition->id;
+                            $delivery_details_item->product_requisition_detail_id = $request->requisition_details_id[$index];
+                            $delivery_details_item->product_material_purchase_detail_id = $purchase_details_id;
+                            $delivery_details_item->product_id = $request->product_material_id[$index];
+                            $delivery_details_item->delivered_qty = $qty;
+                            $delivery_details_item->received_qty = 0;
+                            $delivery_details_item->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PENDING;
+                            $delivery_details_item->status = ProductRequisitionDeliveryDetails::STATUS_ACTIVE;
+                            $delivery_details_item->created_at = Carbon::now();
+                            $delivery_details_item->created_by = auth()->user()->id;
+                            $delivery_details_item->updated_at = Carbon::now();
+                            $delivery_details_item->updated_by = auth()->user()->id;
+                            $delivery_details_item->save();
+
+                            $itemDeliveredQty += $qty;
+                        }
+
+                    }
+
+                    $delivery_details->delivered_qty = $itemDeliveredQty;
+                    $delivery_details->save();
+
+                    $requisition_details = ProductRequisitionDetails::where('deleted', ProductRequisitionDetails::DELETED_NO)
+                        ->where('id', $request->requisition_details_id[$index])
+                        ->first();
+
+                    $totalDeliveredQty = $requisition_details->delivered_qty + $itemDeliveredQty;
+                    
+                    $requisition_details->delivered_qty = $totalDeliveredQty;
+                    if($totalDeliveredQty == $requisition_details->qty){
+                        $requisition_details->delivery_status = ProductRequisitionDetails::DELIVERY_STATUS_DELIVERED;
+                    } else {
+                        $requisition_details->delivery_status = ProductRequisitionDetails::DELIVERY_STATUS_PARTIALLY_DELIVERED;
+                    }
+                    $requisition_details->save();
+                }
+            }
+
+            //check if all requisition details are delivered
+            $requisition_details = ProductRequisitionDetails::where('deleted', ProductRequisitionDetails::DELETED_NO)
+                ->where('product_requisition_id', $requisition->id)
+                ->where('delivery_status', '!=', ProductRequisitionDetails::DELIVERY_STATUS_DELIVERED)
+                ->exists();
+
+            if(!$requisition_details){
+                $requisition->delivery_status = ProductRequisition::DELIVERY_STATUS_DELIVERED;
+            } else {
+                $requisition->delivery_status = ProductRequisition::DELIVERY_STATUS_PARTIALLY_DELIVERED;
+            }
+            $requisition->save();
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function getProductRequisitionMaterials($id) {
+        $data['materials'] = ProductRequisitionDetails::with([
+                'product', 
+                'product.category', 
+                'product.availablePurchaseDetails', 
+                'product.availablePurchaseDetails.materialPurchase'
+            ])
+            ->where('product_requisition_id', $id)
+            ->where('deleted', ProductRequisitionDetails::DELETED_NO)
             ->get();
 
         return $data;

@@ -214,7 +214,7 @@
 				this.materials[materialIndex].barcodeCounts--;
             },
             getMaterials() {
-                let id = {{ $pre_production->id }};
+                let id = "{{ $pre_production->id }}";
                 let url = "{{ route('inventory.material-request.get-all-materials', ':id') }}";
                 url = url.replace(':id', id);
 

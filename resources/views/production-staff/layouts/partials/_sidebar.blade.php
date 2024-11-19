@@ -14,6 +14,9 @@
                 <li>
                     <a href="{{route('production-staff.production.production.index')}}" class="{{ ($activeMenu == 'production-staff.production.production.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Production</span></a>
                 </li>
+                <li>
+                    <a href="{{route('production-staff.requisition.index')}}" class="{{ ($activeMenu == 'production-staff.requisition.index') ? 'active' : '' }}"><i class="la la-archive"></i> <span>Requisition</span></a>
+                </li>
                 
             </ul>
         </div>
