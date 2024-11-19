@@ -5,6 +5,7 @@ namespace App\Services\ProductionStaff;
 use App\Models\Inventory\ProductRequisition;
 use App\Models\Inventory\ProductRequisitionDelivery;
 use App\Models\Inventory\ProductRequisitionDeliveryDetails;
+use App\Models\Inventory\ProductRequisitionDeliveryDetailsItem;
 use App\Models\Inventory\ProductRequisitionDetails;
 use App\Models\Products\FinishedGoodsCategory;
 use App\Models\Products\ProductMaterialCategory;
@@ -115,7 +116,7 @@ class RequisitionService
     }
 
     public function storeReceive($request, $id) {
-        dd($request->all());
+        // dd($request->all());
         DB::beginTransaction();
         try {
             $authUser = auth()->guard('production-staff')->user();
@@ -143,26 +144,102 @@ class RequisitionService
                         ->where('id', $request->delivery_details_id[$detailIndex])
                         ->where('status', ProductRequisitionDeliveryDetails::STATUS_ACTIVE)
                         ->first();
+                    if(empty($deliveryDetails)) {
+                        continue;
+                    }
 
+                    $requisitionDetails = ProductRequisitionDetails::where('product_requisition_id', $requisition->id)
+                        ->where('id', $deliveryDetails->product_requisition_detail_id)
+                        // ->where('product_id', $deliveryDetails->product_id)
+                        ->where('status', ProductRequisitionDetails::STATUS_ACTIVE)
+                        ->first();
+
+                    $productReceivedQty = 0;
                     if(isset($selected_qty_arr) && (is_array($selected_qty_arr) && (count($selected_qty_arr) > 0))) {
                         foreach($selected_qty_arr as $itemIndex => $selected_qty) {
                             if($selected_qty <= 0) {
                                 continue;
                             }
+                            $deliveryDetailsItem = ProductRequisitionDeliveryDetailsItem::where('product_requisition_delivery_id', $delivery->id)
+                                ->where('id', $request->delivery_item_id[$detailIndex][$itemIndex])
+                                ->where('status', ProductRequisitionDeliveryDetailsItem::STATUS_ACTIVE)
+                                ->first();
 
-                            
+                            if(empty($deliveryDetailsItem)) {
+                                continue;
+                            }
+
+                            $received_qty = $deliveryDetailsItem->received_qty + $selected_qty;
+                            $deliveryDetailsItem->received_qty = $received_qty;
+                            if($received_qty >= $deliveryDetailsItem->delivered_qty) {
+                                $deliveryDetailsItem->received_status = ProductRequisitionDeliveryDetailsItem::RECEIVED_STATUS_RECEIVED;
+                            } else {
+                                $deliveryDetailsItem->received_status = ProductRequisitionDeliveryDetailsItem::RECEIVED_STATUS_PARTIALLY_RECEIVED;
+                            }
+                            $deliveryDetailsItem->updated_at = now();
+                            $deliveryDetailsItem->updated_by = $authUser->id;
+                            $deliveryDetailsItem->save();
+
+                            $productReceivedQty += $selected_qty;
                         }
                     }
+
+                    $totalReceivedQty = $deliveryDetails->received_qty + $productReceivedQty;
+                    $deliveryDetails->received_qty = $totalReceivedQty;
+                    if($totalReceivedQty >= $deliveryDetails->delivered_qty) {
+                        $deliveryDetails->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_RECEIVED;
+                    } else {
+                        $deliveryDetails->received_status = ProductRequisitionDeliveryDetails::RECEIVED_STATUS_PARTIALLY_RECEIVED;
+                    }
+                    $deliveryDetails->updated_at = now();
+                    $deliveryDetails->updated_by = $authUser->id;
+                    $deliveryDetails->save();
+
+
+                    $requisitionDetails->received_qty += $productReceivedQty;
+                    if($requisitionDetails->received_qty >= $requisitionDetails->qty) {
+                        $requisitionDetails->received_status = ProductRequisitionDetails::RECEIVED_STATUS_RECEIVED;
+                    } else {
+                        $requisitionDetails->received_status = ProductRequisitionDetails::RECEIVED_STATUS_PARTIALLY_RECEIVED;
+                    }
+                    $requisitionDetails->updated_at = now();
+                    $requisitionDetails->updated_by = $authUser->id;
+                    $requisitionDetails->save();
                 }
             }
 
+            $hasPendingReceiveForDelivery = ProductRequisitionDeliveryDetails::where('product_requisition_delivery_id', $delivery->id)
+                ->where('received_status', '!=', ProductRequisitionDeliveryDetails::RECEIVED_STATUS_RECEIVED)
+                ->where('status', ProductRequisitionDeliveryDetails::STATUS_ACTIVE)
+                ->count();
+            if($hasPendingReceiveForDelivery == 0) {
+                $delivery->received_status = ProductRequisitionDelivery::RECEIVED_STATUS_RECEIVED;
+            } else {
+                $delivery->received_status = ProductRequisitionDelivery::RECEIVED_STATUS_PARTIALLY_RECEIVED;
+            }
+            $delivery->updated_at = now();
+            $delivery->updated_by = $authUser->id;
+            $delivery->save();
+
+            $hasPendingReceiveForRequisition = ProductRequisitionDetails::where('product_requisition_id', $requisition->id)
+                ->where('received_status', '!=', ProductRequisitionDetails::RECEIVED_STATUS_RECEIVED)
+                ->where('status', ProductRequisitionDetails::STATUS_ACTIVE)
+                ->count();
+            if($hasPendingReceiveForRequisition == 0) {
+                $requisition->received_status = ProductRequisition::RECEIVED_STATUS_RECEIVED;
+            } else {
+                $requisition->received_status = ProductRequisition::RECEIVED_STATUS_PARTIALLY_RECEIVED;
+            }
+            $requisition->updated_at = now();
+            $requisition->updated_by = $authUser->id;
+            $requisition->save();
 
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }
         DB::commit();
-        return ['redirectUri' => route('production-staff.requisition.index')];
+        return ['redirectUri' => route('production-staff.requisition.details', $requisition->id)];
     }
 
     public function getDeliveryData($id)

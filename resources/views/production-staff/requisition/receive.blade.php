@@ -68,7 +68,7 @@
                                                                 <h4 class="text-center d-table-title">@{{ details.delivered_qty }}</h4>
                                                             </td>
                                                             <td class="erp-tbody-td text-center">
-                                                                <h4 class="text-center d-table-title">@{{ details.delivered_qty - details.received_qty }}</h4>
+                                                                <h4 class="text-center d-table-title">@{{ details.received_qty }}</h4>
                                                             </td>
                                                             <td class="erp-tbody-td text-center">
                                                                 <div class="pd-recived-product-wrapper">
@@ -81,7 +81,7 @@
                                                                                 @{{ item.purchase_detail.material_purchase.batch_number }}
                                                                             </p>
                                                                             <p>
-                                                                                @{{ item.delivered_qty }}
+                                                                                @{{ item.delivered_qty - item.received_qty }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -104,13 +104,14 @@
                                                                             <p>
                                                                                 <input type="hidden" :name="'purchase_detail_id['+ detailsIndex + '][]'" :value="receiveItem.purchase_detail.id">
                                                                                 <input type="hidden" :name="'selected_qty['+ detailsIndex + '][]'" :value="receiveItem.selected_qty">
+                                                                                <input type="hidden" :name="'delivery_item_id['+ detailsIndex + '][]'" :value="receiveItem.id">
                                                                                 @{{ receiveItem.purchase_detail.material_purchase.batch_number }}
                                                                             </p>
                                                                             <p>
                                                                                 @{{ receiveItem.selected_qty }}
                                                                             </p>
                                                                             <div class="pd-recived-product-c-item">
-                                                                                <a href="javascript:void(0)" @click.prevent="removeSelectedItem(deliverIndex, detailsIndex, receiveItemIndex)"><i class="fa-solid fa-xmark"></i></a>
+                                                                                <a href="javascript:void(0)" @click.prevent="removeSelectedItem(deliveryIndex, detailsIndex, receiveItemIndex)"><i class="fa-solid fa-xmark"></i></a>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -324,7 +325,8 @@
                     }else{
                         this.selected_delviery_index = deliverIndex;
                         this.selected_delviery_details_index = detailsIndex;
-                        $('#scanModal').modal('show');
+                        $("#receiveModal").modal('show');
+                        // $('#scanModal').modal('show');
                     }
                 },
 

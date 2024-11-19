@@ -26,14 +26,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="text-end mt-4">
+					{{-- <div class="text-end mt-4">
 						<a href="{{ route('inventory.material-request.product-requisition.barcode-print',$requisition->id) }}" class="btn btn-primary btn-sm" target="_blank">
 							<span>
 								<i class="fa fa-print"></i>
 							</span>
 							Print QR code
 						</a>
-					</div>
+					</div> --}}
 					<div class="pd-table-box">
 						<div class="my-attendance-report-wrapper">
 							<div class="big-table">
@@ -251,7 +251,8 @@
 					showErrorAlert('Error', 'All items are delivered');
 				}else{
 					this.selected_material_index = materialIndex;
-					$('#scanModal').modal('show');
+					$('#deliverModal').modal('show');
+					// $('#scanModal').modal('show');
 				}
 			},
 
@@ -260,15 +261,37 @@
 				let total_selected_qty = 0;
 				let deliver_items = [];
 			
-				material.product.available_purchase_details.forEach(purchaseDetails => {
-					if(purchaseDetails.selected_qty == undefined){
+				for (let i = 0; i < material.product.available_purchase_details.length; i++) {
+					let purchaseDetails = material.product.available_purchase_details[i];
+					if (purchaseDetails.selected_qty == undefined) {
 						purchaseDetails.selected_qty = 0;
 					}
 					total_selected_qty += parseInt(purchaseDetails.selected_qty);
-					if(purchaseDetails.selected_qty > 0){
+					if (purchaseDetails.selected_qty > purchaseDetails.available_qty) {
+						showErrorAlert('Error', 'Items Exceeding Available Quantity');
+						return;
+					}
+					if (purchaseDetails.selected_qty > 0) {
 						deliver_items.push(purchaseDetails);
 					}
-				});
+				}
+
+				/*
+					material.product.available_purchase_details.forEach(purchaseDetails => {
+						if(purchaseDetails.selected_qty == undefined){
+							purchaseDetails.selected_qty = 0;
+						}
+						total_selected_qty += parseInt(purchaseDetails.selected_qty);
+						if(purchaseDetails.selected_qty > purchaseDetails.available_qty){
+							showErrorAlert('Error', 'Items Exceeding Available Quantity');
+							return false;
+						}
+						if(purchaseDetails.selected_qty > 0){
+							deliver_items.push(purchaseDetails);
+						}
+					});
+				*/
+				
 			
 				if(total_selected_qty > this.remainingDeliverQty(this.selected_material_index)){
 					showErrorAlert('Error', 'Items Exceeding Required Quantity');
