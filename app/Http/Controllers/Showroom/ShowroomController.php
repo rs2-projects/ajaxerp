@@ -79,4 +79,42 @@ class ShowroomController extends BackendController
         }
         return $this->returnAjaxSuccess([],'Showroom deleted successfully');
     }
+
+    //showroom employees
+    public function showroomEmployees($id)
+    {
+        $this->setPageTitle('Set Employee');
+        $this->addBreadcrumbs('Set Employee');
+        $this->setActiveMenu('showroom.index');
+
+        return $this->view('showroom.showroom_employees')->with(['showroomId' => $id]);
+    }
+
+    //showroom employees filtered data
+    public function showroomEmployeesFiltered(Request $request, $id)
+    {
+        $data = $this->service->showroomEmployeesFilteredData($request, $id);
+        $view = $this->view('showroom._employees_filtered')
+            ->with($data)
+            ->render();
+        return $this->returnAjaxSuccess(['view' => $view]);
+    }
+
+    //get empty showroom employees
+    public function getEmptyShowroomEmployees(Request $request)
+    {
+        $data = $this->service->getEmptyShowroomEmployees($request);
+        return $this->returnAjaxSuccess($data);
+    }
+
+    //store showroom employees
+    public function storeShowroomEmployees(Request $request, $id)
+    {
+        try {
+            $this->service->storeShowroomEmployees($request, $id);
+        }catch(\Exception $e){
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Employee added successfully');
+    }
 }

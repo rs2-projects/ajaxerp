@@ -122,6 +122,7 @@ class User extends BaseAuthenticatableModel
         'marriage_date',
         'present_address',
         'permanent_address',
+        'showroom_id',
         'email_verified_at',
         'password',
         'resigned',

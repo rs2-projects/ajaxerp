@@ -505,3 +505,27 @@
     background-color: #ccf9ff;
     color: #00bcd4;
 }
+
+
+@media (min-width: 1200px) {
+    .modal-lg, .modal-xl {
+        --bs-modal-width: 1000px;
+    }
+}
+.employee-select-top-box {
+    min-height: 137px;
+    display: flex;
+    align-items: end;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+@media (max-width: 767px) {
+    .employee-select-top-box {
+        min-height: auto;
+        display: flex;
+        align-items: end;
+        font-size: 18px;
+        font-weight: 700;
+    }
+}

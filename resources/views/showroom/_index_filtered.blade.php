@@ -6,6 +6,7 @@
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Name </th>
                 <th class="erp-th text-center">Address</th>
+                <th class="erp-th text-center">Employees</th>
                 @if(hasPermission('manage-customers'))
                     <th class="erp-th text-center">Action </th>
                 @endif
@@ -19,6 +20,9 @@
                     </td>
                     <td class="erp-tbody-td">{{ $item->name }}</td>
                     <td class="erp-tbody-td text-center">{{ $item->address ?? '-' }}</td>
+                    <td class="erp-tbody-td text-center">
+                        <a href="{{ route('showroom.showroom-employees.index', $item->id) }}" class="btn btn-primary">Employees</a>
+                    </td>
                     @if(hasPermission('manage-customers'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
