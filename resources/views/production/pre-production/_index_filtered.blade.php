@@ -2,7 +2,7 @@
     <div class="big-table pt-4">
         <div class="de-table-wrapper">
             <div class="table-responsives">
-                <table class="table mb-0 erp-table">
+                <table class="table mb-0 erp-table auto-col-table">
                     <thead class="erp-thead">
                         <tr class="erp-tr">
                             <th class="erp-th">SL</th>
