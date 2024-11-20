@@ -529,3 +529,13 @@
         font-weight: 700;
     }
 }
+.showroom-employees-btn {
+    background: linear-gradient(to right, #37B34A 0%, #8BC53F 100%);
+    color: #fff !important;
+    font-weight: 700;
+    border-radius: 13px;
+    padding: 5px 20px;
+    font-size: 15px;
+    line-height: 1;
+    border: none;
+}

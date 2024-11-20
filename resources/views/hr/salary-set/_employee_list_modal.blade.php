@@ -66,7 +66,7 @@
                                 <div class="table-body-item em-list flex-30">
                                     <a href="javascript:void(0)" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                         <div class="em-pro-img-box">
-                                            <img src="@{{employee.show_image}}" alt="">
+                                            <img :src="employee.show_image" alt="">
                                         </div>
                                         <div class="em-pro-details-box">
                                             <h5>@{{ employee.full_name }}</h5>

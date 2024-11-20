@@ -1,6 +1,6 @@
 <!-- Add Showroom Modal -->
 <div id="addShowroomModal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered " role="document">
         <form style="width:100%" action="{{ route('showroom.store') }}" id="showroomStoreForm" method="POST">
             @csrf
             <div class="modal-content">

@@ -21,7 +21,7 @@
                     <td class="erp-tbody-td">{{ $item->name }}</td>
                     <td class="erp-tbody-td text-center">{{ $item->address ?? '-' }}</td>
                     <td class="erp-tbody-td text-center">
-                        <a href="{{ route('showroom.showroom-employees.index', $item->id) }}" class="btn btn-primary">Employees</a>
+                        <a href="{{ route('showroom.showroom-employees.index', $item->id) }}" class="showroom-employees-btn">Employees</a>
                     </td>
                     @if(hasPermission('manage-customers'))
                         <td class="text-end erp-tbody-td">
