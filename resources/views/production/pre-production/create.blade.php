@@ -31,10 +31,18 @@
                                 <input class="form-control" name="order_details" type="text" placeholder="" required="">
                             </div>
                         </div>
-                        <div class="pgib-item flex-36">
+                        <div class="pgib-item flex-35">
                             <div class="input-block erp-step-input-block mb-0">
                                 <label class="col-form-label">Design Of Documents</label>
                                 <input class="form-control" name="design_of_documents" type="file" multiple>
+                            </div>
+                        </div>
+                        <div class="pgib-item flex-25">
+                            <div class="input-block erp-step-input-block mb-0">
+                                <label class="col-form-label">Invoice</label>
+                                <select class="form-control" name="invoice_id" id="invoice_id">
+                                    <option value="">Select Invoice</option>
+                                </select>
                             </div>
                         </div>
                         <div class="pgib-item flex-100">
@@ -89,7 +97,7 @@
                             <div class="production-machine-selection-wrapper d-flex flex-wrap">
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
-                                        <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Process Selection <span class="text-danger">*</span></label>
                                         <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             @foreach ($machines as $machine)
                                                 <option value="{{$machine->id}}">{{$machine->name}}</option>
@@ -425,14 +433,14 @@
             $('.machine-multiselect').multipleSelect('destroy');
             $('.machine-multiselect').multipleSelect({
                 filter: true,
-                placeholder: 'Select Machine',
+                placeholder: 'Select Process',
                 minimumCountSelected: 6,
-                filterPlaceholder: 'Search Machine',
+                filterPlaceholder: 'Search Process',
                 selectAll: true,
                 onOpen: function () {
                     $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
                         return this.nodeType === 3;
-                    }).replaceWith("Select All Machines");
+                    }).replaceWith("Select All Processes");
                 },
             });
         }
@@ -494,6 +502,18 @@
                 }
             });
         }
+
+        $(document).ready(function () {
+            $("#invoice_id").select2({
+                placeholder: 'Select Invoice',
+                width: '100%',
+                ajax: {
+                    delay: 500,
+                    url: "{{ route('production.pre-production.get-invoice-list-data') }}",
+                    dataType: 'json'
+                }
+            });
+        });
     </script>
 @endsection
 

@@ -91,6 +91,7 @@
 @section('modals')
     @include('common.modals._make_payment_modal')
     @include('sales.invoice._design_upload_modal')
+    @include('sales.invoice._production_status_modal')
 @endsection
 @section('css')
     <style>
@@ -195,7 +196,6 @@
         }
         //get filtered data
         function getData(){
-
             getPaginatedListData("{{ route('sales.invoice.filtered') }}", "#ajax-data-load", filterData);
         }
         //get paginated data
@@ -272,6 +272,19 @@
                 minimumResultsForSearch: -1,
                 width: '100%',
             });
+        }
+
+        function getProductionStatus(id){
+            let url = "{{ route('sales.invoice.production-status', ':id') }}"
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#productionStatusModal #production-status-wrapper").html(response.view);
+                    $("#productionStatusModal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
     </script>

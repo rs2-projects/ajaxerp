@@ -25,4 +25,9 @@ class PreProductionProcessMachine extends BaseModel
             ->where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE);
     }
+
+    public function preProductionProcess()
+    {
+        return $this->belongsTo(PreProductionProcess::class, 'pre_production_process_id', 'id');
+    }
 }

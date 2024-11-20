@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 class DesignationService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -51,7 +53,7 @@ class DesignationService
             $designation->updated_at = Carbon::now();
             $designation->save();
         }catch (\Exception $exception) {
-            return throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -78,7 +80,7 @@ class DesignationService
                 ->where('id', $id)
                 ->first();
             if (!$designation) {
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $designation->name = $request->name;
             $designation->department_id = $request->department_id;
@@ -88,7 +90,7 @@ class DesignationService
             $designation->save();
 
         }catch (\Exception $exception) {
-            return  throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
 
     }
@@ -100,14 +102,14 @@ class DesignationService
                 ->where('id', $id)
                 ->first();
             if (!$designation) {
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $designation->deleted = Designation::DELETED_YES;
             $designation->deleted_at = Carbon::now();
             $designation->deleted_by = auth()->id();
             $designation->save();
         }catch (\Exception $exception) {
-            return throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 }

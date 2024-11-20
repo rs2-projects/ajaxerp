@@ -67,12 +67,14 @@ class ProductMaterialService
 
         return $data;
     }
+
     public function indexFilteredData($request)
     {
 
         $keyword_filtered = $request->keyword_filtered;
         $category_filtered = $request->category_filtered;
         $status_filtered = $request->status_filtered;
+        $stock_status = $request->stock_filter ?? '';
 
         switch ($status_filtered){
             case 'board':
@@ -93,8 +95,7 @@ class ProductMaterialService
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
                     $q->where('name', 'like', '%'.$keyword_filtered.'%');
-                        $q->orWhere('code', 'like', '%'.$keyword_filtered.'%');
-
+                    $q->orWhere('code', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->where(function ($q) use ($category_filtered){
@@ -107,8 +108,30 @@ class ProductMaterialService
                     $q->where('type', $type);
                 }
             })
+            ->where(function ($q) use ($stock_status){
+                if(($stock_status != '') && ($stock_status != 'all')) {
+                    if($stock_status == 'stock_warning'){
+                        $q->whereRaw('low_stock_warning >= available_qty')
+                            ->whereRaw('low_stock_at_least < available_qty');
+                    }else if($stock_status == 'stock_alert'){
+                        $q->whereRaw('low_stock_at_least >= available_qty');
+                    }
+                }
+            })
             ->orderBy('name', 'asc')
             ->paginate($this->paginate_limit);
+
+        return $data;
+    }
+
+    public function details($id) {
+        $data['product'] = ProductMaterial::with(['warehouse', 'category', 'tax', 'materialWarehouseSections', 'materialWarehouseSections.productMaterialRacks'])
+            ->where('id', $id)
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->first();
+        if (!$data['product']) {
+            throw new \Exception('Product Material not found');
+        }
 
         return $data;
     }

@@ -56,7 +56,7 @@ class UserTerminationService
                 ->where('deleted', User::DELETED_NO)
                 ->first();
             if (!$chek_user) {
-                throw new \Exception("User not found");
+                throw new \Exception("User not found!");
             }
             $userTermination = new UserTermination();
             $userTermination->user_id = $request->user_id;
@@ -76,6 +76,9 @@ class UserTerminationService
             $chek_user->updated_at = Carbon::now();
             $chek_user->updated_by = auth()->user()->id;
             $chek_user->save();
+
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeOrUpdateTermination($userTermination);
 
         }catch (\Exception $exception) {
             DB::rollBack();
@@ -126,6 +129,9 @@ class UserTerminationService
             $chek_user->updated_at = Carbon::now();
             $chek_user->updated_by = auth()->user()->id;
             $chek_user->save();
+
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeOrUpdateTermination($userTermination);
 
         }catch (\Exception $exception) {
             DB::rollBack();

@@ -26,7 +26,7 @@
                                             </div>
                                             <div class="erp-em-reg-step-item flex-48">
                                                 <div class="input-block erp-step-input-block ">
-                                                    <label class="col-form-label">Designation: </label>
+                                                    <label class="col-form-label">Position: </label>
                                                     <input class="form-control " value="{{ $experience->designation }}" name="designation[]" type="text" >
                                                 </div>
                                             </div>
@@ -42,6 +42,12 @@
                                                     <div class="cal-icon"><input class="form-control datetimepicker" value="{{ $experience->end_date }}" name="end_date[]" type="text" ></div>
                                                 </div>
                                             </div>
+                                            <div class="erp-em-reg-step-item flex-100">
+                                                <div class="input-block erp-step-input-block ">
+                                                    <label class="col-form-label">Description: </label>
+                                                    <textarea name="description[]" class="form-control" rows="3">{{ $experience->description }}</textarea>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endforeach
                                 @else
@@ -55,8 +61,8 @@
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
-                                                <label class="col-form-label">Designation: </label>
-                                                <input class="form-control " name="designation[]" type="text" >
+                                                <label class="col-form-label">Position: </label>
+                                                <input class="form-control " name="designation[]" type="text" > 
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
@@ -68,7 +74,15 @@
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
                                                 <label class="col-form-label">Ending: </label>
-                                                <div class="cal-icon"><input class="form-control datetimepicker"  name="end_date[]" type="text" ></div>
+                                                <div class="cal-icon">
+                                                    <input class="form-control datetimepicker"  name="end_date[]" type="text" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-100">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">Description: </label>
+                                                <textarea name="description[]" class="form-control" rows="3"></textarea>
                                             </div>
                                         </div>
                                     </div>

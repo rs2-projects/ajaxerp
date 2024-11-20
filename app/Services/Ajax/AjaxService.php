@@ -5,6 +5,7 @@ namespace App\Services\Ajax;
 use App\Models\Designation;
 use App\Models\SalarySettingsSalarySets;
 use App\Models\SettingsLeaveType;
+use App\Models\SettingsSalarySet;
 use App\Models\SettingsSalarySetEmployee;
 use App\Models\SettingsSalarySetLeaveType;
 use App\Models\User;
@@ -87,12 +88,18 @@ class AjaxService
     {
         if(isset($request->salary_set_id)) {
             $salary_set_id = $request->salary_set_id;
-            $salary_set_employees = SettingsSalarySetEmployee::where('settings_salary_set_id', $salary_set_id)
+            $salary_set_employees = SettingsSalarySetEmployee::whereHas('salarySet', function ($q) {
+                $q->where('status', SettingsSalarySet::STATUS_ACTIVE);
+            })
+                ->where('settings_salary_set_id', $salary_set_id)
                 ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
                 ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
                 ->pluck('basic_salary', 'employee_id')->toArray();
 
-            $removed_employee_ids = SettingsSalarySetEmployee::where('settings_salary_set_id', '!=', $salary_set_id)
+            $removed_employee_ids = SettingsSalarySetEmployee::whereHas('salarySet', function ($q) {
+                $q->where('status', SettingsSalarySet::STATUS_ACTIVE);
+            })
+                ->where('settings_salary_set_id', '!=', $salary_set_id)
                 ->where('status', SettingsSalarySetEmployee::STATUS_ACTIVE)
                 ->where('deleted', SettingsSalarySetEmployee::DELETED_NO)
                 ->pluck('employee_id')->toArray();
@@ -144,7 +151,7 @@ class AjaxService
                 $selected_employee_ids = array_keys($salary_set_employees);
                 if(in_array($employee->id, $selected_employee_ids)) {
                     $employee->is_selected = true;
-                    $employee->basic_salary = $salary_set_employees[$employee->id];
+                    $employee->basic_salary = formatNumber($salary_set_employees[$employee->id]);
                 } else {
                     $employee->is_selected = false;
                     $employee->basic_salary = 0;

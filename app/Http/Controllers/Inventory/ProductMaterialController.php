@@ -38,6 +38,14 @@ class ProductMaterialController extends BackendController
 
         return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
     }
+    
+    public function details($id)
+    {
+        $this->setPageTitle("Product Material");
+        $this->setActiveMenu('inventory.product-material.index');
+        $data = $this->service->details($id);
+        return  $this->view('inventory.product-material.details')->with($data);
+    }
 
     public function store(StoreProductMaterialRequest $request)
     {

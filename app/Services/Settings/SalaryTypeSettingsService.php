@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\DB;
 
 class SalaryTypeSettingsService
 {
+    public SettingsSalarySetUpdateHelperService $updateSalarySetHelperService;
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
+        $this->updateSalarySetHelperService = new SettingsSalarySetUpdateHelperService();
     }
 
     public function getIndexFilteredData($request)
@@ -74,7 +76,32 @@ class SalaryTypeSettingsService
         DB::beginTransaction();
         try {
             $salaryType = SettingsSalaryType::where('id', $id)->first();
-            $salaryType->title = $request->title;
+            $salaryType->status = SettingsSalaryType::STATUS_INACTIVE;
+            $salaryType->updated_at = Carbon::now();
+            $salaryType->updated_by = auth()->user()->id;
+            $salaryType->save();
+
+            $newSalaryType = new SettingsSalaryType();
+            $newSalaryType->title = $request->title;
+            $newSalaryType->description = $request->description;
+            $newSalaryType->status = SettingsSalaryType::STATUS_ACTIVE;
+            $newSalaryType->created_at = Carbon::now();
+            $newSalaryType->created_by = auth()->user()->id;
+            $newSalaryType->updated_at = Carbon::now();
+            $newSalaryType->updated_by = auth()->user()->id;
+            $newSalaryType->save();
+
+            if (is_array($request->detail_type) && count($request->detail_type) > 0) {
+                foreach ($request->detail_type as $key => $value) {
+                    $salaryTypeDetail = new SettingsSalaryTypeDetails();
+                    $salaryTypeDetail->settings_salary_type_id = $newSalaryType->id;
+                    $salaryTypeDetail->title = $request->detail_title[$key];
+                    $salaryTypeDetail->type = $request->detail_type[$key];
+                    $salaryTypeDetail->value = $request->detail_value[$key];
+                    $salaryTypeDetail->save();
+                }
+            }
+            /*$salaryType->title = $request->title;
             $salaryType->description = $request->description;
             $salaryType->updated_at = Carbon::now();
             $salaryType->updated_by = auth()->user()->id;
@@ -102,9 +129,11 @@ class SalaryTypeSettingsService
                     $salaryTypeDetail->value = $request->detail_value[$key];
                     $salaryTypeDetail->save();
                 }
-            }
+            }*/
 
-        }catch (\Exception $e) {
+            $this->updateSalarySetHelperService->updateSalaryType($salaryType, $newSalaryType);
+
+        } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }

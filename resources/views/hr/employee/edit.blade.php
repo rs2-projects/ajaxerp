@@ -125,14 +125,38 @@
                                     <div class="erp-em-reg-step-wrapper d-flex flex-wrap">
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
-                                                <label class="col-form-label">NID No. </label>
+                                                <label class="col-form-label">Government ID: </label>
                                                 <input class="form-control " value="{{ $employee->nid_no }}" name="nid_no" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-item flex-48">
                                             <div class="input-block erp-step-input-block ">
-                                                <label class="col-form-label">Upload NID: </label>
+                                                <label class="col-form-label">Upload Government ID: </label>
                                                 <input class="form-control " name="nid_image" type="file" >
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">TIN Number: </label>
+                                                <input class="form-control " value="{{ $employee->tin_number }}" name="tin_number" type="text" >
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">SSS Number: </label>
+                                                <input class="form-control " value="{{ $employee->sss_number }}" name="sss_number" type="text" >
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">PHIC: </label>
+                                                <input class="form-control " value="{{ $employee->phic }}" name="phic" type="text" >
+                                            </div>
+                                        </div>
+                                        <div class="erp-em-reg-step-item flex-48">
+                                            <div class="input-block erp-step-input-block ">
+                                                <label class="col-form-label">Pag-Ibig: </label>
+                                                <input class="form-control " value="{{ $employee->pag_ibig }}" name="pag_ibig" type="text" >
                                             </div>
                                         </div>
                                         <div class="erp-em-reg-step-group-item flex-100 d-flex justify-content-center flex-wrap">
@@ -312,7 +336,12 @@
                                                         <input class="form-control " value="{{ $bank->note }}" name="note[]" type="text" >
                                                     </div>
                                                 </div>
-                                                <div class="erp-em-reg-step-item flex-48"></div>
+                                                <div class="erp-em-reg-step-item flex-48">
+                                                    <div class="input-block erp-step-input-block ">
+                                                        <label class="col-form-label">E-Wallet (Gcash/Maya): </label>
+                                                        <input class="form-control " value="{{ $bank->e_wallet }}" name="e_wallet[]" type="text" >
+                                                    </div>
+                                                </div>
                                             </div>
                                         @endforeach
                                     @endif

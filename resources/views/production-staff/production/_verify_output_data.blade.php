@@ -17,6 +17,7 @@
                                 <th class="erp-th">Name</th>
                                 <th class="erp-th">
                                     <a href="javascript:void(0)" qty={{$data->quantity}} class="qc-btn-all qc-perfect-all" onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 3]) }}' , this, 'perfect-all')"><span class="me-1"><i class="fa-solid fa-check"></i></span> Perfect All</a>
+                                    <a href="javascript:void(0)" class="qc-btn qc-perfect" onclick="addReuseItem(this, {{ $data->id }})"><span class="me-1"><i class="fa-solid fa-plus"></i></span> Add Re-Use</a>
                                 </th>
                             </tr>
                         </thead>
@@ -30,7 +31,8 @@
                                     <td class="erp-tbody-td text-left">
                                         <div class="qc-btn-wrap">
                                             <a href="javascript:void(0)" class="qc-btn qc-perfect" onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 1]) }}' , this, 'perfect')">Perfect </a>
-                                            <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 2]) }}' , this, 'damage')">Damage </a>
+                                            {{-- <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="verifyOutput('{{ route('production-staff.production.production.verify-output.update', [$data->id, 2]) }}' , this, 'damage')">Damage </a> --}}
+                                            <a href="javascript:void(0)" class="qc-btn qc-damage"  onclick="damageOutput(this,{{ $data->id }})">Damage </a>
                                         </div>
                                     </td>
                                 </tr>

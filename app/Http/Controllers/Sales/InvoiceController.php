@@ -42,7 +42,8 @@ class InvoiceController extends BackendController
 
     //Create Invoice
     public function create()
-    {$this->setPageTitle("New Invoice");
+    {
+        $this->setPageTitle("New Invoice");
         $this->setActiveMenu('sales.invoice.index');
         $data = $this->service->createData();
         return $this->view('sales.invoice.create')->with($data);
@@ -52,7 +53,6 @@ class InvoiceController extends BackendController
     {
         $data = $this->service->getAllCustomer($request);
         return response()->json($data['customers']);
-
     }
     //Get all finished goods
     // public function getAllFinishedGoods(Request $request)
@@ -161,5 +161,11 @@ class InvoiceController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
+    }
+
+    public function getProductionStatus($id)
+    {
+        $data = $this->service->getProductionStatus($id);
+        return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetched Successfully');
     }
 }

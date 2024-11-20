@@ -190,10 +190,10 @@ class ProductMaterialSetService
 
                     'product_material_set_item_id' => $item->id,
                     'qty' => $item->quantity,
-                    'cost' => $item->rp_cost,
-                    'item_srp' => $item->rp_srp,
-                    'item_srp_with_discount' => $item->srp_with_discount,
-                    'item_wholesale' => $item->wholesale
+                    'cost' => formatNumber($item->rp_cost),
+                    'item_srp' => formatNumber($item->rp_srp),
+                    'item_srp_with_discount' => formatNumber($item->srp_with_discount),
+                    'item_wholesale' => formatNumber($item->wholesale)
                 ];
             });
 

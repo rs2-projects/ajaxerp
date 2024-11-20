@@ -44,19 +44,19 @@
             </div>
 
             <div class="table-body-item em-list ">
-                <h4 class="text-center erp-t-email">{{ getCurrencySymbol() }} {{ showAmount($item->net_basic_salary) }}</h4>
+                <h4 class="text-center erp-t-email">{{ getCurrencySymbol() }} {{ formatNumber($item->net_basic_salary) }}</h4>
             </div>
             <div class="table-body-item em-list ">
-                <h4 class="text-center erp-t-phone">{{ getCurrencySymbol() }} {{ showAmount($item->net_payable_salary) }}</h4>
+                <h4 class="text-center erp-t-phone">{{ getCurrencySymbol() }} {{ formatNumber($item->net_payable_salary) }}</h4>
             </div>
             <div class="table-body-item em-list ">
-                <h4 class="text-center erp-t-department">{{ getCurrencySymbol() }} {{ showAmount($item->absent_day_amount) }}</h4>
+                <h4 class="text-center erp-t-department">{{ getCurrencySymbol() }} {{ formatNumber($item->absent_day_amount) }}</h4>
             </div>
             <div class="table-body-item em-list ">
-                <h4 class="text-center erp-t-designation">{{ getCurrencySymbol() }} {{ showAmount( $item->late_amount) }}</h4>
+                <h4 class="text-center erp-t-designation">{{ getCurrencySymbol() }} {{ formatNumber($item->late_amount) }}</h4>
             </div>
             <div class="table-body-item em-list ">
-                <h4 class="text-center erp-t-designation">{{ getCurrencySymbol() }} {{ showAmount( $item->total_over_time_amount) }}</h4>
+                <h4 class="text-center erp-t-designation">{{ getCurrencySymbol() }} {{ formatNumber($item->total_over_time_amount) }}</h4>
             </div>
             <div class="table-body-item em-list">
                 <div class="erp-action-t">

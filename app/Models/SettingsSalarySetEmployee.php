@@ -41,4 +41,9 @@ class SettingsSalarySetEmployee extends BaseModel
     {
         return $this->belongsTo(User::class, 'employee_id', 'id');
     }
+
+    public function salarySet()
+    {
+        return $this->belongsTo(SettingsSalarySet::class, 'settings_salary_set_id', 'id');
+    }
 }

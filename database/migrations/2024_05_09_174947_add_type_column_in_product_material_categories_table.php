@@ -15,14 +15,6 @@ return new class extends Migration
             $table->unsignedTinyInteger('type')->default(0)->comment('0=Others,1=Boards,2=Paper')->after('id');
 
         });
-        \Illuminate\Support\Facades\DB::table('product_material_categories')->insert([
-            'type' => \App\Models\Products\ProductMaterialCategory::TYPE_BOARD,
-            'name' => 'Boards'
-        ]);
-        \Illuminate\Support\Facades\DB::table('product_material_categories')->insert([
-            'type' => \App\Models\Products\ProductMaterialCategory::TYPE_PAPER,
-            'name' => 'Papers'
-        ]);
     }
 
     /**

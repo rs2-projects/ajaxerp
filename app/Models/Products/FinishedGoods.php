@@ -3,6 +3,7 @@
 namespace App\Models\Products;
 
 use App\Models\BaseModel;
+use App\Models\Production\PreProduction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FinishedGoods extends BaseModel
@@ -124,6 +125,14 @@ class FinishedGoods extends BaseModel
     }
     public function color_downs(){
         return $this->belongsTo(ProductMaterial::class, 'color_down', 'id');
+    }
+
+    public function availableProductions() {
+        return $this->hasMany(PreProduction::class, 'finished_goods_id', 'id')
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('is_verified', PreProduction::VERIFIED_YES)
+            ->where('type', PreProduction::TYPE_BOARD)
+            ->where('available_qty', '>', 0);
     }
 
 }

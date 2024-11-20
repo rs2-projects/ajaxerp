@@ -21,13 +21,13 @@
                                             <div class="pgib-item flex-30">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">SRP Markup % <span class="text-red">*</span></label>
-                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="srp_markup_percent" name="srp_markup_percent" type="number" min="0" required="">
+                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="srp_markup_percent" name="srp_markup_percent" type="number" step="0.01" min="0" required="">
                                                 </div>
                                             </div>
                                             <div class="pgib-item flex-30">
                                                 <div class="input-block erp-step-input-block mb-0">
                                                     <label class="col-form-label">Wholesale Discount %</label>
-                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="wholesale_discount_percent" name="wholesale_discount_percent" type="number" min="0">
+                                                    <input class="form-control" v-on:input="updateSrpMarkupOrWholesale()" v-model.number="wholesale_discount_percent" name="wholesale_discount_percent" step="0.01" type="number" min="0">
                                                 </div>
                                             </div>
                                             <div class="pgib-item flex-20">
@@ -354,7 +354,7 @@
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.cost = item.cost;
+                        item.cost = formatNumber(parseFloat(item.cost));
                         item.item_srp = 0;
                         item.item_srp_with_discount = 0;
                         item.item_wholesale = 0;
@@ -380,7 +380,7 @@
                     if(cost <= 0) {
                         this.cartItems[index].cost = 0;
                     } else {
-                        this.cartItems[index].cost = parseInt(cost);
+                        this.cartItems[index].cost = formatNumber(parseFloat(cost));
                     }
                     this.calculateCartItemCost(index); 
                 },
@@ -401,9 +401,9 @@
                     let item_srp = item_srp_with_discount / (1 - (this.FIXED_PERCENT / 100));
                     let item_wholesale = item_srp_with_discount * (1 - (this.wholesale_discount_percent/100));
                     
-                    this.cartItems[index].item_srp = item_srp.toFixed(2);
-                    this.cartItems[index].item_srp_with_discount = item_srp_with_discount.toFixed(2);
-                    this.cartItems[index].item_wholesale = item_wholesale.toFixed(2);
+                    this.cartItems[index].item_srp = formatNumber(parseFloat(item_srp));
+                    this.cartItems[index].item_srp_with_discount = formatNumber(parseFloat(item_srp_with_discount));
+                    this.cartItems[index].item_wholesale = formatNumber(parseFloat(item_wholesale));
 
                     this.calculateProductMaterialSetCost();
                 },
@@ -422,10 +422,10 @@
                             this.wholesale += parseFloat(item.item_wholesale);
                         });
 
-                        this.cost = this.cost.toFixed(2);
-                        this.srp_with_discount = this.srp_with_discount.toFixed(2);
-                        this.srp = this.srp.toFixed(2);
-                        this.wholesale = this.wholesale.toFixed(2);
+                        this.cost = formatNumber(parseFloat(this.cost));
+                        this.srp_with_discount = formatNumber(parseFloat(this.srp_with_discount));
+                        this.srp = formatNumber(parseFloat(this.srp));
+                        this.wholesale = formatNumber(parseFloat(this.wholesale));
                     } else {
                         this.cost = "0.00";
                         this.srp_with_discount = "0.00";

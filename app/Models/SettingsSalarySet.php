@@ -48,6 +48,9 @@ class SettingsSalarySet extends BaseModel
         self::SALARY_GENERATE_TYPE_FULL_MONTH => 'Full Month',
     ];
     protected $fillable = [
+        'start_date',
+        'end_date',
+        'parent_id',
         'name',
         'description',
         'settings_salary_type_id',
@@ -76,5 +79,10 @@ class SettingsSalarySet extends BaseModel
     public function leaveTypes()
     {
         return $this->hasMany(SettingsSalarySetLeaveType::class, 'settings_salary_set_id', 'id');
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(SettingsSalarySetEmployee::class, 'settings_salary_set_id', 'id');
     }
 }

@@ -18,7 +18,7 @@ trait GetSalaryResources
     public function getSettingsSalarySet($salary_set_id, $salary_generate_type)
     {
         return SettingsSalarySet::where('id', $salary_set_id)
-            ->where('status', SettingsSalarySet::STATUS_ACTIVE)
+
             ->where('deleted', SettingsSalarySet::DELETED_NO)
             ->where('salary_generate_type', $salary_generate_type)
             ->first();

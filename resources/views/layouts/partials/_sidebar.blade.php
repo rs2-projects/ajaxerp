@@ -153,14 +153,24 @@
                     <li class="menu-title">
                         <span>Sales & Orders</span>
                     </li>
-                    @if(hasPermission( 'view-customers','manage-customers' ))
+                    @if(hasPermission( 'view-invoices','manage-invoices','make-payment','deliver-items'))
                         <li>
-                            <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
+                            <a href="{{ route('sales.quotation.index') }}" class="{{ $activeMenu == 'sales.quotation.index' ? 'active' : ''}}"><i class="la la-file-pdf-o"></i> <span>Quotations</span></a>
                         </li>
                     @endif
                     @if(hasPermission( 'view-invoices','manage-invoices','make-payment','deliver-items'))
                         <li>
                             <a href="{{ route('sales.invoice.index') }}" class="{{ $activeMenu == 'sales.invoice.index' ? 'active' : ''}}"><i class="la la-file-pdf-o"></i> <span>Invoices</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-customers','manage-customers' ))
+                        <li>
+                            <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission( 'view-customers','manage-customers' ))
+                        <li>
+                            <a href="{{ route('showroom.index') }}" class="{{ $activeMenu == 'showroom.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Showroom</span></a>
                         </li>
                     @endif
                 @endif
@@ -170,6 +180,12 @@
                     <li class="menu-title">
                         <span>Inventory</span>
                     </li>
+                    
+                    @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
+                        <li>
+                            <a href="{{route('inventory.reuse-items.index')}}"  class="{{ ($activeMenu == 'inventory.reuse-items.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Reuse Items</span></a>
+                        </li>
+                    @endif
                     @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
                         <li>
                             <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
@@ -304,6 +320,11 @@
                     @if(hasPermission('view-production-staff','manage-production-staff'))
                         <li>
                             <a href="{{route('production.production-staff.index')}}" class="{{ ($activeMenu == 'production.production-staff.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Production Staff</span></a>
+                        </li>
+                    @endif
+                    @if(hasPermission('view-production','manage-processes','receive-production-materials','dispatch-production-materials'))
+                        <li>
+                            <a href="{{route('production.production.monitoring')}}" class="{{ ($activeMenu == 'production.production.monitoring') ? 'active' : '' }}"><i class="la la-cogs"></i> <span>Production Monitor</span></a>
                         </li>
                     @endif
                 @endif

@@ -60,13 +60,13 @@
                         <h4 class="text-center d-table-title">{{ getFormattedDate($purchase_order->estimated_delivery_date, 'd M, Y') }}</h4>
 
                     </td>
-                    <td class="erp-tbody-td">
-                        <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
+                    <td class="erp-tbody-td purchase-supplier-td">
+                        <div class="em-profile-wrap d-flex align-items-center flex-wrap justify-content-center">
                             <div class="em-pro-img-box">
                                 <img src="{{ asset($purchase_order->supplier->show_image) }}" alt="">
                             </div>
                             <div class="em-pro-details-box">
-                                <h5>{{ $purchase_order->supplier->business_name }}</h5>
+                                <h5 title="{{ $purchase_order->supplier->business_name }}">{{ $purchase_order->supplier->business_name }}</h5>
                             </div>
                         </div>
                     </td>
@@ -75,11 +75,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->payable_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->due_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
@@ -128,8 +128,8 @@
                                     <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         @if(hasPermission('product-material-purchase-print-barcode' ))
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a>
-                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (PDF)</a>
+                                            {{-- <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a> --}}
+                                            <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print QR Code (PDF)</a>
                                         @endif    
                                         @if(
                                             ($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_NEW) ||
@@ -159,6 +159,19 @@
 
                                                 @if($purchase_order->is_backed == $purchase_order::IS_BACKED_NO)
                                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
+                                                @endif
+                                            @endif
+                                        @endif
+                                        
+                                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_DELIVERED)
+                                            @if($purchase_order->price_calculated == $purchase_order::PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_others == \App\Models\Procurements\ProductMaterialPurchase::HAS_OTHERS_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Others Price</a>
+                                                @endif
+                                            @endif
+                                            @if($purchase_order->board_price_calculated == $purchase_order::BOARD_PRICE_CALCULATED_NO)
+                                                @if($purchase_order->has_boards == \App\Models\Procurements\ProductMaterialPurchase::HAS_BOARD_YES)
+                                                    <a class="dropdown-item" href="{{route('procurement.purchase-order.board.calculate-price.index', $purchase_order->id)}}" ><i class="la la-calculator m-r-5"></i>Calculate Board Price</a>
                                                 @endif
                                             @endif
                                         @endif

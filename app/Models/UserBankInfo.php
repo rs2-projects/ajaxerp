@@ -31,6 +31,7 @@ class UserBankInfo extends BaseModel
         'branch_name',
         'account_name',
         'account_number',
+        'e_wallet',
         'routing_number',
         'swift_code',
         'note',

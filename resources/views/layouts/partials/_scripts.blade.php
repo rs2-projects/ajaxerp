@@ -23,6 +23,13 @@
 <script src="{{ asset('assets') }}/js/sweetalert2@11.js"></script>
 <script src="{{ asset('assets') }}/js/ajax-request.js"></script>
 <script>
+    const ADD_TO_CART_ROUTE = "{{ route('inventory.product-material.add-to-cart') }}";
+    const REMOVE_FROM_CART_ROUTE = "{{ route('inventory.product-material.remove-cart-item') }}";
+    const UPDATE_CART_QTY_ROUTE = "{{ route('inventory.product-material.update-cart-qty') }}";
+    const GET_CART_CONTENTS_ROUTE = "{{ route('inventory.product-material.get-cart-contents') }}";
+</script>
+<script src="{{ asset('assets') }}/js/cart.js"></script>
+<script>
     $(document).ready(function () {
         setTimeout(function () {
             @if (session('error'))

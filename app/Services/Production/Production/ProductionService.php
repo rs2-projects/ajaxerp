@@ -2,6 +2,7 @@
 
 namespace App\Services\Production\Production;
 
+use App\Models\Machine;
 use App\Models\Production\PreProduction;
 use App\Models\Production\PreProductionBoard;
 use App\Models\Production\PreProductionBoardDelivery;
@@ -19,6 +20,8 @@ use Picqer\Barcode\BarcodeGeneratorPNG;
 
 class ProductionService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -609,6 +612,24 @@ class ProductionService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function monitoringPerDayData() {
+        $data = [];
+        $data['productions'] = PreProduction::where('deleted', PreProduction::DELETED_NO)
+            ->where('status', PreProduction::STATUS_ACTIVE)
+            ->where('process_status', PreProduction::PROCESS_STATUS_PROCESSING)
+            ->where('type', PreProduction::TYPE_OTHERS)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
+            ->where('status', Machine::STATUS_ACTIVE)
+            ->orderBy('id', 'asc')
+            ->get();
+            
+
+        return $data;
     }
 
     // public function printBarcodeData($id, $type){

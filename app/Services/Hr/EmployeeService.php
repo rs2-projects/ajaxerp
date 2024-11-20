@@ -17,6 +17,7 @@ use App\Models\UserEmergencyContact;
 use App\Models\UserExperienceInfo;
 use App\Models\UserLeave;
 use App\Models\UserLeaveDetail;
+use App\Models\UserLifecycle;
 use App\Services\Common\ImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -169,6 +170,10 @@ class EmployeeService
             $user->password = bcrypt($request->password);
             $user->nid_no = $request->nid_no??null;
             $user->nid_image = $nid_image_path??null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no??null;
             $user->passport_expiry_date = $request->passport_expiry_date??null;
             $user->passport_image = $passport_image_path??null;
@@ -212,6 +217,7 @@ class EmployeeService
                     $user_bank_info->branch_name = $request->branch_name[$key];
                     $user_bank_info->account_name = $request->account_name[$key];
                     $user_bank_info->account_number = $request->account_number[$key];
+                    $user_bank_info->e_wallet = $request->e_wallet[$key];
                     $user_bank_info->routing_number = $request->routing_number[$key];
                     $user_bank_info->swift_code = $request->swift_code[$key];
                     $user_bank_info->note = $request->note[$key];
@@ -245,6 +251,8 @@ class EmployeeService
                 }
             }
 
+            $userLifecycleService = new UserLifecycleService();
+            $userLifecycleService->storeJoin($user);
 
         }catch (\Exception $exception) {
             DB::rollBack();
@@ -345,6 +353,10 @@ class EmployeeService
             $user->contractor_id = $contractorId??null;
             $user->nid_no = $request->nid_no ?? null;
             $user->nid_image = $nid_image_path ?? null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no ?? null;
             $user->passport_expiry_date = $request->passport_expiry;
             $user->passport_image = $passport_image_path ?? null;
@@ -427,6 +439,7 @@ class EmployeeService
                             $bank_info->branch_name = $request->branch_name[$key];
                             $bank_info->account_name = $request->account_name[$key];
                             $bank_info->account_number = $request->account_number[$key];
+                            $bank_info->e_wallet = $request->e_wallet[$key];
                             $bank_info->routing_number = $request->routing_number[$key];
                             $bank_info->swift_code = $request->swift_code[$key];
                             $bank_info->note = $request->note[$key];
@@ -442,6 +455,7 @@ class EmployeeService
                         $bank_info->branch_name = $request->branch_name[$key];
                         $bank_info->account_name = $request->account_name[$key];
                         $bank_info->account_number = $request->account_number[$key];
+                        $bank_info->e_wallet = $request->e_wallet[$key];
                         $bank_info->routing_number = $request->routing_number[$key];
                         $bank_info->swift_code = $request->swift_code[$key];
                         $bank_info->note = $request->note[$key];
@@ -547,6 +561,13 @@ class EmployeeService
             throw new \Exception("Employee not found!");
         }
 
+        $data['activities'] = UserLifecycle::with('designation', 'department')
+            ->where('user_id', $id)
+            ->where('status', UserLifecycle::STATUS_ACTIVE)
+            ->where('deleted', UserLifecycle::DELETED_NO)
+            ->orderBy('date', 'ASC')
+            ->get();
+
         return $data;
     }
 
@@ -633,6 +654,10 @@ class EmployeeService
 
             $user->nid_no = $request->nid_no ?? null;
             $user->nid_image = $nid_image_path ?? null;
+            $user->tin_number = $request->tin_number??null;
+            $user->sss_number = $request->sss_number??null;
+            $user->phic = $request->phic??null;
+            $user->pag_ibig = $request->pag_ibig??null;
             $user->passport_no = $request->passport_no ?? null;
             $user->passport_expiry_date = $request->passport_expiry_date ?? null;
             $user->passport_image = $passport_image_path ?? null;
@@ -688,6 +713,7 @@ class EmployeeService
                             $bank_info->branch_name = $request->branch_name[$key];
                             $bank_info->account_name = $request->account_name[$key];
                             $bank_info->account_number = $request->account_number[$key];
+                            $bank_info->e_wallet = $request->e_wallet[$key];
                             $bank_info->routing_number = $request->routing_number[$key];
                             $bank_info->swift_code = $request->swift_code[$key];
                             $bank_info->note = $request->note[$key];
@@ -703,6 +729,7 @@ class EmployeeService
                         $bank_info->branch_name = $request->branch_name[$key];
                         $bank_info->account_name = $request->account_name[$key];
                         $bank_info->account_number = $request->account_number[$key];
+                        $bank_info->e_wallet = $request->e_wallet[$key];
                         $bank_info->routing_number = $request->routing_number[$key];
                         $bank_info->swift_code = $request->swift_code[$key];
                         $bank_info->note = $request->note[$key];
@@ -824,6 +851,7 @@ class EmployeeService
                             $exp_info->designation = $request->designation[$key];
                             $exp_info->start_date = $request->start_date[$key];
                             $exp_info->end_date = $request->end_date[$key];
+                            $exp_info->description = $request->description[$key];
                             $exp_info->updated_by = auth()->id();
                             $exp_info->updated_at = Carbon::now();
                             $exp_info->save();
@@ -836,6 +864,7 @@ class EmployeeService
                         $exp_info->designation = $request->designation[$key];
                         $exp_info->start_date = $request->start_date[$key];
                         $exp_info->end_date = $request->end_date[$key];
+                        $exp_info->description = $request->description[$key];
                         $exp_info->created_by = auth()->id();
                         $exp_info->created_at = Carbon::now();
                         $exp_info->updated_by = auth()->id();

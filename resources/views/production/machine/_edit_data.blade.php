@@ -7,13 +7,18 @@
             <span class="name_error ie-span"></span>
         </div>
         <div class="input-block mb-2">
-            <label class="col-form-label">Machine Model <span class="text-danger">*</span></label>
-            <input class="form-control" name="model" value="{{ $item->model }}" required type="text">
+            <label class="col-form-label">Machine Model</label>
+            <input class="form-control" name="model" value="{{ $item->model }}" type="text">
             <span class="model_error ie-span"></span>
         </div>
         <div class="input-block mb-2">
-            <label class="col-form-label">Production Cost <span class="text-danger">*</span></label>
-            <input class="form-control" type="number" value="{{ $item->production_cost }}" name="production_cost" min="0" required>
+            <label class="col-form-label">Machine Code</label>
+            <input class="form-control" type="text" name="machine_code" value="{{ $item->machine_code }}">
+            <span class="machine_code_error ie-span"></span>
+        </div>
+        <div class="input-block mb-2">
+            <label class="col-form-label">Production Cost</label>
+            <input class="form-control" type="number" value="{{ formatNumber($item->production_cost) }}" name="production_cost" min="0">
             <span class="model_error ie-span"></span>
         </div>
 

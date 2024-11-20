@@ -12,10 +12,10 @@ class AttendanceHistoryHelper
     public static function attendanceReportCreateOrUpdate($employee_id, $date, $inputted_by_type)
     {
         try{
-            $data_format = Carbon::parse($date)->format('Y-m-d');
+            $date_format = Carbon::parse($date)->format('Y-m-d');
 
             $attendanceReport = AttendanceReport::where('employee_id', $employee_id)
-                ->where('date', $data_format)
+                ->where('date', $date_format)
                 ->first();
 
             if (empty($attendanceReport)){
@@ -25,9 +25,9 @@ class AttendanceHistoryHelper
                 $attendanceReport->inputted_by_type = $inputted_by_type;
             }
 
-            $salarySet = SalarySetHelper::getEmployeeSalarySet($employee_id);
+            $salarySet = SalarySetHelper::getEmployeeSalarySet($employee_id, $date_format);
 
-            $employeeAttendanceDetails =  AttendanceHelper::employeeAttendanceDetails($employee_id, $data_format);
+            $employeeAttendanceDetails =  AttendanceHelper::employeeAttendanceDetails($employee_id, $date_format, $salarySet);
 
             $is_present = $employeeAttendanceDetails['lateEarlyTimeDetails']['is_present'];
             $is_late = $employeeAttendanceDetails['lateEarlyTimeDetails']['is_late'];
@@ -67,7 +67,7 @@ class AttendanceHistoryHelper
 
             $attendanceReport->employee_id = $employee_id;
             $attendanceReport->settings_salary_set_id = $salarySet->id;
-            $attendanceReport->date = $data_format;
+            $attendanceReport->date = $date_format;
             $attendanceReport->time_in = $punch_in_time;
             $attendanceReport->time_out = $punch_out_time;
             $attendanceReport->time_in_status = $time_in_status;

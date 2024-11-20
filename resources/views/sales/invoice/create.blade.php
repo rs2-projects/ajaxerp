@@ -216,7 +216,7 @@
                                                                 <select class="select select-step" name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="stItem in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
-                                                                        @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                        @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
                                                             </div>
@@ -242,7 +242,7 @@
                                             <div class="pms-item flex-100">
                                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Raw Board</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_goods')" class="erp-search-btn text-center pp-add-more-btn pp-add-goods-btn"><i class="la la-plus-circle"></i> Finished Goods</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn"><i class="la la-plus-circle"></i> Finished Board</a>
@@ -301,6 +301,17 @@
                                         </div>
                                         <div class="po-order-prudct-grand-total-box">
                                             <div class="po-order-prudct-grand-total-inner">
+                                                <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <h3>Unloading Cost</h3>
+                                                    </div>
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
+                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <h3>Sub Total</h3>
@@ -687,7 +698,7 @@
                     discount_value: 0,
                     discount_amount: 0,
                     paying_amount: 0,
-
+                    unloading_cost: 0
                 }
             },
             computed: {
@@ -730,14 +741,16 @@
                     if(this.discount_value != 0) {
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = (total_amount * this.discount_value) / 100;
+                            this.discount_amount = parseFloat(((total_amount * parseFloat(this.discount_value)) / 100).toFixed(6));
                         } else {
                             //fixed
-                            this.discount_amount = this.discount_value;
+                            this.discount_amount = parseFloat(this.discount_value).toFixed(6);
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
-                    return total_amount;
+                    
+                    total_amount = total_amount - parseFloat(this.discount_amount);
+                    total_amount = total_amount + parseFloat(this.unloading_cost);
+                    return parseFloat(total_amount.toFixed(6));
                 },
             },
             methods: {
@@ -803,6 +816,7 @@
                 },
 
                 addItemToCart(item) {
+                    console.log(item.srp)
                     // let exists = this.cartItems.findIndex(o => o.id === item.id);
                     let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
 
@@ -810,7 +824,7 @@
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = item.srp;
+                        item.price = formatNumber(parseFloat(item.srp));
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         let ab = this.cartItems.push(item);
@@ -865,15 +879,18 @@
                 updatePrice(index) {
                     this.updateCartItemPrice(index);
                 },
+                
                 updateCartItemPrice(index) {
-                    let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
+                    let priceWithoutVat = parseFloat((this.cartItems[index].qty * this.cartItems[index].price).toFixed(6));
                     this.cartItems[index].spt_amount_wv = priceWithoutVat;
+
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                        let vatAmount = (this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100;
+                        this.cartItems[index].vat_amount = parseFloat(vatAmount.toFixed(6));
                     }
-                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+                    this.cartItems[index].spt_amount = parseFloat((priceWithoutVat + this.cartItems[index].vat_amount).toFixed(6));
                 },
 
                 changeDiscountType() {

@@ -6,6 +6,8 @@ use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionReceipt;
+use App\Models\Production\PreProduction;
+use App\Models\Production\PreProductionProcess;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialSet;
@@ -14,6 +16,7 @@ use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDesigns;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoicePayment;
+use App\Models\Sales\Quotation;
 use App\Services\Common\FileUploadService;
 use App\Services\Sales\InvoiceDesignService;
 use App\Services\Sales\InvoicePaymentService;
@@ -249,13 +252,29 @@ class InvoiceService
                 throw new \Exception("Order Number already exists");
             }
 
+            $quotation_id = null;
+            if(isset($request->quotation_id)){
+                $quotation = Quotation::where('id', $request->quotation_id)
+                    ->where('deleted', Quotation::DELETED_NO)
+                    ->first();
+                if(!empty($quotation)){
+                    $quotation->quotation_status = Quotation::QUOTATION_STATUS_ORDER_CREATED;
+                    $quotation->save();
+
+                    $quotation_id = $quotation->id;
+                }
+                
+            }
+
             $invoice = new Invoice();
+            $invoice->quotation_id = $quotation_id;
             $invoice->customer_id = $request->customer_id;
             $invoice->order_no = $request->order_no;
             $invoice->invoice_date = $request->invoice_date;
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->created_at = Carbon::now();
@@ -280,7 +299,7 @@ class InvoiceService
                     $tax_id = $request->tax[$key];
 
                     $amount_without_tax = $qty * $price;
-                    $amount_with_tax = 0;
+                    $amount_with_tax = $amount_without_tax;
                     $tax_rate = 0;
                     $tax_amount = 0;
                     if ($tax_id != null) {
@@ -342,12 +361,14 @@ class InvoiceService
                 $discount_amount = $invoice->discount_value;
             }
 
+            $total_amount_with_vat = $total_amount + $vat_amount;
+            $payable_amount = $total_amount_with_vat - $discount_amount + $request->unloading_cost;
             $invoice->subtotal_amount = $total_amount;
             $invoice->vat_amount = $vat_amount;
-            $invoice->total_amount = $total_amount + $vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $discount_amount;
-            $invoice->payable_amount = $total_amount + $vat_amount - $discount_amount;
-            $invoice->due_amount = $total_amount + $vat_amount - $discount_amount;
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $payable_amount;
             $invoice->save();
 
 
@@ -693,12 +714,12 @@ class InvoiceService
                     'thickness' => $product?->thickness,
                     'description' => $item->description,
                     'qty' => $item->quantity,
-                    'price' => $item->unit_price,
-                    'unit_price' => $item->unit_price,
-                    'total_price' => $item->net_total,
+                    'price' => formatNumber($item->unit_price),
+                    'unit_price' => formatNumber($item->unit_price),
+                    'total_price' => formatNumber($item->net_total),
                     'tax' => $itemTax,
                     'item_type' => $item_type,
-                    'srp' => $item->unit_price,
+                    'srp' => formatNumber($item->unit_price),
                     'material_items' => $material_items,
                     'invoice_details_id' => $item->id
                 ];
@@ -741,6 +762,7 @@ class InvoiceService
             $invoice->payment_date = $request->payment_date;
             $invoice->discount_type = $request->discount_type;
             $invoice->discount_value = $request->discount_value;
+            $invoice->unloading_cost = $request->unloading_cost;
             $invoice->notes = $request->notes;
             $invoice->invoice_footer = $request->invoice_footer;
             $invoice->updated_at = Carbon::now();
@@ -875,13 +897,18 @@ class InvoiceService
                 $total_discount_amount = $request->discount_value;
             }
 
+            $total_amount_with_vat = $subtotal_amount + $total_vat_amount;
+            $payable_amount = $total_amount_with_vat - $total_discount_amount + $request->unloading_cost;
+
+            $due_amount = $payable_amount - $invoice->paid_amount;
+            
             $invoice->subtotal_amount = $subtotal_amount;
             $invoice->vat_amount = $total_vat_amount;
-            $invoice->total_amount = $subtotal_amount + $total_vat_amount;
+            $invoice->total_amount = $total_amount_with_vat;
             $invoice->discount_amount = $total_discount_amount;
-            $invoice->payable_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            $invoice->due_amount = ($subtotal_amount + $total_vat_amount) - $total_discount_amount;
-            if ($invoice->due_amount == 0) {
+            $invoice->payable_amount = $payable_amount;
+            $invoice->due_amount = $due_amount;
+            if ($invoice->due_amount <= 0) {
                 $invoice->payment_status = Invoice::PAYMENT_STATUS_PAID;
             }
             $invoice->save();
@@ -940,6 +967,51 @@ class InvoiceService
         $design->deleted_at = Carbon::now();
         $design->deleted_by = auth()->id();
         $design->save();
+    }
+
+    public function     getProductionStatus($id)
+    {
+        $data['invoice'] = Invoice::where('id', $id)
+            ->where('deleted', Invoice::DELETED_NO)
+            ->first();
+        if (!$data['invoice']) {
+            throw new \Exception('Invalid Invoice!');
+        }
+        
+        $data['prouctions'] = PreProduction::where('invoice_id', $id)
+            ->where('deleted', PreProduction::DELETED_NO)
+            ->get()
+            ->map(function ($item) {
+                $item->show_image_full_url = asset($item->show_image);
+                $item->process_name = 'Unknown';
+                if($item->is_verified == PreProduction::VERIFIED_NO){
+                    $item->production_status = 'design_stage';
+                } else {
+                    if($item->process_status == PreProduction::PROCESS_STATUS_PENDING){
+                        $item->production_status = 'pending_production';
+                    } else if($item->process_status == PreProduction::PROCESS_STATUS_PROCESSING){
+                        $item->production_status = 'processing_production';
+
+                        $last_processing_process = PreProductionProcess::where('pre_production_id', $item->id)
+                            ->where('process_status', PreProductionProcess::PROCESS_STATUS_PROCESSING)
+                            ->where('deleted', PreProductionProcess::DELETED_NO)
+                            ->orderBy('id', 'desc')
+                            ->first();
+                        if($last_processing_process){
+                            $item->process_name = $last_processing_process->processMachines?->first()?->machine?->name;
+                        }
+
+                    } else if($item->process_status == PreProduction::PROCESS_STATUS_COMPLETED){
+                        $item->production_status = 'completed_production';
+                    }
+                }
+                
+                return $item;
+            });
+        
+        $data['view'] = view('sales.invoice.__production_status_data', $data)->render();
+        
+        return $data;
     }
 
 

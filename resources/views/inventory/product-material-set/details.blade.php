@@ -19,37 +19,37 @@
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">SRP Markup %</label>
-                                            <h4>{{ $material_set->srp_markup_percent }}%</h4>
+                                            <h4>{{ formatNumber($material_set->srp_markup_percent) }}%</h4>
                                         </div>
                                     </div>
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Wholesale Discount % </label>
-                                            <h4>{{ $material_set->wholesale_discount_percent }}%</h4>
+                                            <h4>{{ formatNumber($material_set->wholesale_discount_percent) }}%</h4>
                                         </div>
                                     </div>
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Cost</label>
-                                            <h4>{{ getCurrencySymbol() }}{{ $material_set->rp_cost }}</h4>
+                                            <h4>{{ getCurrencySymbol() }}{{ formatNumber($material_set->rp_cost) }}</h4>
                                         </div>
                                     </div>
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">SRP </label>
-                                            <h4>{{ getCurrencySymbol() }}{{ $material_set->rp_srp }}</h4>
+                                            <h4>{{ getCurrencySymbol() }}{{ formatNumber($material_set->rp_srp) }}</h4>
                                         </div>
                                     </div>
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">SRP With 20% Discount</label>
-                                            <h4>{{ getCurrencySymbol() }}{{ $material_set->srp_with_discount }}</h4>
+                                            <h4>{{ getCurrencySymbol() }}{{ formatNumber($material_set->srp_with_discount) }}</h4>
                                         </div>
                                     </div>
                                     <div class="pgib-item flex-32 pd-item">
                                         <div class="input-block erp-step-input-block mb-0">
                                             <label class="col-form-label">Wholesale </label>
-                                            <h4>{{ getCurrencySymbol() }}{{ $material_set->wholesale }}</h4>
+                                            <h4>{{ getCurrencySymbol() }}{{ formatNumber($material_set->wholesale) }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -96,7 +96,7 @@
                                                         <div class="purchase-order-product-body-item-inner">
                                                             <div class="purchase-order-product-body-item-inner-content">
                                                                 <div class="pd-item">
-                                                                    <h4>{{ getCurrencySymbol() }}{{ $data->rp_cost }}</h4>
+                                                                    <h4>{{ getCurrencySymbol() }}{{ formatNumber($data->rp_cost) }}</h4>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -115,7 +115,7 @@
                                                         <div class="purchase-order-product-body-item-inner">
                                                             <div class="purchase-order-product-body-item-inner-content">
                                                                 <div class="pd-item">
-                                                                    <h4>{{ getCurrencySymbol() }}{{ $data->rp_srp }}</h4>
+                                                                    <h4>{{ getCurrencySymbol() }}{{ formatNumber($data->rp_srp) }}</h4>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -124,7 +124,7 @@
                                                         <div class="purchase-order-product-body-item-inner">
                                                             <div class="purchase-order-product-body-item-inner-content">
                                                                 <div class="pd-item">
-                                                                    <h4>{{ getCurrencySymbol() }}{{ $data->srp_with_discount }}</h4>
+                                                                    <h4>{{ getCurrencySymbol() }}{{ formatNumber($data->srp_with_discount) }}</h4>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -133,7 +133,7 @@
                                                         <div class="purchase-order-product-body-item-inner">
                                                             <div class="purchase-order-product-body-item-inner-content">
                                                                 <div class="pd-item">
-                                                                    <h4>{{ getCurrencySymbol() }}{{ $data->wholesale }}</h4>
+                                                                    <h4>{{ getCurrencySymbol() }}{{ formatNumber($data->wholesale) }}</h4>
                                                                 </div>
                                                             </div>
                                                         </div>

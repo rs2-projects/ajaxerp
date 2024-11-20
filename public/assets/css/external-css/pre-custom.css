@@ -105,8 +105,20 @@
     position: relative;
     background: #dddddd4a;
 }
+.pd-deliver-date-box p .bold{
+    font-weight: 700;
+}
 
-.pd-deliver-date-box p span{
+.pd-deliver-date-box div {
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 8px;
+    position: relative;
+    background: #dddddd4a;
+}
+.pd-deliver-date-box div .bold{
     font-weight: 700;
 }
 
@@ -425,3 +437,11 @@ span.pp-icon {
     font-size: 15px;
 }
 /* Add Expense Calculation End */
+
+
+.pd-recived-product-item {
+    justify-content: space-between;
+}
+.pd-recived-product-item p {
+    margin-bottom: 0;
+}

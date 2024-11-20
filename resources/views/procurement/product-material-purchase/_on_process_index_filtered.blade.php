@@ -43,13 +43,13 @@
                         <h4 class="text-center d-table-title">{{ getFormattedDate($purchase_order->estimated_delivery_date, 'd M, Y') }}</h4>
 
                     </td>
-                    <td class="erp-tbody-td">
-                        <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-center">
+                    <td class="erp-tbody-td purchase-supplier-td">
+                        <div class="em-profile-wrap d-flex align-items-center flex-wrap justify-content-center">
                             <div class="em-pro-img-box">
                                 <img src="{{ asset($purchase_order->supplier->show_image) }}" alt="">
                             </div>
                             <div class="em-pro-details-box">
-                                <h5>{{ $purchase_order->supplier->business_name }}</h5>
+                                <h5 title="{{ $purchase_order->supplier->business_name }}">{{ $purchase_order->supplier->business_name }}</h5>
                             </div>
                         </div>
                     </td>
@@ -58,11 +58,11 @@
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->payable_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->payable_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">
-                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ $purchase_order->due_amount }}</h4>
+                        <h4 class="text-center d-table-title">{{ getCurrencySymbol('usd') }}{{ formatNumber($purchase_order->due_amount) }}</h4>
 
                     </td>
                     <td class="erp-tbody-td text-center">

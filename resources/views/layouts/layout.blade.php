@@ -37,6 +37,8 @@
 <!-- /Main Wrapper -->
 
 @yield('modals')
+@include('inventory.product-material._cart_canvas')
+
 
 
 @include('layouts.partials._scripts')

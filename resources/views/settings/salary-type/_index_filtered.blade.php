@@ -28,13 +28,13 @@
                         <div class="erp-action-t erp-table-status {{ ($item->status == \App\Models\SettingsSalaryType::STATUS_ACTIVE) ? 'status-approved' : '' }}">
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-regular fa-circle-dot me-1"></i> <span> {{ $item->status_label }} </span></a>
-                                <div class="dropdown-menu dropdown-menu-right">
+                                {{--<div class="dropdown-menu dropdown-menu-right">
 
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('settings.salary-type.change-status',[$item->id,1]) }}" ><i class="fa-regular fa-circle-dot m-r-5 "></i> Active</a>
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus(this, function () { getData() })" data-href="{{ route('settings.salary-type.change-status',[$item->id,0]) }}" ><i class="fa-regular fa-circle-dot m-r-5"></i> Inactive</a>
 
 
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
 

@@ -119,6 +119,13 @@
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 
+        function initializeSelect() {
+            $('.select2').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
         function editItem(id){
             let url = "{{route('inventory.product-material-category.edit', ':id')}}";
             url = url.replace(':id', id);
@@ -126,6 +133,7 @@
                 if (response.status == 200) {
                     $("#edit_category_modal_body").html(response.view);
                     $("#editCategoryModal").modal('show');
+                    initializeSelect();
                 } else {
                     toastr.error(response.message);
                 }

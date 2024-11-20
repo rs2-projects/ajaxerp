@@ -33,7 +33,7 @@
                                                         <div class="accounting-list-item d-flex flex-wrap align-items-center justify-content-start">
                                                             <div class="accounting-list-item-first-box">
                                                                 <div class="accounting-list-item-title">
-                                                                    <h5>{{ $coa_account->name }} <span data-bs-toggle="tooltip" title="Available Balance">{{ ($coa_account->available_balance != 0)?'( '.getCurrencySymbol().' '.showAmount($coa_account->available_balance).' )':'' }}</span></h5>
+                                                                    <h5>{{ $coa_account->name }} <span data-bs-toggle="tooltip" title="Available Balance">{{ ($coa_account->available_balance != 0)?'( '.getCurrencySymbol().' '.formatNumber($coa_account->available_balance).' )':'' }}</span></h5>
                                                                 </div>
                                                                 <div class="accounting-list-item-last-transction">
                                                                     <p>Last transaction on Jan 15, 2024</p>

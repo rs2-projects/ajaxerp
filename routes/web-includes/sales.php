@@ -4,6 +4,7 @@ use App\Http\Controllers\Sales\CustomerController;
 use App\Http\Controllers\Sales\InvoiceController;
 use App\Http\Controllers\Sales\InvoiceDeliveredController;
 use App\Http\Controllers\Sales\InvoiceDesignController;
+use App\Http\Controllers\Sales\QuotationController;
 use Illuminate\Support\Facades\Route;
 //customer routes start
 Route::prefix('customers')->group(function(){
@@ -44,10 +45,38 @@ Route::prefix('invoice')->group(function(){
     Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload')->middleware('permission:manage-invoices');
     //Design delete
     Route::get('/{id}/delete-design',[InvoiceController::class,'deleteDesign'])->name('sales.invoice.design.delete')->middleware('permission:manage-invoices');
+
+    Route::get('/{id}/production-status',[InvoiceController::class,'getProductionStatus'])->name('sales.invoice.production-status')->middleware('permission:view-invoices');
+
+    
     //Invoice delivered
     Route::get('/{id}/deliver', [InvoiceDeliveredController::class, 'deliver'])->name('sales.invoice.deliver')->middleware('permission:deliver-items');
     Route::post('/{id}/deliver', [InvoiceDeliveredController::class, 'deliverStore'])->name('sales.invoice.deliver.store')->middleware('permission:deliver-items');
     Route::get('/{id}/finished-goods', [InvoiceDeliveredController::class, 'getFinishedGoods'])->name('sales.invoice.deliver.get-all-finished-goods')->middleware('permission:deliver-items');
     Route::get('/{id}/deliver/{barcode}/{count}', [InvoiceDeliveredController::class, 'checkBarCode'])->name('sales.invoice.deliver.check-barcode')->middleware('permission:deliver-items');
 
+
+});
+
+//start quotation route
+Route::prefix('quotation')->group(function(){
+    Route::get('/',[QuotationController::class,'index'])->name('sales.quotation.index')->middleware('permission:view-invoices');
+    Route::post('/filtered',[QuotationController::class,'indexFilteredData'])->name('sales.quotation.filtered')->middleware('permission:view-invoices');
+    //create invoice data
+    Route::get('/create',[QuotationController::class,'create'])->name('sales.quotation.create')->middleware('permission:manage-invoices');
+    Route::post('/create',[QuotationController::class,'store'])->name('sales.quotation.store')->middleware('permission:manage-invoices');
+
+    //Edit invoice data
+    Route::get('/{id}/edit',[QuotationController::class,'edit'])->name('sales.quotation.edit')->middleware('permission:manage-invoices');
+    Route::get('/{id}/get-edit-quotation-data',[QuotationController::class,'getEditQuotationData'])->name('sales.quotation.get-edit-quotation-data')->middleware('permission:manage-invoices');
+    //update invoice data
+    Route::post('/{id}/update',[QuotationController::class,'update'])->name('sales.quotation.update')->middleware('permission:manage-invoices');
+    //Delete invoice
+    Route::get('/{id}/delete',[QuotationController::class,'delete'])->name('sales.quotation.delete')->middleware('permission:manage-invoices');
+
+    Route::get('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoice'])->name('sales.quotation.convert-to-invoice')->middleware('permission:manage-invoices');
+    Route::get('{id}/get-convert-to-invoice-data',[QuotationController::class,'getConvertToInvoiceData'])->name('sales.quotation.get-convert-to-invoice-data')->middleware('permission:manage-invoices');
+    Route::post('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoiceStore'])->name('sales.quotation.convert-to-invoice-store')->middleware('permission:manage-invoices');
+
+    Route::get('{id}/download-pdf',[QuotationController::class,'downloadPdf'])->name('sales.quotation.download-pdf')->middleware('permission:view-invoices');
 });

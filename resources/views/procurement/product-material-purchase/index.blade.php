@@ -15,7 +15,7 @@
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-end align-items-center mb-4">
 
-                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
+                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-80">
 
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
                                     <div class="erp-filter-item">
@@ -122,6 +122,23 @@
             padding-top: 2px;
             font-weight: 600;
             color: #0d6efd;
+        }
+        .purchase-supplier-td .em-pro-details-box h5 {
+            width: auto !important;
+        }
+        .purchase-supplier-td .em-profile-wrap {
+            gap: 5px;
+        }
+        .purchase-supplier-td .em-pro-details-box h5 {
+            width: 170px !important;
+            white-space: pre-wrap;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+        @media(max-width: 1400px) {
+            .purchase-supplier-td .em-pro-details-box h5 {
+                text-align: center
+            }
         }
     </style>
 @endsection

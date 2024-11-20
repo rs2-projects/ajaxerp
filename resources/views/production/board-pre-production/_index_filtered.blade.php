@@ -33,7 +33,7 @@
                             </div>
                         </a>
                     </td>
-                    <td class="erp-tbody-td text-center">{{ $data->raw_board?->product_material?->name??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center" title="{{ $data->raw_board?->product_material?->name??'N/A' }}">{{ getRealSubStr($data->raw_board?->product_material?->name??'N/A', 18) }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->finishedGoods?->embossed_ups?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->paper_up?->product_material?->name??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->finishedGoods?->embossed_downs?->name??'N/A' }}</td>

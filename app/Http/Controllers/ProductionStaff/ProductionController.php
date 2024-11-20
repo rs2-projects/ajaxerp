@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\ProductionStaff;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\ProductionStaff\Production\StoreProductionDispatchRequest;
@@ -11,7 +10,7 @@ use App\Http\Requests\ProductionStaff\Production\StoreProductionScanRequest;
 use App\Models\Production\PreProduction;
 use App\Services\ProductionStaff\ProductionService;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductionController extends BackendController
 {
@@ -76,15 +75,37 @@ class ProductionController extends BackendController
         return $this->view('production-staff.production._receive')->with($data);
     }
 
+    public function barcodeDetails(Request $request, $id){
+        $data = $this->service->barcodeDetails($id, $request->type);
+
+        $code_generator = new BarcodeGeneratorPNG();
+        // return $this->view('inventory.material-request.barcode_details')->with($data);
+        $product_materials = $data['product_materials'];
+        $finished_boards = $data['finished_boards'];
+        $pdf = PDF::loadView('production-staff.production.qrcode_print', compact(
+            'product_materials',
+            'code_generator',
+            'finished_boards'
+        ));
+        // $pdf = PDF::loadView('production-staff.production.barcode_print', compact(
+        //     'product_materials',
+        //     'code_generator'
+        // ));
+        $pdf->setPaper('a4');
+        $pdf->setOrientation('portrait');
+        $pdf->setOption('footer-html', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+        return $pdf->inline();
+    }
+
     public function receiveStore(StoreProductionReceiveRequest $request, $id){
-        try {
+        // try {
             $this->service->receiveStoreData($request, $id);
             $data = $this->service->getDeliveryData($id);
             session()->flash('success', "Received successfully");
             $data['redirectUri'] = route('production-staff.production.production.index');
-        }catch (\Exception $e) {
-            return $this->returnAjaxError([],$e->getMessage());
-        }
+        // }catch (\Exception $e) {
+        //     return $this->returnAjaxError([],$e->getMessage());
+        // }
         return $this->returnAjaxSuccess($data, 'Received successfully');
     }
 
@@ -147,10 +168,10 @@ class ProductionController extends BackendController
         }
     }
 
-    public function updateVerifyOutput($id, $type)
+    public function updateVerifyOutput(Request $request, $id, $type)
     {
         try {
-            $data = $this->service->updateVerifyOutput($id, $type);
+            $data = $this->service->updateVerifyOutput($request, $id, $type);
             return $this->returnAjaxSuccess([$data], 'Verified Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());

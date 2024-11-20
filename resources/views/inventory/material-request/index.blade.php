@@ -44,8 +44,9 @@
                         </ul>
 
                     
-                        <div class="my-attendance-report-wrapper" id="ajax-data-load">
-                            
+                        <div class="my-attendance-report-wrapper">
+                            <div id="ajax-data-load"></div>
+                            <div id="ajax-data-load2"></div>
                         </div>
                     </div>
                 </div>
@@ -220,9 +221,11 @@
 
         function getData(){
             getPaginatedListData("{{ route('inventory.material-request.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('inventory.material-request.filtered-product-requisitions') }}", "#ajax-data-load2", filterData);
         }
 
         function getPaginatedData(button) {
+            console.log(button);
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
         }
 

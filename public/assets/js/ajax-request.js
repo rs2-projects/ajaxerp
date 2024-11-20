@@ -65,17 +65,21 @@ function formPost(url, data, successCallback='default', errorCallback='default')
 }
 
 
-function ajaxGet(url, data, successCallback='default', errorCallback='default') {
-    $.ajax({
+function ajaxGet(url, data, successCallback='default', errorCallback='default', showLoading=true) {
+    return $.ajax({
         url: url,
         type: 'GET',
         data: data,
         beforeSend: function (){
-          showLoader('Please Wait', 'Loading...');
+            if (showLoading) {
+                showLoader('Please Wait', 'Loading...');
+            }
         },
         success: function (response) {
             // console.log(response);
-            hideLoader();
+            if(showLoading){
+                hideLoader();
+            }
             if (successCallback == 'default') {
                 if (response.status == 200) {
                     toastr.success(response.message);
@@ -106,7 +110,9 @@ function ajaxGet(url, data, successCallback='default', errorCallback='default') 
             }
         },
         error: function(xhr, status, error) {
-            hideLoader();
+            if(showLoading){
+                hideLoader();
+            }
             if (errorCallback == 'default') {
                 toastr.error(xhr.responseText);
             } else if(errorCallback == 'show_input_error') {

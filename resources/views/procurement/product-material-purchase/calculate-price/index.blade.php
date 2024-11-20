@@ -17,6 +17,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             @foreach ($purchase->purchaseDetails as $data)
                                 <div class="rs-ecp-single-wrap">
                                     <input type="hidden" name="product_material_purchase_detail_id[]" value="{{$data->id}}">
@@ -32,7 +33,7 @@
                                                         <img src="{{$data->productMaterial->show_image}}" alt="">
                                                     </div>
                                                     <div class="em-pro-details-box">
-                                                        <h5>{{$data->productMaterial->name}}</h5>
+                                                        <h5 title="{{$data->productMaterial->name}}">{{$data->productMaterial->name}}</h5>
                                                         <p class="em-id">Code: <span> {{$data->productMaterial->code? '#'.$data->productMaterial->code : 'N/A'}}</span></p>
                                                     </div>
                                                 </div>
@@ -51,8 +52,8 @@
                                                     <h4>Price</h4>
                                                 </div>
                                                 <div class="rs-ecp-std-item-content-box">
-                                                    <input type="hidden" name="price[]" value="{{$data->unit_price}}">
-                                                   {{ getCurrencySymbol() }}<span class="unit_price">{{$data->unit_price}}</span>
+                                                    <input type="hidden" name="price[]" value="{{ formatNumber($data->unit_price) }}">
+                                                    {{getCurrencySymbol('usd')}}<span class="unit_price">{{ formatNumber($data->unit_price) }}</span>
                                                 </div>
                                             </div>
                                             <div class="rs-ecp-std-left-item flex-100">
@@ -159,7 +160,7 @@
                                                 <h4>Exchange Rate</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
+                                                <input type="number" value="{{ formatNumber($purchase->php_rate) }}" step="any" min="0" @input="exchangeRateHandler($event)" name="exchange_rate[]" class="form-control exchange_rate" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -167,7 +168,7 @@
                                                 <h4>Price USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
+                                                <input type="number" step="any" min="0" @input="priceUsdHandler($event)" name="price_usd[]" class="form-control price_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -175,7 +176,7 @@
                                                 <h4>CBM</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" name="cbm[]" @input="cmbHandler($event)" step="0.01" min="0" class="form-control cbm" required>
+                                                <input type="number" name="cbm[]" @input="cmbHandler($event)" step="any" min="0" class="form-control cbm" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -183,7 +184,7 @@
                                                 <h4>Total Pieces per Container </h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
+                                                <input type="number" step="any" min="0" @input="totalPcPerContainerHandler($event)" name="total_pieces_per_container[]" class="form-control total_pieces_per_container" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -191,7 +192,7 @@
                                                 <h4>Freight Cost USD</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
+                                                <input type="number" step="any" min="0" @input="freightCostUsdHandler($event)" name="freight_cost_usd[]" class="form-control freight_cost_usd" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -199,7 +200,7 @@
                                                 <h4>Exchange Rate  <span>After Import</span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
+                                                <input type="number" step="any" min="0" @input="exchangeRateAfterImportHandler($event)" name="exchange_rate_after_import[]" class="form-control exchange_rate_after_import" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -207,7 +208,7 @@
                                                 <h4>Total Taxes I.D. <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Product Category" data-bs-original-title="Total Taxes Import Duties MNL" style="color: #48b36e;border: 1px solid #48b36e;"><i class="fa-duotone fa-exclamation"></i></span></h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
+                                                <input type="number" step="any" min="0" @input="totalTaxesImportDutiesHandler($event)" name="total_taxes_import_duties[]" class="form-control total_taxes_import_duties" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -215,7 +216,7 @@
                                                 <h4>Total Transport Cost to WH</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
+                                                <input type="number" step="any" min="0" @input="totalTransportCostToWH($event)" name="total_transport_cost_to_wh[]" class="form-control total_transport_cost_to_wh" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -223,7 +224,7 @@
                                                 <h4>Total Unloading Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
+                                                <input type="number" step="any" min="0" @input="totalUnloadingCostHandler($event)" name="total_unloading_cost[]" class="form-control total_unloading_cost" required>
                                             </div>
                                         </div>
                                         <div class="rs-ecp-bottom-box-item">
@@ -231,7 +232,7 @@
                                                 <h4>Handling Cost</h4>
                                             </div>
                                             <div class="rs-ecp-std-item-input-box">
-                                                <input type="number" step="0.01" min="0" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
+                                                <input type="number" step="any" min="0" @input="handlingCostHandler($event)" name="handling_cost[]" class="form-control handling_cost" required>
                                             </div>
                                         </div>
                                     </div>
@@ -355,7 +356,8 @@
                         priceFOBPHPElement.textContent = 0;
                     } else {
                         const priceFOBPHP = exchangeRate * priceUsd;
-                        priceFOBPHPElement.textContent = priceFOBPHP.toFixed(2);
+                        // priceFOBPHPElement.textContent = priceFOBPHP.toFixed(6);
+                        priceFOBPHPElement.textContent = formatNumber(priceFOBPHP); 
                     }
                 },
 
@@ -381,7 +383,7 @@
                     } else {
                         // const freightCost = (freightCostUsd / totalPcPerContainer) * exchangeRateAfterImport;
                         const freightCost = (((freightCostUsd / this.CONST_VALUE) * cbm) * exchangeRateAfterImport) / totalPcPerContainer;
-                        freightCostElement.textContent = freightCost.toFixed(2);
+                        freightCostElement.textContent = formatNumber(freightCost);
                     }
                 },
 
@@ -405,7 +407,7 @@
                     } else {
                         // const taxesImportDuties = totalTaxesImportDuties / totalPcPerContainer;
                         const taxesImportDuties = ((totalTaxesImportDuties / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        taxesImportDutiesElement.textContent = taxesImportDuties.toFixed(2);
+                        taxesImportDutiesElement.textContent = formatNumber(taxesImportDuties);
                     }
                 },
 
@@ -429,7 +431,7 @@
                     } else {
                         // const costToWareHouse = totalTransportCostToWh / totalPcPerContainer;
                         const costToWareHouse = ((totalTransportCostToWh / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        transportCostToWhElement.textContent = costToWareHouse.toFixed(2);
+                        transportCostToWhElement.textContent = formatNumber(costToWareHouse);
                     }
                 },
 
@@ -453,7 +455,7 @@
                     } else {
                         // const unloadingCost = totalUnloadingCost / totalPcPerContainer;
                         const unloadingCost = ((totalUnloadingCost / this.CONST_VALUE) * cbm) / totalPcPerContainer;
-                        unloadingCostElement.textContent = unloadingCost.toFixed(2);
+                        unloadingCostElement.textContent = formatNumber(unloadingCost);
                     }
                 },
 
@@ -482,7 +484,7 @@
                         priceExcludingVat.textContent = '0.00';
                     } else {
                         const finalPrice = (priceFOB + freightCost + taxesImportDuties + transportCostToWh + unloadingCost) * handlingCost;
-                        priceExcludingVat.textContent = finalPrice.toFixed(2);
+                        priceExcludingVat.textContent = formatNumber(finalPrice);
                     }
 
                     // Calculate and display the VAT amount based on calculated price
@@ -508,10 +510,10 @@
                             totalFinalPriceElement.textContent = '0.00';
                         } else{
                             const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                            vatAmountElement.textContent = vatAmount.toFixed(2);
-                            const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                            vatAmountElement.textContent = formatNumber(vatAmount);
+                            const final_price_amt = formatNumber(priceExcludingVat + vatAmount);
                             finalPriceElement.textContent = final_price_amt;
-                            totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                            totalFinalPriceElement.textContent = formatNumber(final_price_amt * parseFloat(qtyElement.textContent));
                         }
                     }else{
                         const items = document.querySelectorAll('.rs-ecp-single-wrap');
@@ -532,10 +534,10 @@
                                 totalFinalPriceElement.textContent = '0.00';
                             } else{
                                 const vatAmount = (priceExcludingVat * vatPercent) / 100;
-                                vatAmountElement.textContent = vatAmount.toFixed(2);
-                                const final_price_amt = (priceExcludingVat + vatAmount).toFixed(2);
+                                vatAmountElement.textContent = formatNumber(vatAmount);
+                                const final_price_amt = formatNumber(priceExcludingVat + vatAmount);
                                 finalPriceElement.textContent = final_price_amt;
-                                totalFinalPriceElement.textContent = (final_price_amt * parseFloat(qtyElement.textContent)).toFixed(2);
+                                totalFinalPriceElement.textContent = formatNumber(final_price_amt * parseFloat(qtyElement.textContent));
                             }
                         });
                     }
@@ -564,6 +566,7 @@
 
             },
             mounted () {
+
             }
 
         }).mount('#VueApp');

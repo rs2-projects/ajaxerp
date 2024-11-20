@@ -53,21 +53,19 @@
 
             @if(hasPermission('manage-employee-leave'))
                 <td class="text-end erp-tbody-td">
-                    <div class="erp-action-t">
-                        <div class="dropdown dropdown-action">
-                            <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-
-                                @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
+                    @if($userLeave->leave_status != \App\Models\UserLeave::LEAVE_STATUS_APPROVED)
+                        <div class="erp-action-t">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                <div class="dropdown-menu dropdown-menu-right">
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="editItem({{$userLeave->id}})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="approveItem({{$userLeave->id}})"><i class="fa-solid fa-check m-r-5"></i> Approve</a>
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="rejectItem({{$userLeave->id}})"><i class="fa-solid fa-cancel m-r-5"></i> Reject</a>
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                @endif
-
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('hr.user-leaves.delete',$userLeave->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>                            
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </td>
             @endif
         </tr>

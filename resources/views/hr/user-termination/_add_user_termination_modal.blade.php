@@ -39,7 +39,7 @@
 
                         <div class="input-block mb-2">
                             <label class="col-form-label">Reason <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="reason" rows="4"></textarea>
+                            <textarea class="form-control" name="reason" rows="4" required></textarea>
                         </div>
                         <div class="submit-section mt-2">
                             <button class="btn btn-primary submit-btn">Submit</button>

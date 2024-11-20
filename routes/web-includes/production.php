@@ -26,6 +26,8 @@ Route::group(['prefix' => 'production'], function () {
     Route::get('/{id}/dispatch', [ProductionController::class, 'dispatch'])->name('production.production.dispatch-data')->middleware('permission:dispatch-production-materials');
     Route::post('/{id}/dispatch', [ProductionController::class, 'dispatchStore'])->name('production.production.dispatch.store')->middleware('permission:dispatch-production-materials');
     Route::get('/{id}/print-barcode/{type}', [ProductionController::class, 'printBarcode'])->name('production.production.print-barcode')->middleware('permission:production-print-barcode');
+
+    Route::get('monitoring-per-day', [ProductionController::class, 'monitoringPerDay'])->name('production.production.monitoring')->middleware('permission:view-production');
     // });
 
     Route::group(['prefix' => 'machine'], function () {
@@ -36,6 +38,7 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/edit', [MachineController::class, 'edit'])->name('production.machine.edit')->middleware('permission:manage-machines');
         Route::post('/{id}/update', [MachineController::class, 'update'])->name('production.machine.update')->middleware('permission:manage-machines');
         Route::get('/{id}/delete', [MachineController::class, 'delete'])->name('production.machine.delete')->middleware('permission:manage-machines');
+        Route::get('/{id}/print-qrcode', [MachineController::class, 'printQrCode'])->name('production.machine.print-qrcode')->middleware('permission:view-machines');
     });
 
     Route::group(['prefix' => 'pre-production'], function () {
@@ -52,6 +55,8 @@ Route::group(['prefix' => 'production'], function () {
         Route::get('/{id}/change-status/{status}', [PreProductionController::class, 'statusUpdate'])->name('production.pre-production.change-status')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-processes', [PreProductionController::class, 'getProcess'])->name('production.pre-production.get-all-processes')->middleware('permission:manage-pre-productions');
         Route::get('/{id}/get-document', [PreProductionController::class, 'getDocument'])->name('production.pre-production.get-design-document')->middleware('permission:view-pre-productions');
+
+        Route::get('get-invoice-list-data', [PreProductionController::class, 'getInvoiceListData'])->name('production.pre-production.get-invoice-list-data')->middleware('permission:manage-pre-productions');
     });
 
     // board pre production
@@ -115,10 +120,19 @@ Route::group(['prefix' => 'board-production'], function () {
 Route::group(['prefix' => 'material-request'], function () {
     Route::get('/', [PreProductionMaterialRequestController::class, 'index'])->name('inventory.material-request.index')->middleware('permission:view-material-requests');
     Route::post('/filtered', [PreProductionMaterialRequestController::class, 'indexFiltered'])->name('inventory.material-request.filtered')->middleware('permission:view-material-requests');
+    Route::post('/filtered-product-requisitions', [PreProductionMaterialRequestController::class, 'productRequisitionFiltered'])->name('inventory.material-request.filtered-product-requisitions')->middleware('permission:view-material-requests');
     Route::get('/{id}/details', [PreProductionMaterialRequestController::class, 'details'])->name('inventory.material-request.details')->middleware('permission:view-material-requests');
     Route::get('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliver'])->name('inventory.material-request.deliver')->middleware('permission:deliver-requested-materials');
+    Route::get('/{id}/barcode-details', [PreProductionMaterialRequestController::class, 'barcodeDetails'])->name('inventory.material-request.barcode-details')->middleware('permission:deliver-requested-materials');
     Route::post('/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverStore'])->name('inventory.material-request.deliver.store')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/materials', [PreProductionMaterialRequestController::class, 'getMaterials'])->name('inventory.material-request.get-all-materials')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/deliver/{barcode}/{count}/{type}', [PreProductionMaterialRequestController::class, 'checkBarCode'])->name('inventory.material-request.check-barcode')->middleware('permission:deliver-requested-materials');
     Route::get('/{id}/get-document', [PreProductionMaterialRequestController::class, 'getDocument'])->name('inventory.material-request.get-design-document')->middleware('permission:view-material-requests');
+
+    Route::get('product-requisition/{id}/deliver', [PreProductionMaterialRequestController::class, 'deliverProductRequisition'])->name('inventory.material-request.product-requisition.deliver')->middleware('permission:deliver-requested-materials');
+    Route::post('product-requisition/{id}/deliver', [PreProductionMaterialRequestController::class, 'storeDeliverProductRequisition'])->name('inventory.material-request.product-requisition.deliver.store')->middleware('permission:deliver-requested-materials');
+    Route::get('product-requisition/{id}/print-barcode', [PreProductionMaterialRequestController::class, 'productRequisitionBarcodePrint'])->name('inventory.material-request.product-requisition.barcode-print')->middleware('permission:deliver-requested-materials');
+    Route::get('product-requisition/{id}/materials', [PreProductionMaterialRequestController::class, 'getProductRequisitionMaterials'])->name('inventory.material-request.product-requisition.get-materials')->middleware('permission:deliver-requested-materials');
 });
+
+Route::get('newer-picked-materials', [PreProductionMaterialRequestController::class, 'newerPickedMaterials'])->name('inventory.material-request.newer-picked-materials')->middleware('permission:view-material-requests');

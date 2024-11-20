@@ -21,6 +21,12 @@ class PreProductionProcess extends BaseModel
         self::PROCESS_STATUS_COMPLETED => 'Completed',
     ];
 
+    const MONITOR_PROCESS_STATUSES = [
+        self::PROCESS_STATUS_PENDING => '',
+        self::PROCESS_STATUS_PROCESSING => 'On Going',
+        self::PROCESS_STATUS_COMPLETED => 'Done',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [

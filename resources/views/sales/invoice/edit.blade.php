@@ -218,7 +218,7 @@
                                                                 <select class="select select-step vat-tax-select2" @if($invoice->due_amount!=$invoice->payable_amount) disabled @endif name="tax[]" onchange="taxChangeOutside(this)" v-bind:data-cartItemIndex="cartItemIndex">
                                                                     <option value="0" >Select Tax</option>
                                                                     <option v-for="(stItem, stItemIndex) in system_tax_items" v-bind:value="stItem.id" :key="stItem.id" :selected="(cartItem.tax !== null) ? (cartItem.tax.id === stItem.id):false">
-                                                                        @{{ stItem.name }} @{{ stItem.tax_rate }}%
+                                                                        @{{ stItem.name }} @{{ Number(stItem.tax_rate).toFixed(2) }}%
                                                                     </option>
                                                                 </select>
                                                             </div>
@@ -245,7 +245,7 @@
                                             <div class="pms-item flex-100">
                                                 <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                     <a href="#" @click.prevent="openSelectItemModal('raw_materials')" class="erp-search-btn text-center pp-add-more-btn"><i class="la la-plus-circle"></i> Raw Material</a>
-                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Raw Board</a>
+                                                    <a href="#" @click.prevent="openSelectItemModal('raw_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('papers')" class="erp-search-btn text-center pp-add-more-btn pp-add-paper-btn"><i class="la la-plus-circle"></i> Paper</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_goods')" class="erp-search-btn text-center pp-add-more-btn pp-add-goods-btn"><i class="la la-plus-circle"></i> Finished Goods</a>
                                                     <a href="#" @click.prevent="openSelectItemModal('finished_boards')" class="erp-search-btn text-center pp-add-more-btn pp-add-finished-board-btn"><i class="la la-plus-circle"></i> Finished Board</a>
@@ -303,6 +303,17 @@
                                         </div>
                                         <div class="po-order-prudct-grand-total-box">
                                             <div class="po-order-prudct-grand-total-inner">
+                                                <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <h3>Unloading Cost</h3>
+                                                    </div>
+                                                    <div class="po-vat-tax-item grand-total-item">
+                                                        <div class="purchase-order-product-body-item-inner-content position-relative">
+                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="purchase-order-product-body-item-inner po-vat-tax-item-wrapper d-flex align-items-center  justify-content-end">
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <h3>Sub Total</h3>
@@ -652,9 +663,10 @@
                     selected_customer:null,
                     open_select_item: false,
                     discount_type: "{{ $invoice->discount_type }}",
-                    discount_value: "{{ $invoice->discount_value }}",
-                    discount_amount: "{{ $invoice->discount_amount }}",
+                    discount_value: "{{ formatNumber($invoice->discount_value) }}",
+                    discount_amount: "{{ formatNumber($invoice->discount_amount) }}",
                     paying_amount: 0,
+                    unloading_cost: "{{ formatNumber($invoice->unloading_cost) }}",
 
                 }
             },
@@ -696,11 +708,17 @@
                     }
                     this.discount_amount = 0;
                     if(this.discount_value != 0) {
+                        let due = 0;
+                        if(this.invoice != null) {
+                            due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
+                        } else {
+                            due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount);
+                        }
+                        
                         if(this.discount_type == 0) {
                             //0=percentage
-                            this.discount_amount = (total_amount * this.discount_value) / 100;
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
-
+                            this.discount_amount = formatNumber((parseFloat(total_amount) * parseFloat(this.discount_value)) / 100);
+                            
                             if(this.discount_amount>due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
                                 this.discount_value = {{ $invoice->discount_value }}
@@ -708,16 +726,15 @@
                         } else {
                             //fixed
                             this.discount_amount = this.discount_value;
-                            let due = (this.cartTotalVatAmount + this.cartSubTotalWithoutVatAmount)-this.invoice.paid_amount;
-                            if(this.discount_amount>due){
+                            if(this.discount_amount > due){
                                 showWarningAlert('Warning!',`Discount Amount can not be greater than due amount ${due}`);
                                 this.discount_value = {{ $invoice->discount_value }}
                             }
                         }
                     }
-                    total_amount = total_amount - this.discount_amount;
-
-                    return total_amount;
+                    total_amount = total_amount - parseFloat(this.discount_amount);
+                    total_amount = total_amount + parseFloat(this.unloading_cost);
+                    return formatNumber(parseFloat(total_amount));
                 },
             },
             methods: {
@@ -789,7 +806,7 @@
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = item.srp;
+                        item.price = formatNumber(parseFloat(item.srp));
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         item.invoice_details_id = "";
@@ -849,13 +866,13 @@
                 },
                 updateCartItemPrice(index) {
                     let priceWithoutVat = this.cartItems[index].qty * this.cartItems[index].price;
-                    this.cartItems[index].spt_amount_wv = priceWithoutVat;
+                    this.cartItems[index].spt_amount_wv = formatNumber(parseFloat(priceWithoutVat));
                     if(this.cartItems[index].tax == null) {
                         this.cartItems[index].vat_amount = 0;
                     } else {
-                        this.cartItems[index].vat_amount = ((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100);
+                        this.cartItems[index].vat_amount = formatNumber(parseFloat(((this.cartItems[index].tax.tax_rate * priceWithoutVat) / 100)));
                     }
-                    this.cartItems[index].spt_amount = priceWithoutVat + this.cartItems[index].vat_amount;
+                    this.cartItems[index].spt_amount = formatNumber(parseFloat(priceWithoutVat + parseFloat(this.cartItems[index].vat_amount)));
                 },
 
                 changeDiscountType() {

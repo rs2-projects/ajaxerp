@@ -55,6 +55,12 @@
                     <input class="form-control " name="note[]" type="text" >
                 </div>
             </div>
+            <div class="erp-em-reg-step-item flex-48">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">E-Wallet (Gcash/Maya): </label>
+                    <input class="form-control " value="" name="e_wallet[]" type="text" >
+                </div>
+            </div>
         </div>
     </div>
 
@@ -135,6 +141,12 @@
                 <div class="input-block erp-step-input-block ">
                     <label class="col-form-label">Ending: </label>
                     <div class="cal-icon"><input class="form-control datetimepicker"  name="end_date[]" type="text" ></div>
+                </div>
+            </div>
+            <div class="erp-em-reg-step-item flex-100">
+                <div class="input-block erp-step-input-block ">
+                    <label class="col-form-label">Description: </label>
+                    <textarea name="description[]" class="form-control" rows="3"></textarea>
                 </div>
             </div>
         </div>

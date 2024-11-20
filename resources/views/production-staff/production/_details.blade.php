@@ -67,7 +67,11 @@
                                         <a href="#" @click.prevent="scanRawMaterialModal()" class="raw-material-scan-btn">Scan Raw Materials</a>
                                     @endif
                                     @if($processData->process_status == $processData::PROCESS_STATUS_PENDING )
-                                        <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @if(count($processData->processMachines) > 0)
+                                            <a href="javascript:void(0)" data-machine-id="{{ $processData->processMachines->first()->machine->machine_code }}" onclick="startProcess(this, '{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @else
+                                            <a href="javascript:void(0)" onclick="changeStatus('{{ route('production-staff.production.production.update-process-status',[$pre_production->id,$processData->id,1]) }}')" class="start-process-btn">Start Process</a>
+                                        @endif
                                     @elseif($processData->process_status == $processData::PROCESS_STATUS_PROCESSING)
                                         <a href="javascript:void(0)" pre_production_id="{{$pre_production->id}}" process_id="{{ $processData->id }}" onclick="showVerifyOutputModal('{{ $pre_production->id }}', '{{ $processData->id }}', this)" class="complete-process-btn">Quality Control</a>
                                     @else
@@ -216,6 +220,88 @@
             </div>
         </div>
         @include('production-staff.production._scan_raw_material_modal')
+
+
+
+        <!-- Scan Modal -->
+        <div class="modal fade" id="scanModal" tabindex="-1" aria-labelledby="scanModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="scanModalLabel">Scan Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" v-if="selected_delviery_index != null">
+                        <div class="form-group">
+                            <label class="mb-2" for="scanning_qrcode">Scan QrCode</label>
+                            <input type="text" class="form-control" id="scanning_qrcode" v-model="scanning_qrcode" placeholder="Scan QrCode">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="scanItem()">Check</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receive Modal -->
+        <div class="modal fade" id="receiveModal" tabindex="-1" aria-labelledby="receiveModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="receiveModalLabel">Scan Item</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" v-if="selected_delviery_index != null">
+                        <h4 >Remaining Scan Quantity: @{{ remainingScanQty(selected_delviery_index,selected_delviery_details_index) }}</h4>
+                        <table class="table table-bordered table-striped table-hover" v-if="deliveries[selected_delviery_index].type == 'other'">
+                            <thead>
+                                <tr>
+                                    <th>Purchase ID</th>
+                                    <th>Pending Qty</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <tr v-for="(pendingScan, index) in deliveries[selected_delviery_index].delivery_details[selected_delviery_details_index].pending_scans">
+                                    <td>@{{ pendingScan.purchase_details.material_purchase.batch_number }}</td>
+                                    <td class="text-center">@{{ pendingScan.received_qty - pendingScan.scanned_qty }}</td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="Enter Qty" v-model="pendingScan.selected_qty" :max="pendingScan.received_qty - pendingScan.scanned_qty">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {{-- <table class="table table-bordered table-striped table-hover" v-else>
+                            <thead>
+                                <tr>
+                                    <th>Production ID</th>
+                                    <th>Batch</th>
+                                    <th>Available Qty</th>
+                                    <th>Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <tr v-for="(pendingItem, index) in deliveries[selected_delviery_index].delivery_details[selected_delviery_details_index].pending_items">
+                                    <td>@{{ pendingItem.production.pre_production_no }}</td>
+                                    <td>@{{ pendingItem.production.pre_production_batch_no }}</td>
+                                    <td class="text-center">@{{ pendingItem.quantity - pendingItem.received_qty }}</td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="Enter Qty" v-model="pendingItem.selected_qty" :max="pendingItem.quantity - pendingItem.received_qty">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table> --}}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" v-on:click="selectScanItem()">Receive</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!--End::row-1 -->
@@ -298,8 +384,12 @@
 @endsection
 
 @section('modals')
+
+
     @include('production-staff.production._verify_output_modal')
+    @include('production-staff.production._verify_machine_modal')
     @include('production-staff.production._re_requisiton_modal')
+    @include('production-staff.production._output_damage_modal')
 @endsection
 
 @section('css')
@@ -400,6 +490,16 @@
             font-size: 11px;
             font-weight: 500;
         }
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        .reuseDetails {
+            border: 1px dashed #ddd;
+            margin-top: 15px;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
  </style>
 @endsection
 
@@ -414,34 +514,61 @@
 
 @section('js')
     <script>
+        $(document).ready(function () {
+            $('#verifyMachineModal').modal().on('shown.bs.modal', function() {
+                $('#scanning_machine_code').focus()
+            });
+        });
+        $(document).on("submit", "#verifyMachineForm", function (e) {
+            e.preventDefault();
+            verifyMachine();
+        });
+        var selected_machine_id = '';
+        var machine_start_uri = '';
+        function startProcess(element, uri) {
+            selected_machine_id = $(element).attr('data-machine-id');
+            machine_start_uri = uri;
+            $("#verifyMachineModal").modal('show');
+            $("#scanning_machine_code").focus();
+        }
+        function verifyMachine () {
+            let scannedCode = $("#scanning_machine_code").val();
+            if(scannedCode == selected_machine_id){
+                $("#verifyMachineModal").modal('hide');
+                changeStatus(machine_start_uri);
+            }else{
+                showErrorAlert('Invalid Machine');
+            }
+        }
         function changeStatus(uri) {
-           console.log(uri);
-            Swal.fire({
-                title: '',
-                html: 'Are you sure to update process status?',
-                showDenyButton: true,
-                confirmButtonText: 'Yes',
-                denyButtonText: `No`,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    ajaxGet(
-                        uri,
-                        {},
-                        function (response) {
-                          if (response.status == 200){
-                            toastr.success(response.message);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
-                          }else{
-                            toastr.error(response.message);
-                          }
-                        }
-                    );
-                } else if (result.isDenied) {
+        //    console.log(uri);
+            // Swal.fire({
+            //     title: '',
+            //     html: 'Are you sure to update process status?',
+            //     showDenyButton: true,
+            //     confirmButtonText: 'Yes',
+            //     denyButtonText: `No`,
+            // }).then((result) => {
+            //     if (result.isConfirmed) {
+                    
+            //     } else if (result.isDenied) {
 
+            //     }
+            // })
+            ajaxGet(
+                uri,
+                {},
+                function (response) {
+                    if (response.status == 200){
+                    toastr.success(response.message);
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                    }else{
+                    toastr.error(response.message);
+                    }
                 }
-            })
+            );
         }
 
         let currentProcessBtn = '';
@@ -459,6 +586,88 @@
                     toastr.error(response.message);
                 }
             }, 'default');
+        }
+
+        function openReuse() {
+            $("#reuseDetails").slideDown();
+        }
+
+        function addReuseItem(btn, output_id) {
+            let uri = "{{ route('production-staff.production.production.verify-output.update', [':output_id', 2]) }}";
+            uri = uri.replace(':output_id', output_id);
+
+            let damageModal = $("#outputDamageModal");
+            $("#outputDamageForm").attr('action', uri);
+            damageModal.find('.modal-title').text('Re-Use Item');
+            damageModal.find("#hidden_reuse_type").val('only_reuse');
+            damageModal.find('.damageOptionButtons').hide();
+            damageModal.find("#reuseDetails").show();
+            damageModal.modal('show');
+        }
+
+        function damageOutput(btn, output_id) {
+            let uri = "{{ route('production-staff.production.production.verify-output.update', [':output_id', 2]) }}";
+            uri = uri.replace(':output_id', output_id);
+
+            let damageModal = $("#outputDamageModal");
+            $("#outputDamageForm").attr('action', uri);
+            damageModal.find('.modal-title').text('Damage Output?');
+            damageModal.find("#hidden_reuse_type").val('damage');
+            damageModal.find('.damageOptionButtons').show();
+            damageModal.find("#reuseDetails").hide();
+            damageModal.modal('show');
+        }
+
+        function submitDamageOutput(type) {
+            let request_data = {damage_type: type};
+            if(type == 'reuse') {
+                let reuse_length = $("#reuse_length").val();
+                let reuse_width = $("#reuse_width").val();
+                let reuse_thickness = $("#reuse_thickness").val();
+                let reuse_type = $("#hidden_reuse_type").val();
+                if(!reuse_length) {
+                    toastr.error('Please enter length');
+                    $("#reuse_length").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_length").removeClass("is-invalid");
+                }
+                if(!reuse_width) {
+                    toastr.error('Please enter width');
+                    $("#reuse_width").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_width").removeClass("is-invalid");
+                }
+                if(!reuse_thickness) {
+                    toastr.error('Please enter thickness');
+                    $("#reuse_thickness").addClass("is-invalid").focus();
+                    return;
+                } else {
+                    $("#reuse_thickness").removeClass("is-invalid");
+                }
+
+                request_data.reuse_length = reuse_length;
+                request_data.reuse_width = reuse_width;
+                request_data.reuse_thickness = reuse_thickness;
+                request_data.reuse_type = reuse_type;
+            }
+            let uri = $("#outputDamageForm").attr('action');
+            ajaxGet(
+                uri,
+                request_data,
+                function (response) {
+                    if (response.status == 200){
+                        showSuccessAlert('',response.message);
+                        $("#outputDamageModal").modal('hide');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 500);
+                    }else{
+                        toastr.error(response.message);
+                    }
+                }
+            );
         }
 
         function verifyOutput(uri, btn, type) {
@@ -482,7 +691,6 @@
                                 currentProcessBtn.classList.remove('complete-process-btn');
                                 currentProcessBtn.classList.add('rs-pre-completed-process');
                                 currentProcessBtn.textContent = 'Completed Process';
-
                             }
                             if(type == 'perfect' ){
                                 btn.closest('tr').classList.add('perfect-qc-tr');
@@ -627,12 +835,20 @@
             }, 'show_input_error');
         });
 
+        $(document).ready(function () {
+            $('#scanModal').modal().on('shown.bs.modal', function() {
+                $('#scanning_qrcode').focus()
+            });
+        });
         // scan raw materials....
         var { createApp } = Vue;
         var vueApp = createApp({
             data() {
                 return {
                     deliveries: [],
+                    selected_delviery_index:null,
+                    selected_delviery_details_index:null,
+                    scanning_qrcode: '',
                 };
             },
             methods: {
@@ -707,6 +923,7 @@
                                             ...detail,
                                             scannedBarcodes: [],
                                             barcodeCounts: 0,
+                                            scan_items: [],
                                         };
                                     })
                                 };
@@ -721,7 +938,7 @@
                 checkValidation(e, deliveryIndex) {
                     e.preventDefault();
                     const delivery = this.deliveries[deliveryIndex];
-                    if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
+                    if (delivery.delivery_details.every(detail => detail.scan_items.length === 0)) {
                         showErrorAlert('Oops!', 'Please add scanned items!');
                     } else {
                         scanStoreForm(delivery.delivery.id, deliveryIndex);
@@ -758,7 +975,101 @@
                             })
                         };
                     });
-                }
+                },
+
+                openScanModal(deliverIndex, detailsIndex){
+                    
+                    let delivery_details = this.deliveries[deliverIndex].delivery_details[detailsIndex];
+                    if(delivery_details.scan_status == '1'){
+                        showErrorAlert('Error', 'All items are scanned');
+                    }else{
+                        this.selected_delviery_index = deliverIndex;
+                        this.selected_delviery_details_index = detailsIndex;
+                        $('#scanModal').modal('show');
+                    }
+                },
+
+                scanItem() {
+                    let delivery = this.deliveries[this.selected_delviery_index];
+                    let delivery_details = delivery.delivery_details[this.selected_delviery_details_index];
+                    let barcodeValue = this.scanning_qrcode;
+
+                    if(delivery.type == 'other') {
+                        if (delivery_details.material.product.code == barcodeValue) {
+                            $("#scanModal").modal('hide');
+                            $("#receiveModal").modal('show');
+                            this.scanning_qrcode = '';
+                        } else {
+                            showErrorAlert('Error', 'Invalid Item');
+                            this.scanning_qrcode = '';
+                        }
+                    } else {
+                        if (delivery_details.board.product.code == barcodeValue) {
+                            $("#scanModal").modal('hide');
+                            $("#receiveModal").modal('show');
+                            this.scanning_qrcode = '';
+                        } else {
+                            showErrorAlert('Error', 'Invalid Item');
+                            this.scanning_qrcode = '';
+                        }
+                    }
+                },
+
+                remainingScanQty(deliveryIndex, detailsIndex){
+                    // console.log(deliveryIndex, detailsIndex);
+                    let delivery = this.deliveries[deliveryIndex].delivery_details[detailsIndex];
+                    return delivery.received_qty - delivery.scanned_qty;
+                },
+
+                selectScanItem() {
+                    let delivery = this.deliveries[this.selected_delviery_index];
+                    let delivery_details = this.deliveries[this.selected_delviery_index].delivery_details[this.selected_delviery_details_index];
+                    let total_selected_qty = 0;
+                    let scan_items = [];
+                    if(delivery.type == 'other'){
+                        for(let i=0; i<delivery_details.pending_scans.length; i++) {
+                            let pendingItem = delivery_details.pending_scans[i];
+                            if(pendingItem.selected_qty == undefined){
+                                pendingItem.selected_qty = 0;
+                            }
+                            if(pendingItem.selected_qty > (pendingItem.received_qty - pendingItem.scanned_qty)){
+                                showErrorAlert('Error', 'Items Exceeding Received Quantity');
+                                return false;
+                            }
+                            total_selected_qty += parseInt(pendingItem.selected_qty);
+                            if(pendingItem.selected_qty > 0){
+                                scan_items.push(pendingItem);
+                            }
+                        }
+                    } else {
+                        for(let i=0; i<delivery_details.pending_scans.length; i++) {
+                            let pendingItem = delivery_details.pending_scans[i];
+                            if(pendingItem.selected_qty == undefined){
+                                pendingItem.selected_qty = 0;
+                            }
+                            if(pendingItem.selected_qty > (pendingItem.received_qty - pendingItem.scanned_qty)){
+                                showErrorAlert('Error', 'Items Exceeding Received Quantity');
+                                return false;
+                            }
+                            total_selected_qty += parseInt(pendingItem.selected_qty);
+                            if(pendingItem.selected_qty > 0){
+                                scan_items.push(pendingItem);
+                            }
+                        }
+
+                    }
+                    
+                    if(total_selected_qty > this.remainingScanQty(this.selected_delviery_index, this.selected_delviery_details_index)){
+                        showErrorAlert('Error', 'Items Exceeding Received Quantity.');
+                    }else{
+                        // material.material.delivered_qty += total_selected_qty;
+                        delivery_details.scan_items = scan_items;
+                        this.selected_delviery_index = null;
+                        this.selected_delviery_details_index = null;
+                        $('#receiveModal').modal('hide');
+                        $("#scanRawMaterialModal").modal('show');
+                    }
+                },
 
             },
             mounted() {
@@ -768,7 +1079,7 @@
 
         $('#scanRawMaterialModal').on('hidden.bs.modal', function () {
             setTimeout(function () {
-                location.reload();
+                // location.reload();
             }, 100);
         })
         function scanStoreForm(deliveryID, deliveryIndex){

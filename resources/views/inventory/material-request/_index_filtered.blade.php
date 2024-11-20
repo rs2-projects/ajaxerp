@@ -1,6 +1,6 @@
-
     <div class="big-table pt-4">
         <div class="de-table-wrapper">
+            <h4>Production</h4>
             <div class="table-responsives">
                 <table class="table mb-0 erp-table">
                     <thead class="erp-thead">
@@ -93,3 +93,4 @@
     </div>
 
     {{ $pre_productions->links('vendor.pagination.common_ajax_pagination') }}
+    

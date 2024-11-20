@@ -10,7 +10,7 @@ use App\Models\Production\PreProduction;
 use App\Services\Production\Production\ProductionService;
 use Illuminate\Http\Request;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductionController extends BackendController
 {
@@ -145,6 +145,15 @@ class ProductionController extends BackendController
         } catch (\Exception $exception) {
             return redirect()->back()->with(['failed' => $exception->getMessage()]);
         }
+    }
+
+    public function monitoringPerDay() {
+        $this->setPageTitle("Production Monitoring Per Day");
+        $this->setActiveMenu('production.production.monitoring_per_day');
+
+        $data = $this->service->monitoringPerDayData();
+
+        return $this->view('production.production.monitoring_per_day')->with($data);
     }
 
 }

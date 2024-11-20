@@ -7,6 +7,8 @@ use App\Services\Common\ImageUploadService;
 
 class MachineService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -52,7 +54,8 @@ class MachineService
         $machine->name = $request->name;
         $machine->image = $image_path??null;
         $machine->model = $request->model;
-        $machine->production_cost = $request->production_cost;
+        $machine->production_cost = $request->production_cost ?? 0;
+        $machine->machine_code = $request->machine_code;
         $machine->color = $request->color;
         $machine->description = $request->description;
         $machine->created_by = auth()->user()->id;
@@ -100,7 +103,8 @@ class MachineService
         $machine->name = $request->name;
         $machine->image = $image_path?? $machine->image;
         $machine->model = $request->model;
-        $machine->production_cost = $request->production_cost;
+        $machine->production_cost = $request->production_cost ?? 0;
+        $machine->machine_code = $request->machine_code;
         $machine->color = $request->color;
         $machine->description = $request->description;
         $machine->updated_by = auth()->user()->id;
@@ -120,5 +124,16 @@ class MachineService
         $machine->deleted_by = auth()->user()->id;
         $machine->deleted_at = now();
         $machine->save();
+    }
+
+    public function getMachine($id)
+    {
+        $machine = Machine::where('id', $id)
+            ->where('deleted', Machine::DELETED_NO)
+            ->first();
+        if (!$machine) {
+            throw new \Exception('Machine not found');
+        }
+        return $machine;
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\Production\Machine\StoreMachineRequest;
 use App\Http\Requests\Production\Machine\UpdateMachineRequest;
 use App\Services\Production\Machine\MachineService;
 use Illuminate\Http\Request;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class MachineController extends BackendController
 {
@@ -81,5 +82,26 @@ class MachineController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Machine deleted successfully');
+    }
+
+    public function printQrCode($id)
+    {
+        try {
+            $machine = $this->service->getMachine($id);
+            if($machine->machine_code == '') {
+                throw new \Exception('This machine has no machine code');
+            }
+            $pdf = PDF::loadView('production.machine.print-qrcode-pdf', compact(
+                'machine'
+            ));
+            
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+            return $pdf->inline();
+
+        }catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

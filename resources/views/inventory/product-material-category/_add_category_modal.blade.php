@@ -16,6 +16,16 @@
                             <label class="col-form-label">Category Name <span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="name" required>
                         </div>
+
+                        <div class="input-block mb-2">
+                            <label class="col-form-label">Calculator Type <span class="text-danger">*</span></label>
+                            <select class="select select-step" name="calculator_type" required>
+                                @foreach($calculator_types as $key=>$type)
+                                    <option value="{{ $key }}">{{ $type }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div class="input-block mb-2">
                             <label class="col-form-label">SRP Markup Percent (%) </label>
                             <input class="form-control" type="number" min="0" name="srp_markup_percent" >

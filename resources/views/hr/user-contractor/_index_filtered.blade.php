@@ -39,7 +39,7 @@
 
                 </td>
                 <td class="erp-tbody-td text-center">
-                    <h4 class="text-center d-table-title">{{ $userContractor->contract_value??'N/A' }}</h4>
+                    <h4 class="text-center d-table-title">{{ formatNumber($userContractor->contract_value)??'N/A' }}</h4>
 
                 </td>
                 <td class="erp-tbody-td text-center">

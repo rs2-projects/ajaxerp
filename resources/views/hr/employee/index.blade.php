@@ -111,6 +111,9 @@
     @include('hr.employee._change_role')
     @include('hr.employee._change_password')
     @include('hr.employee._add_user_leave_modal')
+    @include('hr.employee._promote_employee_modal')
+    @include('hr.employee._demote_employee_modal')
+    @include('hr.employee._update_salary_employee_modal')
 @endsection
 
 @section('css')
@@ -199,6 +202,57 @@
                 formPost(url, formData, function (res){
                     if(res.status == 200){
                         $("#editPasswordModal").modal('hide');
+                        showSuccessAlert('Success',res.message);
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $(document).on("submit", "#promoteEmployeeForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#promote_employee_modal").modal('hide');
+                        showSuccessAlert('Success',res.message);
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $(document).on("submit", "#demoteEmployeeForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#demote_employee_modal").modal('hide');
+                        showSuccessAlert('Success',res.message);
+                        getData();
+                    }else{
+                        showErrorAlert('Error',res.message)
+                    }
+                }, 'show_input_error');
+            });
+
+            $(document).on("submit", "#updateEmployeeSalaryForm", function(e) {
+                e.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $(".ie-span").text("").hide();
+                var url = $(this).attr('action');
+
+                formPost(url, formData, function (res){
+                    if(res.status == 200){
+                        $("#update_salary_employee_modal").modal('hide');
                         showSuccessAlert('Success',res.message);
                         getData();
                     }else{
@@ -389,6 +443,20 @@
             });
         }
 
+        function initializePromotionSelect() {
+            $('#promote_employee_modal .select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
+        function initializeDemotionSelect() {
+            $('#demote_employee_modal .select').select2({
+                minimumResultsForSearch: -1,
+                width: '100%'
+            });
+        }
+
         function initializeDatepicker() {
             $('.datetimepicker').datetimepicker({
                 //format: 'DD/MM/YYYY',
@@ -400,6 +468,48 @@
                     previous: 'fa-solid fa-angle-left'
                 }
             });
+        }
+
+        function showPromoteUserModal(id) {
+            let url = "{{route('hr.employee.get-promotion-modal-data', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#promote_employee_modal .modal-body").html(response.view);
+                    $("#promote_employee_modal").modal('show');
+                    initializePromotionSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function showDemoteUserModal(id) {
+            let url = "{{route('hr.employee.get-demotion-modal-data', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#demote_employee_modal .modal-body").html(response.view);
+                    $("#demote_employee_modal").modal('show');
+                    initializeDemotionSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
+        function showUpdateSalaryModal(id) {
+            let url = "{{route('hr.employee.get-update-salary-modal-data', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#update_salary_employee_modal .modal-body").html(response.view);
+                    $("#update_salary_employee_modal").modal('show');
+                    initializeDemotionSelect();
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
 
     </script>

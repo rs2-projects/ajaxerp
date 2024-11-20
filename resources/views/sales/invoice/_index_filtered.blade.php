@@ -39,8 +39,8 @@
                 </a>
             </td>
             <td class="erp-tbody-td text-center">
-                <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().$invoice->payable_amount }}</h4>
-                <h4 class="text-center d-table-title"><span class="in-t-amount-text due-text">Due - </span>{{ getCurrencySymbol().$invoice->due_amount }}</h4>
+                <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().formatNumber($invoice->payable_amount) }}</h4>
+                <h4 class="text-center d-table-title"><span class="in-t-amount-text due-text">Due - </span>{{ getCurrencySymbol().formatNumber($invoice->due_amount) }}</h4>
 
             </td>
 
@@ -74,10 +74,12 @@
                                 @endif
                                 @if(hasPermission('manage-invoices'))
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
+                                
                                     @if($invoice->payment_status == $invoice::PAYMENT_STATUS_UNPAID)
                                         <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                     @endif
                                     <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                    <a class="dropdown-item" href="#" onclick="getProductionStatus({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Check Status</a>
                                 @endif
                             </div>
                         </div>

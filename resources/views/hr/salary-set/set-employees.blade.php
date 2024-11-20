@@ -48,12 +48,11 @@
                                                 <div class="table-body-item em-list flex-23">
                                                     <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                                                         <div class="em-pro-img-box">
-                                                            <img src="@{{ selectedEmployee.show_image }}" alt="">
+                                                            <img :src="selectedEmployee.show_image" alt="">
                                                         </div>
                                                         <div class="em-pro-details-box">
                                                             <h5>@{{ selectedEmployee.full_name }}</h5>
                                                             <p class="em-id">ID: <span> # @{{ selectedEmployee.employee_id }}</span></p>
-
                                                         </div>
                                                     </a>
                                                 </div>
@@ -112,8 +111,7 @@
 @endsection
 
 @section('js')
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    @include('layouts.partials.__vue_scripts')
 
     <script>
         $(document).ready(function() {

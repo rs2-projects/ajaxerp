@@ -7,6 +7,8 @@ use Carbon\Carbon;
 
 class DepartmentService
 {
+    public $paginate_limit;
+
     public function __construct()
     {
         $this->paginate_limit = config('commonData.paginate_limit');
@@ -57,7 +59,7 @@ class DepartmentService
                 ->where('id', $id)
                 ->first();
             if (!$department) {
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $department->name = $request->name;
             $department->description = $request->description;
@@ -66,7 +68,7 @@ class DepartmentService
             $department->save();
 
         }catch (\Exception $exception) {
-          return  throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
 
     }
@@ -78,14 +80,14 @@ class DepartmentService
                 ->where('id', $id)
                 ->first();
             if (!$department) {
-                return throw new \Exception("Data not found");
+                throw new \Exception("Data not found");
             }
             $department->deleted = Department::DELETED_YES;
             $department->deleted_at = Carbon::now();
             $department->deleted_by = auth()->id();
             $department->save();
         }catch (\Exception $exception) {
-            return throw new \Exception($exception->getMessage());
+            throw new \Exception($exception->getMessage());
         }
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Models\Procurements;
 
 use App\Models\BaseModel;
+use App\Models\Products\ProductMaterialCategory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductMaterialPurchase extends BaseModel
@@ -163,8 +165,24 @@ class ProductMaterialPurchase extends BaseModel
     {
         return $this->hasMany(ProductMaterialPurchaseDetails::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO);
     }
+
     public function purchaseCalculated()
     {
         return $this->hasMany(ProductMaterialPurchaseCalculatedPrice::class, 'product_material_purchase_id', 'id')->where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO);
+    }
+
+    public function generateBatchNumber($addNum = 1)
+    {
+        $total = ProductMaterialPurchase::count();
+        $total = $total + 1000;
+        $total += $addNum;
+        $batch_number = Carbon::now()->format('ydm') . '-' . $total;
+        // Check if batch number already exists
+        $checkBatchNumber = ProductMaterialPurchase::where('batch_number', $batch_number)
+            ->first();
+        if (!empty($checkBatchNumber)) {
+            return $this->generateBatchNumber($addNum + 1);
+        }
+        return $batch_number;
     }
 }

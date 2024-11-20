@@ -33,7 +33,7 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $data->code??'N/A' }}</td>
-                    <td class="erp-tbody-td text-center">{{ $data->production_cost??'0' }}</td>
+                    <td class="erp-tbody-td text-center">{{ formatNumber($data->production_cost??'0') }}</td>
                     <td class="erp-tbody-td text-center">{{ $data->note??'N/A' }}</td>
                     @if(hasPermission('manage-plate'))
                         <td class="text-end erp-tbody-td">

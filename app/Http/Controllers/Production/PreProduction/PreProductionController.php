@@ -120,4 +120,15 @@ class PreProductionController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
     }
+
+    public function getInvoiceListData(Request $request)
+    {
+        try {
+            $data = $this->service->getInvoiceListData($request);
+            return $this->returnAjaxSuccess($data);
+            // return $this->returnAjaxSuccess(['view' => $view]);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
 }
