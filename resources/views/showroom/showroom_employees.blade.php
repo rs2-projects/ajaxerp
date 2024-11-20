@@ -6,7 +6,7 @@
         @if(hasPermission('manage-customers'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
-                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#employee_list_modal"><i class="fa-solid fa-plus"></i> Add Employees</a>
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" v-on:click="addEmployeeModal()"><i class="fa-solid fa-plus"></i> Add Employees</a>
                 </div>
             </div>
         @endif
@@ -182,7 +182,12 @@
                     let employeeIndex = this.employees.findIndex(employee => employee.id === employee_id);
                     this.selected_employees.splice(index, 1);
                     this.employees[employeeIndex].is_selected = false;
-                }
+                },
+                addEmployeeModal() {
+                    this.fetchEmployees();
+                    this.selected_employees = [];
+                    $("#employee_list_modal").modal('show');
+                },
             },
             mounted () {
                 this.fetchEmployees();

@@ -15,8 +15,8 @@
                             <div class="d-flex flex-wrap mt-3 gap-1">
                                 <div class="erp-em-reg-step-item flex-50">
                                     <div class="input-block erp-step-input-block ">
-                                        <label class="col-form-label">Name <span class="text-red">*</span></label>
-                                        <input class="form-control" v-model="employee_filter_keyword" @input="fetchEmployees" type="text" placeholder="Name">
+                                        <label class="col-form-label">Search By: </label>
+                                        <input class="form-control" v-model="employee_filter_keyword" @input="fetchEmployees" type="text" placeholder="Name / Email">
                                     </div>
                                 </div>
                             </div>

@@ -140,6 +140,7 @@ class ShowroomService
         
         $data['employees'] = User::where('showroom_id', $id)
             ->where('type', User::TYPE_EMPLOYEE) 
+            ->where('is_contracted', User::CONTRACTED_NO)
             ->where('deleted', Showroom::DELETED_NO)
             ->where('status', Showroom::STATUS_ACTIVE)
             ->paginate($this->paginate_limit);
@@ -149,6 +150,7 @@ class ShowroomService
     public function getEmptyShowroomEmployees($request) {
         $data['employees'] = User::where('showroom_id', null)
             ->where('type', User::TYPE_EMPLOYEE)
+            ->where('is_contracted', User::CONTRACTED_NO)
             ->where('deleted', Showroom::DELETED_NO)
             ->where('status', Showroom::STATUS_ACTIVE)
             ->where(function ($q) use ($request){
@@ -189,6 +191,7 @@ class ShowroomService
             foreach ($employee_ids as $employee_id) {
                 $employee = User::where('id', $employee_id)
                     ->where('type', User::TYPE_EMPLOYEE)
+                    ->where('is_contracted', User::CONTRACTED_NO)
                     ->where('deleted', Showroom::DELETED_NO)
                     ->where('status', Showroom::STATUS_ACTIVE)
                     ->first();
@@ -200,6 +203,38 @@ class ShowroomService
                 $employee->updated_at = now();
                 $employee->save();
             }
+
+        }catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+        DB::commit();
+    }
+
+    public function removeShowroomEmployees($id, $employee_id)
+    {
+        DB::beginTransaction();
+        try {
+            $showroom = Showroom::where('id', $id)
+                ->where('deleted', Showroom::DELETED_NO)
+                ->where('status', Showroom::STATUS_ACTIVE)
+                ->first();
+            if (!$showroom) {
+                throw new \Exception('Invalid Showroom!');
+            }
+
+            $employee = User::where('id', $employee_id)
+                ->where('type', User::TYPE_EMPLOYEE)
+                ->where('deleted', Showroom::DELETED_NO)
+                ->where('status', Showroom::STATUS_ACTIVE)
+                ->first();
+            if (!$employee) {
+                throw new \Exception('Invalid Employee!');
+            }
+            $employee->showroom_id = null;
+            $employee->updated_by = auth()->id();
+            $employee->updated_at = now();
+            $employee->save();
 
         }catch (\Exception $e) {
             DB::rollBack();

@@ -16,4 +16,5 @@ Route::group(['prefix' => 'showroom'], function () {
     Route::post('{id}/showroom-employees/filtered', [ShowroomController::class, 'showroomEmployeesFiltered'])->name('showroom.showroom-employees.index.filtered');
     Route::get('empty-showroom-employees', [ShowroomController::class, 'getEmptyShowroomEmployees'])->name('showroom.showroom-employees.free-employees');
     Route::post('{id}/showroom-employees/store', [ShowroomController::class, 'storeShowroomEmployees'])->name('showroom.showroom-employees.store');
+    Route::get('{id}/showroom-employees/{employee_id}/remove', [ShowroomController::class, 'removeShowroomEmployees'])->name('showroom.showroom-employees.remove');
 });

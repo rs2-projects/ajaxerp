@@ -21,7 +21,7 @@
                         <h4 class="d-table-title">{{ $employees->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td">
-                        <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                        <a href="{{ route('hr.employee.details', $employee->id) }}" target="_blank" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
                             <div class="em-pro-img-box">
                                 <img src="{{ $employee->show_image }}" alt="">
                             </div>
@@ -31,14 +31,17 @@
                             </div>
                         </a>
                     </td>
-                    <td class="erp-tbody-td">{{ $employee->email }}</td>
-                    <td class="erp-tbody-td">{{ $employee->phone }}</td>
-                    <td class="erp-tbody-td">{{ $employee->department->name ?? '' }}</td>
-                    <td class="erp-tbody-td">{{ $employee->designation->name ?? '' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $employee->email }}</td>
+                    <td class="erp-tbody-td text-center">{{ $employee->phone }}</td>
+                    <td class="erp-tbody-td text-center">{{ $employee->department->name ?? '' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $employee->designation->name ?? '' }}</td>
                     @if(hasPermission('manage-customers'))
-                        <td class="text-end erp-tbody-td">
+                        <td class="text-center erp-tbody-td">
                             <div class="erp-action-t">
-                                <a class="btn btn-sm btn-danger" href="javascript:void(0)"><i class="fa fa-trash"></i></a>
+                                <a class="text-danger" href="javascript:void(0)" 
+                                    onclick="deleteAjax('{{ route('showroom.showroom-employees.remove',['id' => $employee->showroom_id, 'employee_id' => $employee->id]) }}', 'reloadAjaxGetData') ">
+                                    <i class="fa fa-trash"></i>
+                                </a>
                             </div>
                         </td>
                     @endif

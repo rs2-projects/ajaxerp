@@ -117,4 +117,15 @@ class ShowroomController extends BackendController
         }
         return $this->returnAjaxSuccess([], 'Employee added successfully');
     }
+
+    //remove showroom employees
+    public function removeShowroomEmployees($id, $employee_id)
+    {
+        try {
+            $this->service->removeShowroomEmployees($id, $employee_id);
+        }catch(\Exception $e){
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess([], 'Employee removed successfully');
+    }
 }
