@@ -7,7 +7,7 @@ use App\Http\Requests\Sales\StoreQuotationRequest;
 use App\Http\Requests\Sales\UpdateQuotationRequest;
 use App\Services\Sales\Quotation\QuotationService;
 use Illuminate\Http\Request;
-use PDF;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class QuotationController extends BackendController
 {
@@ -64,9 +64,12 @@ class QuotationController extends BackendController
         $this->addBreadcrumbs('Edit');
 
         $data = $this->service->editData($id);
+        if (!isset($data['quotation'])) {
+            return redirect()->route('sales.quotation.index')->with(['failed' => 'Invalid Quotation!']);
+        }
 
         if (!isset($data['quotation'])) {
-            return redirect()->route('sales.quotation.index')->with(['failed' => 'Invalid Invoice!']);
+            return redirect()->route('sales.quotation.index')->with(['failed' => 'Invalid Quotation!']);
         }
 
         $quotation = $data['quotation'];

@@ -49,6 +49,7 @@ class Quotation extends BaseModel
     protected $fillable = [
         'quotation_no',
         'customer_id',
+        'showroom_id',
         'ref_no',
         'quotation_date',
         'project_name',
