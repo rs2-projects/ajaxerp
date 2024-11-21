@@ -59,6 +59,7 @@ class Invoice extends BaseModel
         'invoice_no',
         'quotation_id',
         'customer_id',
+        'showroom_id',
         'order_no',
         'invoice_date',
         'payment_date',

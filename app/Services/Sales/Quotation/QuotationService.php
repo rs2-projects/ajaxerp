@@ -53,6 +53,8 @@ class QuotationService
         $status_filter = $request->status_filter;
         $start_date_filtered = $request->start_date_filtered ?? null;
         $end_date_filtered = $request->end_date_filtered ?? null;
+        $authUser = auth()->user();
+
         $data['quotations'] = Quotation::where('deleted', Invoice::DELETED_NO)
             ->where(function ($q) use ($quotation_no) {
                 if ($quotation_no != '') {
@@ -72,7 +74,13 @@ class QuotationService
                     $q->whereDate('quotation_date', '<=', $end_date_filtered);
                 }
             })
-            ->orderBy('id', 'desc')->paginate($this->paginate_limit);
+            ->where(function ($q) use ($authUser) {
+                if ($authUser->showroom_id != null) {
+                    $q->where('showroom_id', $authUser->showroom_id);
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($this->paginate_limit);
 
         $data['view'] = view('sales.quotation._index_filtered', $data)->render();
         return $data;
@@ -241,8 +249,11 @@ class QuotationService
                 throw new \Exception("Ref Number already exists");
             }
 
+            $authUser = auth()->user();
+
             $quotation = new Quotation();
             $quotation->customer_id = $request->customer_id;
+            $quotation->showroom_id = $authUser->showroom_id;
             $quotation->ref_no = $request->ref_no;
             $quotation->quotation_date = $request->quotation_date;
             $quotation->project_name = $request->project_name;
@@ -379,12 +390,18 @@ class QuotationService
     //Edit Invoice
     public function editData($id)
     {
+        $authUser = auth()->user();
         $quotation = Quotation::where('id', $id)
             ->where('deleted', 0)
+            ->where(function ($q) use ($authUser) {
+                if ($authUser->showroom_id != null) {
+                    $q->where('showroom_id', $authUser->showroom_id);
+                }
+            })
             ->first();
 
         if (empty($quotation)) {
-            return null;
+            return ['quotation' => null];
         }
         
         $data['quotation'] = $quotation;

@@ -26,6 +26,7 @@ class Customer extends BaseModel
     ];
 
     protected $fillable = [
+        'showroom_id',
         'business_name',
         'image',
         'email',
