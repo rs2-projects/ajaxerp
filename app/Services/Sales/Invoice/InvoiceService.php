@@ -53,6 +53,7 @@ class InvoiceService
         $status_filter = $request->status_filter;
         $start_date_filtered = $request->start_date_filtered ?? null;
         $end_date_filtered = $request->end_date_filtered ?? null;
+        $authUser = auth()->user();
         $data['invoices'] = Invoice::where('deleted', Invoice::DELETED_NO)
             ->where(function ($q) use ($invoice_id) {
                 if ($invoice_id != '') {
@@ -74,6 +75,11 @@ class InvoiceService
                 }
                 if ($end_date_filtered != null) {
                     $q->whereDate('invoice_date', '<=', $end_date_filtered);
+                }
+            })
+            ->where(function ($q) use ($authUser) {
+                if ($authUser->showroom_id != null) {
+                    $q->where('showroom_id', $authUser->showroom_id);
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -266,9 +272,12 @@ class InvoiceService
                 
             }
 
+            $authUser = auth()->user();
+
             $invoice = new Invoice();
             $invoice->quotation_id = $quotation_id;
             $invoice->customer_id = $request->customer_id;
+            $invoice->showroom_id = $authUser->showroom_id;
             $invoice->order_no = $request->order_no;
             $invoice->invoice_date = $request->invoice_date;
             $invoice->payment_date = $request->payment_date;
@@ -626,8 +635,14 @@ class InvoiceService
     //Edit Invoice
     public function editData($id)
     {
+        $authUser = auth()->user();
         $invoice = Invoice::where('id', $id)
-            ->where('deleted', 0)
+            ->where(function ($q) use ($authUser) {
+                if ($authUser->showroom_id != null) {
+                    $q->where('showroom_id', $authUser->showroom_id);
+                }
+            })
+            ->where('deleted', Invoice::DELETED_NO)
             ->first();
 
         if (empty($invoice)) {

@@ -73,8 +73,12 @@ class CustomerService
                 $image_path = $imageUploadService->store($request->image, 'sales/customers');
                 $image_path = $image_path['path'];
             }
+
+            $authUser = auth()->user();
+
             //store data into customers table
             $customer = new Customer();
+            $customer->showroom_id = $authUser->showroom_id;
             $customer->business_name = $request->business_name;
             $customer->image = $image_path??null;
             $customer->email = $request->email;

@@ -539,3 +539,10 @@
     line-height: 1;
     border: none;
 }
+
+.auto-col-table {
+
+}
+.auto-col-table td {
+    white-space: normal;
+}
