@@ -984,7 +984,7 @@ class InvoiceService
         $design->save();
     }
 
-    public function     getProductionStatus($id)
+    public function getProductionStatus($id)
     {
         $data['invoice'] = Invoice::where('id', $id)
             ->where('deleted', Invoice::DELETED_NO)
@@ -1026,6 +1026,20 @@ class InvoiceService
         
         $data['view'] = view('sales.invoice.__production_status_data', $data)->render();
         
+        return $data;
+    }
+
+    public function getDownloadPdfData($id) {
+        $data['invoice'] = Invoice::where('id', $id)
+            ->where('deleted', Invoice::DELETED_NO)
+            ->first();
+        $data['customer'] = Customer::where('id', $data['invoice']->customer_id)
+            ->where('status', Customer::STATUS_ACTIVE)
+            ->where('deleted', Customer::DELETED_NO)
+            ->first();
+        $data['invoiceDetails'] = InvoiceDetails::where('invoice_id', $id)
+            ->where('deleted', InvoiceDetails::DELETED_NO)
+            ->get();
         return $data;
     }
 
