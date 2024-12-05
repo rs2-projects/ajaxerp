@@ -9,7 +9,7 @@
                 <th class="erp-th text-center">Phone</th>
                 <th class="erp-th text-center">Department</th>
                 <th class="erp-th text-center">Designation</th>
-                @if(hasPermission('manage-customers'))
+                @if(hasPermission('manage-showroom'))
                     <th class="erp-th text-center">Action </th>
                 @endif
             </tr>
@@ -35,7 +35,7 @@
                     <td class="erp-tbody-td text-center">{{ $employee->phone }}</td>
                     <td class="erp-tbody-td text-center">{{ $employee->department->name ?? '' }}</td>
                     <td class="erp-tbody-td text-center">{{ $employee->designation->name ?? '' }}</td>
-                    @if(hasPermission('manage-customers'))
+                    @if(hasPermission('manage-showroom'))
                         <td class="text-center erp-tbody-td">
                             <div class="erp-action-t">
                                 <a class="text-danger" href="javascript:void(0)" 

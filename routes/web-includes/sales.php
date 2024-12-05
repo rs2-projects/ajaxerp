@@ -48,6 +48,8 @@ Route::prefix('invoice')->group(function(){
 
     Route::get('/{id}/production-status',[InvoiceController::class,'getProductionStatus'])->name('sales.invoice.production-status')->middleware('permission:view-invoices');
 
+    Route::get('{id}/download-pdf',[InvoiceController::class,'downloadPdf'])->name('sales.invoice.download-pdf')->middleware('permission:view-invoices');
+
     
     //Invoice delivered
     Route::get('/{id}/deliver', [InvoiceDeliveredController::class, 'deliver'])->name('sales.invoice.deliver')->middleware('permission:deliver-items');

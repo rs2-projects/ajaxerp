@@ -157,6 +157,14 @@ class PermissionsTableSeeder extends Seeder
                     'slug' => 'deliver-items',
                     'title' => 'Deliver Items'
                 ],
+                [
+                    'slug' => 'view-showroom',
+                    'title' => 'View Showroom'
+                ],
+                [
+                    'slug' => 'manage-showroom',
+                    'title' => 'Manage Showroom'
+                ],
             ],
 
             //Inventory
