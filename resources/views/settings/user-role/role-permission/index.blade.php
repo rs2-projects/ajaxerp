@@ -868,6 +868,30 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>View Showroom</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="view-showroom" data-required-remove="manage-showroom" class="check" name="permissions[]" value="view-showroom"
+                                            {{ in_array('view-showroom', $permissions) ? 'checked' : ''}}>
+                                            <label for="view-showroom" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rs-erp-permission-c-item-wrapper d-flex justify-content-between">
+                                    <div class="rs-erp-permission-c-item">
+                                        <h4>Manage Showroom</h4>
+                                    </div>
+                                    <div class="rs-erp-permission-c-item ">
+                                        <div class="status-toggle rs-erp-toggle float-none d-flex justify-content-center">
+                                            <input type="checkbox" id="manage-showroom" data-required-add="view-showroom" class="check" name="permissions[]" value="manage-showroom"
+                                            {{ in_array('manage-showroom', $permissions) ? 'checked' : ''}}>
+                                            <label for="manage-showroom" class="checktoggle">checkbox</label>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </div>
 

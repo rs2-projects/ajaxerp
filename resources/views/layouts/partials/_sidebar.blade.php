@@ -168,7 +168,7 @@
                             <a href="{{ route('sales.customer.index') }}" class="{{ $activeMenu == 'sales.customer.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Customers</span></a>
                         </li>
                     @endif
-                    @if(hasPermission( 'view-customers','manage-customers' ))
+                    @if(hasPermission( 'view-showroom','manage-showroom' ))
                         <li>
                             <a href="{{ route('showroom.index') }}" class="{{ $activeMenu == 'showroom.index' ? 'active' : ''}}"><i class="la la-get-pocket"></i> <span>Showroom</span></a>
                         </li>

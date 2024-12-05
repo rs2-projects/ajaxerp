@@ -3,7 +3,7 @@
 <div id="VueApp">
     <!-- Start::row-1 -->
     <div class="row">
-        @if(hasPermission('manage-customers'))
+        @if(hasPermission('manage-showroom'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
                     <a href="javascript:void(0)" class="btn add-btn erp-add-employee" v-on:click="addEmployeeModal()"><i class="fa-solid fa-plus"></i> Add Employees</a>
