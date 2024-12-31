@@ -40,6 +40,7 @@ Route::prefix('invoice')->group(function(){
     //update invoice data
     Route::post('/{id}/update',[InvoiceController::class,'update'])->name('sales.invoice.update')->middleware('permission:manage-invoices');
     //Delete invoice
+    
     Route::get('/{id}/delete',[InvoiceController::class,'delete'])->name('sales.invoice.delete')->middleware('permission:manage-invoices');
     //Upload invoice design
     Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload')->middleware('permission:manage-invoices');
