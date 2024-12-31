@@ -278,7 +278,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="po-order-product-add-item text-center flex-wrap justify-content-center">
+                                        <div class="po-order-product-add-item text-center flex-wrap justify-content-center add_item_row_element_wrapper">
                                             {{-- <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a> --}}
                                             
                                             <div class="pms-item flex-100">
@@ -299,7 +299,7 @@
                                                 </div>
                                                 <div class="search-product-item-wrapper custom-card-scroll" >
                                                     <div v-if="items.length > 0">
-                                                        <div class="search-product-item" v-for="singleItem in items" :key="singleItem.id" @click="addItemToCart(singleItem)">
+                                                        <div class="search-product-item" v-for="singleItem in items" :key="singleItem.id" @click="!['raw_materials', 'raw_boards', 'papers'].includes(current_item_type) && addItemToCart(singleItem)">
                                                             <div class="smi-left">
                                                                 <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
                                                                     <div class="em-pro-img-box">
@@ -326,6 +326,16 @@
                                                                         <div class="po-order-product-body-mesurement-item">
                                                                             <h4>Thickness :</h4>
                                                                             <p> @{{ singleItem.thickness }}</p>
+                                                                        </div>
+                                                                        <div class="po-order-product-body-mesurement-item" v-if="['raw_materials', 'raw_boards', 'papers'].includes(current_item_type)">
+                                                                            <p> 
+                                                                                <button type="button" class="btn btn-primary" @click="addItemToCart(singleItem, 'wholesale')">Add Wholesale</button>
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="po-order-product-body-mesurement-item" @click="addItemToCart(singleItem, 'retail')" v-if="['raw_materials', 'raw_boards', 'papers'].includes(current_item_type)">
+                                                                            <p> 
+                                                                                <button type="button" class="btn btn-primary">Add Retail</button>
+                                                                            </p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -863,7 +873,7 @@
                     }
                 },
 
-                addItemToCart(item) {
+                addItemToCart(item, priceType = 'default') {
                     console.log(item.srp)
                     // let exists = this.cartItems.findIndex(o => o.id === item.id);
                     let exists = this.cartItems.findIndex(o => o.id === item.id && o.item_type === item.item_type);
@@ -872,7 +882,14 @@
                         this.incrementQty(exists);
                     } else {
                         item.qty = 1;
-                        item.price = formatNumber(parseFloat(item.srp));
+                        if(priceType == 'wholesale') {
+                            item.price = formatNumber(parseFloat(item.wholesale_price));
+                        } else if(priceType == 'retail') {
+                            item.price = formatNumber(parseFloat(item.retail_price));
+                        } else {
+                            item.price = formatNumber(parseFloat(item.srp));
+                        }
+                        
                         item.spt_amount = 0;
                         item.spt_amount_wv = 0;
                         let ab = this.cartItems.push(item);
@@ -984,6 +1001,15 @@
                         this.updateCartItemPrice(cartItemIndex);
                     }
                 }
+            },
+            created() {
+                //check user clicked outside of #add_item_row_element_wrapper
+                document.addEventListener('click', function(event) {
+                    var isClickInside = document.querySelector('.add_item_row_element_wrapper').contains(event.target);
+                    if (!isClickInside) {
+                        vueApp.open_select_item = false;
+                    }
+                });
             },
             mounted () {
                 this.getAllProducts();

@@ -220,6 +220,11 @@ class InvoiceService
                         'material_items' => $material_items,
                     ];
 
+                    if(in_array($typeData['type'], ['raw_materials', 'raw_boards', 'papers'])){
+                        $productData['wholesale_price'] = $item->wholesale_price;
+                        $productData['retail_price'] = $item->retail_price;
+                    }
+
                     return $productData;
                 });
 

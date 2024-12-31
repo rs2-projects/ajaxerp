@@ -27,26 +27,26 @@
                                             <div class="rs-ecp-std-r-left-top-wrap d-flex flex-wrap">
                                                 <div class="rs-ecp-std-r-left-top-item">
                                                     <div class="rs-ecp-std-r-left-top-title-box">
-                                                        <h4>SRP</h4>
+                                                        <h4>Retail Price</h4>
                                                     </div>
                                                     <div class="rs-ecp-std-r-left-top-content-box">
-                                                        <span id="rp_srp">0.00</span>
+                                                        <span id="retail_price">0.00</span>
                                                     </div>
                                                 </div>
-                                                <div class="rs-ecp-std-r-left-top-item">
+                                                {{-- <div class="rs-ecp-std-r-left-top-item">
                                                     <div class="rs-ecp-std-r-left-top-title-box">
                                                         <h4>SRP With 20% Discount</h4>
                                                     </div>
                                                     <div class="rs-ecp-std-r-left-top-content-box">
                                                         <span id="srp_with_discount">0.00</span>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <div class="rs-ecp-std-r-left-top-item">
                                                     <div class="rs-ecp-std-r-left-top-title-box">
-                                                        <h4>Wholesale</h4>
+                                                        <h4>Wholesale Price</h4>
                                                     </div>
                                                     <div class="rs-ecp-std-r-left-top-content-box">
-                                                        <span id="wholesale">0.00</span>
+                                                        <span id="wholesale_price">0.00</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -56,26 +56,26 @@
                                 <div class="rs-ecp-bottom-box d-flex flex-wrap board-pp-calc-price-input-wrapper">
                                     <div class="rs-ecp-bottom-box-item">
                                         <div class="rs-ecp-std-item-title-box">
-                                            <h4>Cost</h4>
+                                            <h4>Landed Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($material_cost) }}" step="any" min="0" id="rp_cost" name="rp_cost" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material->wholesale_landed_cost) }}" step="any" min="0" id="wholesale_landed_cost" name="wholesale_landed_cost" class="form-control" oninput="calculateTotalPrice()" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
                                         <div class="rs-ecp-std-item-title-box">
-                                            <h4>SRP Markup Percent</h4>
+                                            <h4>Wholesale Multiplier</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($material->category?->srp_markup_percent) }}" step="0.01" min="0" id="srp_markup_percent" name="srp_markup_percent" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material->wholesale_multiplier) }}" step="0.01" min="0" id="wholesale_multiplier" name="wholesale_multiplier" class="form-control" oninput="calculateTotalPrice()" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">
                                         <div class="rs-ecp-std-item-title-box">
-                                            <h4>Wholesale Discount Percent</h4>
+                                            <h4>Retail Multiplier</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($material->category?->wholesale_discount_percent) }}" id="wholesale_discount_percent" name="wholesale_discount_percent" step="0.01" min="0" class="form-control" required>
+                                            <input type="number" value="{{ formatNumber($material->retail_multiplier) }}" id="retail_multiplier" name="retail_multiplier" step="0.01" min="0" class="form-control" oninput="calculateTotalPrice()" required>
                                         </div>
                                     </div>
                                 </div>
@@ -111,6 +111,9 @@
 
     <script>
         $(document).ready(function() {
+            calculateTotalPrice();
+        })
+        /*$(document).ready(function() {
             calculateSrpWithDiscount();
             calculateWholesalePrice();
 
@@ -158,6 +161,28 @@
             }else{
                 $("#wholesale").text(formatNumber(parseFloat(srp_with_discount)));
             }
+        }*/
+
+        function calculateTotalPrice() {
+            let landed_cost = parseFloat($("#wholesale_landed_cost").val());
+            let wholesale_multiplier = parseFloat($("#wholesale_multiplier").val());
+            let retail_multiplier = parseFloat($("#retail_multiplier").val());
+
+            if(isNaN(landed_cost)){
+                landed_cost = 0;
+            }
+            if(isNaN(wholesale_multiplier)){
+                wholesale_multiplier = 0;
+            }
+            if(isNaN(retail_multiplier)){
+                retail_multiplier = 0;
+            }
+
+            let wholesale_price = landed_cost * wholesale_multiplier;
+            let retail_price = wholesale_price * retail_multiplier;
+
+            $("#wholesale_price").text(formatNumber(parseFloat(wholesale_price)));
+            $("#retail_price").text(formatNumber(parseFloat(retail_price)));
         }
 
         $("#calculatePriceFormSubmit").on('submit', function (e){
