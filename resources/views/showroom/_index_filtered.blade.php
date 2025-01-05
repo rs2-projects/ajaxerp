@@ -7,7 +7,7 @@
                 <th class="erp-th">Name </th>
                 <th class="erp-th text-center">Address</th>
                 <th class="erp-th text-center">Employees</th>
-                @if(hasPermission('manage-customers'))
+                @if(hasPermission('manage-showroom'))
                     <th class="erp-th text-center">Action </th>
                 @endif
             </tr>
@@ -23,7 +23,7 @@
                     <td class="erp-tbody-td text-center">
                         <a href="{{ route('showroom.showroom-employees.index', $item->id) }}" class="showroom-employees-btn">Employees</a>
                     </td>
-                    @if(hasPermission('manage-customers'))
+                    @if(hasPermission('manage-showroom'))
                         <td class="text-end erp-tbody-td">
                             <div class="erp-action-t">
                                 <div class="dropdown dropdown-action">

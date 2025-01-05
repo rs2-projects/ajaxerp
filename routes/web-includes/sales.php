@@ -40,6 +40,7 @@ Route::prefix('invoice')->group(function(){
     //update invoice data
     Route::post('/{id}/update',[InvoiceController::class,'update'])->name('sales.invoice.update')->middleware('permission:manage-invoices');
     //Delete invoice
+    
     Route::get('/{id}/delete',[InvoiceController::class,'delete'])->name('sales.invoice.delete')->middleware('permission:manage-invoices');
     //Upload invoice design
     Route::post('/upload-design',[InvoiceDesignController::class,'uploadDesign'])->name('sales.invoice.design_upload')->middleware('permission:manage-invoices');
@@ -47,6 +48,8 @@ Route::prefix('invoice')->group(function(){
     Route::get('/{id}/delete-design',[InvoiceController::class,'deleteDesign'])->name('sales.invoice.design.delete')->middleware('permission:manage-invoices');
 
     Route::get('/{id}/production-status',[InvoiceController::class,'getProductionStatus'])->name('sales.invoice.production-status')->middleware('permission:view-invoices');
+
+    Route::get('{id}/download-pdf',[InvoiceController::class,'downloadPdf'])->name('sales.invoice.download-pdf')->middleware('permission:view-invoices');
 
     
     //Invoice delivered

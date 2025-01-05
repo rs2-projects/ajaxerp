@@ -98,4 +98,22 @@ class InvoiceDetails extends BaseModel
         return $this->belongsTo(AccCoaAccount::class, 'tax_id', 'id');
     }
 
+
+    public function itemName() {
+        if($this->item_type == self::TYPE_RAW_MATERIAL) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_RAW_BOARD) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_PAPER) {
+            return $this->product_material->name;
+        } elseif($this->item_type == self::TYPE_FINISHED_GOODS) {
+            return $this->finishedGood->name;
+        } elseif($this->item_type == self::TYPE_FINISHED_BOARD) {
+            return $this->finishedGood->name;
+        } elseif($this->item_type == self::TYPE_SET_ITEM) {
+            return $this->set_item->name;
+        } 
+        return "";
+    }
+
 }

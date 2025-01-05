@@ -615,14 +615,25 @@ class ProductMaterialService
             throw new \Exception('Product Material Not Found');
         }
 
-        $fixed_percent = 20;
-        $material->rp_cost = $request->rp_cost;
-        $material->srp_markup_percent = $request->srp_markup_percent;
-        $material->wholesale_discount_percent = $request->wholesale_discount_percent;
-        $srp_with_discount = $request->rp_cost * ($request->srp_markup_percent / 100);
-        $material->srp_with_discount = $srp_with_discount;
-        $material->rp_srp = $srp_with_discount / (1 - ($fixed_percent / 100));
-        $material->wholesale = $srp_with_discount * (1 - ($request->wholesale_discount_percent/100));
+        // $fixed_percent = 20;
+        // $material->rp_cost = $request->rp_cost;
+        // $material->srp_markup_percent = $request->srp_markup_percent;
+        // $material->wholesale_discount_percent = $request->wholesale_discount_percent;
+        // $srp_with_discount = $request->rp_cost * ($request->srp_markup_percent / 100);
+        // $material->srp_with_discount = $srp_with_discount;
+        // $material->rp_srp = $srp_with_discount / (1 - ($fixed_percent / 100));
+        // $material->wholesale = $srp_with_discount * (1 - ($request->wholesale_discount_percent/100));
+
+        $material->wholesale_landed_cost = $request->wholesale_landed_cost;
+        $material->wholesale_multiplier = $request->wholesale_multiplier;
+        $material->retail_multiplier = $request->retail_multiplier;
+
+        $wholesale_price = $request->wholesale_landed_cost * $request->wholesale_multiplier;
+        $retail_price = $wholesale_price * $request->retail_multiplier;
+
+        $material->wholesale_price = $wholesale_price;
+        $material->retail_price = $retail_price;
+
         $material->price_calculated = ProductMaterial::PRICE_CALCULATED_YES;
         $material->save();
     }

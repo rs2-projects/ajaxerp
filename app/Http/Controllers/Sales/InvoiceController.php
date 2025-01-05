@@ -8,6 +8,7 @@ use App\Http\Requests\Sales\StoreInvoiceRequest;
 use App\Http\Requests\Sales\UpdateInvoiceRequest;
 use App\Services\Sales\Invoice\InvoiceService;
 use Illuminate\Http\Request;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class InvoiceController extends BackendController
 {
@@ -167,5 +168,27 @@ class InvoiceController extends BackendController
     {
         $data = $this->service->getProductionStatus($id);
         return $this->returnAjaxSuccess(['view' => $data['view']], 'Data Fetched Successfully');
+    }
+
+    public function downloadPdf($id)
+    {
+        // try {
+            $data = $this->service->getDownloadPdfData($id);
+
+            // return view('sales.invoice.pdf', $data);
+            $pdf = PDF::loadView('sales.invoice.pdf', $data);
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('margin-bottom', 15);
+            $pdf->setOption('margin-top', 15);
+            if($data['invoice']->invoice_footer != "") {
+                $pdf->setOption('footer-center', $data['invoice']->invoice_footer);
+            }
+            return $pdf->inline('Invoice-'.$data['invoice']->invoice_no.'.pdf');
+
+        // }catch (\Exception $e) {
+        //     dd($e->getMessage());
+        //     return redirect()->back()->with(['failed' => $e->getMessage()]);
+        // }
     }
 }
