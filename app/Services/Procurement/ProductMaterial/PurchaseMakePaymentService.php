@@ -136,7 +136,7 @@ class PurchaseMakePaymentService
             $purchase_payment->amount_php = $request->amount * $request->php_rate;
             $purchase_payment->amount = $request->amount;
             $purchase_payment->payment_date = $request->date;
-            $purchase->note = $request->note;
+            $purchase_payment->note = $request->note;
             $purchase_payment->created_at = Carbon::now();
             $purchase_payment->created_by = auth()->user()->id;
             $purchase_payment->updated_at = Carbon::now();
