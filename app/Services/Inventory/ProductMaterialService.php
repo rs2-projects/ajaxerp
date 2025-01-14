@@ -483,6 +483,7 @@ class ProductMaterialService
 
             $calculated = ProductMaterialPurchaseCalculatedPrice::where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
                 ->where('status', ProductMaterialPurchaseCalculatedPrice::STATUS_ACTIVE)
+                ->where('product_material_id', $id)
                 ->whereIn('product_material_purchase_id', $purchase->pluck('id')->toArray())
                 ->orderBy('id', 'desc')
                 ->take(5)
