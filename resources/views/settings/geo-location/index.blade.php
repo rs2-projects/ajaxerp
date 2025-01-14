@@ -54,7 +54,7 @@
 
 @section('js')
     <!-- Google Map Api -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAw74VNUecFrAFANUq9WnHIKPVAPsCqyZg&libraries=drawing,places&v=weekly&callback=initialize" defer>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6dW4A7tEhWemwXdXeCmMsi-2b10w6L0I&libraries=drawing,places&v=weekly&callback=initialize" defer>
     </script>
     <script>
         $(document).ready(function(){
