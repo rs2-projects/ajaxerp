@@ -27,7 +27,7 @@
                             </div>
                             <div class="em-pro-details-box">
                                 <h5>{{ $data->name }}</h5>
-                                <p class="em-id">Code: <span> #{{ $data->code }}</span></p>
+                                {{-- <p class="em-id">Code: <span> #{{ $data->code }}</span></p> --}}
 
                             </div>
                         </a>
