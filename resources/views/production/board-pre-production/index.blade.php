@@ -24,7 +24,7 @@
                                     </div>
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
-                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Board Pre Production">
+                                            <input type="text" id="keyword_filtered" class="form-control search-product-in" placeholder="Enter code">
 
                                         </div>
                                     </div>
