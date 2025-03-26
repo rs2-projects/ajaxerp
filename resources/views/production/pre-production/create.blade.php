@@ -123,7 +123,7 @@
                                         <div class="pms-item flex-32" v-if="materialSection.type == 'other'">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Material Category</label>
-                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
+                                                <select class="select select-step select2" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="categoryChangeOutside(this)">
                                                     <option value="">Select Category</option>
                                                     @foreach ($categories as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -134,7 +134,7 @@
                                         <div class="pms-item flex-32" v-if="materialSection.type == 'board'">
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Board Category </label>
-                                                <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
+                                                <select class="select select-step select2" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
                                                     <option value="">Select Category</option>
                                                     @foreach ($finished_categoris as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
@@ -425,7 +425,7 @@
         // other functions
         function initSelect2() {
             $('.select-step').select2({
-                minimumResultsForSearch: -1,
+                // minimumResultsForSearch: -1,
                 width: '100%',
             });
         }

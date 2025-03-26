@@ -575,7 +575,7 @@
 
         function initSelect2() {
             $('.select-step').select2({
-                minimumResultsForSearch: -1,
+                // minimumResultsForSearch: -1,
                 width: '100%',
             });
         }

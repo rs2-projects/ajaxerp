@@ -59,7 +59,7 @@
                                             <h4>Landed Cost</h4>
                                         </div>
                                         <div class="rs-ecp-std-item-input-box">
-                                            <input type="number" value="{{ formatNumber($material->wholesale_landed_cost) }}" step="any" min="0" id="wholesale_landed_cost" name="wholesale_landed_cost" class="form-control" oninput="calculateTotalPrice()" required>
+                                            <input type="number" value="{{ formatNumber($material->wholesale_landed_cost > 0 ? $material->wholesale_landed_cost : $final_price) }}" step="any" min="0" id="wholesale_landed_cost" name="wholesale_landed_cost" class="form-control" oninput="calculateTotalPrice()" required>
                                         </div>
                                     </div>
                                     <div class="rs-ecp-bottom-box-item">

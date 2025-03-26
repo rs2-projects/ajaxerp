@@ -25,6 +25,7 @@ class FinishedGoodService
         //finished goods category
         $data['finished_good_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
             ->where('status',FinishedGoodsCategory::STATUS_ACTIVE)
+            ->where('type', FinishedGoodsCategory::TYPE_OTHERS)
             ->orderBy('name','asc')
             ->get();
         //Warehouses
@@ -34,6 +35,8 @@ class FinishedGoodService
             ->get();
         //total product
         $data['total_goods'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
             ->count();
         return $data;
     }
@@ -184,6 +187,7 @@ class FinishedGoodService
 
             $data['finished_goods_categories'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
                 ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+                ->where('type', FinishedGoodsCategory::TYPE_OTHERS)
                 ->orderBy('name', 'asc')
                 ->get();
 
