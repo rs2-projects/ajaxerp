@@ -135,7 +135,7 @@
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Board Category </label>
                                                 <select class="select select-step select2" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
-                                                    <option value="">Select Category</option>
+                                                    {{-- <option value="">Select Category</option> --}}
                                                     @foreach ($finished_categoris as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
                                                     @endforeach

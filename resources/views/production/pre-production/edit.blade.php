@@ -134,7 +134,7 @@
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Board Category </label>
                                                 <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
-                                                    <option value="">Select Category</option>
+                                                    {{-- <option value="">Select Category</option> --}}
                                                     <option v-for="category in board_categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
