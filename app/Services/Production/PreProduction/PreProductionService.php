@@ -157,6 +157,7 @@ class PreProductionService
         
         $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
             ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+            ->where('type', FinishedGoodsCategory::TYPE_BOARD)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -443,6 +444,7 @@ class PreProductionService
 
         $data['finished_categoris'] = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
             ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
+            ->where('type', FinishedGoodsCategory::TYPE_BOARD)
             ->orderBy('id', 'desc')
             ->get();
 

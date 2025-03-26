@@ -603,6 +603,10 @@ class ProductMaterialService
         $material_cost = $this->getLatestCalculatedPurchaseCost($id);
         $data['material_cost'] = $material_cost;
 
+        $purchase_history = $this->purchaseHistory($id);
+        $latest_purchase_history = $purchase_history['purchase_history']->first();
+        $data['final_price'] = $latest_purchase_history ? $latest_purchase_history->final_price : 0;
+
         return $data; 
     }
 
