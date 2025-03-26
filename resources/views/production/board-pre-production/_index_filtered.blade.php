@@ -4,7 +4,7 @@
             <tr class="erp-tr">
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Code</th>
-                <th class="erp-th">Raw Board</th>
+                <th class="erp-th text-center">Raw Board</th>
                 <th class="erp-th text-center">Plate Up </th>
                 <th class="erp-th text-center">Paper Up </th>
                 <th class="erp-th text-center">Plate Down </th>
@@ -29,7 +29,7 @@
                             </div> --}}
                             <div class="em-pro-details-box">
                                 <h5>{{$data->finishedGoods?->name}}</h5>
-                                <p class="em-id">P.P. No: <span> #{{$data->pre_production_no?? 'N/A'}}</span></p>
+                                {{-- <p class="em-id">P.P. No: <span> #{{$data->pre_production_no?? 'N/A'}}</span></p> --}}
                             </div>
                         </a>
                     </td>
