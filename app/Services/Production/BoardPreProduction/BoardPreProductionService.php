@@ -39,9 +39,14 @@ class BoardPreProductionService
         $keyword_filtered = $request->keyword_filtered ?? null;
         $data['pre_productions'] = BoardPreProduction::where('deleted', BoardPreProduction::DELETED_NO)
             ->where('status', BoardPreProduction::STATUS_ACTIVE)
-            ->where(function ($q) use ($keyword_filtered){
+            // ->where(function ($q) use ($keyword_filtered){
+            //     if ($keyword_filtered !=''){
+            //         $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+            //     }
+            // })
+            ->whereHas('finishedGoods', function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->where('name', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);

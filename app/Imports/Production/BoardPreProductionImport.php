@@ -58,7 +58,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
 
                 $plate_up_id = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
                     ->where('status', BoardEmbossed::STATUS_ACTIVE)
-                    ->where('code', $item[3])
+                    ->where('name', $item[3])
                     ->first();
 
                 if(empty($plate_up_id)){
@@ -67,7 +67,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
 
                 $plate_down_id = BoardEmbossed::where('deleted', BoardEmbossed::DELETED_NO)
                     ->where('status', BoardEmbossed::STATUS_ACTIVE)
-                    ->where('code', $item[6])
+                    ->where('name', $item[6])
                     ->first();
 
                 if (empty($plate_down_id)) {
@@ -105,7 +105,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                 $paper_up_id = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
                     ->where('status', ProductMaterial::STATUS_ACTIVE)
                     ->where('type', ProductMaterial::TYPE_PAPER)
-                    ->where('code', $item[4])
+                    ->where('name', $item[4])
                     ->first();
                     
                 if (empty($paper_up_id)) {
@@ -115,7 +115,7 @@ class BoardPreProductionImport implements ToCollection, WithStartRow
                 $paper_down_id = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
                     ->where('status', ProductMaterial::STATUS_ACTIVE)
                     ->where('type', ProductMaterial::TYPE_PAPER)
-                    ->where('code', $item[7])
+                    ->where('name', $item[7])
                     ->first();
 
                 if (empty($paper_down_id)) {
