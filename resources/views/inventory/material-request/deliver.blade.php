@@ -443,6 +443,7 @@
 			scanItem() {
 				let material = this.materials[this.selected_material_index].material;
 				let barcodeValue = this.scanning_qrcode;
+				
 				if (material.product.code == barcodeValue) {
 					$("#scanModal").modal('hide');
 					$("#deliverModal").modal('show');

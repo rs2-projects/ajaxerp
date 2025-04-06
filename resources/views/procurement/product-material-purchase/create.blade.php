@@ -511,7 +511,12 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .radio-inputs{
+            width: auto !important;
+            background: transparent !important;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
