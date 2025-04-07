@@ -934,6 +934,7 @@ class ProductionService
     public function scanStoreData($request, $id){
         DB::beginTransaction();
         try {
+            // dd($request->all());
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
                 ->where('id', $id)
@@ -961,146 +962,75 @@ class ProductionService
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
 
-                // foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
-                foreach($request->delivery_items as $detailsKey => $detailsId){
-                    if($detailsId != ''){
-                        //  && isset($request->code[$detailsKey]) && is_array($request->code[$detailsKey]) && $request->code[$detailsKey] > 0
-                        $item = null;
-
-                        foreach($request->delivery_items[$detailsKey] as $itemKey => $deliveryItemId){
-                            if($type == 'board'){
-                                $item = PreProductionBoardDeliveryDetailsItem::where('scan_status', '!=', PreProductionBoardDeliveryDetailsItem::SCAN_STATUS_SCANNED)
-                                    ->where('id', $deliveryItemId)
-                                    ->where('pre_production_id', $id)
-                                    // ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
-                                    ->where('pre_production_board_delivery_id', $delivery_id)
-                                    // ->where('pre_production_board_delivery_details_id', $detailsId)
-                                    // ->where('barcode', $itemCode)
-                                    ->first();
-                            }else{
-                                $item = PreProductionMaterialDeliveryDetailsItems::where('scan_status', '!=', PreProductionMaterialDeliveryDetailsItems::SCAN_STATUS_SCANNED)
-                                ->where('id', $deliveryItemId)
-                                    // ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-                                    ->where('pre_production_id', $id)
-                                    ->where('pre_production_material_delivery_id', $delivery_id)
-                                    // ->where('pre_production_material_delivery_details_id', $detailsId)
-                                    // ->where('barcode', $itemCode)
-                                    ->first();
-                                }
-                            if($item){
-                                $detailsId = $item->pre_production_material_delivery_details_id;
-                                $qty = $request->selected_qty[$detailsKey][$itemKey];
-                                // $item->scanned = $item_model::SCANNED_YES;
-                                $scan_qty = $item->scanned_qty + $qty;
-                                $item->scanned_qty = $scan_qty;
-
-                                if($scan_qty == $item->received_qty){
-                                    $item->scan_status = $item_model::SCAN_STATUS_SCANNED;
-                                    $item->scanned = $item_model::SCANNED_YES;
-                                } else {
-                                    $item->scan_status = $item_model::SCAN_STATUS_PARTIAL;
-                                }
-                                $item->save();
-
-                                if($type == 'board'){
-                                    $material = $material_model::find($item->pre_production_board_id);
-                                }else{
-                                    $material = $material_model::find($item->pre_production_material_id);
-                                }
-
-                                $material->scanned_qty = $material->scanned_qty + $qty;
-                                $material->save();
-
-                                if($type == 'board'){
-                                    $item_details = $details_model::find($item->pre_production_board_delivery_details_id);
-                                }else{
-                                    $item_details = $details_model::find($item->pre_production_material_delivery_details_id);
-                                }
-                                $item_details->scanned_qty = $item_details->scanned_qty + $qty;
-                                $item_details->save();
-
-                                if($material->scanned_qty == 0){
-                                    $material->scan_status = $material_model::RECEIVED_STATUS_PENDING;
-                                }else if($material->received_qty != $material->quantity){
-                                    $material->scan_status = $material_model::RECEIVED_STATUS_PARTIAL;
-                                }else{
-                                    $material->scan_status = $material_model::SCAN_STATUS_SCANNED;
-                                }
-                                $material->save();
-
-                                if($material->scanned_qty == 0){
-                                    $material->scan_status = PreProductionMaterial::SCAN_STATUS_PENDING;
-                                    $material->save();
-                                }else if($material->scanned_qty != $material->quantity){
-                                    $material->scan_status = PreProductionMaterial::SCAN_STATUS_PARTIAL;
-                                    $material->save();
-                                }else{
-                                    $material->scan_status = PreProductionMaterial::SCAN_STATUS_SCANNED;
-                                    $material->save();
-                                }
-                            }
-                        }
-
-                        if($type == 'board'){
-                            $item_count = PreProductionBoardDeliveryDetailsItem::where('scan_status', '!=', PreProductionBoardDeliveryDetailsItem::SCAN_STATUS_SCANNED)
-                                ->where('pre_production_id', $id)
-                                // ->where('scanned', PreProductionBoardDeliveryDetailsItem::SCANNED_NO)
-                                ->where('pre_production_board_delivery_id', $delivery_id)
-                                ->where('pre_production_board_delivery_details_id', $detailsId)
-                                // ->where('barcode', $itemCode)
-                                ->count();
-                        }else{
-                            $item_count = PreProductionMaterialDeliveryDetailsItems::where('scan_status', '!=', PreProductionMaterialDeliveryDetailsItems::SCAN_STATUS_SCANNED)
-                                ->where('pre_production_id', $id)
-                                // ->where('scanned', PreProductionMaterialDeliveryDetailsItems::SCANNED_NO)
-                                ->where('pre_production_material_delivery_id', $delivery_id)
-                                ->where('pre_production_material_delivery_details_id', $detailsId)
-                                // ->where('barcode', $itemCode)
-                                ->count();
-                        }
-
-                        $details = $details_model::find($detailsId);
-
-                        if($item_count > 0){
-                            $details->scan_status = $details_model::SCAN_STATUS_PARTIAL;
-                        }else{
-                            $details->scan_status = $details_model::SCAN_STATUS_SCANNED;
-                        }
-                        $details->save();
-
-                        // if ($item_count > 0 && ($details->total_quantity - $details->scanned_qty) > 0) {
-                        //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PARTIAL;
-                        // } elseif ($item_count == 0 && ($details->total_quantity - $details->scanned_qty) == 0) {
-                        //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_SCANNED;
-                        // } else {
-                        //     $details->scan_status = PreProductionMaterialDeliveryDetails::SCAN_STATUS_PENDING;
-                        // }
-                        // $details->save();
+                foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
+                    if ($detailsId == '') {
+                        continue;
                     }
+
+                    $delivery_details = $details_model::find($detailsId);
+
+                    if (!$delivery_details) {
+                        continue;
+                    }
+
+                    $material = $type === 'board'
+                        ? $material_model::find($delivery_details->pre_production_board_id)
+                        : $material_model::find($delivery_details->pre_production_material_id);
+
+                    if (!$material) {
+                        continue;
+                    }
+
+                    $material->scanned_qty += $delivery_details->received_qty??0;
+                    $material->save();
+                    
+                    $delivery_details->scanned_qty = $delivery_details->received_qty??0;
+                    $delivery_details->save();
+
+                    $material->scan_status =
+                        $material->scanned_qty == 0
+                            ? $material_model::SCAN_STATUS_PENDING
+                            : ($material->scanned_qty != $material->received_qty
+                                ? $material_model::SCAN_STATUS_PARTIAL
+                                : $material_model::SCAN_STATUS_SCANNED);
+                            
+                    $delivery_details->scanned_qty =
+                        $delivery_details->scanned_qty == 0
+                            ? $details_model::SCAN_STATUS_PENDING
+                            : ($delivery_details->scanned_qty != $delivery_details->received_qty
+                                ? $details_model::SCAN_STATUS_PARTIAL
+                                : $details_model::SCAN_STATUS_SCANNED);
+
+                    $material->save();
+                    $delivery_details->save();
                 }
 
-                if($type == 'board'){
-                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
-                        ->where('status', $details_model::STATUS_ACTIVE)
-                        ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
-                        ->where('pre_production_id', $id)
-                        ->where('pre_production_board_delivery_id', $delivery_id)
-                        ->count();
-                }else{
-                    $details_count = $details_model::where('deleted', $details_model::DELETED_NO)
-                        ->where('status', $details_model::STATUS_ACTIVE)
-                        ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
-                        ->where('pre_production_id', $id)
-                        ->where('pre_production_material_delivery_id', $delivery_id)
-                        ->count();
-                }
-                $delivery = $delivery_model::find($delivery_id);
+                // if($type == 'board'){
+                //     $pending_details = $details_model::where('deleted', $details_model::DELETED_NO)
+                //         ->where('status', $details_model::STATUS_ACTIVE)
+                //         ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
+                //         ->where('pre_production_id', $id)
+                //         ->where('pre_production_board_delivery_id', $delivery_id)
+                //         ->count();
+                // }else{
+                //     $pending_details = $details_model::where('deleted', $details_model::DELETED_NO)
+                //         ->where('status', $details_model::STATUS_ACTIVE)
+                //         ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
+                //         ->where('pre_production_id', $id)
+                //         ->where('pre_production_material_delivery_id', $delivery_id)
+                //         ->count();
+                // }
 
-                if($details_count == 0){
-                    $delivery->scan_status = $delivery_model::SCAN_STATUS_SCANNED;
-                }else{
-                    $delivery->scan_status = $delivery_model::SCAN_STATUS_PARTIAL;
-                }
+                $pending_details = $details_model::where('deleted', $details_model::DELETED_NO)
+                    ->where('status', $details_model::STATUS_ACTIVE)
+                    ->where('scan_status','!=',$details_model::SCAN_STATUS_SCANNED)
+                    ->where('pre_production_id', $id)
+                    ->where(($type === 'board' ? 'pre_production_board_delivery_id' : 'pre_production_material_delivery_id'), $delivery_id)
+                    ->count();
+
+                $delivery->scan_status = $pending_details > 0
+                    ? $delivery_model::SCAN_STATUS_PARTIAL
+                    : $delivery_model::SCAN_STATUS_SCANNED;
 
                 $delivery->save();
             }
@@ -1117,11 +1047,15 @@ class ProductionService
                 ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
                 ->count();
 
-            if ($other_delivery_count == 0 && $board_delivery_count == 0) {
-                $pre_production->scan_status = PreProduction::SCAN_STATUS_SCANNED;
-            } else {
-                $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
-            }
+            // if ($other_delivery_count == 0 && $board_delivery_count == 0) {
+            //     $pre_production->scan_status = PreProduction::SCAN_STATUS_SCANNED;
+            // } else {
+            //     $pre_production->scan_status = PreProduction::SCAN_STATUS_PARTIAL;
+            // }
+
+            $pre_production->scan_status = ($other_delivery_count === 0 && $board_delivery_count === 0)
+                ? PreProduction::SCAN_STATUS_SCANNED
+                : PreProduction::SCAN_STATUS_PARTIAL;
 
             $pre_production->save();
 

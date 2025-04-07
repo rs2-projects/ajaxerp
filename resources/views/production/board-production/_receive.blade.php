@@ -102,7 +102,7 @@
                                                                     </div>
                                                                     <div v-else>
                                                                         <div v-if="detailsData.material.is_scanned === 1">
-                                                                            <h4 class="text-center d-table-title pending-status">QR Code Matched</h4>
+                                                                            <h4 class="text-center d-table-title pending-status">Matched</h4>
                                                                         </div>
                                                                         
                                                                         <div v-else>
@@ -242,7 +242,7 @@
                             if (material?.product?.id == material_id && material?.product?.code == barcodeValue) {
                                 material.is_scanned = 1;
                             } else {
-                                showErrorAlert('Oops!', 'Barcode does not match!');
+                                showErrorAlert('Oops!', 'QR Code does not match!');
                             }
                         }
                     },
@@ -282,8 +282,8 @@
                     checkValidation(e, deliveryIndex) {
                         e.preventDefault();
                         const delivery = this.deliveries[deliveryIndex];
-                        if (delivery.delivery_details.every(detail => detail.barcodeCounts === 0)) {
-                            showErrorAlert('Oops!', 'Please add received items!');
+                        if (delivery.delivery_details.every(detail => detail.material?.is_scanned != 1)) {
+                            showErrorAlert('Oops!', 'Please scan QR Code to add received items!');
                         } else {
                             receiveStoreForm(delivery.id, deliveryIndex);
                         }

@@ -856,44 +856,64 @@
                     this.getMaterials();
                     // $("#scanRawMaterialModal").modal('show');
                 },
-                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
+                // handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
+                //     if (event.key === 'Enter') {
+                //         const barcodeValue = event.target.value;
+                //         const delivery_type = this.deliveries[deliverIndex].type;
+                //         if(barcodeValue !=''){
+                //             const id = document.getElementById('pre_production__id').value;
+                //             let url = `{{ route('production-staff.production.production.check-barcode.scan', ':id') }}`;
+                //             url = url.replace(':id', id);
+
+                //             let data = {
+                //                 barcode: barcodeValue,
+                //                 delivery_id: deliverId,
+                //                 delivery_details_id: detailsId,
+                //                 type: delivery_type
+                //             }
+
+                //             axios.get(url, { params: data })
+                //             .then(response => {
+                //                 event.target.value = '';
+                //                 if(response.data.is_valid_code == 1){
+                //                     if(response.data.code_quantity > 0 && response.data.code_quantity > this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts){
+                //                         this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.push(response.data.code);
+                //                         this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts++;
+                //                     }else{
+                //                         showErrorAlert('Error', 'Scanned quantity can\'t be larger than received quantity');
+                //                     }
+                //                 }else{
+                //                     showErrorAlert('Error', 'Invalid Barcode');
+                //                 }
+                //             })
+                //             .catch(error => {
+                //                 event.target.value = '';
+                //                 showErrorAlert('Error', 'Invalid Barcode');
+                //                 console.log(error);
+                //             });
+                //         }
+                //     }
+                // },
+
+                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                    event.preventDefault();
                     if (event.key === 'Enter') {
-                        const barcodeValue = event.target.value;
-                        const delivery_type = this.deliveries[deliverIndex].type;
-                        if(barcodeValue !=''){
-                            const id = document.getElementById('pre_production__id').value;
-                            let url = `{{ route('production-staff.production.production.check-barcode.scan', ':id') }}`;
-                            url = url.replace(':id', id);
+                        const barcodeValue = event.target.value.trim();
+                        if (!barcodeValue) return;
 
-                            let data = {
-                                barcode: barcodeValue,
-                                delivery_id: deliverId,
-                                delivery_details_id: detailsId,
-                                type: delivery_type
-                            }
-
-                            axios.get(url, { params: data })
-                            .then(response => {
-                                event.target.value = '';
-                                if(response.data.is_valid_code == 1){
-                                    if(response.data.code_quantity > 0 && response.data.code_quantity > this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts){
-                                        this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.push(response.data.code);
-                                        this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts++;
-                                    }else{
-                                        showErrorAlert('Error', 'Scanned quantity can\'t be larger than received quantity');
-                                    }
-                                }else{
-                                    showErrorAlert('Error', 'Invalid Barcode');
-                                }
-                            })
-                            .catch(error => {
-                                event.target.value = '';
-                                showErrorAlert('Error', 'Invalid Barcode');
-                                console.log(error);
-                            });
+                        const material = this.deliveries
+                            ?.find(d => d.delivery.id == deliverId)
+                            ?.delivery_details?.find(dd => dd.id == detailsId)
+                            ?.material;
+                            
+                        if (material?.product?.id == material_id && material?.product?.code == barcodeValue) {
+                            material.is_scanned = 1;
+                        } else {
+                            showErrorAlert('Oops!', 'QR Code does not match!');
                         }
                     }
                 },
+                
                 removeBarcode(deliverIndex,detailsIndex,barcodeIndex) {
                     this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.splice(barcodeIndex, 1);
                     this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts--;
@@ -938,8 +958,8 @@
                 checkValidation(e, deliveryIndex) {
                     e.preventDefault();
                     const delivery = this.deliveries[deliveryIndex];
-                    if (delivery.delivery_details.every(detail => detail.scan_items.length === 0)) {
-                        showErrorAlert('Oops!', 'Please add scanned items!');
+                    if (delivery.delivery_details.every(detail => detail.material?.is_scanned != 1)) {
+                        showErrorAlert('Oops!', 'Please scan QR Code to add scanned items!');
                     } else {
                         scanStoreForm(delivery.delivery.id, deliveryIndex);
                     }
