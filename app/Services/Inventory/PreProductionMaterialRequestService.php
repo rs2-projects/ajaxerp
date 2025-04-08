@@ -514,7 +514,6 @@ class PreProductionMaterialRequestService
     }
 
     public function checkBarCode($material_id, $barcode, $count, $type){
-
         if($type == 'other'){
             $is_valid_code = ProductMaterialPurchaseDetails::where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('product_material_id', $material_id)

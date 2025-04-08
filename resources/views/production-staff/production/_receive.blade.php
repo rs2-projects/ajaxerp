@@ -72,20 +72,20 @@
                                                                 <th class="erp-th text-center">Qty </th>
                                                                 <th class="erp-th text-center">Delivery Qty</th>
                                                                 <th class="erp-th text-center">Received Qty</th>
-                                                                <th class="text-center erp-th">Pending Receive</th>
+                                                                {{-- <th class="text-center erp-th">Pending Receive</th> --}}
                                                                 <th class="text-center erp-th">QR Code</th>
-                                                                <th class="text-center erp-th">Items Received</th>
+                                                                {{-- <th class="text-center erp-th">Items Received</th> --}}
                                                             </tr>
                                                         </thead>
                                                         <tbody class="erp-tbody">
                                                             <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
                                                                 
-                                                                <td class="erp-tbody-td text-start max-td-width-150">
-                                                                    <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                                <td class="erp-tbody-td text-start max-td-width-150" style="width: 20%;word-break: break-word; white-space: normal;">
+                                                                    <input type="hidden" v-if="detailsData?.is_scanned === 1" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                                     <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.category.name}}</h4>
                                                                     <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.category.name}}</h4>
                                                                 </td>
-                                                                <td class="erp-tbody-td text-center max-td-width-150">
+                                                                <td class="erp-tbody-td text-center max-td-width-150" style="width: 30%;word-break: break-word; white-space: normal;">
                                                                     <h4 class="text-center d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
                                                                     <h4 class="text-center d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
                                                                 </td>
@@ -98,7 +98,7 @@
                                                                 <td class="erp-tbody-td text-center">
                                                                     <h4 class="text-center d-table-title">@{{detailsData.received_qty}}</h4>
                                                                 </td>
-                                                                <td class="erp-tbody-td text-center">
+                                                                {{-- <td class="erp-tbody-td text-center">
                                                                     <div class="pd-recived-product-wrapper">
                                                                         <div class="pre-counter">
                                                                             <span>@{{detailsData.quantity - detailsData.received_qty}}</span>
@@ -122,19 +122,28 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </td>
+                                                                </td> --}}
                                                                 <td class="erp-tbody-td text-center">
-                                                                    {{-- if quantity-received_qtn > 0 show this --}}
                                                                     <div v-if="detailsData.received_qty === detailsData.quantity">
                                                                         <h4 class="text-center d-table-title approved-status">Received</h4>
                                                                     </div>
-                                                                    <div class="pd-input-box" v-else>
-                                                                        <button type="button" v-on:click="openReceiveModal(deliverIndex, detailsIndex)" class="btn btn-primary btn-sm">Receive</button>
+                                                                    <div v-else>
+                                                                        <div v-if="detailsData?.is_scanned === 1">
+                                                                            <h4 class="text-center d-table-title pending-status">Matched</h4>
+                                                                        </div>
+                                                                        
+                                                                        <div v-else>
+                                                                            <input
+                                                                                class="form-control text-center bar-code-input"
+                                                                                type="text"
+                                                                                placeholder="Click & Scan QR Code"
+                                                                                @keydown.enter.prevent="handleBarcodeScan($event, deliverData.delivery.id, detailsData.id, deliverIndex, detailsIndex)"
+                                                                            />
+                                                                        </div>
                                                                     </div>
-                                                                    {{-- otherwise show fully received text --}}
                                                                 </td>
 
-                                                                <td class="erp-tbody-td text-center">
+                                                                {{-- <td class="erp-tbody-td text-center">
                                                                     <div class="pd-recived-product-wrapper">
                                                                         <div class="pre-counter">@{{ sumOfReceiveItem(deliverIndex, detailsIndex) }}</div>
                                                                         <div class="pd-recived-product-scrol-box">
@@ -174,7 +183,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </td>
+                                                                </td> --}}
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -321,44 +330,64 @@
                     };
                 },
                 methods: {
-                    handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
+                    // handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex) {
+                    //     if (event.key === 'Enter') {
+                    //         const barcodeValue = event.target.value;
+                    //         const delivery_type = this.deliveries[deliverIndex].type;
+                    //         if(barcodeValue !=''){
+                    //             const id = document.getElementById('pre_production_id').value;
+                    //             let url = `{{ route('production-staff.production.production.check-barcode', ':id') }}`;
+                    //             url = url.replace(':id', id);
+
+                    //             let data = {
+                    //                 barcode: barcodeValue,
+                    //                 delivery_id: deliverId,
+                    //                 delivery_details_id: detailsId,
+                    //                 type: delivery_type
+                    //             }
+
+                    //             axios.get(url, { params: data })
+                    //             .then(response => {
+                    //                 event.target.value = '';
+                    //                 if(response.data.is_valid_code == 1){
+                    //                     if(response.data.code_quantity > 0 && response.data.code_quantity > this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts){
+                    //                         this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.push(response.data.code);
+                    //                         this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts++;
+                    //                     }else{
+                    //                         showErrorAlert('Error', 'Received quantity can\'t be larger than delivered quantity');
+                    //                     }
+                    //                 }else{
+                    //                     showErrorAlert('Error', 'Invalid Barcode');
+                    //                 }
+                    //             })
+                    //             .catch(error => {
+                    //                 event.target.value = '';
+                    //                 showErrorAlert('Error', 'Invalid Barcode');
+                    //                 console.log(error);
+                    //             });
+                    //         }
+                    //     }
+                    // },
+
+                    handleBarcodeScan(event, deliverId, detailsId) {
+                        event.preventDefault();
                         if (event.key === 'Enter') {
-                            const barcodeValue = event.target.value;
-                            const delivery_type = this.deliveries[deliverIndex].type;
-                            if(barcodeValue !=''){
-                                const id = document.getElementById('pre_production_id').value;
-                                let url = `{{ route('production-staff.production.production.check-barcode', ':id') }}`;
-                                url = url.replace(':id', id);
+                            const barcodeValue = event.target.value.trim();
+                            if (!barcodeValue) return;
 
-                                let data = {
-                                    barcode: barcodeValue,
-                                    delivery_id: deliverId,
-                                    delivery_details_id: detailsId,
-                                    type: delivery_type
-                                }
+                            const detail = this.deliveries?.find(d => d.delivery.id == deliverId)
+                                ?.delivery_details?.find(dd => dd.id == detailsId);
 
-                                axios.get(url, { params: data })
-                                .then(response => {
-                                    event.target.value = '';
-                                    if(response.data.is_valid_code == 1){
-                                        if(response.data.code_quantity > 0 && response.data.code_quantity > this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts){
-                                            this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.push(response.data.code);
-                                            this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts++;
-                                        }else{
-                                            showErrorAlert('Error', 'Received quantity can\'t be larger than delivered quantity');
-                                        }
-                                    }else{
-                                        showErrorAlert('Error', 'Invalid Barcode');
-                                    }
-                                })
-                                .catch(error => {
-                                    event.target.value = '';
-                                    showErrorAlert('Error', 'Invalid Barcode');
-                                    console.log(error);
-                                });
+                            const item = detail?.[this.deliveries.find(d => d.delivery.id == deliverId)?.type === 'other' ? 'material' : 'board'];
+                            
+                            if (item?.product?.code == barcodeValue) {
+                                detail.is_scanned = 1;
+                            } else {
+                                showErrorAlert('Oops!', 'QR Code does not match!');
                             }
                         }
                     },
+
                     removeBarcode(deliverIndex,detailsIndex,barcodeIndex) {
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].scannedBarcodes.splice(barcodeIndex, 1);
                         this.deliveries[deliverIndex].delivery_details[detailsIndex].barcodeCounts--;
