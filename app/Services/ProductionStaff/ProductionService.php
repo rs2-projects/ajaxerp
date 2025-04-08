@@ -572,7 +572,7 @@ class ProductionService
     public function receiveStoreData($request, $id){
         DB::beginTransaction();
         try {
-            // dd($request->all());
+            dd($request->all());
             $pre_production = PreProduction::where('deleted', PreProduction::DELETED_NO)
                 ->where('status', PreProduction::STATUS_ACTIVE)
                 ->where('id', $id)
@@ -736,6 +736,7 @@ class ProductionService
 
                 $delivery->save();
             }
+            
 
             $other_delivery_count= PreProductionMaterialDelivery::where('received_status', '!=' , PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED)
                 ->where('pre_production_id', $id)

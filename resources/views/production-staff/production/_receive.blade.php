@@ -433,8 +433,8 @@
                     checkValidation(e, deliveryIndex) {
                         e.preventDefault();
                         const delivery = this.deliveries[deliveryIndex];
-                        if (delivery.delivery_details.every(detail => detail.receive_items.length === 0)) {
-                            showErrorAlert('Oops!', 'Please add received items!');
+                        if (delivery.delivery_details.every(detail => detail?.is_scanned != 1)) {
+                            showErrorAlert('Oops!', 'Please scan QR Code to add received items!');
                         } else {
                             receiveStoreForm(delivery.delivery.id, deliveryIndex);
                         }
