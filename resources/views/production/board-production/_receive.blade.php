@@ -66,7 +66,7 @@
                                                         </thead>
                                                         <tbody class="erp-tbody">
                                                             <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
-                                                                <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                                <input type="hidden" v-if="detailsData.material.is_scanned === 1" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                                 <td class="erp-tbody-td text-start">
                                                                     <h4 class="text-start d-table-title">@{{detailsData.material.category.name}}</h4>
                                                                 </td>

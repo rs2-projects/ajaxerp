@@ -174,6 +174,14 @@ class PreProduction extends BaseModel
             ->where('received_status', '!=', PreProductionMaterialDelivery::RECEIVED_STATUS_DELIVERED);
     }
 
+    public function pendingPreProductionBoardDeliveries()
+    {
+        return $this->hasMany(PreProductionBoardDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionBoardDelivery::DELETED_NO)
+            ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionBoardDelivery::RECEIVED_STATUS_DELIVERED);
+    }
+
     public function pendingForReceiveCount(){
         return $this->hasMany(PreProductionMaterialDelivery::class, 'pre_production_id', 'id')
             ->where('deleted', PreProductionMaterialDelivery::DELETED_NO)

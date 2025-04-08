@@ -48,8 +48,8 @@
 										<table class="table mb-0 erp-table">
 											<thead class="erp-thead">
 												<tr class="erp-tr">
-													<th class="erp-th">Category </th>
-													<th class="erp-th text-center">Item Name </th>
+													<th class="erp-th" style="width: 15%">Category </th>
+													<th class="erp-th text-center" style="width: 25%">Item Name </th>
 													<th class="erp-th text-center">Qty </th>
 													<th class="erp-th text-center">Delivered Qty </th>
 													<th class="text-center erp-th">QR Code</th>
@@ -59,14 +59,14 @@
 											<tbody class="erp-tbody">
 												<tr class="erp-tbody-tr" v-for="(material, index) in materials">
 													
-													<td class="erp-tbody-td text-start">
+													<td class="erp-tbody-td text-start" style="width: 20%;word-break: break-word; white-space: normal;">
 														<input type="hidden" name="type[]" :value="material.type">
 														<input type="hidden" name="pre_production_material_id[]" :value="material.material.id">
 														<input type="hidden" name="product_material_id[]" :value="material.material.product.id">
 														<input type= "hidden" name="total_quantity[]" :value="material.material.quantity">
 														<h4 class="text-start d-table-title">@{{material.material.category.name}}</h4>
 													</td>
-													<td class="erp-tbody-td text-center">
+													<td class="erp-tbody-td text-center" style="width: 30%;word-break: break-word; white-space: normal;">
 														<h4 class="text-center d-table-title">@{{material.material.product.name}}</h4>
 													</td>
 													<td class="erp-tbody-td text-center">

@@ -895,19 +895,38 @@
                 //     }
                 // },
 
-                handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                // handleBarcodeScan(event, deliverId, detailsId, deliverIndex, detailsIndex, material_id) {
+                //     event.preventDefault();
+                //     if (event.key === 'Enter') {
+                //         const barcodeValue = event.target.value.trim();
+                //         if (!barcodeValue) return;
+
+                //         const material = this.deliveries
+                //             ?.find(d => d.delivery.id == deliverId)
+                //             ?.delivery_details?.find(dd => dd.id == detailsId)
+                //             ?.material;
+                            
+                //         if (material?.product?.id == material_id && material?.product?.code == barcodeValue) {
+                //             material.is_scanned = 1;
+                //         } else {
+                //             showErrorAlert('Oops!', 'QR Code does not match!');
+                //         }
+                //     }
+                // },
+
+                handleBarcodeScan(event, deliverId, detailsId) {
                     event.preventDefault();
                     if (event.key === 'Enter') {
                         const barcodeValue = event.target.value.trim();
                         if (!barcodeValue) return;
 
-                        const material = this.deliveries
-                            ?.find(d => d.delivery.id == deliverId)
-                            ?.delivery_details?.find(dd => dd.id == detailsId)
-                            ?.material;
-                            
-                        if (material?.product?.id == material_id && material?.product?.code == barcodeValue) {
-                            material.is_scanned = 1;
+                        const detail = this.deliveries?.find(d => d.delivery.id == deliverId)
+                            ?.delivery_details?.find(dd => dd.id == detailsId);
+
+                        const item = detail?.[this.deliveries.find(d => d.delivery.id == deliverId)?.type === 'other' ? 'material' : 'board'];
+                        console.log(detail)
+                        if (item?.product?.code == barcodeValue) {
+                            detail.is_scanned = 1;
                         } else {
                             showErrorAlert('Oops!', 'QR Code does not match!');
                         }
@@ -958,7 +977,7 @@
                 checkValidation(e, deliveryIndex) {
                     e.preventDefault();
                     const delivery = this.deliveries[deliveryIndex];
-                    if (delivery.delivery_details.every(detail => detail.material?.is_scanned != 1)) {
+                    if (delivery.delivery_details.every(detail => detail?.is_scanned != 1)) {
                         showErrorAlert('Oops!', 'Please scan QR Code to add scanned items!');
                     } else {
                         scanStoreForm(delivery.delivery.id, deliveryIndex);

@@ -990,11 +990,11 @@ class ProductionService
                     $material->scan_status =
                         $material->scanned_qty == 0
                             ? $material_model::SCAN_STATUS_PENDING
-                            : ($material->scanned_qty != $material->received_qty
+                            : ($material->scanned_qty != $material->quantity
                                 ? $material_model::SCAN_STATUS_PARTIAL
                                 : $material_model::SCAN_STATUS_SCANNED);
                             
-                    $delivery_details->scanned_qty =
+                    $delivery_details->scan_status =
                         $delivery_details->scanned_qty == 0
                             ? $details_model::SCAN_STATUS_PENDING
                             : ($delivery_details->scanned_qty != $delivery_details->received_qty

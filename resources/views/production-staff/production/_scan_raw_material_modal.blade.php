@@ -11,7 +11,7 @@
             <div class="pd-table-box">
                 <div v-if="deliveries.length > 0">
                     <div class="pd-table-box-item-wrapper" v-for="(deliverData, deliverIndex) in deliveries" :key="deliverIndex">
-                        <form action="{{route('production-staff.production.production.scan.store', $pre_production->id)}}" 
+                        <form v-if="deliverData?.delivery_details?.length > 0" action="{{route('production-staff.production.production.scan.store', $pre_production->id)}}" 
                             :id="'deliverStoreForm'+deliverData.delivery.id" method="post" 
                             @submit="checkValidation($event, deliverIndex)">
                             @csrf
@@ -40,7 +40,7 @@
                                                     <tbody class="erp-tbody">
                                                         <tr class="erp-tbody-tr" v-for="(detailsData, detailsIndex) in deliverData.delivery_details" :key="detailsIndex">
                                                             <td class="erp-tbody-td text-start">
-                                                                <input type="hidden" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
+                                                                <input type="hidden" v-if="detailsData?.is_scanned === 1" name="pre_production_material_delivery_details_id[]" :value="detailsData.id">
                                                                 
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'other'">@{{detailsData.material.product.name}}</h4>
                                                                 <h4 class="text-start d-table-title" v-if="deliverData.type == 'board'">@{{detailsData.board.product.name}}</h4>
@@ -57,11 +57,11 @@
                                                                 <h4 class="text-center d-table-title">@{{detailsData.scanned_qty}}</h4>
                                                             </td>
                                                             <td class="erp-tbody-td text-center">
-                                                                <div v-if="detailsData.scanned_qty === detailsData.quantity">
+                                                                <div v-if="detailsData.scanned_qty === detailsData.received_qty">
                                                                     <h4 class="text-center d-table-title approved-status">Scanned</h4>
                                                                 </div>
                                                                 <div v-else>
-                                                                    <div v-if="detailsData.material.is_scanned === 1">
+                                                                    <div v-if="detailsData?.is_scanned === 1">
                                                                         <h4 class="text-center d-table-title pending-status">Matched</h4>
                                                                     </div>
                                                                     
@@ -70,7 +70,7 @@
                                                                             class="form-control text-center bar-code-input"
                                                                             type="text"
                                                                             placeholder="Click & Scan QR Code"
-                                                                            @keydown.enter.prevent="handleBarcodeScan($event, deliverData.delivery.id, detailsData.id, deliverIndex, detailsIndex, detailsData.material.product.id)"
+                                                                            @keydown.enter.prevent="handleBarcodeScan($event, deliverData.delivery.id, detailsData.id, deliverIndex, detailsIndex)"
                                                                         />
                                                                     </div>
                                                                 </div>
