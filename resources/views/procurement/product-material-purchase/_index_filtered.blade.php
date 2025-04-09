@@ -143,11 +143,11 @@
                                                         <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-revised-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Revised P.O</a>
                                                         <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
                                                     @endif
-                                                    <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                                    {{-- <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a> --}}
                                                 @endif
-                                                @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                                {{-- @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
                                                     <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
-                                                @endif
+                                                @endif --}}
                                             @elseif($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_DELIVERED)
                                                 @if($purchase_order->has_missing == $purchase_order::HAS_MISSING_YES || $purchase_order->has_damage == $purchase_order::HAS_DAMAGE_YES)
                                                     <a class="dropdown-item" href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Received  (Damage / Missing)</a>
@@ -161,6 +161,11 @@
                                                     <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.create-back-order',$purchase_order->id) }}"><i class="fa-solid fa-circle-info m-r-5"></i>  Create Back P.O</a>
                                                 @endif
                                             @endif
+                                        @endif
+
+                                        @if($purchase_order->purchase_status != $purchase_order::PURCHASE_STATUS_REVISED_OR_BACKED && $purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                            <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
                                         
                                         @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_DELIVERED)
