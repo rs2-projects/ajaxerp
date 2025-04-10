@@ -4,12 +4,12 @@
         <tr class="erp-tr">
             <th class="erp-th">SL</th>
             <th class="erp-th">P.O No </th>
-            <th class="erp-th text-center">Estimate Delivery Date </th>
+            <th class="erp-th text-center">Delivery Date </th>
             <th class="erp-th text-center">Supplier </th>
             <th class="erp-th text-center">Product </th>
             <th class="erp-th text-center">Total Amount </th>
             <th class="erp-th text-center">Due Amount </th>
-            <<th class="erp-th text-center">Investigation Status </th>
+            <th class="erp-th text-center">Investigation Status </th>
             <th class="erp-th text-center">Payment Status </th>
             @if(hasPermission( 'manage-asset-product-purchase-orders'))
                 <th class="text-end erp-th">Action</th>
@@ -23,7 +23,7 @@
                         <h4 class="d-table-title">{{ $purchase_orders->firstItem() + $loop->iteration -1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_id }}</strong></h4>
+                        <h4 class="text-start d-table-title"><strong>{{ $purchase_order->purchase_order_id }}</strong></h4>
                         <small class="text-center d-table-title">{{ getFormattedDate($purchase_order->purchase_date, 'd M, Y') }}</small>
                     </td>
                     <td class="erp-tbody-td text-center">

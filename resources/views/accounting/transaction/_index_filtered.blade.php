@@ -34,7 +34,7 @@
                                 <h4 class="text-center d-table-title cofa-status-transfer">{{ \App\Models\Accounting\Transaction::REFERENCE_TYPES[$transaction->reference_type] ?? '' }}</h4>
                             @endif
                         </td>
-                        <td class="erp-tbody-td text-center">
+                        <td class="erp-tbody-td text-center" style="width: 25%;word-break: break-word; white-space: normal;">
                             @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_INVOICE_PAYMENT)
                                 <h4 class="text-center d-table-title">
                                     {{ $transaction->reference_description }}
@@ -95,13 +95,46 @@
                                     <div class="dropdown dropdown-action">
                                         <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
+                                            {{-- @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick="deleteExpense({{ $transaction->id }})"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                             @else
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick="showInfoAlert('','Not Implemented Yet!')"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            @endif --}}
+
+                                            @php
+                                                $delete_message = 'Are you sure to delete this transaction?';
+
+                                                if ($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT) {
+                                                    $status = $transaction->materialPurchasePayment?->materialPurchase?->purchase_status;
+
+                                                    if ($status == \App\Models\Procurements\ProductMaterialPurchase::PURCHASE_STATUS_DELIVERED) {
+                                                        $delete_message = 'Deleting this transaction will reset the purchase state from Delivered to On Process, also the purchase quantity will be deducted from the inventory. Are you sure to delete this transaction?';
+                                                    } elseif ($status == \App\Models\Procurements\ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS) {
+                                                        $delete_message = 'Deleting this transaction will change the purchase state from On Process to New. Are you sure to delete this transaction?';
+                                                    } else {
+                                                        $delete_message = 'Are you sure to delete this product material purchase payment transaction?';
+                                                    }
+                                                }elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_INVOICE_PAYMENT){
+                                                    $delete_message = 'Are you sure to delete this invoice payment transaction?';
+
+                                                }elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE){
+                                                    $delete_message = 'Are you sure to delete this expense transaction?';
+                                                }
+
+
+                                            @endphp
+
+                                            @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                             @endif
+                                            <a class="dropdown-item" 
+                                                href="javascript:void(0)"
+                                                data-message="{{ $delete_message }}"  
+                                                onclick="deleteTransaction({{ $transaction->id }}, '{{ $transaction->reference_type }}', this )">
+                                                <i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            
                                         </div>
                                     </div>
                                 </div>

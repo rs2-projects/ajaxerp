@@ -77,8 +77,8 @@
                                 
                                     @if($invoice->payment_status == $invoice::PAYMENT_STATUS_UNPAID)
                                         <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                     @endif
-                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('sales.invoice.delete',$invoice->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                     <a class="dropdown-item" href="#" onclick="getProductionStatus({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Check Status</a>
                                     <a class="dropdown-item" href="{{ route('sales.invoice.download-pdf', $invoice->id) }}" target="_blank"><i class="fa-solid fa-file-pdf m-r-5"></i> PDF</a>
                                 @endif
