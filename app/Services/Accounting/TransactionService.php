@@ -8,6 +8,7 @@ use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionVat;
 use App\Models\Procurements\ProductMaterialPurchase;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\ProductMaterialPurchasePayment;
 use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoicePayment;
@@ -191,7 +192,28 @@ class TransactionService
             if($purchase->purchase_status == ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS){
                 $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
             }elseif($purchase->purchase_status == ProductMaterialPurchase::PURCHASE_STATUS_DELIVERED){
+
                 $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS;
+                $purchase->has_damage = ProductMaterialPurchase::HAS_DAMAGE_NO;
+                $purchase->has_missing = ProductMaterialPurchase::HAS_MISSING_NO;
+                $purchase->price_calculated = ProductMaterialPurchase::PRICE_CALCULATED_NO;
+
+                if($purchase->purchaseDetails->isNotEmpty()){
+                    foreach($purchase->purchaseDetails as $details){
+                        // TODO: Delete calculated price, InventoryProductMaterial
+                        $puchase_qty = $details->qty - $details->damage_qty - $details->missing_qty;
+
+                        $productMaterial = $details->productMaterial;
+                        $productMaterial->total_purchased_qty = $productMaterial->total_purchased_qty - $puchase_qty;
+                        $productMaterial->available_qty = $productMaterial->available_qty - $puchase_qty;
+                        $productMaterial->save();
+
+                        $details->is_perfect = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
+                        $details->has_damage = ProductMaterialPurchaseDetails::IS_PERFECT_NO;
+                        $details->has_missing = ProductMaterialPurchaseDetails::HAS_DAMAGE_NO;
+                        $details->save();
+                    }
+                }
             }
 
 
