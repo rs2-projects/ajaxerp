@@ -72,7 +72,7 @@
                     <td class="erp-tbody-td text-center">
                         @if($purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_PAID)
                             @if(hasPermission( 'manage-product-material-purchase-orders' ))
-                                <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="make-payment-btn">Investigation</a>
+                                <a href="{{ route('procurement.purchase-investigation.index',$purchase_order->id) }}" class="investigate-btn">Investigation</a>
                             @endif
                         @else
                             @if(hasPermission( 'product-material-purchase-order-payment' ))
@@ -89,6 +89,11 @@
                                         @if(hasPermission('product-material-purchase-print-barcode' ))
                                             {{-- <a class="dropdown-item" href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'printer')" ><i class="fa-solid fa-print m-r-5"></i> Print Barcode (Printer)</a> --}}
                                             <a class="dropdown-item"href="javascript:void(0)" onclick="printBarcodeData({{ $purchase_order->id }}, 'pdf')" ><i class="fa-solid fa-print m-r-5"></i> Print QR Code (PDF)</a>
+                                        @endif
+
+                                        @if($purchase_order->purchase_status == $purchase_order::PURCHASE_STATUS_ON_PROCESS && $purchase_order->payment_status == $purchase_order::PAYMENT_STATUS_UNPAID)
+                                            <a class="dropdown-item" href="{{ route('procurement.product-material-purchase.edit',$purchase_order->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('procurement.product-material-purchase.delete',$purchase_order->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
                                     </div>
                                 </div>

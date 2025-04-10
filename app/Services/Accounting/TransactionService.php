@@ -188,8 +188,19 @@ class TransactionService
                 throw new \Exception('Invalid Purchase Payment!');
             }
 
-            $new_paid_amount = $purchasePayment->amount;
+            if($purchase->purchase_status == ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS){
+                $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_NEW;
+            }elseif($purchase->purchase_status == ProductMaterialPurchase::PURCHASE_STATUS_DELIVERED){
+                $purchase->purchase_status = ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS;
+            }
+
+
+            $new_paid_amount = $purchase->paid_amount - $purchasePayment->amount;
             $new_due_amount = $purchase->payable_amount - $new_paid_amount;
+
+            $new_paid_amount_php = $purchase->paid_amount_php - $purchasePayment->amount_php;
+            $new_due_amount_php = $purchase->payable_amount_php - $new_paid_amount_php;
+
             if ($new_paid_amount != 0) {
                 $purchase->payment_status = ProductMaterialPurchase::PAYMENT_STATUS_PARTIAL_PAID;
             } else {
@@ -198,6 +209,8 @@ class TransactionService
 
             $purchase->paid_amount = $new_paid_amount;
             $purchase->due_amount = $new_due_amount;
+            $purchase->paid_amount_php = $new_paid_amount_php;
+            $purchase->due_amount_php = $new_due_amount_php;
             $purchase->save();
 
             $addPreviousAccountBalance = $this->addAccountBalanceById($transaction->account_id, $transaction->total_amount);

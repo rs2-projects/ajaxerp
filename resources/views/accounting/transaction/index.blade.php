@@ -199,7 +199,8 @@
         //     );
         // }
 
-        function deleteTransaction(id, type) {
+        function deleteTransaction(id, type, element) {
+            const message = element.getAttribute('data-message');
             const routes = {
                 '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE }}': "{{ route('accounting.transaction.expense.delete', ':id') }}",
                 '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_INVOICE_PAYMENT }}': "{{ route('accounting.transaction.invoice_payment.delete', ':id') }}",
@@ -215,7 +216,7 @@
                 return;
             }
             const url = route.replace(':id', id);
-            deleteAjax(url, 'reloadAjaxGetData');
+            deleteAjax(url, 'reloadAjaxGetData', 'default', {}, message);
         }
 
 

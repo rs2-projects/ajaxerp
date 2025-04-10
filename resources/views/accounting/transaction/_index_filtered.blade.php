@@ -112,17 +112,28 @@
                                                     if ($status == \App\Models\Procurements\ProductMaterialPurchase::PURCHASE_STATUS_DELIVERED) {
                                                         $delete_message = 'Deleting this transaction will reset the purchase state from Delivered to On Process, also the purchase quantity will be deducted from the inventory. Are you sure to delete this transaction?';
                                                     } elseif ($status == \App\Models\Procurements\ProductMaterialPurchase::PURCHASE_STATUS_ON_PROCESS) {
-                                                        $delete_message = 'Deleting this transaction may change the purchase status from On Process to New. Are you sure to delete this transaction?';
+                                                        $delete_message = 'Deleting this transaction will change the purchase state from On Process to New. Are you sure to delete this transaction?';
                                                     } else {
                                                         $delete_message = 'Are you sure to delete this product material purchase payment transaction?';
                                                     }
+                                                }elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_INVOICE_PAYMENT){
+                                                    $delete_message = 'Are you sure to delete this invoice payment transaction?';
+
+                                                }elseif($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE){
+                                                    $delete_message = 'Are you sure to delete this expense transaction?';
                                                 }
+
+
                                             @endphp
 
                                             @if($transaction->reference_type == \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE)
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick="editExpense({{ $transaction->id }})"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
                                             @endif
-                                            <a class="dropdown-item" href="javascript:void(0)" onclick="deleteTransaction({{ $transaction->id }}, '{{ $transaction->reference_type }}', {!! json_encode($delete_message) !!})"><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
+                                            <a class="dropdown-item" 
+                                                href="javascript:void(0)"
+                                                data-message="{{ $delete_message }}"  
+                                                onclick="deleteTransaction({{ $transaction->id }}, '{{ $transaction->reference_type }}', this )">
+                                                <i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                             
                                         </div>
                                     </div>

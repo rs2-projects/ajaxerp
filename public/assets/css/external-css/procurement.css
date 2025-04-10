@@ -97,6 +97,14 @@
     font-size: 13px;
     font-weight: 700;
 }
+.investigate-btn {
+    background: linear-gradient(to right, #3160c7 0%, #436af9 100%) !important;
+    color: #fff !important;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+}
 .paid-status{
     display: inline-block;
     background: var(--bg-gradiant-primary);
