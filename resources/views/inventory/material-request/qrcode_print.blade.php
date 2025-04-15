@@ -80,7 +80,7 @@
             @foreach ($product_materials as $product_material)
                 <tr>
                     <td style="width:20%;text-align:center;">
-                        <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(150)->generate($product_material->code)) !!} " alt="QrCode">
+                        <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(150)->generate($product_material?->code)) !!} " alt="QrCode">
                     </td>
                     <td style="width:30%;text-align:left;">
                         <div class="product-info">

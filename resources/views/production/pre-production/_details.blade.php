@@ -34,7 +34,7 @@
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Product(Finished Product) Selection</label>
+                            <label class="col-form-label">Product(Finished Product)</label>
                             <h4>{{$pre_production->finishedGoods->name}}</h4>
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                             <div class="production-machine-selection-wrapper d-flex flex-wrap p-de-box-wrapper">
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0 p-de-input-box">
-                                        <label class="col-form-label">Machine Selection </label>
+                                        <label class="col-form-label">Machine </label>
                                         <h4 class="input-box-title">
                                             @foreach ($processData?->processMachines as $machineData)
                                                 @if($machineData->machine?->name)

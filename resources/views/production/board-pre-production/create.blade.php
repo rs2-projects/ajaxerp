@@ -16,7 +16,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="input-block erp-step-input-block mb-0">
-                                    <label class="col-form-label">Machine Selection <span class="text-danger">*</span></label>
+                                    <label class="col-form-label">Machine <span class="text-danger">*</span></label>
                                     <select class="select select-step select2" name="machine_id">
                                         <option value="">Select Machine</option>
                                         @foreach ($machines as $machine)

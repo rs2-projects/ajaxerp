@@ -55,7 +55,7 @@
                     <div class="product-selection-info-box d-flex flex-wrap">
                         <div class="psib-item flex-68">
                             <div class="input-block erp-step-input-block mb-0 two">
-                                <label class="col-form-label">Product<small>(Finished Product)</small> Selection <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
+                                <label class="col-form-label">Product<small>(Finished Product)</small> <span class="erp-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Product Select"><i class="fa-duotone fa-exclamation"></i></span></label>
                                 <select class="select select-step" name="finished_goods_id" required="">
                                     <option value="">Select Product</option>
                                     @foreach ($finished_products as $f_product)
@@ -135,7 +135,7 @@
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Board Category </label>
                                                 <select class="select select-step select2" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
-                                                    {{-- <option value="">Select Category</option> --}}
+                                                    <option value="">Select Category</option>
                                                     @foreach ($finished_categoris as $category)
                                                         <option value="{{$category->id}}">{{$category->name}}</option>
                                                     @endforeach
@@ -384,6 +384,7 @@
                     axios.get(url)
                         .then(response => {
                             const products = response.data.products;
+                            console.log(products)
                             vueApp.processes[processIndex].materialSections[materialIndex].products = products;
                         })
                         .catch(error => {

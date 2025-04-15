@@ -47,4 +47,32 @@ class TransactionController extends BackendController
         return $this->returnAjaxSuccess([], 'Transaction reviewed successfully!');
     }
 
+    public function deleteInvoicePayment($id){
+        try {
+            $this->service->deleteInvoicePayment($id);
+        }catch (\Exception $e){
+            return $this->returnAjaxException($e);
+        }
+        return $this->returnAjaxSuccess([], 'Transaction deleted successfully!');
+    }
+
+    public function deleteMaterialPurchasePayment($id){
+        try {
+            $this->service->deleteMaterialPurchasePayment($id);
+        }catch (\Exception $e){
+            return $this->returnAjaxException($e);
+        }
+        return $this->returnAjaxSuccess([], 'Transaction deleted successfully!');
+    }
+
+    public function deleteAssetPurchasePayment($id){
+        dd($id);
+        try {
+            $this->service->deleteAssetPurchasePayment($id);
+        }catch (\Exception $e){
+            return $this->returnAjaxException($e);
+        }
+        return $this->returnAjaxSuccess([], 'Transaction deleted successfully!');
+    }
+
 }

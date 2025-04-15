@@ -190,14 +190,35 @@
             }, 'default');
         }
 
-        function deleteExpense(id) {
-            let url = "{{route('accounting.transaction.expense.delete', ':id')}}";
-            url = url.replace(':id', id);
-            deleteAjax(
-                url,
-                'reloadAjaxGetData'
-            );
+        // function deleteExpense(id) {
+        //     let url = "{{route('accounting.transaction.expense.delete', ':id')}}";
+        //     url = url.replace(':id', id);
+        //     deleteAjax(
+        //         url,
+        //         'reloadAjaxGetData'
+        //     );
+        // }
+
+        function deleteTransaction(id, type, element) {
+            const message = element.getAttribute('data-message');
+            const routes = {
+                '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_EXPENSE }}': "{{ route('accounting.transaction.expense.delete', ':id') }}",
+                '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_INVOICE_PAYMENT }}': "{{ route('accounting.transaction.invoice_payment.delete', ':id') }}",
+                // '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_RETURN_INVOICE_PAYMENT }}': "{{ route('accounting.transaction.invoice_return_payment.delete', ':id') }}",
+                // '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_ASSET_PRODUCT_PURCHASE_PAYMENT }}': "{{ route('accounting.transaction.asset_purchase_payment.delete', ':id') }}",
+                '{{ \App\Models\Accounting\Transaction::REFERENCE_TYPE_PRODUCT_MATERIAL_PURCHASE_PAYMENT }}': "{{ route('accounting.transaction.material_purchase_payment.delete', ':id') }}",
+            };
+
+            const route = routes[type];
+
+            if (!route) {
+                showInfoAlert('Oops!', 'Delete not implemented for this transaction type!');
+                return;
+            }
+            const url = route.replace(':id', id);
+            deleteAjax(url, 'reloadAjaxGetData', 'default', {}, message);
         }
+
 
         function reviewTransaction(checkbox, id) {
             let url = "{{route('accounting.transaction.review', ':id')}}";

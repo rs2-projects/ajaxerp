@@ -186,6 +186,7 @@
 @section('js')
     <script>
         $(document).ready(function() {
+            $('#cart_php_rate').prop('required', false);
             initSelect2();
             $("#preProductionUpdateForm").on('submit', function (e) {
                 var self = this;
