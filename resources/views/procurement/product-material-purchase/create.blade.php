@@ -444,7 +444,7 @@
                                 </div>
                                 <div class="purchase-order-product-save-all-wrapper">
                                     <div class="purchase-save-all-btn-box">
-                                        <button type="submit">Save Invoice</button>
+                                        <button type="submit">Save Purchase</button>
                                     </div>
                                 </div>
                             </div>
@@ -511,7 +511,12 @@
 @endsection
 
 @section('css')
-
+    <style>
+        .radio-inputs{
+            width: auto !important;
+            background: transparent !important;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')

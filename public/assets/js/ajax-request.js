@@ -170,10 +170,10 @@ function getPaginatedListData(form_route, placement_area, extra_data={}, scrollT
 }
 
 
-function deleteAjax(uri, successCallback='default', errorCallback='default', data={}) {
+function deleteAjax(uri, successCallback='default', errorCallback='default', data={}, message = 'Are you sure to delete this?') {
     Swal.fire({
         title: '',
-        html: 'Are you sure to delete this?',
+        html: message,
         showDenyButton: true,
         confirmButtonText: 'Yes',
         denyButtonText: `No`,

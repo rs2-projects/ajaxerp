@@ -444,7 +444,7 @@
                                 </div>
                                 <div class="purchase-order-product-save-all-wrapper">
                                     <div class="purchase-save-all-btn-box">
-                                        <button type="submit">Save Invoice</button>
+                                        <button type="submit">Save Purchase</button>
                                     </div>
                                 </div>
                             </div>

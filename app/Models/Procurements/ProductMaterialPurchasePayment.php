@@ -59,4 +59,9 @@ class ProductMaterialPurchasePayment extends BaseModel
         'deleted_by',
         'deleted_at',
     ];
+
+    public function materialPurchase()
+    {
+        return $this->belongsTo(ProductMaterialPurchase::class, 'product_material_purchase_id', 'id');
+    }
 }

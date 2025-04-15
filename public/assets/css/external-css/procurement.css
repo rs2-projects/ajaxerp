@@ -97,6 +97,14 @@
     font-size: 13px;
     font-weight: 700;
 }
+.investigate-btn {
+    background: linear-gradient(to right, #3160c7 0%, #436af9 100%) !important;
+    color: #fff !important;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+}
 .paid-status{
     display: inline-block;
     background: var(--bg-gradiant-primary);
@@ -131,7 +139,8 @@
 }
 .partial-status{
     display: inline-block;
-    background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important;
+    /* background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important; */
+    background: linear-gradient(to right, rgb(193 98 233) 0, #b552e5 100%) !important;
     color: #fff !important;
     padding: 5px 20px;
     border-radius: 100px;

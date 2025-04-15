@@ -25,6 +25,13 @@ Route::group(['prefix' => 'accounting'], function (){
         Route::post('filtered', [TransactionController::class, 'indexFiltered'])->name('accounting.transaction.index.filtered')->middleware('permission:view-transactions');
         Route::get('{id}/review', [TransactionController::class, 'reviewTransaction'])->name('accounting.transaction.review')->middleware('permission:verify-transactions');
 
+        // delete transaction
+        Route::get('invoice/{id}/delete', [TransactionController::class, 'deleteInvoicePayment'])->name('accounting.transaction.invoice_payment.delete')->middleware('permission:verify-transactions');
+        Route::get('invoice-return/{id}/delete', [TransactionController::class, 'deleteInvoiceReturnPayment'])->name('accounting.transaction.invoice_return_payment.delete')->middleware('permission:verify-transactions');
+        Route::get('asset/{id}/delete', [TransactionController::class, 'deleteAssetPurchasePayment'])->name('accounting.transaction.asset_purchase_payment.delete')->middleware('permission:verify-transactions');
+        Route::get('material/{id}/delete', [TransactionController::class, 'deleteMaterialPurchasePayment'])->name('accounting.transaction.material_purchase_payment.delete')->middleware('permission:verify-transactions');
+
+
         Route::post('expense', [TransactionExpenseController::class, 'storeExpense'])->name('accounting.transaction.expense.store')->middleware('permission:add-expenses');
         Route::get('expense/{id}/edit', [TransactionExpenseController::class, 'editExpense'])->name('accounting.transaction.expense.edit')->middleware('permission:manage-transactions');
         Route::post('expense/{id}/update', [TransactionExpenseController::class, 'updateExpense'])->name('accounting.transaction.expense.update')->middleware('permission:manage-transactions');

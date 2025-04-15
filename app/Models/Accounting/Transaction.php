@@ -3,6 +3,8 @@
 namespace App\Models\Accounting;
 
 use App\Models\BaseModel;
+use App\Models\Procurements\ProductMaterialPurchasePayment;
+use App\Models\Sales\InvoicePayment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends BaseModel
@@ -120,4 +122,13 @@ class Transaction extends BaseModel
         return $this->belongsTo(AccCoaAccount::class, 'category_id', 'id');
     }
 
+    public function invoicePayment()
+    {
+        return $this->belongsTo(InvoicePayment::class, 'reference_id', 'id');
+    }
+
+    public function materialPurchasePayment()
+    {
+        return $this->belongsTo(ProductMaterialPurchasePayment::class, 'reference_id', 'id');
+    }
 }
