@@ -472,13 +472,22 @@ class ProductMaterialService
                 ->where('deleted', ProductMaterialPurchaseDetails::DELETED_NO)
                 ->where('status', ProductMaterialPurchaseDetails::STATUS_ACTIVE)
                 ->get();
-
+                
             $purchaseIds = $details->pluck('product_material_purchase_id')->toArray();
+
+            // $purchase = ProductMaterialPurchase::where('deleted', ProductMaterialPurchase::DELETED_NO)
+            //     ->where('status', ProductMaterialPurchase::STATUS_ACTIVE)
+            //     ->where('price_calculated', ProductMaterialPurchase::PRICE_CALCULATED_YES)
+            //     ->whereIn('id', $purchaseIds)
+            //     ->get();
 
             $purchase = ProductMaterialPurchase::where('deleted', ProductMaterialPurchase::DELETED_NO)
                 ->where('status', ProductMaterialPurchase::STATUS_ACTIVE)
-                ->where('price_calculated', 1)
                 ->whereIn('id', $purchaseIds)
+                ->where(function ($query) {
+                    $query->where('price_calculated', ProductMaterialPurchase::PRICE_CALCULATED_YES)
+                        ->orWhere('board_price_calculated', ProductMaterialPurchase::BOARD_PRICE_CALCULATED_YES);
+                })
                 ->get();
 
             $calculated = ProductMaterialPurchaseCalculatedPrice::where('deleted', ProductMaterialPurchaseCalculatedPrice::DELETED_NO)
@@ -488,9 +497,10 @@ class ProductMaterialService
                 ->orderBy('id', 'desc')
                 ->take(5)
                 ->get();
+                
             $data['purchase_history'] = $calculated;
 
-
+            // dd($purchase);
             return $data;
         }catch (\Exception $e) {
             throw new \Exception($e->getMessage());
