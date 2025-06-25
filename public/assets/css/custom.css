@@ -553,3 +553,15 @@
     border-radius: 5px;
     margin: 2px 0px;
 }
+
+.custom-optgroup-label {
+    font-weight: bold !important;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    color: #333;
+    display: block;
+    pointer-events: none;
+    cursor: default;
+    border-radius: 5px;
+    margin-left: 0 !important;
+}

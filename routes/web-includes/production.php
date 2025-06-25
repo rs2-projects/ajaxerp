@@ -6,6 +6,7 @@ use App\Http\Controllers\Inventory\PreProductionMaterialRequestController;
 use App\Http\Controllers\Production\BoardPreProduction\BoardPreProductionController;
 use App\Http\Controllers\Production\BoardPreProduction\CalculateBoardPriceController;
 use App\Http\Controllers\Production\BoardProduction\BoardProductionController;
+use App\Http\Controllers\Production\Machine\MachineCategoryController;
 use App\Http\Controllers\Production\Production\ProductionController;
 use App\Http\Controllers\Production\ProductionStaff\ProductionStaffController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,16 @@ Route::group(['prefix' => 'production'], function () {
 
     Route::get('monitoring-per-day', [ProductionController::class, 'monitoringPerDay'])->name('production.production.monitoring')->middleware('permission:view-production');
     // });
+
+    Route::group(['prefix' => 'machine-category'], function () {
+        Route::get('/', [MachineCategoryController::class, 'index'])->name('production.machine-category.index')->middleware('permission:view-machines');
+        Route::post('/filtered', [MachineCategoryController::class, 'indexFiltered'])->name('production.machine-category.filtered')->middleware('permission:view-machines');
+        Route::get('/create', [MachineCategoryController::class, 'create'])->name('production.machine-category.create')->middleware('permission:manage-machines');
+        Route::post('/create', [MachineCategoryController::class, 'store'])->name('production.machine-category.store')->middleware('permission:manage-machines');
+        Route::get('/{id}/edit', [MachineCategoryController::class, 'edit'])->name('production.machine-category.edit')->middleware('permission:manage-machines');
+        Route::post('/{id}/update', [MachineCategoryController::class, 'update'])->name('production.machine-category.update')->middleware('permission:manage-machines');
+        Route::get('/{id}/delete', [MachineCategoryController::class, 'delete'])->name('production.machine-category.delete')->middleware('permission:manage-machines');
+    });
 
     Route::group(['prefix' => 'machine'], function () {
         Route::get('/', [MachineController::class, 'index'])->name('production.machine.index')->middleware('permission:view-machines');

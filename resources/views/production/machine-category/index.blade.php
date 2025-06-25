@@ -5,7 +5,7 @@
         @if(hasPermission('manage-machines'))
             <div class="erp-add-employee-wrapper mb-3">
                 <div class="erp-add-employee">
-                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addMachineModal"><i class="fa-solid fa-plus"></i> New Machine</a>
+                    <a href="javascript:void(0)" class="btn add-btn erp-add-employee" data-bs-toggle="modal" data-bs-target="#addMachineModal"><i class="fa-solid fa-plus"></i> New Category</a>
 
                 </div>
             </div>
@@ -16,7 +16,7 @@
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-box-header">
-                                <h4>Total Machines : {{$machine_count}}</h4>
+                                <h4>Total Categories : {{$machine_cat_count}}</h4>
                             </div>
                             <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
@@ -26,7 +26,7 @@
                                     <div class="erp-filter-item flex-25">
                                         <div class=" form-focus select-focus custom-form-focus">
                                             <input type="text" class="form-control search-product-in"
-                                                placeholder="Machine Name / Model" id="keyword_filtered">
+                                                placeholder="Category Name" id="keyword_filtered">
                                         </div>
                                     </div>
                                     <div class="erp-filter-item">
@@ -50,8 +50,8 @@
 @endsection
 
 @section('modals')
-    @include('production.machine._add_machine_modal')
-    @include('production.machine._edit_machine_modal')
+    @include('production.machine-category._add_machine_modal')
+    @include('production.machine-category._edit_machine_modal')
 @endsection
 
 @section('css')
@@ -118,7 +118,7 @@
         });
 
         function getData(){
-            getPaginatedListData("{{ route('production.machine.filtered') }}", "#ajax-data-load", filterData);
+            getPaginatedListData("{{ route('production.machine-category.filtered') }}", "#ajax-data-load", filterData);
         }
 
         function getPaginatedData(button) {
@@ -126,7 +126,7 @@
         }
 
         function editItem(id){
-            let url = "{{route('production.machine.edit', ':id')}}";
+            let url = "{{route('production.machine-category.edit', ':id')}}";
             url = url.replace(':id', id);
             ajaxGet(url, {}, function (response) {
                 if (response.status == 200) {

@@ -3,6 +3,7 @@
 namespace App\Services\Production\PreProduction;
 
 use App\Models\Machine;
+use App\Models\MachineCategory;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
@@ -139,9 +140,23 @@ class PreProductionService
             $data['pre_production_batch_no'] = 10001;
         }
 
-        $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
-            ->where('status', Machine::STATUS_ACTIVE)
-            ->orderBy('name', 'asc')
+        // $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
+        //     ->where('status', Machine::STATUS_ACTIVE)
+        //     ->orderBy('name', 'asc')
+        //     ->get();
+
+        $data['machine_categories'] = MachineCategory::with(['machines' => function ($query) {
+            $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                ->where('deleted', Machine::DELETED_NO)
+                ->where('status', Machine::STATUS_ACTIVE);
+            }])
+            ->whereHas('machines', function ($query) {
+                $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                    ->where('deleted', Machine::DELETED_NO)
+                    ->where('status', Machine::STATUS_ACTIVE);
+            })
+            ->where('deleted', MachineCategory::DELETED_NO)
+            ->where('status', MachineCategory::STATUS_ACTIVE)
             ->get();
 
         $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
@@ -411,9 +426,18 @@ class PreProductionService
     public function editData($id){
         $data['pre_production'] = PreProduction::find($id);
 
-        $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
-            ->where('status', Machine::STATUS_ACTIVE)
-            ->orderBy('id', 'desc')
+        $data['machine_categories'] = MachineCategory::with(['machines' => function ($query) {
+            $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                ->where('deleted', Machine::DELETED_NO)
+                ->where('status', Machine::STATUS_ACTIVE);
+            }])
+            ->whereHas('machines', function ($query) {
+                $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                    ->where('deleted', Machine::DELETED_NO)
+                    ->where('status', Machine::STATUS_ACTIVE);
+            })
+            ->where('deleted', MachineCategory::DELETED_NO)
+            ->where('status', MachineCategory::STATUS_ACTIVE)
             ->get();
 
         $data['categories'] = ProductMaterialCategory::where('deleted', ProductMaterialCategory::DELETED_NO)
@@ -451,6 +475,20 @@ class PreProductionService
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
             ->orderBy('id', 'desc')
+            ->get();
+
+        $data['machine_categories'] = MachineCategory::with(['machines' => function ($query) {
+            $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                ->where('deleted', Machine::DELETED_NO)
+                ->where('status', Machine::STATUS_ACTIVE);
+            }])
+            ->whereHas('machines', function ($query) {
+                $query->where('type', Machine::TYPE_KITCHEN_PRODUCTION)
+                    ->where('deleted', Machine::DELETED_NO)
+                    ->where('status', Machine::STATUS_ACTIVE);
+            })
+            ->where('deleted', MachineCategory::DELETED_NO)
+            ->where('status', MachineCategory::STATUS_ACTIVE)
             ->get();
 
         $data['staffs'] = ProductionStaff::where('deleted', ProductionStaff::DELETED_NO)
@@ -705,6 +743,14 @@ class PreProductionService
                                         }
                                     }
                                 }
+                            }else{
+                                PreProductionProcessMaterial::where('pre_production_id', $pre_production->id)
+                                    ->where('pre_production_process_id', $process_id)
+                                    ->delete();
+
+                                PreProductionProcessBoard::where('pre_production_id', $pre_production->id)
+                                    ->where('pre_production_process_id', $process_id)
+                                    ->delete();
                             }
 
                             //update estimated outputs

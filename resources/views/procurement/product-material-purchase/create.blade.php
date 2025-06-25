@@ -241,10 +241,10 @@
                                             <a href="javascript:void(0);" v-on:click="openSelectItemModal()" class="po-add-product-btn flex-100 justify-content-center"><span class="me-2"><i class="fa-solid fa-plus"></i></span> Add Product</a>
                                             <div class="searchable-input-wrapper flex-100" v-if="open_select_item">
                                                 <div class="custom-searcable-input-wrap">
-                                                    <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="getSearchedItems()" >
+                                                    <input type="text" class="form-control" placeholder="Search Products" v-model="item_search" v-on:input="searchFilteredItems()">
                                                 </div>
                                                 <div class="search-product-item-wrapper custom-card-scroll" >
-                                                    <div class="search-product-item" v-for="singleItem in allItems" :key="singleItem.id" @click="addItemToCart(singleItem)">
+                                                    <div class="search-product-item" v-for="singleItem in filteredItems" :key="singleItem.id" @click="addItemToCart(singleItem)">
                                                         <div class="smi-left">
                                                             <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100 justify-content-start">
                                                                 <div class="em-pro-img-box">
@@ -586,6 +586,8 @@
             data() {
                 return {
                     allItems:[],
+                    filteredItemsOriginal: [],
+                    filteredItems: [],
                     item_search: '',
                     cartItems:[],
                     system_tax_items:[],
@@ -655,7 +657,7 @@
                 openSelectItemModal() {
                     this.open_select_item = !this.open_select_item;
                     this.item_search = '';
-                    this.getSearchedItems();
+                    // this.getSearchedItems();
                 },
                 checkValidation(e) {
                     e.preventDefault();
@@ -670,8 +672,26 @@
                 getSearchedItems() {
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-product-materials') }}?q='+this.item_search)
-                        .then(response => (this.allItems = response.data.product_materials));
+                        .then(response => {
+                            this.allItems = response.data.product_materials;
+                            this.filteredItemsOriginal = this.allItems;
+                            this.filteredItems = this.allItems;
+                        });
                 },
+
+                searchFilteredItems() {
+                    const search = this.item_search?.toLowerCase().trim();
+
+                    if (!search) {
+                        this.filteredItems = [...this.filteredItemsOriginal];
+                        return;
+                    }
+                    this.filteredItems = this.filteredItemsOriginal.filter(item =>
+                        item.name.toLowerCase().includes(search)
+                    );
+                },
+
+
                 getTaxItems() {
                     axios
                         .get('{{ route('procurement.product-material-purchase.get-all-taxes') }}')
@@ -742,10 +762,30 @@
                 changeDiscountType() {
 
                 },
+
+                // changeSupplier(index) {
+                //     this.selected_supplier = this.suppliers[index];
+                //     $("#addSupplierModal").modal('hide');
+                // },
                 changeSupplier(index) {
                     this.selected_supplier = this.suppliers[index];
                     $("#addSupplierModal").modal('hide');
+                    const supplierId = this.selected_supplier.id;
+                    this.cartItems = [];
+
+                    const filtered = this.allItems.filter(item =>
+                        item.supplier_ids.includes(supplierId)
+                    );
+
+                    if (filtered.length > 0) {
+                        this.filteredItemsOriginal = filtered;
+                    } else {
+                        this.filteredItemsOriginal = [...this.allItems]; 
+                    }
+
+                    this.filteredItems = [...this.filteredItemsOriginal];
                 },
+
                 changeTax(cartItemIndex, new_tax_id) {
                     if(new_tax_id == 0) {
                         this.cartItems[cartItemIndex].tax = null;
