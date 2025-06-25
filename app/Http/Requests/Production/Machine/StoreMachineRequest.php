@@ -22,7 +22,9 @@ class StoreMachineRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => 'required',
             'name' => 'required',
+            'category_id' => 'required',
             // 'model' => 'required',
             // 'production_cost' => 'required',
         ];

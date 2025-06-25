@@ -13787,6 +13787,7 @@ a.em-profile-wrap:hover {
   display: block;
   white-space: nowrap;
   line-height: 1.6;
+  margin: 5px;
 }
 .ms-drop input[type=checkbox] {
   vertical-align: middle;

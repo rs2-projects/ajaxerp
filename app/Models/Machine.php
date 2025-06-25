@@ -11,6 +11,13 @@ class Machine extends BaseModel
     protected $table = 'machines';
     public $timestamps = false;
 
+    const TYPE_KITCHEN_PRODUCTION = 0;
+    const TYPE_BOARD_PRODUCTION = 1;
+    const TYPES = [
+        self::TYPE_KITCHEN_PRODUCTION => 'Kitchen Production',
+        self::TYPE_BOARD_PRODUCTION => 'Board Production',
+    ];
+
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [
@@ -26,6 +33,8 @@ class Machine extends BaseModel
     ];
 
     protected $fillable = [
+        'type',
+        'category_id',
         'name',
         'production_cost',
         'image',
@@ -49,5 +58,10 @@ class Machine extends BaseModel
             return asset($this->image);
         }
         return asset('assets/img/placeholder.jpg');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(MachineCategory::class, 'category_id');
     }
 }

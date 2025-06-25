@@ -3,6 +3,7 @@
 namespace App\Services\Production\Machine;
 
 use App\Models\Machine;
+use App\Models\MachineCategory;
 use App\Services\Common\ImageUploadService;
 
 class MachineService
@@ -16,6 +17,11 @@ class MachineService
 
     public function indexData(){
         $data['machine_count'] = Machine::where('deleted', Machine::DELETED_NO)->count();
+        $data['machine_categories'] = MachineCategory::where('deleted', Machine::DELETED_NO)
+            ->where('status', MachineCategory::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->get();
+        $data['machine_types'] = Machine::TYPES;
         return $data;
     }
 
@@ -51,6 +57,8 @@ class MachineService
         }
 
         $machine = new Machine();
+        $machine->type = $request->type;
+        $machine->category_id = $request->category_id;
         $machine->name = $request->name;
         $machine->image = $image_path??null;
         $machine->model = $request->model;
@@ -73,6 +81,14 @@ class MachineService
         if (!$data['item']) {
             throw new \Exception('Machine not found');
         }
+
+        $data['machine_categories'] = MachineCategory::where('deleted', Machine::DELETED_NO)
+            ->where('status', MachineCategory::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        $data['machine_types'] = Machine::TYPES;
+
         return $data;
     }
 
@@ -99,7 +115,8 @@ class MachineService
             $image_path = $imageUploadService->store($request->image, 'production/machine');
             $image_path = $image_path['path'];
         }
-
+        $machine->type = $request->type;
+        $machine->category_id = $request->category_id;
         $machine->name = $request->name;
         $machine->image = $image_path?? $machine->image;
         $machine->model = $request->model;
