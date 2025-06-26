@@ -9,6 +9,7 @@ use App\Models\Accounting\TransactionVat;
 use App\Models\Procurements\ProductMaterialPurchase;
 use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Procurements\Supplier;
+use App\Models\Procurements\SupplierProductMaterial;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialCategory;
 use Carbon\Carbon;
@@ -539,6 +540,10 @@ class ProductMaterialPurchaseService
                 } else {
                     $itemTax = $item->tax;
                 }
+
+                $supplierIds = SupplierProductMaterial::where('product_material_id', $item->id)
+                    ->pluck('supplier_id')
+                    ->toArray();
                 return [
                     'id' => $item->productMaterial->id,
                     'name' => $item->productMaterial->name,
@@ -562,6 +567,7 @@ class ProductMaterialPurchaseService
                     'has_missing' => $item->has_missing,
                     'missing_qty' => $item->missing_qty,
                     'missing_remarks' => $item->missing_remarks,
+                    'supplier_ids' => $supplierIds,
                 ];
             });
 
@@ -1294,6 +1300,10 @@ class ProductMaterialPurchaseService
                 } else {
                     $itemTax = $item->tax;
                 }
+                $supplierIds = SupplierProductMaterial::where('product_material_id', $item->id)
+                    ->pluck('supplier_id')
+                    ->toArray();
+                    
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -1306,6 +1316,7 @@ class ProductMaterialPurchaseService
                     'length' => $item->length,
                     'width' => $item->width,
                     'thickness' => $item->thickness,
+                    'supplier_ids' => $supplierIds,
                 ];
             });
         return $data;

@@ -525,6 +525,13 @@ class InvoiceService
                 ->where('is_account_type', AccCoaSubCategory::IS_ACCOUNT_TYPE_YES)
                 ->get();
 
+            if($data['invoice']->paid_amount == 0){
+                $total_amount = $data['invoice']->total_amount;
+                $data['payment_amount'] = ($total_amount / 2) + $data['invoice']->unloading_cost;
+            }else{
+                $data['payment_amount'] = $data['invoice']->due_amount;
+            }
+
             return $data;
 
         } catch (\Exception $e) {

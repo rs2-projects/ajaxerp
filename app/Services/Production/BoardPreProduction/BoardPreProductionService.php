@@ -58,6 +58,7 @@ class BoardPreProductionService
     public function createData(){
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
+            ->where('type', Machine::TYPE_BOARD_PRODUCTION)
             ->orderBy('name', 'asc')
             ->get();
 
@@ -218,6 +219,7 @@ class BoardPreProductionService
 
         $data['machines'] = Machine::where('deleted', Machine::DELETED_NO)
             ->where('status', Machine::STATUS_ACTIVE)
+            ->where('type', Machine::TYPE_BOARD_PRODUCTION)
             ->orderBy('id', 'desc')
             ->get();
 

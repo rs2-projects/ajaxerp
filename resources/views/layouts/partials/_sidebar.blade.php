@@ -308,8 +308,22 @@
                         </li>
                     @endif
                     @if(hasPermission('view-machines','manage-machines'))
-                        <li>
+                        {{-- <li>
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
+                        </li> --}}
+
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'production.machine-category.index' || $activeMenu == 'production.machine.index') ? 'active' : '' }} noti-dot"><i class="la la-fax"></i> <span>Machines</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission('view-machines','manage-machines'))
+                                    <li>
+                                        <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><span>Machines</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('production.machine-category.index')}}" class="{{ ($activeMenu == 'production.machine-category.index') ? 'active' : '' }}"> <span>Categories</span></a>
+                                    </li>
+                                @endif
+                            </ul>
                         </li>
                     @endif
                     @if(hasPermission('view-plate','manage-plate'))
@@ -339,6 +353,22 @@
                         </li>
                     @endif
                 @endif
+
+                <li class="menu-title">
+                    <span>Warehouse</span>
+                </li>
+
+                <li class="submenu">
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'report.product-material-stock-report' || $activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }} noti-dot"><i class="las la-stream"></i> <span>Stock Report</span><span class="menu-arrow"></span></a>
+                    <ul>
+                        <li>
+                            <a href="{{route('report.product-material-stock-report')}}" class="{{ ($activeMenu == 'report.product-material-stock-report') ? 'active' : '' }}"><span>Product Material</span></a>
+                        </li>
+                        <li>
+                            <a href="{{route('report.asset-product-stock-report')}}" class="{{ ($activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }}"> <span>Asset Product</span></a>
+                        </li>
+                    </ul>
+                </li>
 
                 @if(hasPermission( 'view-chart-of-accounts','manage-chart-of-accounts','view-transactions','manage-transactions','add-expenses','verify-transactions'))
                     <li class="menu-title">

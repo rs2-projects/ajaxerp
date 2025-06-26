@@ -472,8 +472,9 @@
             return methods[method][this.options.animate] || method;
         },
 
-        update: function (isInit) {
-            var selects = this.options.displayValues ? this.getSelects() : this.getSelects('text'),
+            update: function (isInit) {
+                // var selects = this.options.displayValues ? this.getSelects() : this.getSelects('text'),
+                var selects = this.options.displayValues ? this.getSelects('text') : this.getSelects('text'),
                 $span = this.$choice.find('>span'),
                 sl = selects.length;
 
