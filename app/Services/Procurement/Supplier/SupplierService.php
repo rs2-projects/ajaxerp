@@ -31,7 +31,7 @@ class SupplierService
             ->orderBy('name', 'asc')->get();
         $data['material_products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
-            ->whereDoesntHave('materialSupplier')
+            // ->whereDoesntHave('materialSupplier')
             ->orderBy('name', 'asc')->get();
         return $data;
     }
@@ -184,9 +184,9 @@ class SupplierService
 
         $data['material_products'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
             ->where('status', ProductMaterial::STATUS_ACTIVE)
-            ->whereDoesntHave('materialSupplier', function ($q) use ($id){
-                $q->where('supplier_id', '!=', $id);
-            })
+            // ->whereDoesntHave('materialSupplier', function ($q) use ($id){
+            //     $q->where('supplier_id', '!=', $id);
+            // })
             ->orderBy('name', 'asc')->get();
 
         if (!$data['item']) {

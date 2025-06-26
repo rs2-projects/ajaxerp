@@ -317,7 +317,7 @@
                                                     </div>
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
-                                                            <input type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
+                                                            <input id="unloadingCost" type="number" class="form-control text-end" v-model="unloading_cost" name="unloading_cost" required min="0">
 
                                                         </div>
                                                     </div>
@@ -329,7 +329,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end sub-total-amount pe-2"> {{getCurrencySymbol()}}
-                                                                <span class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
+                                                                <span id="subtotalAmt" class="subtotal-amount">@{{ cartSubTotalWithoutVatAmount }}</span>
                                                             </h4>
 
                                                         </div>
@@ -342,7 +342,7 @@
                                                     <div class="po-vat-tax-item grand-total-item">
                                                         <div class="purchase-order-product-body-item-inner-content position-relative">
                                                             <h4 class="text-end sub-total-amount pe-2">{{getCurrencySymbol()}}
-                                                                <span class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
+                                                                <span id="totalVatAmt" class="subtotal-amount">@{{ cartTotalVatAmount }}</span>
                                                             </h4>
 
                                                         </div>
@@ -447,7 +447,7 @@
                                                         <div class="payment-selection-item">
                                                             <div class="input-block erp-step-input-block mb-0">
                                                                 <label class="col-form-label">Amount <span class="text-danger">*</span> </label>
-                                                                <input type="number" step="any" class="form-control"  min="0.01" id="amount"  name="amount">
+                                                                <input type="number" step="any" v-model="amount" class="form-control"  min="0.01" id="amount"  name="amount">
                                                             </div>
                                                         </div>
                                                         <div class="payment-selection-item">
@@ -487,7 +487,7 @@
                                                         <div class="payment-selection-item flex-100">
                                                             <div class="input-block erp-step-input-block mb-0">
                                                                 <label class="col-form-label">Upload Receipt <span class="text-danger">*</span> </label>
-                                                                <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+                                                                <input type="file" id="receipt_input" class="form-control" name="receipt[]" placeholder="Upload Receipt">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -643,12 +643,14 @@
                     $("#amount").prop('required', true);
                     $("#account_id").prop('required', true);
                     $("#payment_method").prop('required', true);
-                    initPaymentMethodSelect2()
+                    $("#receipt_input").prop('required', true);
+                    initPaymentMethodSelect2();
                 } else {
                     $("#payment_status_details").slideUp();
                     $("#amount").prop('required', false);
                     $("#account_id").prop('required', false);
                     $("#payment_method").prop('required', false);
+                    $("#receipt_input").prop('required', false);
                     initPaymentMethodSelect2()
                 }
             });
@@ -708,7 +710,8 @@
                     discount_value: 0,
                     discount_amount: 0,
                     paying_amount: 0,
-                    unloading_cost: 0
+                    unloading_cost: 0,
+                    amount: 0,
                 }
             },
             computed: {
@@ -763,7 +766,27 @@
                     return parseFloat(total_amount.toFixed(6));
                 },
             },
+            watch: {
+                cartItems: {
+                    handler() {
+                        this.updatePaymentAmount();
+                    },
+                    deep: true,
+                },
+                discount_value: 'updatePaymentAmount',
+                discount_type: 'updatePaymentAmount',
+                unloading_cost: 'updatePaymentAmount',
+            },
             methods: {
+                updatePaymentAmount(){
+                    let subtotalAmt = parseFloat(this.cartSubTotalWithoutVatAmount);
+                    let totalVatAmt = parseFloat(this.cartTotalVatAmount);
+                    let unloadingCost = parseFloat(this.unloading_cost) || 0;
+                    let discountAmount = parseFloat(this.discount_amount) || 0;
+                    let totalAmount = (subtotalAmt + totalVatAmt) - discountAmount;
+                    totalAmount = (totalAmount / 2) + unloadingCost;
+                    this.amount = totalAmount > 0 ? totalAmount.toFixed(2) : '0';
+                },
                 openSelectItemModal(type) {
                     this.open_select_item = !this.open_select_item;
                     this.item_search = '';

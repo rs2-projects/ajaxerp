@@ -889,4 +889,16 @@ class QuotationService
             ->get();
         return $data;
      }
+
+    public function pendingQuotationData(){
+        $threeDaysAgo = now()->subDays(3)->startOfDay();
+        $data['quotations'] = Quotation::where('quotation_status', Quotation::QUOTATION_STATUS_PENDING)
+            ->whereDate('quotation_date', '<=', $threeDaysAgo)
+            ->where('deleted', Quotation::DELETED_NO)
+            ->where('status', Quotation::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return $data;
+    }
 }

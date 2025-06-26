@@ -124,6 +124,47 @@
         </li>
         <!-- /Notifications -->
 
+        {{-- pending quotations --}}
+        @php($pendingQuotations = \App\Helpers\PendingQuotation::getPendingQuotations())
+        <li class="nav-item dropdown">
+            <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
+                <i class="fa-regular fa-file-lines"></i>
+                @if(count($pendingQuotations) > 0)
+                    <span class="badge rounded-pill">{{ (count($pendingQuotations) > 5) ? '5+':count($pendingQuotations) }}</span>
+                @endif
+            </a>
+            <div class="dropdown-menu notifications">
+                <div class="topnav-dropdown-header">
+                    <span class="notification-title">Pending Quotations</span>
+                    {{-- <a href="javascript:void(0)" class="clear-noti"> Clear All </a> --}}
+                </div>
+                <div class="noti-content">
+                    <ul class="notification-list">
+                        @foreach ($pendingQuotations as $pendingQuotation)
+                            <li class="notification-message">
+                                <a href="{{ route('inventory.material-request.newer-picked-materials') }}">
+                                    <div class="chat-block d-flex">
+                                        <span class="avatar flex-shrink-0">
+                                            <img src="{{ asset('assets') }}/img/profiles/avatar-02.jpg" alt="User Image">
+                                        </span>
+                                        <div class="media-body flex-grow-1">
+                                            <p class="noti-details">
+                                                <span class="noti-title">Pending quotation <b>#{{ $pendingQuotation->quotation_no }}</b> for {{ $pendingQuotation?->customer?->business_name }}.</span> 
+                                            </p>
+                                            <p class="noti-time"><span class="notification-time">{{ Carbon\Carbon::parse($pendingQuotation->created_at)->diffForHumans() }}</span></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div class="topnav-dropdown-footer">
+                    <a href="{{ route('sales.quotation.pending-quotations') }}">View all pending quotations</a>
+                </div>
+            </div>
+        </li>
+
         <!-- Message Notifications -->
         {{-- <li class="nav-item dropdown">
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
