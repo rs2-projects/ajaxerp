@@ -145,4 +145,13 @@ class QuotationController extends BackendController
         // }
 
     }
+
+    public function pendingQuotations()
+    {
+        $this->setPageTitle("Pending Quotations");
+        // $this->setActiveMenu('sales.quotation.index');
+        $this->addBreadcrumbs('Pending Quotations');
+        $data = $this->service->pendingQuotationData();
+        return $this->view('sales.quotation.all_pending_quotations')->with($data);
+    }
 }

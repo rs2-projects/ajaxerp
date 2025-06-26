@@ -82,4 +82,7 @@ Route::prefix('quotation')->group(function(){
     Route::post('{id}/convert-to-invoice',[QuotationController::class,'convertToInvoiceStore'])->name('sales.quotation.convert-to-invoice-store')->middleware('permission:manage-invoices');
 
     Route::get('{id}/download-pdf',[QuotationController::class,'downloadPdf'])->name('sales.quotation.download-pdf')->middleware('permission:view-invoices');
+
+    // all pending quotations
+    Route::get('/pending-quotations', [QuotationController::class, 'pendingQuotations'])->name('sales.quotation.pending-quotations')->middleware('permission:view-invoices');
 });
