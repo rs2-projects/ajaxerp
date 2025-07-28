@@ -41,7 +41,7 @@
                                     @endif
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    {{ $data->production_material->sum('received_qty') }} / {{ $data->production_material->sum('quantity') }}
+                                    {{ $data->production_material->sum('received_qty') + $data->board_material->sum('received_qty') }} / {{ ($data->production_material->sum('quantity') + $data->board_material->sum('quantity')) ?? 0 }}
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
@@ -60,7 +60,7 @@
                                             <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                             <div class="dropdown-menu dropdown-menu-right">
                                                 @if(hasPermission('receive-production-materials'))
-                                                    @if($data->pendingForReceiveCount() > 0)
+                                                    @if($data->pendingForReceiveCount() + $data->pendingForReceiveBoardCount() > 0)
                                                         <a class="dropdown-item" href="{{ route('production.production.receive', $data->id) }}"><i class="la la-deviantart m-r-5"></i> Receive Product</a>
                                                     @endif
                                                 @endif

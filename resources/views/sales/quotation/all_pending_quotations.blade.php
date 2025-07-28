@@ -20,6 +20,9 @@
                                                 <th class="erp-th text-center">Ref No </th>
                                                 <th class="erp-th text-center">Date </th>
                                                 <th class="erp-th text-center">Amount </th>
+                                                @if(hasPermission('deliver-items','manage-invoices'))
+                                                    <th class="text-end erp-th">Action</th>
+                                                @endif
                                             </tr>
                                             </thead>
                                             <tbody class="erp-tbody">
@@ -54,6 +57,19 @@
                                                 <td class="erp-tbody-td text-center">
                                                     <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().formatNumber($quotation->payable_amount) }}</h4>
                                                 </td>
+                                                @if(hasPermission('deliver-items','manage-invoices'))
+                                                    <td class="text-end erp-tbody-td">
+                                                        <div class="erp-action-t">
+                                                            <div class="dropdown dropdown-action">
+                                                                <a href="#" class="action-icon dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                                <div class="dropdown-menu dropdown-menu-right">
+                                                                    <a class="dropdown-item" href="{{ route('sales.quotation.convert-to-invoice',$quotation->id) }}"><i class="fa-solid fa-plus m-r-5"></i> Create Invoice</a>
+                                                                    <a class="dropdown-item" href="{{ route('sales.quotation.download-pdf',$quotation->id) }}" target="_blank"><i class="fa-solid fa-file-pdf m-r-5"></i> PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                @endif
                                             </tr>
                                             @empty
                                                 <tr class="erp-tbody-tr">
