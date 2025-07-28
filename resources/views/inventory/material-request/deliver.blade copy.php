@@ -61,8 +61,7 @@
 													
 													<td class="erp-tbody-td text-start" style="width: 20%;word-break: break-word; white-space: normal;">
 														<input type="hidden" name="type[]" :value="material.type">
-														{{-- pre production material id or preproduction board id --}}
-														<input type="hidden" name="pre_production_material_id[]" :value="material.material.id"> 
+														<input type="hidden" name="pre_production_material_id[]" :value="material.material.id">
 														<input type="hidden" name="product_material_id[]" :value="material.material.product.id">
 														<input type= "hidden" name="total_quantity[]" :value="material.material.quantity">
 														<h4 class="text-start d-table-title">@{{material.material.category.name}}</h4>
@@ -139,12 +138,12 @@
 																	v-for="(deliver_item, deliver_item_index) in material.deliver_items"
 																	:key="deliver_item_index"
 																	>
-																	{{-- <input type="hidden" :name="'production_id['+index+'][]'" :value="deliver_item.id"> --}}
+																	<input type="hidden" :name="'production_id['+index+'][]'" :value="deliver_item.id">
 																	{{-- <input type="hidden" :name="'production_details_id['+index+'][]'" :value="deliver_item.id"> --}}
 																	<input type="hidden" :name="'selected_qty['+index+'][]'" :value="deliver_item.selected_qty">
 																	<input type="hidden" :name="'type['+index+']'" :value="material.type">
 																	<p>
-																		@{{ deliver_item.code }}
+																		@{{ deliver_item.pre_production_batch_no }}
 																	</p>
 																	<p>
 																		@{{ deliver_item.selected_qty }}
@@ -205,26 +204,6 @@
 						<table class="table table-bordered table-striped table-hover" v-else>
 							<thead>
 								<tr>
-									<th>Item</th>
-									<th>Code</th>
-									<th>Available Qty</th>
-									<th>Qty</th>
-								</tr>
-							</thead>
-							<tbody v-if="selected_material_index != null">
-								<tr>
-									<td>@{{ materials[selected_material_index].material.product.name }}</td>
-									<td>@{{ materials[selected_material_index].material.product.code }}</td>
-									<td class="text-center">@{{ materials[selected_material_index].material.product.available_qty }}</td>
-									<td>
-										<input type="text" class="form-control" placeholder="Enter Qty" v-model="materials[selected_material_index].selected_qty" :max="materials[selected_material_index].material.base_quantity">
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						{{-- <table class="table table-bordered table-striped table-hover" v-else>
-							<thead>
-								<tr>
 									<th>Production ID</th>
 									<th>Batch</th>
 									<th>Available Qty</th>
@@ -241,7 +220,7 @@
 									</td>
 								</tr>
 							</tbody>
-						</table> --}}
+						</table>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -399,7 +378,6 @@
 
 			selectDeliverItem() {
 				let material = this.materials[this.selected_material_index];
-					console.log('material', material);
 				let total_selected_qty = 0;
 				let deliver_items = [];
 				if(material.type == 'other'){
@@ -413,30 +391,15 @@
 						}
 					});
 				} else {
-					if(material.selected_qty == undefined){
-						material.selected_qty = 0;
-					}
-					total_selected_qty += parseInt(material.selected_qty);
-					if(material.selected_qty > 0){
-						// deliver_items.push(material);
-						deliver_items.push(
-							{
-								selected_qty: material.selected_qty,
-								type: material.type,
-								code: material.material.product.code,
-							}
-						);
-					}
-
-					// material.material.product.available_productions.forEach(production => {
-					// 	if(production.selected_qty == undefined){
-					// 		production.selected_qty = 0;
-					// 	}
-					// 	total_selected_qty += parseInt(production.selected_qty);
-					// 	if(production.selected_qty > 0){
-					// 		deliver_items.push(production);
-					// 	}
-					// });
+					material.material.product.available_productions.forEach(production => {
+						if(production.selected_qty == undefined){
+							production.selected_qty = 0;
+						}
+						total_selected_qty += parseInt(production.selected_qty);
+						if(production.selected_qty > 0){
+							deliver_items.push(production);
+						}
+					});
 				}
 				
 				// console.log('total_selected_qty',total_selected_qty);

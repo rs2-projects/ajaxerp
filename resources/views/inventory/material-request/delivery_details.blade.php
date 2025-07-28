@@ -131,9 +131,9 @@
                                                             <tr class="erp-tr">
                                                                 <th class="erp-th">Category </th>
                                                                 <th class="erp-th text-center">Item Name </th>
-                                                                <th class="erp-th text-center">Qty </th>
+                                                                <th class="erp-th text-center">Requested Qty </th>
                                                                 <th class="erp-th text-center">Delivered Qty </th>
-                                                                <th class="text-center erp-th">Item Delivered</th>
+                                                                {{-- <th class="text-center erp-th">Item Delivered</th> --}}
                                                                 <th class="text-center erp-th">Status</th>
                                                             </tr>
                                                         </thead>
@@ -152,7 +152,7 @@
                                                                     <td class="erp-tbody-td text-center">
                                                                         <h4 class="text-center d-table-title">{{$details->quantity}}</h4>
                                                                     </td>
-                                                                    <td class="erp-tbody-td text-center">
+                                                                    {{-- <td class="erp-tbody-td text-center">
                                                                         <div class="pd-recived-product-wrapper">
                                                                             <div class="pre-counter">
                                                                                 <span>{{$details->quantity}}</span>
@@ -167,7 +167,7 @@
                                                                                 @endforeach
                                                                             </div>
                                                                         </div>
-                                                                    </td>
+                                                                    </td> --}}
                                                                     <td class="erp-tbody-td text-center">
                                                                         <div class="pd-st-box {{strtolower($details::RECEIVEDS[$details->received_status])}}"><p>{{ $details::RECEIVEDS[$details->received_status] }}</p></div>
                                                                     </td>

@@ -2,7 +2,9 @@
 
 namespace App\Services\Report\StockReport;
 
+use App\Models\Inventory\ProductMaterialStock;
 use App\Models\Products\ProductMaterial;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductMaterialStockReportService
 {
@@ -15,31 +17,126 @@ class ProductMaterialStockReportService
 
     public function indexFilteredData($request)
     {
+        $keyword = $request->keyword_filtered;
+        $date = $request->date;
 
-        $keyword_filtered = $request->keyword_filtered;
-        $stock_status = $request->stock_filter ?? '';
+        $query = ProductMaterialStock::with('productMaterial')
+            ->where('deleted', ProductMaterialStock::DELETED_NO)
+            ->where('status', ProductMaterialStock::STATUS_ACTIVE)
+            ->when($date, fn($q) => $q->whereDate('date', '<=', $date))
+            ->when($keyword, function ($q) use ($keyword) {
+                $q->whereHas('productMaterial', function ($subQ) use ($keyword) {
+                    $subQ->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('code', 'like', "%{$keyword}%");
+                });
+            });
 
-        $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
-            ->where(function ($q) use ($keyword_filtered){
-                if ($keyword_filtered !=''){
-                    $q->where('name', 'like', '%'.$keyword_filtered.'%');
-                    $q->orWhere('code', 'like', '%'.$keyword_filtered.'%');
-                }
+        $allStocks = $query->get();
+
+        $groupedAndTransformed = $allStocks
+            ->groupBy('product_material_id')
+            ->map(function ($stocks) {
+                $firstStock = $stocks->first();
+                $product = $firstStock->productMaterial;
+
+                $totalQty = $stocks->reduce(function ($carry, $item) {
+                    return $carry + ($item->type === 0 ? $item->quantity : -$item->quantity);
+                }, 0);
+
+                return (object) [
+                    'id'    => $product->id ?? '-',
+                    'name'  => $product->name ?? '-',
+                    'code'  => $product->code ?? '-',
+                    'available_qty' => $totalQty,
+                    'wholesale_price' => $product->wholesale_price ?? 0,
+                    'retail_price' => $product->retail_price ?? 0,
+                ];
             })
-            ->where(function ($q) use ($stock_status){
-                if(($stock_status != '') && ($stock_status != 'all')) {
-                    if($stock_status == 'stock_warning'){
-                        $q->whereRaw('low_stock_warning >= available_qty')
-                            ->whereRaw('low_stock_at_least < available_qty');
-                    }else if($stock_status == 'stock_alert'){
-                        $q->whereRaw('low_stock_at_least >= available_qty');
-                    }
-                }
-            })
-            ->orderBy('name', 'asc')
-            ->paginate($this->paginate_limit);
+            ->sortBy('name')
+            ->values();
 
-        return $data;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = $this->paginate_limit;
+        $currentItems = $groupedAndTransformed->slice(($page - 1) * $perPage, $perPage)->values();
+
+        $paginated = new LengthAwarePaginator(
+            $currentItems,
+            $groupedAndTransformed->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return [
+            'product_materials' => $paginated
+        ];
     }
+
+    public function indexFilteredDataOld($request)
+    {
+        $keyword = $request->keyword_filtered;
+        $date = $request->date;
+
+        $query = ProductMaterialStock::with('productMaterial')
+            ->where('deleted', ProductMaterialStock::DELETED_NO)
+            ->where('status', ProductMaterialStock::STATUS_ACTIVE)
+            ->when($date, fn($q) => $q->whereDate('date', '<=', $date))
+            ->when($keyword, function ($q) use ($keyword) {
+                $q->whereHas('productMaterial', function ($subQ) use ($keyword) {
+                    $subQ->where('name', 'like', "%{$keyword}%")
+                        ->orWhere('code', 'like', "%{$keyword}%");
+                });
+            });
+
+        $paginated = $query->paginate($this->paginate_limit);
+
+        $groupedAndTransformed = $paginated->getCollection()
+            ->groupBy('product_material_id')
+            ->map(function ($stocks) {
+                $firstStock = $stocks->first();
+                $product = $firstStock->productMaterial;
+
+                $totalQty = $stocks->reduce(function ($carry, $item) {
+                    return $carry + ($item->type === 0 ? $item->quantity : -$item->quantity);
+                }, 0);
+
+                return (object) [
+                    'id'    => $product->id ?? '-',
+                    'name'  => $product->name ?? '-',
+                    'code'  => $product->code ?? '-',
+                    'available_qty' => $totalQty,
+                    'wholesale_price' => $product->wholesale_price ?? 0,
+                    'retail_price' => $product->retail_price ?? 0,
+                ];
+            })
+            ->sortBy('name')
+            ->values();
+
+        $paginated->setCollection($groupedAndTransformed);
+
+        return [
+            'product_materials' => $paginated
+        ];
+    }
+
+
+    // public function indexFilteredData($request)
+    // {
+
+    //     $keyword_filtered = $request->keyword_filtered;
+    //     $stock_status = $request->stock_filter ?? '';
+
+    //     $data['product_materials'] = ProductMaterial::where('deleted', ProductMaterial::DELETED_NO)
+    //         ->where(function ($q) use ($keyword_filtered){
+    //             if ($keyword_filtered !=''){
+    //                 $q->where('name', 'like', '%'.$keyword_filtered.'%');
+    //                 $q->orWhere('code', 'like', '%'.$keyword_filtered.'%');
+    //             }
+    //         })
+    //         ->orderBy('name', 'asc')
+    //         ->paginate($this->paginate_limit);
+
+    //     return $data;
+    // }
 
 }
