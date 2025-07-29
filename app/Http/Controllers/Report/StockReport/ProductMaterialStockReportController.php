@@ -39,12 +39,12 @@ class ProductMaterialStockReportController extends BackendController
     }
 
     public function exportPdf(Request $request){
-        // try{
+        try{
             $data = $this->service->exportPdf($request);
             $pdf = PDF::loadView('report.stock.product-material.export-pdf', $data);
             return $pdf->inline('product_stock_report.pdf');
-        // }catch (\Exception $e){
-        //     return redirect()->back()->with('error', $e->getMessage());
-        // }
+        }catch (\Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }
