@@ -1,8 +1,8 @@
-name: Deploy Main Branch
+name: Deploy ERP2 Branch
 
 on:
     push:
-        branches: [ "main" ]
+        branches: [ "erp2" ]
 
 jobs:
 
@@ -22,7 +22,7 @@ jobs:
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
-                        cd /var/www/erp.ajaxtradingcorp.com/
+                        cd /var/www/erp2.ajaxtradingcorp.com/
                         git stash
                         git pull
 
@@ -33,7 +33,7 @@ jobs:
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
-                        cd /var/www/erp.ajaxtradingcorp.com/
+                        cd /var/www/erp2.ajaxtradingcorp.com/
                         php8.2 /usr/local/bin/composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
                         # composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -46,6 +46,6 @@ jobs:
                     key: ${{ secrets.SSH_PRIVATE_KEY }}
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
-                        cd /var/www/erp.ajaxtradingcorp.com/
+                        cd /var/www/erp2.ajaxtradingcorp.com/
                         php8.2 artisan migrate --force
                         # php artisan migrate --force
