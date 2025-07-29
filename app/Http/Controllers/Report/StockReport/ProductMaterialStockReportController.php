@@ -23,7 +23,7 @@ class ProductMaterialStockReportController extends BackendController
 
     public function index()
     {
-        $this->setPageTitle("Product Material Stock Report");
+        $this->setPageTitle("Product Material Stock");
         $this->setActiveMenu('report.product-material-stock-report');
         return  $this->view('report.stock.product-material.index');
     }
