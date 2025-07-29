@@ -68,11 +68,11 @@
             @forelse($product_materials as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td class="text-left">{{ $item->name }}</td>
-                    <td>{{ $item->code }}</td>
-                    <td>{{ $item->available_qty }}</td>
-                    <td>{{ getCurrencySymbol() }} {{ showAmount($item->wholesale_price) }}</td>
-                    <td>{{ getCurrencySymbol() }} {{ showAmount($item->retail_price) }}</td>
+                    <td class="text-left" style="text-align: left;">{{ $item->name }}</td>
+                    <td style="width: 20%">{{ $item->code }}</td>
+                    <td style="width: 10%">{{ $item->available_qty }}</td>
+                    <td style="width: 15%">{{ getCurrencySymbol() }} {{ showAmount($item->wholesale_price) }}</td>
+                    <td style="width: 15%">{{ getCurrencySymbol() }} {{ showAmount($item->retail_price) }}</td>
                 </tr>
             @empty
                 <tr>
