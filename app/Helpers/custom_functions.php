@@ -166,7 +166,17 @@ if (!function_exists('strToClassName')) {
     }
 }
 
-
+if (!function_exists('showDateFormat')) {
+    function showDateFormat($date, $format='M d, Y', $default='') {
+        if ($date != '') {
+            $user_timezone = config('app.user_timezone');
+            $date = Carbon::parse($date)->timezone($user_timezone)->format($format);
+        } else {
+            $date = $default;
+        }
+        return $date;
+    }
+}
 
 
 
