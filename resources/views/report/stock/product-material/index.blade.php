@@ -6,7 +6,7 @@
             <div class="erp-main-filter-wrapper bg-card attd-table">
                 <div class="my-attendance-box-item flex-100 ">
                     <div class="my-attendance-report-wrapper">
-                        <div class="erp-header-main-wrap d-flex justify-content-start align-items-center">
+                        <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-filter-box d-flex align-items-center justify-content-start flex-70">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-100">
                                     <div class="erp-filter-item">
@@ -29,6 +29,11 @@
                                             <button class=" erp-search-btn" type="button" onclick="getData()">Search</button>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="erp-filter-item">
+                                <div class="erp-search-btn-wrap">
+                                    <button onclick="exportPDF()" class="erp-search-btn"><i class="fa fa-file"></i> Export PDF </button>
                                 </div>
                             </div>
                         </div>
@@ -107,6 +112,12 @@
 
         function getPaginatedData(button) {
             getPaginatedListData($(button).attr('data-href'), "#ajax-data-load", filterData);
+        }
+
+        function exportPDF() {
+            let url = "{{ route('report.product-material-stock-report.export-pdf') }}";
+            url = url + "?keyword_filtered=" + filterData.keyword_filtered + "&date=" + filterData.date;
+            window.open(url, '_blank');
         }
 
         function initializeDatepicker() {

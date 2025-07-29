@@ -15,7 +15,78 @@ class ProductMaterialStockReportService
         $this->paginate_limit = config('commonData.paginate_limit');
     }
 
+    // public function indexFilteredData($request)
+    // {
+    //     $keyword = $request->keyword_filtered;
+    //     $date = $request->date;
+
+    //     $query = ProductMaterialStock::with('productMaterial')
+    //         ->where('deleted', ProductMaterialStock::DELETED_NO)
+    //         ->where('status', ProductMaterialStock::STATUS_ACTIVE)
+    //         ->when($date, fn($q) => $q->whereDate('date', '<=', $date))
+    //         ->when($keyword, function ($q) use ($keyword) {
+    //             $q->whereHas('productMaterial', function ($subQ) use ($keyword) {
+    //                 $subQ->where('name', 'like', "%{$keyword}%")
+    //                     ->orWhere('code', 'like', "%{$keyword}%");
+    //             });
+    //         });
+
+    //     $allStocks = $query->get();
+
+    //     $groupedAndTransformed = $allStocks
+    //         ->groupBy('product_material_id')
+    //         ->map(function ($stocks) {
+    //             $firstStock = $stocks->first();
+    //             $product = $firstStock->productMaterial;
+
+    //             $totalQty = $stocks->reduce(function ($carry, $item) {
+    //                 return $carry + ($item->type === 0 ? $item->quantity : -$item->quantity);
+    //             }, 0);
+
+    //             return (object) [
+    //                 'id'    => $product->id ?? '-',
+    //                 'name'  => $product->name ?? '-',
+    //                 'code'  => $product->code ?? '-',
+    //                 'available_qty' => $totalQty,
+    //                 'wholesale_price' => $product->wholesale_price ?? 0,
+    //                 'retail_price' => $product->retail_price ?? 0,
+    //             ];
+    //         })
+    //         ->sortBy('name')
+    //         ->values();
+
+    //     $page = LengthAwarePaginator::resolveCurrentPage();
+    //     $perPage = $this->paginate_limit;
+    //     $currentItems = $groupedAndTransformed->slice(($page - 1) * $perPage, $perPage)->values();
+
+    //     $paginated = new LengthAwarePaginator(
+    //         $currentItems,
+    //         $groupedAndTransformed->count(),
+    //         $perPage,
+    //         $page,
+    //         ['path' => request()->url(), 'query' => request()->query()]
+    //     );
+
+    //     return [
+    //         'product_materials' => $paginated
+    //     ];
+    // }
+
     public function indexFilteredData($request)
+    {
+        $data = $this->getFilteredProductMaterialStock($request);
+        return ['product_materials' => $data['paginated']];
+    }
+
+    public function exportPdf($request)
+    {
+        return [
+            'product_materials' => $this->getFilteredProductMaterialStock($request)['all'],
+            'date' => $request->date ? \Carbon\Carbon::parse($request->date)->format('d M, Y') : \Carbon\Carbon::now()->format('d M, Y')
+        ];
+    }
+
+    private function getFilteredProductMaterialStock($request)
     {
         $keyword = $request->keyword_filtered;
         $date = $request->date;
@@ -44,12 +115,12 @@ class ProductMaterialStockReportService
                 }, 0);
 
                 return (object) [
-                    'id'    => $product->id ?? '-',
-                    'name'  => $product->name ?? '-',
-                    'code'  => $product->code ?? '-',
-                    'available_qty' => $totalQty,
+                    'id'              => $product->id ?? '-',
+                    'name'            => $product->name ?? '-',
+                    'code'            => $product->code ?? '-',
+                    'available_qty'   => $totalQty,
                     'wholesale_price' => $product->wholesale_price ?? 0,
-                    'retail_price' => $product->retail_price ?? 0,
+                    'retail_price'    => $product->retail_price ?? 0,
                 ];
             })
             ->sortBy('name')
@@ -68,9 +139,11 @@ class ProductMaterialStockReportService
         );
 
         return [
-            'product_materials' => $paginated
+            'paginated' => $paginated,
+            'all'       => $groupedAndTransformed
         ];
     }
+
 
     public function indexFilteredDataOld($request)
     {
