@@ -9,6 +9,7 @@ use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Inventory\BoardsController;
+use App\Http\Controllers\Inventory\DispatchInvoiceController;
 use App\Http\Controllers\Inventory\ProductMaterialCartController;
 use App\Http\Controllers\Inventory\ProductMaterialSetController;
 use App\Http\Controllers\Inventory\ReuseItemController;
@@ -167,6 +168,14 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/', [ReuseItemController::class, 'index'])->name('inventory.reuse-items.index');
         Route::post('/filtered', [ReuseItemController::class, 'indexFiltered'])->name('inventory.reuse-items.filtered');
         Route::get('/{id}/details', [ReuseItemController::class, 'details'])->name('inventory.reuse-items.details');
+    });
+
+    // dispatch invoice items
+    Route::group(['prefix' => 'dispatch-invoice-items'], function () {
+        Route::get('/',[DispatchInvoiceController::class,'index'])->name('inventory.dispatch-invoice-items.index')->middleware('permission:deliver-items');
+        Route::post('/filtered',[DispatchInvoiceController::class,'indexFilteredData'])->name('inventory.dispatch-invoice-items.filtered')->middleware('permission:deliver-items');
+        Route::get('/{id}/deliver', [DispatchInvoiceController::class, 'deliver'])->name('inventory.dispatch-invoice-items.deliver')->middleware('permission:deliver-items');
+        Route::post('/{id}/deliver', [DispatchInvoiceController::class, 'deliverStore'])->name('inventory.dispatch-invoice-items.deliver.store')->middleware('permission:deliver-items');
     });
 });
 // inventory route end
