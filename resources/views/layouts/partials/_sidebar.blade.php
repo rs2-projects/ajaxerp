@@ -202,6 +202,10 @@
                                 @endif
 
                                 <li>
+                                    <a href="{{route('report.product-material-stock-report')}}" class="{{ ($activeMenu == 'report.product-material-stock-report') ? 'active' : '' }}"><span>Material Stock Report</span></a>
+                                </li>
+
+                                <li>
                                     <a href="{{ route('inventory.product-material-set.index') }}" class="{{ ($activeMenu == 'inventory.product-material-set.index') ? 'active' : '' }}"> <span>Material Sets</span></a>
                                 </li>
 
@@ -222,6 +226,9 @@
                                         <a href="{{ route('inventory.asset-product.index') }}" class="{{ ($activeMenu == 'inventory.asset-product.index') ? 'active' : '' }}"> <span>Assets List</span></a>
                                     </li>
                                 @endif
+                                <li>
+                                    <a href="{{route('report.asset-product-stock-report')}}" class="{{ ($activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }}"> <span>Asset Product</span></a>
+                                </li>
                                 @if(hasPermission( 'view-asset-product-category','manage-asset-product-category'))
                                     <li>
                                         <a href="{{ route('inventory.asset-product-category.index') }}" class="{{ ($activeMenu == 'inventory.asset-product-category.index') ? 'active' : '' }}"> <span>Category</span></a>
@@ -354,7 +361,7 @@
                     @endif
                 @endif
 
-                <li class="menu-title">
+                {{-- <li class="menu-title">
                     <span>Warehouse</span>
                 </li>
 
@@ -368,7 +375,7 @@
                             <a href="{{route('report.asset-product-stock-report')}}" class="{{ ($activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }}"> <span>Asset Product</span></a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
                 @if(hasPermission( 'view-chart-of-accounts','manage-chart-of-accounts','view-transactions','manage-transactions','add-expenses','verify-transactions'))
                     <li class="menu-title">

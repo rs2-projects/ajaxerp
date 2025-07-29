@@ -320,9 +320,6 @@ class ProductionService
 
             $delivery_id = $request->pre_production_material_delivery_id;
             $type = $request->type;
-            $item_model = ($type === 'board') ? PreProductionBoardDeliveryDetailsItem::class : PreProductionMaterialDeliveryDetailsItems::class;
-            $material_model = ($type === 'board') ? PreProductionBoard::class : PreProductionMaterial::class;
-            $details_model = ($type === 'board') ? PreProductionBoardDeliveryDetails::class : PreProductionMaterialDeliveryDetails::class;
             $delivery_model = ($type === 'board') ? PreProductionBoardDelivery::class : PreProductionMaterialDelivery::class;
 
             $delivery = $delivery_model::where('deleted', $delivery_model::DELETED_NO)
@@ -337,6 +334,11 @@ class ProductionService
 
             if (isset($request->pre_production_material_delivery_details_id) && is_array($request->pre_production_material_delivery_details_id) && count($request->pre_production_material_delivery_details_id) > 0) {
                 foreach($request->pre_production_material_delivery_details_id as $detailsKey => $detailsId){
+                    $item_model = ($type === 'board') ? PreProductionBoardDeliveryDetailsItem::class : PreProductionMaterialDeliveryDetailsItems::class;
+                    $material_model = ($type === 'board') ? PreProductionBoard::class : PreProductionMaterial::class;
+                    $details_model = ($type === 'board') ? PreProductionBoardDeliveryDetails::class : PreProductionMaterialDeliveryDetails::class;
+                    
+                    
                     if ($detailsId == '') {
                         continue;
                     }

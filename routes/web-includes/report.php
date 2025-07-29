@@ -8,8 +8,12 @@ Route::group(['prefix' => 'report'], function () {
     
     // product material stock report
     Route::group(['prefix' => 'product-material-stock-report'], function () {
+        // Route::get('/', [ProductMaterialStockReportController::class, 'index'])->name('report.product-material-stock-report');
+        // Route::post('/filtered', [ProductMaterialStockReportController::class, 'indexFiltered'])->name('report.product-material-stock-report.filtered');
+
         Route::get('/', [ProductMaterialStockReportController::class, 'index'])->name('report.product-material-stock-report');
         Route::post('/filtered', [ProductMaterialStockReportController::class, 'indexFiltered'])->name('report.product-material-stock-report.filtered');
+        Route::get('/export-pdf', [ProductMaterialStockReportController::class, 'exportPdf'])->name('report.product-material-stock-report.export-pdf');
     });
 
     // asset stock report

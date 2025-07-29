@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Controllers\Controller;
 use App\Services\Report\StockReport\ProductMaterialStockReportService;
 use Illuminate\Http\Request;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class ProductMaterialStockReportController extends BackendController
 {
@@ -35,5 +36,15 @@ class ProductMaterialStockReportController extends BackendController
             ->render();
 
         return $this->returnAjaxSuccess(['view' => $view], 'Data Fetch Successfully');
+    }
+
+    public function exportPdf(Request $request){
+        try{
+            $data = $this->service->exportPdf($request);
+            $pdf = PDF::loadView('report.stock.product-material.export-pdf', $data);
+            return $pdf->inline('product_stock_report.pdf');
+        }catch (\Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

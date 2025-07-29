@@ -190,6 +190,14 @@ class PreProduction extends BaseModel
             ->count();
     }
 
+    public function pendingForReceiveBoardCount(){
+        return $this->hasMany(PreProductionBoardDelivery::class, 'pre_production_id', 'id')
+            ->where('deleted', PreProductionBoardDelivery::DELETED_NO)
+            ->where('status', PreProductionBoardDelivery::STATUS_ACTIVE)
+            ->where('received_status', '!=', PreProductionBoardDelivery::RECEIVED_STATUS_DELIVERED)
+            ->count();
+    }
+
     public function productionMachines() {
         return $this->hasMany(PreProductionProcessMachine::class, 'pre_production_id', 'id');
     }
