@@ -47,6 +47,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <button class="btn erp-add-btn" type="button" data-bs-toggle="modal" data-bs-target="#printQrCodeModal">
+                                    <i class="fa fa-print"></i> Print QR Code
+                                </button>
+                            </div>
                         </div>
 
                         <div class="big-table pt-4">
@@ -66,6 +71,7 @@
     @if(hasPermission('manage-finished-goods'))
         @include('inventory.finished-good._add_finished_good')
         @include('inventory.finished-good._edit_finished_good')
+        @include('inventory.finished-good._print_qr_code_modal')
     @endif
     {{--@include('inventory.finished-good._purchase_history_modal')--}}
 @endsection
@@ -242,6 +248,19 @@
             });
         }
 
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('printQrCodeForm');
+            form.addEventListener('submit', function() {
+                var modalEl = document.getElementById('printQrCodeModal');
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                    modal.hide();
+                }
+            });
+        });
     </script>
 @endsection
 

@@ -146,6 +146,15 @@
     border-radius: 100px;
     line-height: 1;
 }
+.processing-status {
+    display: inline-block;
+    /* background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important; */
+    background: linear-gradient(to right, rgb(193 98 233) 0, #b552e5 100%) !important;
+    color: #fff !important;
+    padding: 5px 20px;
+    border-radius: 100px;
+    line-height: 1;
+}
 .pending-status{
     display: inline-block;
     background: linear-gradient(to right, rgb(247, 183, 49) 0, #fbc434 100%) !important;

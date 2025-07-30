@@ -5,9 +5,11 @@
     <div class="row" id="VueApp">
         <div class="erp-employee-list-wrapper">
             <div class="new-production-wrapper bg-card attd-table">
-                <form action="{{route('sales.invoice.deliver.store', $invoice->id)}}" id="deliverStoreForm"
+                <form action="{{route('inventory.dispatch-invoice-items.deliver.store', $invoice->id)}}" id="deliverStoreForm"
                       method="post" @submit="checkValidation">
                     @csrf
+
+                    <input type="hidden" name="invoice_id" id="invoice_id" value="{{$invoice->id}}">
                     <div class="product-general-info-box d-flex flex-wrap pd-box">
                         <div class="pgib-item flex-32 pd-item">
                             <div class="input-block erp-step-input-block mb-0">
@@ -45,101 +47,119 @@
                             <div class="big-table">
                                 <div class="de-table-wrapper">
                                     <div class="table-responsive">
-                                        <table class="table mb-0 erp-table">
-                                            <thead class="erp-thead">
-                                            <tr class="erp-tr">
-                                                <th class="erp-th text-center">Item Name</th>
-                                                <th class="erp-th text-center">Qty</th>
-                                                <th class="erp-th text-center">Delivered Qty</th>
-                                                <th class="text-center erp-th">QR Code</th>
-                                                <th class="text-center erp-th">Item Delivered</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody class="erp-tbody">
-                                            <tr class="erp-tbody-tr" v-for="(invoice, index) in invoices">
-                                                <input type="hidden" name="invoice_details_id[]" :value="invoice.id">
-                                                <input type="hidden" name="finished_good_id[]" :value="invoice.finished_good_id">
-                                                <input type= "hidden" name="total_quantity[]" :value="invoice.quantity">
-                                                <td class="erp-tbody-td text-center">
-                                                    <h4 class="text-center d-table-title">
-                                                        @{{invoice.finished_good.name}}</h4>
-                                                </td>
-                                                <td class="erp-tbody-td text-center">
-                                                    <h4 class="text-center d-table-title">@{{invoice.quantity}}</h4>
-                                                </td>
-                                                <td class="erp-tbody-td text-center">
-                                                    <h4 class="text-center d-table-title">@{{invoice.dispatched_qty}}</h4>
-                                                </td>
-                                                <td class="erp-tbody-td text-center">
-                                                    <div v-if="invoice.quantity === invoice.dispatched_qty">
-                                                        <h4 class="text-center d-table-title approved-status">Delivered</h4>
-                                                    </div>
-                                                    <div class="pd-input-box" v-else>
-                                                        <input
-                                                            class="form-control text-center bar-code-input"
-                                                            type="text"
-                                                            placeholder="Scan QR / Bar Code"
-                                                            @keydown.enter.prevent="handleBarcodeScan($event, index, invoice.finished_good.id)"
-                                                        />
-                                                    </div>
-                                                </td>
-                                                <td class="erp-tbody-td text-center">
-                                                    <div class="pd-recived-product-wrapper">
-                                                        <input type="hidden" :name="'barcode_count['+index+']'"
-                                                               :value="invoice.barcodeCounts"/>
-                                                        <div class="pre-counter">@{{ invoice.barcodeCounts }}</div>
-                                                        <div class="pd-recived-product-scrol-box">
-                                                            <div
-                                                                class="pd-recived-product-item d-flex align-items-center gap-2"
-                                                                v-for="(barCode, barCodeIndex) in invoice.scannedBarcodes"
-                                                                :key="barCodeIndex"
-                                                            >
-                                                                <div class="pd-recived-product-c-item">
-                                                                    <input type="hidden" :name="'barcode['+index+'][]'"
-                                                                           :value="barCode.pre_production_no"/>
-                                                                    <input type="hidden"
-                                                                           :name="'pre_production_id['+index+'][]'"
-                                                                           :value="barCode.id"/>
-                                                                    <p class="mb-0">@{{ barCode.pre_production_no }}</p>
-                                                                </div>
-                                                                <div class="pd-recived-product-c-item">
-                                                                    <a href="#"
-                                                                       @click.prevent="removeBarcode(index, barCodeIndex)"><i
-                                                                            class="fa-solid fa-xmark"></i></a>
-                                                                </div>
-                                                            </div>
+                                        <div v-if="regular_items.length > 0">
+                                            <table class="table mb-0 erp-table">
+                                                <thead class="erp-thead">
+                                                <tr class="erp-tr">
+                                                    <th class="erp-th text-center">Item</th>
+                                                    <th class="erp-th text-center">Available Qty</th>
+                                                    <th class="erp-th text-center">Deliverable Qty</th>
+                                                    <th class="text-center erp-th">QR Code</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="erp-tbody">
+                                                <tr class="erp-tbody-tr" v-for="(item, index) in regular_items" :key="item.id">
+                                                    <input type="hidden" name="invoice_details_id[]" :value="item.id">
+                                                    <input type="hidden" name="item_id[]" :value="item.item_id">
+                                                    <input type="hidden" name="item_type[]" :value="item.item_type">
+                                                    <td class="erp-tbody-td text-center" style="width: 40%;">
+                                                        <h4 class="text-center d-table-title">@{{ item.item_name }}</h4>
+                                                    </td>
+                                                    <td class="erp-tbody-td text-center">
+                                                        <h4 class="text-center d-table-title">@{{ item.available_qty }}</h4>
+                                                    </td>
+                                                    <td class="erp-tbody-td text-center">
+                                                        <h4 class="text-center d-table-title">@{{ item.dispatched_qty }} / @{{ item.quantity }}</h4>
+                                                    </td>
+                                                    <td class="erp-tbody-td text-center">
+                                                        <div v-if="item._delivered">
+                                                            <input type="hidden" name="delivery_qty[]" value="0">
+                                                            <h4 class="text-center d-table-title approved-status">Delivered</h4>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                                        <div class="pd-input-box" v-else>
+                                                            <input v-if="!item._showInput" type="hidden" name="delivery_qty[]" value="0">
+                                                            <button v-if="!item._showInput" type="button" class="btn btn-sm btn-primary" @click="openScanModal(item)">Scan</button>
+                                                            <input v-else class="form-control text-center" type="number" :value="item.remaining_qty" min="0" :max="item.remaining_qty" name="delivery_qty[]">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div v-if="set_items.length > 0" class="mt-4">
+                                            <h5 class="mt-4 mb-2"><strong>Set Items</strong></h5>
+                                            <table class="table mb-0 erp-table">
+                                                <thead class="erp-thead">
+                                                <tr class="erp-tr">
+                                                    <th class="erp-th text-center">Set Name</th>
+                                                    <th class="erp-th text-center">Item</th>
+                                                    <th class="erp-th text-center">Available Qty</th>
+                                                    <th class="erp-th text-center">Deliverable Qty</th>
+                                                    <th class="erp-th text-center">QR Code</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="erp-tbody">
+                                                <template v-for="(set, index) in set_items" :key="set.id">
+                                                    <tr v-for="(child, cIndex) in set.set_items" :key="child.id">
+                                                        <td class="erp-tbody-td text-center" v-if="cIndex === 0" :rowspan="set.set_items.length">
+                                                            <h4 class="d-table-title">@{{ set.item_name }}</h4>
+                                                            <input type="hidden" name="invoice_details_id[]" :value="set.id">
+                                                            <input type="hidden" name="item_id[]" :value="set.item_id">
+                                                            <input type="hidden" name="item_type[]" :value="set.item_type">
+                                                        </td>
+                                                        <td class="erp-tbody-td text-center">@{{ child.name }}</td>
+                                                        <td class="erp-tbody-td text-center">@{{ child.available_qty }}</td>
+                                                        <td class="erp-tbody-td text-center" v-if="cIndex === 0" :rowspan="set.set_items.length">
+                                                            <h4 class="text-center d-table-title">@{{ set.dispatched_qty }} / @{{ set.quantity }}</h4>
+                                                        </td>
+                                                        <td class="erp-tbody-td text-center" v-if="cIndex === 0" :rowspan="set.set_items.length">
+                                                            <div v-if="set._delivered">
+                                                                <input type="hidden" name="delivery_qty[]" value="0">
+                                                                <h4 class="text-center d-table-title approved-status">Delivered</h4>
+                                                            </div>
+                                                            <div class="pd-input-box" v-else>
+                                                                <input v-if="!set._showInput" type="hidden" name="delivery_qty[]" value="0">
+                                                                <button v-if="!set._showInput" type="button" class="btn btn-sm btn-primary" @click="openScanModal(set)">Scan</button>
+                                                                <input v-else class="form-control text-center" type="number" :value="set.remaining_qty" min="0" :max="set.remaining_qty" name="delivery_qty[]">
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
-                        <button class=" erp-search-btn text-center" type="submit">Deliver</button>
-                    </div>
+                    @if($invoice->invoice_status != \App\Models\Sales\Invoice::INVOICE_STATUS_DELIVERED)
+                        <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
+                            <button class=" erp-search-btn text-center" type="submit">Deliver</button>
+                        </div>
+                    @endif
                 </form>
             </div>
         </div>
-    </div>
-    <!--End::row-1 -->
+
+        @include('inventory.sales-dispatch.scan-modal')
     </div>
 @endsection
 
 @section('modals')
-
+    {{-- @include('inventory.sales-dispatch.scan-modal') --}}
 @endsection
 
 @section('css')
-
+    <style>
+        .table.erp-table .erp-tbody-td:last-child {
+            border-right: 1px dashed #ddd !important;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
-
 @endsection
 
 @section('js_plugins')
@@ -149,113 +169,134 @@
 
 @section('js')
     <script>
-        var {createApp} = Vue;
-        var vueApp = createApp({
-            data() {
-                return {
-                    invoices: [],
-                };
-            },
-            methods: {
-                handleBarcodeScan(event, index, finished_good_id) {
-                    console.log(index, finished_good_id);
-                    if (event.key === 'Enter') {
-                        const barcodeValue = event.target.value;
-                        let codeCount = 0;
-                        this.invoices[index].scannedBarcodes.map((code, index) => {
-                            if(code.pre_production_no == barcodeValue){
-                                codeCount ++;
-                            }
+const { createApp } = Vue;
+const vueApp = createApp({
+    data() {
+        return {
+            regular_items: [],
+            set_items: [],
+            // scannedCode: '',
+            selected_item: null,
+        };
+    },
+    methods: {
+        getInvoiceData() {
+            let id = document.getElementById('invoice_id').value;
+            let url = "{{ route('inventory.dispatch-invoice-items.get-deliver-data', ':id') }}";
+            url = url.replace(':id', id);
+
+            axios.get(url)
+                .then(response => {
+                    const allItems = response.data.invoice_details;
+
+                    this.regular_items = allItems.filter(item => item.item_type !== {{ \App\Models\Sales\InvoiceDetails::TYPE_SET_ITEM }}).map(item => {
+                        item._showInput = false;
+                        item._delivered = item.quantity === item.dispatched_qty;
+                        item.is_scanned = false;
+                        return item;
+                    });
+
+                    this.set_items = allItems.filter(item => item.item_type === {{ \App\Models\Sales\InvoiceDetails::TYPE_SET_ITEM }}).map(item => {
+                        item._showInput = false;
+                        item._delivered = item.quantity === item.dispatched_qty;
+                        item.is_scanned = false;
+                        item.set_items.forEach(child => {
+                            child.is_scanned = false;
+                            child.scannedCode = '';
                         });
+                        return item;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching finished goods:', error);
+                });
+        },
 
-                        let url = `{{ route('sales.invoice.deliver.check-barcode', ['id' => ':finished_good_id', 'barcode' => ':barcodeValue', 'count' => ':codeCount']) }}`;
-                        url = url.replace(':finished_good_id', finished_good_id);
-                        url = url.replace(':barcodeValue', barcodeValue);
-                        url = url.replace(':codeCount', codeCount);
-                        let available_qtn = this.invoices[index].quantity - this.invoices[index].dispatched_qty;
-                        let scaneed_qtn = this.invoices[index].barcodeCounts;
+        openScanModal(item) {
+            this.selected_item = item;
+            this.scannedCode = '';
 
-                        if(available_qtn > scaneed_qtn){
-                            axios.get(url)
-                                .then(response => {
-                                    console.log(response.data);
-                                    event.target.value = '';
-                                    if(response.data){
-                                        this.invoices[index].scannedBarcodes.push(response.data);
-                                        this.invoices[index].barcodeCounts++;
-                                    }else{
-                                        showErrorAlert('Error', 'Invalid Barcode')
-                                    }
-                                })
-                                .catch(error => {
-                                    event.target.value = '';
-                                    showErrorAlert('Error', 'Invalid Barcode')
-                                });
-                        }else{
-                            showErrorAlert('Error', 'No item available for delivery')
-                        }
-                    }
-                },
-                removeBarcode(finished_good_index, barcodeIndex) {
-                    this.invoices[finished_good_index].scannedBarcodes.splice(barcodeIndex, 1);
-                    this.invoices[finished_good_index].barcodeCounts--;
-                },
-                getInvoices() {
-                    var currentUrl = window.location.href;
-                    var id = currentUrl.split('/')[4];
-                    let url = "{{ route('sales.invoice.deliver.get-all-finished-goods', ':id') }}";
-                    url = url.replace(':id', id);
+            const modal = new bootstrap.Modal(document.getElementById('scanModal'));
+            modal.show();
+        },
 
-                    axios.get(url)
-                        .then(response => {
-                            console.log(response.data);
-                            this.invoices = response.data.invoices.map(invoice => {
-                                return {
-                                    scannedBarcodes: [],
-                                    barcodeCounts: 0,
-                                    barcodes: [],
-                                    ...invoice
-                                };
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching finished goods:', error);
-                        });
-                },
-                checkValidation(e) {
-                    e.preventDefault();
-                    if (this.invoices.every(invoice => invoice.barcodeCounts === 0)) {
-                        showErrorAlert('Opps!', 'Please add delivery items!');
-                    }else {
-                        this.deliverStoreForm();
-                    }
-                },
-                deliverStoreForm(){
-                    var self = $("#deliverStoreForm");
-                    var formData = new FormData($(self)[0]);
-                    var url = $(self).attr('action');
+        closeScanModal() {
+            this.selected_item = null;
+            this.scannedCode = '';
+            const modalEl = document.getElementById('scanModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+        },
 
-                    formPost(url, formData, function (res) {
-                        if(res.status == 200){
-                            showSuccessAlert('Success',res.message)
-                            setTimeout(function () {
-                                window.location.href = "{{route('sales.invoice.index')}}";
-                            }, 1000);
-                        }else{
-                            showErrorAlert('Error',res.message)
-                        }
-                    }, 'show_input_error');
+        verifyScanCode(itemId, code, childId = null) {
+            code = code.trim();
+            if (!code) return;
+
+            // Normal item
+            if (this.selected_item.item_type !== 5) {
+                if (this.selected_item.item_code === code) {
+                    this.selected_item.is_scanned = true;
+                    this.selected_item._showInput = true;
+                    this.closeScanModal();
+                } else {
+                    showErrorAlert('Mismatch', 'QR code does not match.');
+                }
+            } else {
+                // Set item
+                const child = this.selected_item.set_items.find(c => c.id === childId);
+                if (!child) return;
+
+                if (child.code === code) {
+                    child.is_scanned = true;
+                } else {
+                    showErrorAlert('Mismatch', 'QR code does not match for set item.');
                 }
 
-            },
-            mounted() {
-                this.getInvoices();
+                const allScanned = this.selected_item.set_items.every(c => c.is_scanned);
+                if (allScanned) {
+                    this.selected_item.is_scanned = true;
+                    this.selected_item._showInput = true;
+                    this.closeScanModal();
+                }
             }
-        }).mount('#VueApp');
+        },
 
+        checkValidation(e) {
+            e.preventDefault();
+            const regularScanned = this.regular_items.some(item => item.is_scanned);
+            const setScanned = this.set_items.some(set =>
+                set.set_items?.some(child => child.is_scanned)
+            );
 
-    </script>
+            if (!regularScanned && !setScanned) {
+                showErrorAlert('Oops!', 'Please scan at least one item before submitting.');
+                return;
+            }
+            
+            this.deliverStoreForm();
+        },
+
+        deliverStoreForm() {
+            const form = $("#deliverStoreForm");
+            const formData = new FormData(form[0]);
+            const url = form.attr('action');
+
+            formPost(url, formData, function (res) {
+                if (res.status === 200) {
+                    showSuccessAlert('Success', res.message);
+                    setTimeout(() => {
+                        window.location.href = "{{ route('inventory.dispatch-invoice-items.index') }}";
+                    }, 1000);
+                } else {
+                    showErrorAlert('Error', res.message);
+                }
+            }, 'show_input_error');
+        },
+    },
+    mounted() {
+        this.getInvoiceData();
+    }
+}).mount('#VueApp');
+</script>
 
 @endsection
-
-

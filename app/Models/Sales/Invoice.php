@@ -44,7 +44,7 @@ class Invoice extends BaseModel
     const INVOICE_STATUSES = [
         self::INVOICE_STATUS_PENDING => 'Pending',
         self::INVOICE_STATUS_DELIVERED => 'Delivered',
-        self::INVOICE_STATUS_PROCESSING => 'Partial',
+        self::INVOICE_STATUS_PROCESSING => 'Processing',
         self::INVOICE_STATUS_CANCELLED => 'Cancelled',
     ];
     //Delete status const
@@ -103,6 +103,8 @@ class Invoice extends BaseModel
     }
     //relation with invoice details
     public function details(){
-        return $this->hasMany(InvoiceDetails::class, 'invoice_id', 'id')->where('deleted', InvoiceDetails::DELETED_NO);
+        return $this->hasMany(InvoiceDetails::class, 'invoice_id', 'id')->where('deleted', InvoiceDetails::DELETED_NO)
+            ->where('deleted', InvoiceDetails::DELETED_NO)
+            ->where('status', InvoiceDetails::STATUS_ACTIVE);
     }
 }
