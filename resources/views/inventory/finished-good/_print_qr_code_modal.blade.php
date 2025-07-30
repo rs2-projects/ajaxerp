@@ -8,7 +8,7 @@
 
             <form action="{{ route('inventory.finished-good.print-qr-code') }}" method="post" id="printQrCodeForm" target="_blank">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 70vh;overflow: scroll;">
                     <div class="table-responsive">
                         <table class="table table-bordered align-middle">
                             <thead class="table-light">
