@@ -7,6 +7,7 @@
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Machine Name </th>
                 <th class="erp-th text-center">Category </th>
+                <th class="erp-th text-center">Code</th>
                 <th class="erp-th text-center">Model</th>
                 <th class="erp-th text-center">Color</th>
                 <th class="erp-th text-center">Production Cost</th>
@@ -34,6 +35,7 @@
                         </a>
                     </td>
                     <td class="erp-tbody-td text-center">{{ $machine->category->name??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $machine->machine_code??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->model??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->color??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ formatNumber($machine->production_cost??'0') }}</td>

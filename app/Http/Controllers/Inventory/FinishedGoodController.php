@@ -7,6 +7,7 @@ use App\Http\Requests\Inventory\FinishedGood\StoreFinishedGoodRequest;
 use App\Http\Requests\Inventory\FinishedGood\UpdateFinishedGoodRequest;
 use App\Services\Inventory\FinishedGoodService;
 use Illuminate\Http\Request;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class FinishedGoodController extends BackendController
 {
@@ -98,5 +99,23 @@ class FinishedGoodController extends BackendController
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
         }
+    }
+
+    public function printQrCode(Request $request)
+    {
+        try {
+            $data = $this->service->printQrCode($request);
+
+            $pdf = PDF::loadView('inventory.finished-good._print_qrcode_pdf', compact('data'));
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+
+            return $pdf->inline();
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([], $e->getMessage());
+        }
+
+        return $this->returnAjaxSuccess([], 'QR Code printed successfully');
     }
 }

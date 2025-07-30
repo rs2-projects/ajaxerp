@@ -75,17 +75,36 @@ class InvoiceDetails extends BaseModel
 
     public function finishedGood()
     {
-        return $this->belongsTo(FinishedGoods::class, 'item_id', 'id');
+        return $this->belongsTo(FinishedGoods::class, 'item_id', 'id')
+            // ->where('item_type', self::TYPE_FINISHED_GOODS)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
+            ->where('deleted', FinishedGoods::DELETED_NO)
+            ->where('status', FinishedGoods::STATUS_ACTIVE);
+    }
+
+    public function finishedBoard()
+    {
+        return $this->belongsTo(FinishedGoods::class, 'item_id', 'id')
+            // ->where('item_type', self::TYPE_FINISHED_BOARD)
+            ->where('type', FinishedGoods::TYPE_BOARD)
+            ->where('deleted', FinishedGoods::DELETED_NO)
+            ->where('status', FinishedGoods::STATUS_ACTIVE);
     }
 
     public function product_material()
     {
-        return $this->belongsTo(ProductMaterial::class, 'item_id', 'id');
+        return $this->belongsTo(ProductMaterial::class, 'item_id', 'id')
+            // ->whereIn('item_type', [self::TYPE_RAW_MATERIAL, self::TYPE_RAW_BOARD, self::TYPE_PAPER])
+            ->where('deleted', ProductMaterial::DELETED_NO)
+            ->where('status', ProductMaterial::STATUS_ACTIVE);
     }
 
     public function set_item()
     {
-        return $this->belongsTo(ProductMaterialSet::class, 'item_id', 'id');
+        return $this->belongsTo(ProductMaterialSet::class, 'item_id', 'id')
+            // ->where('item_type', self::TYPE_SET_ITEM)
+            ->where('deleted', ProductMaterialSet::DELETED_NO)
+            ->where('status', ProductMaterialSet::STATUS_ACTIVE);
     }
 
     public function invoice()
@@ -99,21 +118,43 @@ class InvoiceDetails extends BaseModel
     }
 
 
-    public function itemName() {
-        if($this->item_type == self::TYPE_RAW_MATERIAL) {
-            return $this->product_material->name;
-        } elseif($this->item_type == self::TYPE_RAW_BOARD) {
-            return $this->product_material->name;
-        } elseif($this->item_type == self::TYPE_PAPER) {
-            return $this->product_material->name;
-        } elseif($this->item_type == self::TYPE_FINISHED_GOODS) {
-            return $this->finishedGood->name;
-        } elseif($this->item_type == self::TYPE_FINISHED_BOARD) {
-            return $this->finishedGood->name;
-        } elseif($this->item_type == self::TYPE_SET_ITEM) {
-            return $this->set_item->name;
-        } 
-        return "";
+    public function getItem()
+    {
+        switch ($this->item_type) {
+            case self::TYPE_RAW_MATERIAL:
+            case self::TYPE_RAW_BOARD:
+            case self::TYPE_PAPER:
+                return $this->product_material;
+
+            case self::TYPE_FINISHED_GOODS:
+                return $this->finishedGood;
+
+            case self::TYPE_FINISHED_BOARD:
+                return $this->finishedBoard;
+
+            case self::TYPE_SET_ITEM:
+                return $this->set_item;
+
+            default:
+                return null;
+        }
     }
+
+
+    public function itemName()
+    {
+        return $this->getItem()->name ?? '';
+    }
+
+    public function itemCode()
+    {
+        return $this->getItem()->code ?? '';
+    }
+
+    public function itemAvailableQty()
+    {
+        return $this->getItem()->available_qty ?? 0;
+    }
+
 
 }

@@ -105,7 +105,7 @@
                                                         <div class="purchase-order-product-body-item-inner">
                                                             <div class="purchase-order-product-body-item-inner-content">
                                                                 <div class="pd-item">
-                                                                    <h4>{{ getCurrencySymbol() }}{{ $data->quantity }}</h4>
+                                                                    <h4>{{ $data->quantity }}</h4>
                                                                 </div>
                                                             </div>
                                                         </div>

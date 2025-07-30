@@ -9,6 +9,7 @@ use App\Http\Controllers\Inventory\ReceiveProductController;
 use App\Http\Controllers\Inventory\AssetProductCategoryController;
 use App\Http\Controllers\Inventory\AssetProductController;
 use App\Http\Controllers\Inventory\BoardsController;
+use App\Http\Controllers\Inventory\DispatchInvoiceController;
 use App\Http\Controllers\Inventory\ProductMaterialCartController;
 use App\Http\Controllers\Inventory\ProductMaterialSetController;
 use App\Http\Controllers\Inventory\ReuseItemController;
@@ -96,6 +97,9 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/change-status/{status}', [FinishedGoodController::class, 'statusUpdate'])->name('inventory.finished-good.change-status')->middleware('permission:manage-finished-goods');
         Route::get('/get-sections-by-warehouse', [FinishedGoodController::class, 'getSectionsByWarehouse'])->name('inventory.finished-good.get-sections-by-warehouse')->middleware('permission:manage-finished-goods');
         Route::get('/get-racks-by-sections', [FinishedGoodController::class, 'getRacksBySections'])->name('inventory.finished-good.get-racks-by-sections')->middleware('permission:manage-finished-goods');
+    
+        //print QR code
+        Route::post('/print-qr-code', [FinishedGoodController::class, 'printQrCode'])->name('inventory.finished-good.print-qr-code');
     });
 
     // receive products
@@ -147,6 +151,7 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/{id}/edit', [BoardsController::class, 'edit'])->name('inventory.boards.edit');
         Route::post('/{id}/update', [BoardsController::class, 'update'])->name('inventory.boards.update');
         Route::get('/{id}/delete', [BoardsController::class, 'delete'])->name('inventory.boards.delete');
+        Route::post('/print-qr-code', [BoardsController::class, 'printQrCode'])->name('inventory.boards.print-qr-code');
     });
 
     // product material sets
@@ -167,6 +172,15 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/', [ReuseItemController::class, 'index'])->name('inventory.reuse-items.index');
         Route::post('/filtered', [ReuseItemController::class, 'indexFiltered'])->name('inventory.reuse-items.filtered');
         Route::get('/{id}/details', [ReuseItemController::class, 'details'])->name('inventory.reuse-items.details');
+    });
+
+    // dispatch invoice items
+    Route::group(['prefix' => 'dispatch-invoice-items'], function () {
+        Route::get('/',[DispatchInvoiceController::class,'index'])->name('inventory.dispatch-invoice-items.index')->middleware('permission:deliver-items');
+        Route::post('/filtered',[DispatchInvoiceController::class,'indexFilteredData'])->name('inventory.dispatch-invoice-items.filtered')->middleware('permission:deliver-items');
+        Route::get('/{id}/deliver', [DispatchInvoiceController::class, 'deliver'])->name('inventory.dispatch-invoice-items.deliver')->middleware('permission:deliver-items');
+        Route::get('/{id}/get-deliver-data', [DispatchInvoiceController::class, 'getDeliverData'])->name('inventory.dispatch-invoice-items.get-deliver-data')->middleware('permission:deliver-items');
+        Route::post('/{id}/deliver', [DispatchInvoiceController::class, 'deliverStore'])->name('inventory.dispatch-invoice-items.deliver.store')->middleware('permission:deliver-items');
     });
 });
 // inventory route end
