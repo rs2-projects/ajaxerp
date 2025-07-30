@@ -38,6 +38,14 @@ class FinishedGoodService
             ->where('status', FinishedGoods::STATUS_ACTIVE)
             ->where('type', FinishedGoods::TYPE_OTHERS)
             ->count();
+
+        $data['finished_goods'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('type', FinishedGoods::TYPE_OTHERS)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->select('id', 'name')
+            ->get();
+
         return $data;
     }
     //finished good filtered data
@@ -355,5 +363,34 @@ class FinishedGoodService
 
     }
 
+    public function printQrCode($request)
+    {   
+        $itemIds = $request->input('item_id', []);
+        $qtys = $request->input('qty', []);
+        $data = [];
+        foreach ($itemIds as $index => $itemId) {
+            $qty = isset($qtys[$index]) ? (int) $qtys[$index] : 0;
+            if ($qty > 0) {
+                $item = FinishedGoods::select('id', 'name', 'code')
+                    ->where('id', $itemId)
+                    ->where('deleted', FinishedGoods::DELETED_NO)
+                    ->where('status', FinishedGoods::STATUS_ACTIVE)
+                    ->where('type', FinishedGoods::TYPE_OTHERS)
+                    ->first();
+
+                if ($item) {
+                    for ($i = 0; $i < $qty; $i++) {
+                        $data[] = [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                            'code' => $item->code
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
 
 }

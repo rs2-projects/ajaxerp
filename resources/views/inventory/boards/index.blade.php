@@ -14,8 +14,8 @@
                 <div class="my-attendance-box-item flex-100 ">
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
-                            <div class="erp-filter-box d-flex align-items-center justify-content-end flex-100">
-                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">
+                            <div class="erp-filter-box d-flex align-items-center justify-content-between flex-100">
+                                <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-start flex-80">
                                     <div class="erp-filter-item">
                                         <h6 class="me-2">Search By: </h6>
                                     </div>
@@ -42,6 +42,11 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div>
+                                    <button class="btn erp-add-btn" type="button" data-bs-toggle="modal" data-bs-target="#printQrCodeModal">
+                                        <i class="fa fa-print"></i> Print QR Code
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -59,6 +64,7 @@
 @endsection
 
 @section('modals')
+    @include('inventory.boards._print_qr_code_modal')
 {{--    @include('inventory.boards._add_boards_modal')--}}
 {{--    @include('inventory.boards._edit_boards_modal')--}}
 @endsection
@@ -168,6 +174,20 @@
         }
 
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('printQrCodeForm');
+            form.addEventListener('submit', function() {
+                var modalEl = document.getElementById('printQrCodeModal');
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                    modal.hide();
+                }
+            });
+        });
+    </script>
+
 @endsection
 
 
