@@ -41,6 +41,16 @@ class DispatchInvoiceController extends BackendController
         return $this->view('inventory.sales-dispatch.deliver')->with($data);
     }
 
+    public function getDeliverData($id)
+    {
+        try {
+             $data = $this->service->getDeliverData($id);
+        }catch (\Exception $e) {
+            return $this->returnAjaxError([],$e->getMessage());
+        }
+        return $this->returnAjaxSuccess($data);
+    }
+
     public function deliverStore(StoreInvoiceDeliverRequest $request, $id){
         try {
              $this->service->deliverStoreData($request, $id);

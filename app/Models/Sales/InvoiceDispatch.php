@@ -12,15 +12,6 @@ class InvoiceDispatch extends BaseModel
     protected $table = 'invoice_dispatches';
     public $timestamps = false;
 
-    const RECEIVED_STATUS_PENDING = 0;
-    const RECEIVED_STATUS_DELIVERED = 1;
-    const RECEIVED_STATUS_PARTIAL = 2;
-    const RECEIVEDS = [
-        self::RECEIVED_STATUS_PENDING => 'Pending',
-        self::RECEIVED_STATUS_DELIVERED => 'Received',
-        self::RECEIVED_STATUS_PARTIAL => 'Partial',
-    ];
-
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUSES = [

@@ -3,8 +3,13 @@
 namespace App\Services\Inventory;
 
 use App\Models\Inventory\InventoryFinishedGoods;
+use App\Models\Inventory\ProductMaterialStock;
+use App\Models\Procurements\ProductMaterialPurchaseDetails;
 use App\Models\Production\PreProduction;
+use App\Models\Products\FinishedGoods;
 use App\Models\Products\FinishedGoodsCategory;
+use App\Models\Products\ProductMaterial;
+use App\Models\Products\ProductMaterialSet;
 use App\Models\Sales\Invoice;
 use App\Models\Sales\InvoiceDetails;
 use App\Models\Sales\InvoiceDispatch;
@@ -78,16 +83,66 @@ class DispatchInvoiceService
         return $data;
     }
 
-    public function deliverStoreData($request, $id)
+    public function getDeliverData($id)
     {
-        $invoice = Invoice::where('deleted', PreProduction::DELETED_NO)
+        $invoice = Invoice::with(['details',
+                'details.product_material',
+                'details.finishedGood',
+                'details.finishedBoard',
+                'details.set_item.set_items.productMaterial',
+            ])
             ->where('deleted', Invoice::DELETED_NO)
-            ->where('id', $id)
-            ->first();
+            ->where('status', Invoice::STATUS_ACTIVE)
+            ->where('id', $id)->first();
+
         if (!$invoice) {
             throw new \Exception('Invoice not found');
         }
+        
+        $details = $invoice->details->map(function ($detail) {
+            $setItems = [];
 
+            if ($detail->item_type == InvoiceDetails::TYPE_SET_ITEM && $detail->set_item) {
+                $setItems = $detail->set_item->set_items->map(function ($setItem) {
+                    return [
+                        'id' => $setItem->id,
+                        'product_material_id' => $setItem->product_material_id,
+                        'name' => $setItem->productMaterial->name ?? null,
+                        'code' => $setItem->productMaterial->code ?? null,
+                        'item_quantity' => $setItem->quantity,
+                        'available_qty' => $setItem->productMaterial->available_qty ?? 0,
+                    ];
+                })->values();
+            }
+
+            return [
+                'id'             => $detail->id,
+                'item_id'        => $detail->item_id,
+                'item_type'      => $detail->item_type,
+                'item_name'      => $detail->itemName(),
+                'item_code'      => $detail->itemCode(),
+                'quantity'       => $detail->quantity,
+                'available_qty'  => $detail->itemAvailableQty(),
+                'dispatched'     => $detail->dispatched ?? 0,
+                'dispatched_qty' => $detail->dispatched_qty ?? 0,
+                'remaining_qty' => $detail->quantity - $detail->dispatched_qty,
+                'set_items'      => $setItems,
+            ];
+        });
+
+        $data['invoice_details'] = $details;
+        return $data;
+    }
+
+    public function deliverStoreData($request, $id)
+    {
+        $invoice = Invoice::where('deleted', Invoice::DELETED_NO)
+            ->where('id', $id)
+            ->first();
+
+        if (!$invoice) {
+            throw new \Exception('Invoice not found');
+        }
         DB::beginTransaction();
         try {
             $dispatch = new InvoiceDispatch();
@@ -96,105 +151,183 @@ class DispatchInvoiceService
             $dispatch->dispatched_at = Carbon::now();
             $dispatch->note = $request->note;
             $dispatch->created_by = auth()->id();
-            $dispatch->created_at = Carbon::now();
             $dispatch->updated_by = auth()->id();
-            $dispatch->updated_at = Carbon::now();
             $dispatch->save();
 
-            $invoiceDispatchDetails = [];
             if (isset($request->invoice_details_id)) {
                 foreach ($request->invoice_details_id as $key => $id) {
-                    if ($request->invoice_details_id != '' && $request->finished_good_id != '' && $request->barcode_count[$key] > 0) {
+                    if (!empty($request->invoice_details_id[$key]) && !empty($request->item_id[$key])) {
 
                         $dispatch_detail = new InvoiceDispatchDetails();
                         $dispatch_detail->invoice_dispatch_id = $dispatch->id;
+                        $dispatch_detail->invoice_id = $invoice->id;
                         $dispatch_detail->invoice_detail_id = $id;
-                        $dispatch_detail->finished_good_id = $request->finished_good_id[$key];
-                        $dispatch_detail->quantity = $request->barcode_count[$key];
+                        $dispatch_detail->finished_good_id = $request->item_id[$key];
+                        $dispatch_detail->quantity = $request->delivery_qty[$key];
                         $dispatch_detail->created_by = auth()->id();
-                        $dispatch_detail->created_at = Carbon::now();
                         $dispatch_detail->updated_by = auth()->id();
-                        $dispatch_detail->updated_at = Carbon::now();
                         $dispatch_detail->save();
-                        //update inventory
-                        $finished_goods_category = FinishedGoodsCategory::where('deleted', FinishedGoodsCategory::DELETED_NO)
-                            ->where('status', FinishedGoodsCategory::STATUS_ACTIVE)
-                            ->first();
-                        $inventory_finished_good = new InventoryFinishedGoods();
-                        $inventory_finished_good->finished_goods_category_id = $finished_goods_category->id;
-                        $inventory_finished_good->finished_goods_id = $request->finished_good_id[$key];
-                        $inventory_finished_good->type = InventoryFinishedGoods::TYPE_OUT;
-                        $inventory_finished_good->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_SALE;
-                        $inventory_finished_good->reference_id = $dispatch_detail->id;
-                        $inventory_finished_good->quantity = $request->barcode_count[$key];
-                        $inventory_finished_good->save();
-                        //update invoice details
+
+                        // Update invoice details
                         $invoice_details = InvoiceDetails::where('deleted', Invoice::DELETED_NO)
                             ->where('id', $id)
                             ->first();
-                        $invoice_details->dispatched_qty += $request->barcode_count[$key];
-                        if (($invoice_details->dispatched_qty != 0) && ($invoice_details->quantity > $invoice_details->dispatched_qty)) {
+
+                        $invoice_details->dispatched_qty += $request->delivery_qty[$key];
+
+                        if ($invoice_details->dispatched_qty > 0 && $invoice_details->quantity > $invoice_details->dispatched_qty) {
                             $invoice_details->dispatched = InvoiceDetails::DISPATCHED_PARTIALLY;
                         } elseif ($invoice_details->quantity <= $invoice_details->dispatched_qty) {
                             $invoice_details->dispatched = InvoiceDetails::DISPATCHED_YES;
                         }
+
                         $invoice_details->save();
 
-                        $invoiceDispatchDetails[$key] = [
-                            'invoice_dispatch_details_id' => $dispatch_detail->id,
-                            'finished_good_id' => $request->finished_good_id[$key],
-                            'invoice_detail_id' => $id
-                        ];
+                        // Inventory update by item type
+                        if ($invoice_details->item_type == InvoiceDetails::TYPE_FINISHED_GOODS) {
+                            $item = FinishedGoods::where('id', $invoice_details->item_id)
+                                ->where('type', FinishedGoods::TYPE_OTHERS)
+                                ->where('deleted', FinishedGoods::DELETED_NO)
+                                ->where('status', FinishedGoods::STATUS_ACTIVE)
+                                ->first();
 
+                            if (!$item) throw new \Exception('Finished Goods not found');
+                            if ($request->delivery_qty[$key] > 0 &&  $item->available_qty < $request->delivery_qty[$key]) {
+                                throw new \Exception('Insufficient Finished Goods stock');
+                            }
+
+                            $item->available_qty -= $request->delivery_qty[$key];
+                            $item->total_sale_qty += $request->delivery_qty[$key];
+                            $item->save();
+
+                        } elseif ($invoice_details->item_type == InvoiceDetails::TYPE_FINISHED_BOARD) {
+                            $item = FinishedGoods::where('id', $invoice_details->item_id)
+                                ->where('type', FinishedGoods::TYPE_BOARD)
+                                ->where('deleted', FinishedGoods::DELETED_NO)
+                                ->where('status', FinishedGoods::STATUS_ACTIVE)
+                                ->first();
+
+                            if (!$item) throw new \Exception('Finished Board not found');
+                            if ($request->delivery_qty[$key] > 0 && $item->available_qty < $request->delivery_qty[$key]) {
+                                throw new \Exception('Insufficient Finished Board stock');
+                            }
+
+                            $item->available_qty -= $request->delivery_qty[$key];
+                            $item->total_sale_qty += $request->delivery_qty[$key];
+                            $item->save();
+
+                        } elseif ($invoice_details->item_type == InvoiceDetails::TYPE_SET_ITEM) {
+                            $setItem = ProductMaterialSet::where('id', $invoice_details->item_id)
+                                ->where('deleted', ProductMaterialSet::DELETED_NO)
+                                ->where('status', ProductMaterialSet::STATUS_ACTIVE)
+                                ->first();
+
+                            if ($setItem && $request->delivery_qty[$key] > 0) {
+                                foreach ($setItem->set_items as $setItemChild) {
+                                    $material = ProductMaterial::where('id', $setItemChild->product_material_id)
+                                        ->where('deleted', ProductMaterial::DELETED_NO)
+                                        ->where('status', ProductMaterial::STATUS_ACTIVE)
+                                        ->first();
+
+                                    if (!$material) throw new \Exception('Product Material not found for Set Item');
+
+                                    $qty = $setItemChild->quantity * $request->delivery_qty[$key];
+
+                                    if ($material->available_qty < $qty) {
+                                        throw new \Exception('Insufficient stock for Set Item Material');
+                                    }
+
+                                    $material->available_qty -= $qty;
+                                    $material->total_used_qty += $qty;
+                                    $material->save();
+
+                                    $this->createMaterialStockOut($invoice->id, $material, $qty);
+                                    $this->deductFromPurchaseStock($material->id, $qty);
+                                }
+                            }
+
+                        } elseif (in_array($invoice_details->item_type, [
+                            InvoiceDetails::TYPE_RAW_MATERIAL,
+                            InvoiceDetails::TYPE_RAW_BOARD,
+                            InvoiceDetails::TYPE_PAPER
+                        ])) {
+                            $material = ProductMaterial::where('id', $invoice_details->item_id)
+                                ->where('deleted', ProductMaterial::DELETED_NO)
+                                ->where('status', ProductMaterial::STATUS_ACTIVE)
+                                ->first();
+
+                            if (!$material) throw new \Exception('Product Material not found');
+                            if ($request->delivery_qty[$key] > 0 && $material->available_qty < $request->delivery_qty[$key]) {
+                                throw new \Exception('Insufficient Product Material stock');
+                            }
+
+                            $material->available_qty -= $request->delivery_qty[$key];
+                            $material->total_used_qty += $request->delivery_qty[$key];
+                            $material->save();
+
+                            $this->createMaterialStockOut($invoice->id, $material, $request->delivery_qty[$key]);
+                            $this->deductFromPurchaseStock($material->id, $request->delivery_qty[$key]);
+                        }
                     }
-
                 }
             }
+
+            // Update invoice status
             $hasPendingDispatch = InvoiceDetails::where('deleted', Invoice::DELETED_NO)
                 ->where('status', Invoice::STATUS_ACTIVE)
                 ->where('invoice_id', $invoice->id)
                 ->where('dispatched', '!=', InvoiceDetails::DISPATCHED_YES)
-                ->count();
-            if ($hasPendingDispatch > 0) {
-                $invoice->invoice_status = Invoice::INVOICE_STATUS_PROCESSING;
-            } else {
-                $invoice->invoice_status = Invoice::INVOICE_STATUS_DELIVERED;
-            }
+                ->exists();
+
+            $invoice->invoice_status = $hasPendingDispatch
+                ? Invoice::INVOICE_STATUS_PROCESSING
+                : Invoice::INVOICE_STATUS_DELIVERED;
+
             $invoice->save();
-
-            if (isset($request->pre_production_id) && is_array($request->pre_production_id)) {
-                foreach ($request->pre_production_id as $key => $pre_production_ids) {
-                    $invoiceDispatchDetail = $invoiceDispatchDetails[$key];
-                    if (!is_array($pre_production_ids)) {
-                        continue;
-                    }
-                    $countPreProductionIds = array_count_values($pre_production_ids);
-
-                    foreach ($countPreProductionIds as $preProductionId => $qty) {
-                        $dispatch_details_production = new InvoiceDispatchDetailsProduction();
-                        $dispatch_details_production->invoice_dispatch_id = $dispatch->id;
-                        $dispatch_details_production->invoice_dispatch_detail_id = $invoiceDispatchDetail['invoice_dispatch_details_id'];
-                        $dispatch_details_production->invoice_detail_id = $invoiceDispatchDetail['invoice_detail_id'];
-                        $dispatch_details_production->finished_good_id = $invoiceDispatchDetail['finished_good_id'];
-                        $dispatch_details_production->pre_production_id = $preProductionId;
-                        $preProduction = PreProduction::where('deleted', PreProduction::DELETED_NO)->where('id', $preProductionId)->first();
-                        $preProduction->available_qty = $preProduction->available_qty - $qty;
-                        $preProduction->sale_qty += $qty;
-                        $preProduction->save();
-                        $dispatch_details_production->quantity = $qty;
-                        $dispatch_details_production->created_by = auth()->id();
-                        $dispatch_details_production->created_at = Carbon::now();
-                        $dispatch_details_production->updated_by = auth()->id();
-                        $dispatch_details_production->updated_at = Carbon::now();
-                        $dispatch_details_production->save();
-                    }
-                }
-            }
 
         } catch (\Exception $e) {
             DB::rollBack();
             throw new \Exception($e->getMessage());
         }
+
         DB::commit();
     }
+
+
+    private function createMaterialStockOut($invoice_id, $material, $qty)
+    {
+        if (!$material || $qty <= 0) return;
+
+        $productStock = new ProductMaterialStock();
+        $productStock->date = Carbon::today()->toDateString();
+        $productStock->product_material_category_id = $material->product_material_category_id;
+        $productStock->product_material_id = $material->id;
+        $productStock->product_material_type = $material->type;
+        $productStock->type = ProductMaterialStock::TYPE_OUT;
+        $productStock->reference_type = ProductMaterialStock::REFERENCE_TYPE_SALES;
+        $productStock->reference_id = $invoice_id ?? null;
+        $productStock->quantity = $qty;
+        $productStock->save();
+    }
+
+    private function deductFromPurchaseStock($product_material_id, $qty)
+    {
+        $remaining = $qty;
+        $purchaseDetails = ProductMaterialPurchaseDetails::where('product_material_id', $product_material_id)
+            ->where('available_qty', '>', 0)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        foreach ($purchaseDetails as $detail) {
+            if ($remaining <= 0) break;
+
+            $deductQty = min($detail->available_qty, $remaining);
+            $detail->available_qty -= $deductQty;
+            $detail->used_qty += $deductQty;
+            $detail->save();
+
+            $remaining -= $deductQty;
+        }
+    }
+
 }

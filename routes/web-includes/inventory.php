@@ -175,6 +175,7 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::get('/',[DispatchInvoiceController::class,'index'])->name('inventory.dispatch-invoice-items.index')->middleware('permission:deliver-items');
         Route::post('/filtered',[DispatchInvoiceController::class,'indexFilteredData'])->name('inventory.dispatch-invoice-items.filtered')->middleware('permission:deliver-items');
         Route::get('/{id}/deliver', [DispatchInvoiceController::class, 'deliver'])->name('inventory.dispatch-invoice-items.deliver')->middleware('permission:deliver-items');
+        Route::get('/{id}/get-deliver-data', [DispatchInvoiceController::class, 'getDeliverData'])->name('inventory.dispatch-invoice-items.get-deliver-data')->middleware('permission:deliver-items');
         Route::post('/{id}/deliver', [DispatchInvoiceController::class, 'deliverStore'])->name('inventory.dispatch-invoice-items.deliver.store')->middleware('permission:deliver-items');
     });
 });
