@@ -41,7 +41,7 @@
                                     @endif
                                 </td>
                                 <td class="erp-tbody-td text-center">
-                                    {{ $data->production_material->sum('received_qty') }} / {{ $data->production_material->sum('quantity') }}
+                                    {{ $data->production_material->sum('received_qty') + $data->board_material->sum('received_qty') }} / {{ ($data->production_material->sum('quantity') + $data->board_material->sum('quantity')) ?? 0 }}
                                 </td>
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>

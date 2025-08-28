@@ -2,6 +2,7 @@
 
 namespace App\Services\Inventory;
 
+use App\Models\Inventory\ProductMaterialStock;
 use App\Models\Inventory\ProductRequisition;
 use App\Models\Inventory\ProductRequisitionDelivery;
 use App\Models\Inventory\ProductRequisitionDeliveryDetails;
@@ -319,7 +320,7 @@ class PreProductionMaterialRequestService
                                     $items->pre_production_board_delivery_details_id = $delivery_details->id;
                                     $items->pre_production_board_id = $pre_production_material_id;
                                     $items->finished_board_id = $request->product_material_id[$key];
-                                    $items->lot_production_id = $request->production_id[$key][$purchaseKey];
+                                    // $items->lot_production_id = $request->production_id[$key][$purchaseKey];
                                 }
 
                                 $items->quantity = $qty;
@@ -344,12 +345,32 @@ class PreProductionMaterialRequestService
                                         'product_material_id' => $items->product_material_id,
                                         'product_material_purchase_details_id' => $items->product_material_purchase_details_id
                                     ];
+
+                                    // update product material stock
+                                    $productStock = new ProductMaterialStock();
+                                    $productStock->date = Carbon::today()->toDateString();
+                                    $productStock->product_material_category_id = $material->product_material_category_id;
+                                    $productStock->product_material_id = $items->product_material_id;
+                                    $productStock->product_material_type = $material->type;
+                                    $productStock->type = ProductMaterialStock::TYPE_OUT;
+                                    $productStock->reference_type = ProductMaterialStock::REFERENCE_TYPE_USE;
+                                    $productStock->reference_id = $items->product_material_purchase_details_id;
+                                    $productStock->quantity = $qty;
+                                    $productStock->save();
+
                                 }else{
-                                    $purchase_details = PreProduction::find($request->production_id[$key][$purchaseKey]);
-                                    if($purchase_details){
-                                        $purchase_details->used_qty = $purchase_details->used_qty + 1;
-                                        $purchase_details->available_qty = $purchase_details->available_qty - 1;
-                                        $purchase_details->save();
+                                    // $purchase_details = PreProduction::find($request->production_id[$key][$purchaseKey]);
+                                    // if($purchase_details){
+                                    //     $purchase_details->used_qty = $purchase_details->used_qty + 1;
+                                    //     $purchase_details->available_qty = $purchase_details->available_qty - 1;
+                                    //     $purchase_details->save();
+                                    // }
+
+                                    $finished_board = FinishedGoods::find($items->finished_board_id);
+                                    if($finished_board){
+                                        $finished_board->total_sale_qty = $finished_board->total_sale_qty + $qty;
+                                        $finished_board->available_qty = $finished_board->available_qty - $qty;
+                                        $finished_board->save();
                                     }
                                 }
                             }

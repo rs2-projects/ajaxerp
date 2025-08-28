@@ -35,6 +35,13 @@ class BoardsService
             ->orderBy('name','asc')
             ->get();
 
+        $data['boards'] = FinishedGoods::where('deleted', FinishedGoods::DELETED_NO)
+            ->where('type', FinishedGoods::TYPE_BOARD)
+            ->where('status', FinishedGoods::STATUS_ACTIVE)
+            ->orderBy('name', 'asc')
+            ->select('id', 'name')
+            ->get();
+
         return $data;
     }
     //finished good filtered data
@@ -201,4 +208,35 @@ class BoardsService
         }
 
     }
+
+    public function printQrCode($request)
+    {   
+        $itemIds = $request->input('item_id', []);
+        $qtys = $request->input('qty', []);
+        $data = [];
+        foreach ($itemIds as $index => $itemId) {
+            $qty = isset($qtys[$index]) ? (int) $qtys[$index] : 0;
+            if ($qty > 0) {
+                $item = FinishedGoods::select('id', 'name', 'code')
+                    ->where('id', $itemId)
+                    ->where('deleted', FinishedGoods::DELETED_NO)
+                    ->where('status', FinishedGoods::STATUS_ACTIVE)
+                    ->where('type', FinishedGoods::TYPE_BOARD)
+                    ->first();
+
+                if ($item) {
+                    for ($i = 0; $i < $qty; $i++) {
+                        $data[] = [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                            'code' => $item->code
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
 }

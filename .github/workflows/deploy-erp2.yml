@@ -1,0 +1,51 @@
+name: Deploy ERP2 Branch
+
+on:
+    push:
+        branches: [ "erp2" ]
+
+jobs:
+
+    deploy:
+
+        runs-on: ubuntu-latest
+
+        steps:
+
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Deployment
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.SSH_HOST }}
+                    key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    username: ${{ secrets.SSH_USERNAME }}
+                    script: |
+                        cd /var/www/erp2.ajaxtradingcorp.com/
+                        git stash
+                        git pull
+
+            -   name: Install Dependencies On Server
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.SSH_HOST }}
+                    key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    username: ${{ secrets.SSH_USERNAME }}
+                    script: |
+                        cd /var/www/erp2.ajaxtradingcorp.com/
+                        php8.2 /usr/local/bin/composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+                        # composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+
+            -   name: Run Migrations
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.SSH_HOST }}
+                    key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    username: ${{ secrets.SSH_USERNAME }}
+                    script: |
+                        cd /var/www/erp2.ajaxtradingcorp.com/
+                        php8.2 artisan migrate --force
+                        # php artisan migrate --force

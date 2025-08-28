@@ -64,4 +64,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     include "web-includes/showroom.php";
 
+    include "web-includes/report.php";
+
 });

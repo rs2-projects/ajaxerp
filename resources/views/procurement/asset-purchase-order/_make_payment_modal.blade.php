@@ -83,7 +83,7 @@
                             <div class="multiple-receipt-item flex-100">
                                 <div class="input-block erp-step-input-block mb-0">
                                     <label class="col-form-label">Upload Receipt <span class="text-danger"> </span></label>
-                                    <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt">
+                                    <input type="file" class="form-control" name="receipt[]" placeholder="Upload Receipt" required>
                                 </div>
                             </div>
                             <div class="add-row flex-100 ">

@@ -34,7 +34,9 @@ jobs:
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
                         cd /var/www/erp.ajaxtradingcorp.com/
-                        composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+                        php8.2 /usr/local/bin/composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+                        # composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
 
             -   name: Run Migrations
@@ -45,4 +47,5 @@ jobs:
                     username: ${{ secrets.SSH_USERNAME }}
                     script: |
                         cd /var/www/erp.ajaxtradingcorp.com/
-                        php artisan migrate --force
+                        php8.2 artisan migrate --force
+                        # php artisan migrate --force

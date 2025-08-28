@@ -100,9 +100,26 @@
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Process Selection <span class="text-danger">*</span></label>
-                                        <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
+                                        {{-- <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             <option v-for="machine in machines"  :value="machine.id" :key="machine.id" :selected="process.process_machine_ids?.includes(machine.id)">@{{machine.name}}</option>
-                                        </select>
+                                        </select> --}}
+                                        <select class="machine-multiselect" :name="'machine_id[' + index + '][]'" multiple required>
+    <optgroup
+        v-for="(category, catIndex) in machine_categories"
+        :label="category.name"
+        :key="'cat-' + catIndex"
+    >
+        <option
+            v-for="machine in category.machines"
+            :key="machine.id"
+            :value="machine.id"
+            :selected="process.process_machine_ids?.includes(machine.id)"
+        >
+            @{{ machine.name }}
+        </option>
+    </optgroup>
+</select>
+
                                     </div>
                                 </div>
                                 <div class="pms-item flex-48" v-if="index > 0">
@@ -134,7 +151,7 @@
                                             <div class="input-block erp-step-input-block mb-0">
                                                 <label class="col-form-label">Board Category </label>
                                                 <select class="select select-step" :name="'product_material_category_id['+index+'][]'" :data-index="index" :data-material-index="materialIndex" onchange="boardCategoryChangeOutside(this)">
-                                                    {{-- <option value="">Select Category</option> --}}
+                                                    <option value="">Select Category</option>
                                                     <option v-for="category in board_categories"  :value="category.id" :key="category.id" :selected="category.id == materialSection.product_material_category_id">@{{category.name}}</option>
                                                 </select>
                                             </div>
@@ -174,7 +191,8 @@
                                         <div class="pms-item flex-10">
                                             <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                 {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
-                                                <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                                                <a @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                                                {{-- <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +205,11 @@
                                     </div>
                                 </div>
                                 <div v-else class="pms-item-main-wrapper d-flex justify-content-center">
-                                    <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a>
+                                    <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
+                                        <a href="#" class="erp-search-btn text-center pp-add-more-btn" @click.prevent="addMaterialOtherSection(index)"><i class="la la-plus-circle"></i> Other</a>
+                                        <a href="#" @click.prevent="addMaterialBoardSection(index)" class="erp-search-btn text-center pp-add-more-btn pp-add-board-btn"><i class="la la-plus-circle"></i> Board</a>
+                                    </div>
+                                    {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
                                 </div>
                             </div>
 
@@ -301,6 +323,7 @@
                     categories: [],
                     board_categories: [],
                     machines: [],
+                    machine_categories: [],
                     staffs: [],
                     process_indexes: [],
                 };
@@ -321,6 +344,7 @@
                             const categories = response.data.categories;
                             const board_categories = response.data.finished_categoris;
                             const machines = response.data.machines;
+                            const machine_categories = response.data.machine_categories;
                             const staffs = response.data.staffs;
                             this.process_indexes = response.data.process_indexes;
 
@@ -339,6 +363,12 @@
                             machines.forEach((machine) => {
                                 this.machines.push({
                                     ...machine
+                                });
+                            });
+
+                            machine_categories.forEach((machine_category) => {
+                                this.machine_categories.push({
+                                    ...machine_category
                                 });
                             });
 
@@ -579,22 +609,44 @@
                 width: '100%',
             });
         }
-        function initAssteProductMultipleSelect(){
-            $('.machine-multiselect').multipleSelect('destroy');
-            $('.machine-multiselect').multipleSelect({
+        // function initAssteProductMultipleSelect(){
+        //     $('.machine-multiselect').multipleSelect('destroy');
+        //     $('.machine-multiselect').multipleSelect({
+        //         filter: true,
+        //         placeholder: 'Select Process',
+        //         minimumCountSelected: 6,
+        //         filterPlaceholder: 'Search Process',
+        //         selectAll: true,
+        //         onOpen: function () {
+        //             $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+        //                 return this.nodeType === 3;
+        //             }).replaceWith("Select All Processes");
+        //         },
+        //     });
+        // }
+        function initAssteProductMultipleSelect() {
+            const $select = $('.machine-multiselect');
+            $select.multipleSelect('destroy');
+            $select.multipleSelect({
                 filter: true,
                 placeholder: 'Select Process',
-                minimumCountSelected: 6,
                 filterPlaceholder: 'Search Process',
+                minimumCountSelected: 4,
                 selectAll: true,
+                displayValues: true,
+                formatAllSelected: 'All Processes Selected',
+                hideOptgroupCheckboxes: true,
                 onOpen: function () {
-                    $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
-                        return this.nodeType === 3;
-                    }).replaceWith("Select All Processes");
-                },
+                    $(".machine-multiselect .ms-drop ul>li.ms-select-all label")
+                        .contents().filter(function () {
+                            return this.nodeType === 3;
+                        }).replaceWith("Select All Processes");
+
+                    $('.machine-multiselect .ms-drop ul li.group label.optgroup')
+                        .addClass('custom-optgroup-label');
+                }
             });
         }
-
         function initMaterialProductMultipleSelect(){
             $('.process-multiselect').multipleSelect({
                 filter: true,

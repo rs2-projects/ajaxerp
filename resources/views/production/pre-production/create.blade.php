@@ -98,9 +98,18 @@
                                 <div class="pms-item flex-48">
                                     <div class="input-block erp-step-input-block mb-0">
                                         <label class="col-form-label">Process Selection <span class="text-danger">*</span></label>
-                                        <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
+                                        {{-- <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
                                             @foreach ($machines as $machine)
                                                 <option value="{{$machine->id}}">{{$machine->name}}</option>
+                                            @endforeach
+                                        </select> --}}
+                                        <select class="machine-multiselect" :name="'machine_id['+index+'][]'" multiple="multiple" required>
+                                            @foreach($machine_categories as $category)
+                                                <optgroup label="{{ $category->name }}">
+                                                    @foreach($category->machines as $machine)
+                                                        <option value="{{ $machine->id }}">{{ $machine->name }}</option>
+                                                    @endforeach
+                                                </optgroup>
                                             @endforeach
                                         </select>
                                     </div>
@@ -173,7 +182,8 @@
                                         <div class="pms-item flex-10">
                                             <div class="add-more-m-box d-flex justify-content-center gap-2 align-items-center">
                                                 {{-- <a href="#" class="add-more-m-btn" @click.prevent="addMaterialSection(index)"><i class="la la-plus-circle"></i></a> --}}
-                                                <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                                                <a @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a>
+                                                {{-- <a v-if="materialIndex > 0" @click.prevent="removeMaterialSection(index,materialIndex)" href="#" class="add-more-m-btn remove-item"><i class="la la-times-circle"></i></a> --}}
                                             </div>
                                         </div>
                                     </div>
@@ -430,19 +440,44 @@
                 width: '100%',
             });
         }
-        function initAssteProductMultipleSelect(){
-            $('.machine-multiselect').multipleSelect('destroy');
-            $('.machine-multiselect').multipleSelect({
+
+        // function initAssteProductMultipleSelect(){
+        //     $('.machine-multiselect').multipleSelect('destroy');
+        //     $('.machine-multiselect').multipleSelect({
+        //         filter: true,
+        //         placeholder: 'Select Process',
+        //         minimumCountSelected: 6,
+        //         filterPlaceholder: 'Search Process',
+        //         selectAll: true,
+        //         onOpen: function () {
+        //             $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
+        //                 return this.nodeType === 3;
+        //             }).replaceWith("Select All Processes");
+        //         },
+        //     });
+        // }
+
+        function initAssteProductMultipleSelect() {
+            const $select = $('.machine-multiselect');
+            $select.multipleSelect('destroy');
+            $select.multipleSelect({
                 filter: true,
                 placeholder: 'Select Process',
-                minimumCountSelected: 6,
                 filterPlaceholder: 'Search Process',
+                minimumCountSelected: 4,
                 selectAll: true,
+                displayValues: true,
+                formatAllSelected: 'All Processes Selected',
+                hideOptgroupCheckboxes: true,
                 onOpen: function () {
-                    $(".machine-multiselect .ms-drop ul>li:first-child label").contents().filter(function() {
-                        return this.nodeType === 3;
-                    }).replaceWith("Select All Processes");
-                },
+                    $(".machine-multiselect .ms-drop ul>li.ms-select-all label")
+                        .contents().filter(function () {
+                            return this.nodeType === 3;
+                        }).replaceWith("Select All Processes");
+
+                    $('.machine-multiselect .ms-drop ul li.group label.optgroup')
+                        .addClass('custom-optgroup-label');
+                }
             });
         }
 

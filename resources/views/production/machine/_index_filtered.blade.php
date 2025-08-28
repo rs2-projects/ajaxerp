@@ -6,6 +6,8 @@
             <tr class="erp-tr">
                 <th class="erp-th">SL</th>
                 <th class="erp-th">Machine Name </th>
+                <th class="erp-th text-center">Category </th>
+                <th class="erp-th text-center">Code</th>
                 <th class="erp-th text-center">Model</th>
                 <th class="erp-th text-center">Color</th>
                 <th class="erp-th text-center">Production Cost</th>
@@ -28,9 +30,12 @@
                             </div>
                             <div class="em-pro-details-box">
                                 <h5>{{ $machine->name }}</h5>
+                                <small class="text-muted">Type: {{ $machine::TYPES[$machine->type] }}</small>
                             </div>
                         </a>
                     </td>
+                    <td class="erp-tbody-td text-center">{{ $machine->category->name??'N/A' }}</td>
+                    <td class="erp-tbody-td text-center">{{ $machine->machine_code??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->model??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ $machine->color??'N/A' }}</td>
                     <td class="erp-tbody-td text-center">{{ formatNumber($machine->production_cost??'0') }}</td>

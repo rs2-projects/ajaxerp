@@ -16,7 +16,7 @@
                     <div class="my-attendance-report-wrapper">
                         <div class="erp-header-main-wrap d-flex justify-content-between align-items-center">
                             <div class="erp-box-header">
-                                <h4>Total Product : {{$machine_count}}</h4>
+                                <h4>Total Machines : {{$machine_count}}</h4>
                             </div>
                             <div class="erp-filter-box d-flex align-items-center justify-content-end flex-70">
                                 <div class="erp-filter-item-wrapper filter-row d-flex flex-wrap align-items-center justify-content-end flex-100">

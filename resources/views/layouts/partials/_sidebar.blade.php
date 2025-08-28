@@ -191,6 +191,11 @@
                             <a href="{{route('inventory.material-request.index')}}"  class="{{ ($activeMenu == 'inventory.material-request.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Material Request<small class="small-rs-text">(Prod.)</small></span></a>
                         </li>
                     @endif
+                    @if(hasPermission( 'view-material-requests','deliver-requested-materials'))
+                        <li>
+                            <a href="{{route('inventory.dispatch-invoice-items.index')}}"  class="{{ ($activeMenu == 'inventory.dispatch-invoice.index') ? 'active' : ''}}"><i class="la la-tencent-weibo"></i> <span>Dispatch Items</span></a>
+                        </li>
+                    @endif
                     @if(hasPermission( 'view-product-material-category','manage-product-material-category','view-product-material','manage-product-material'))
                         <li class="submenu">
                             <a href="javascript:void(0);" class="{{ ($activeMenu == 'inventory.product-material.index' || $activeMenu =='inventory.product-material-category.index' || $activeMenu =='inventory.product-material-category.index') ? 'active' : '' }} noti-dot"><i class="la la-get-pocket"></i> <span> Product Material</span> <span class="menu-arrow"></span></a>
@@ -200,6 +205,10 @@
                                         <a href="{{ route('inventory.product-material.index') }}" class="{{ ($activeMenu == 'inventory.product-material.index') ? 'active' : ''}}"> <span>Material List</span></a>
                                     </li>
                                 @endif
+
+                                <li>
+                                    <a href="{{route('report.product-material-stock-report')}}" class="{{ ($activeMenu == 'report.product-material-stock-report') ? 'active' : '' }}"><span>Material Stock Report</span></a>
+                                </li>
 
                                 <li>
                                     <a href="{{ route('inventory.product-material-set.index') }}" class="{{ ($activeMenu == 'inventory.product-material-set.index') ? 'active' : '' }}"> <span>Material Sets</span></a>
@@ -222,6 +231,9 @@
                                         <a href="{{ route('inventory.asset-product.index') }}" class="{{ ($activeMenu == 'inventory.asset-product.index') ? 'active' : '' }}"> <span>Assets List</span></a>
                                     </li>
                                 @endif
+                                <li>
+                                    <a href="{{route('report.asset-product-stock-report')}}" class="{{ ($activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }}"> <span>Asset Product</span></a>
+                                </li>
                                 @if(hasPermission( 'view-asset-product-category','manage-asset-product-category'))
                                     <li>
                                         <a href="{{ route('inventory.asset-product-category.index') }}" class="{{ ($activeMenu == 'inventory.asset-product-category.index') ? 'active' : '' }}"> <span>Category</span></a>
@@ -308,8 +320,22 @@
                         </li>
                     @endif
                     @if(hasPermission('view-machines','manage-machines'))
-                        <li>
+                        {{-- <li>
                             <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><i class="la la-fax"></i> <span>Machines</span></a>
+                        </li> --}}
+
+                        <li class="submenu">
+                            <a href="javascript:void(0);" class="{{ ($activeMenu == 'production.machine-category.index' || $activeMenu == 'production.machine.index') ? 'active' : '' }} noti-dot"><i class="la la-fax"></i> <span>Machines</span> <span class="menu-arrow"></span></a>
+                            <ul>
+                                @if(hasPermission('view-machines','manage-machines'))
+                                    <li>
+                                        <a href="{{route('production.machine.index')}}" class="{{ ($activeMenu == 'production.machine.index') ? 'active' : '' }}"><span>Machines</span></a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('production.machine-category.index')}}" class="{{ ($activeMenu == 'production.machine-category.index') ? 'active' : '' }}"> <span>Categories</span></a>
+                                    </li>
+                                @endif
+                            </ul>
                         </li>
                     @endif
                     @if(hasPermission('view-plate','manage-plate'))
@@ -339,6 +365,22 @@
                         </li>
                     @endif
                 @endif
+
+                {{-- <li class="menu-title">
+                    <span>Warehouse</span>
+                </li>
+
+                <li class="submenu">
+                    <a href="javascript:void(0);" class="{{ ($activeMenu == 'report.product-material-stock-report' || $activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }} noti-dot"><i class="las la-stream"></i> <span>Stock Report</span><span class="menu-arrow"></span></a>
+                    <ul>
+                        <li>
+                            <a href="{{route('report.product-material-stock-report')}}" class="{{ ($activeMenu == 'report.product-material-stock-report') ? 'active' : '' }}"><span>Product Material</span></a>
+                        </li>
+                        <li>
+                            <a href="{{route('report.asset-product-stock-report')}}" class="{{ ($activeMenu == 'report.asset-product-stock-report') ? 'active' : '' }}"> <span>Asset Product</span></a>
+                        </li>
+                    </ul>
+                </li> --}}
 
                 @if(hasPermission( 'view-chart-of-accounts','manage-chart-of-accounts','view-transactions','manage-transactions','add-expenses','verify-transactions'))
                     <li class="menu-title">
