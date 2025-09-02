@@ -181,7 +181,7 @@
                                                     </div>
                                                     <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-else>
                                                         <div class="em-pro-details-box po-product">
-                                                            <input type="text" name="item_name[]" class="form-control" :value="cartItem.name" placeholder="Item Name" required>
+                                                            <input type="text" name="item_name[]" class="form-control" v-model="cartItem.name" placeholder="Item Name" required>
                                                         </div>
                                                     </div>
                                                 </div>
