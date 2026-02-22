@@ -173,7 +173,7 @@ class SupplierService
     public function editData($id)
     {
         $data['countries'] = Country::orderBy('name', 'asc')->get();
-        $data['item'] = Supplier::with('supplierBanks')
+        $data['item'] = Supplier::with('supplierBanks', 'supplierMaterials', 'supplierAssets', 'supplierContacts')
             ->where('id', $id)
             ->where('deleted', Supplier::DELETED_NO)
             ->first();
@@ -312,13 +312,13 @@ class SupplierService
 
             $material_ids = $request->material_products??[];
             $delete_material = SupplierProductMaterial::where('supplier_id', $supplier->id)
-                ->whereNotIn('id', $material_ids)
+                ->whereNotIn('product_material_id', $material_ids)
                 ->delete();
 
             if (isset($request->material_products) && is_array($request->material_products) && (count($request->material_products) > 0)) {
                 foreach ($request->material_products as $key=>$material_id) {
                     if (isset($request->material_products[$key]) &&  $request->material_products[$key] != null){
-                        $supplier_material = SupplierProductMaterial::where('id', $request->material_products[$key])
+                        $supplier_material = SupplierProductMaterial::where('product_material_id', $request->material_products[$key])
                             ->where('supplier_id', $supplier->id)
                             ->first();
                         if ($supplier_material){
@@ -336,13 +336,13 @@ class SupplierService
 
             $asset_ids = $request->asset_products??[];
             $delete_asset = SupplierAssetProduct::where('supplier_id', $supplier->id)
-                ->whereNotIn('id', $asset_ids)
+                ->whereNotIn('asset_product_id', $asset_ids)
                 ->delete();
 
             if (isset($request->asset_products) && is_array($request->asset_products) && (count($request->asset_products) > 0)) {
                 foreach ($request->asset_products as $key=>$asset_id) {
                     if (isset($request->asset_products[$key]) &&  $request->asset_products[$key] != null){
-                        $supplier_asset = SupplierAssetProduct::where('id', $request->asset_products[$key])
+                        $supplier_asset = SupplierAssetProduct::where('asset_product_id', $request->asset_products[$key])
                             ->where('supplier_id', $supplier->id)
                             ->first();
                         if ($supplier_asset){
