@@ -222,11 +222,18 @@ class AssetProductService
     public function store($request)
     {
         $check_duplicate = AssetProduct::where('name', $request->name)
-                ->where('asset_product_category_id', $request->asset_product_category_id)
-                ->where('deleted', AssetProduct::DELETED_NO)
-                ->first();
+            ->where('asset_product_category_id', $request->asset_product_category_id)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->first();
         if (!empty($check_duplicate)) {
             throw new \Exception("Asset Product already exists");
+        }
+
+        $check_code_duplicate = AssetProduct::where('code', $request->code)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->first();
+        if (!empty($check_code_duplicate)) {
+            throw new \Exception("Asset Product code already exists");
         }
         
         $image_path = null;
@@ -239,7 +246,8 @@ class AssetProductService
         $product = new AssetProduct();
         $product->asset_product_category_id = $request->asset_product_category_id;
         $product->name = $request->name;
-        $product->image = $image_path??null;
+        $product->code = $request->code ?? null;
+        $product->image = $image_path;
         $product->description = $request->description;
         $product->created_by = auth()->user()->id;
         $product->created_at = now();
@@ -281,6 +289,14 @@ class AssetProductService
             throw new \Exception("Asset Product already exists");
         }
 
+        $check_code_duplicate = AssetProduct::where('code', $request->code)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->where('id', '!=', $id)
+            ->first();
+        if (!empty($check_code_duplicate)) {
+            throw new \Exception("Asset Product code already exists");
+        }
+
         $image_path = null;
         if ($request->hasFile('image')) {
             $imageUploadService = new ImageUploadService();
@@ -290,6 +306,7 @@ class AssetProductService
 
         $product->asset_product_category_id = $request->asset_product_category_id;
         $product->name = $request->name;
+        $product->code = $request->code ?? null;
         $product->image = $image_path?? $product->image;
         $product->description = $request->description;
         $product->updated_by = auth()->user()->id;
@@ -312,17 +329,49 @@ class AssetProductService
                 ->where('deleted', AssetProductAssign::DELETED_NO)
                 ->where('status', AssetProductAssign::STATUS_ACTIVE)
                 ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_ASSIGNED)
-                ->orderBy('id', 'desc')->get();
+                ->where('return_type', null)
+                ->where('return_date', null)
+                ->orderBy('id', 'desc')
+                ->get();
 
         }else if ($type == 'maintenance'){
             $data['details'] = AssetProductAssign::where('asset_product_id', $id)
                 ->where('deleted', AssetProductAssign::DELETED_NO)
                 ->where('status', AssetProductAssign::STATUS_ACTIVE)
                 ->where('assign_status', AssetProductAssign::ASSIGN_STATUS_MAINTENANCE)
-                ->orderBy('id', 'desc')->get();
+                ->where('repair_date', null)
+                ->where('repaired_by', null)
+                ->orderBy('id', 'desc')
+                ->get();
         }
 
         $data['type'] = $type;
+
+        return $data;
+    }
+
+    public function assetProductDetails($id)
+    {
+        $data['item'] = AssetProduct::where('id', $id)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->first();
+
+        if (!$data['item']) {
+            throw new \Exception('Asset Product not found');
+        }
+
+        $data['details'] = AssetProductAssign::with(['employee.department', 'employee.designation'])
+            ->where('asset_product_id', $id)
+            ->where('deleted', AssetProductAssign::DELETED_NO)
+            ->where('status', AssetProductAssign::STATUS_ACTIVE)
+            ->whereIn('assign_status', [
+                AssetProductAssign::ASSIGN_STATUS_ASSIGNED,
+                AssetProductAssign::ASSIGN_STATUS_MAINTENANCE,
+                AssetProductAssign::ASSIGN_STATUS_RETURNED,
+            ])
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return $data;
     }
@@ -468,7 +517,7 @@ class AssetProductService
                 $assign->warranty = $request->warranty;
                 $assign->remarks = $request->remarks;
                 $assign->reason = $request->reason;
-                $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
+                // $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
                 $assign->return_type = AssetProductAssign::RETURN_TYPE_FOR_MAINTENANCE;
                 $assign->return_date = $request->date;
                 $assign->return_reason = $request->reason;
@@ -664,7 +713,7 @@ class AssetProductService
             $assign->return_date = $request->return_date;
             $assign->return_type = $request->return_type;
             $assign->return_reason = $request->return_reason;
-            $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
+            // $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_RETURNED;
             $assign->updated_by = auth()->user()->id;
             $assign->updated_at = now();
             $assign->save();
@@ -704,7 +753,7 @@ class AssetProductService
             $assign->repair_note = $request->repair_note;
             $assign->repaired_by = auth()->user()->id;
             $assign->repaired_at = now();
-            $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_REPAIRED;
+            // $assign->assign_status = AssetProductAssign::ASSIGN_STATUS_REPAIRED;
             $assign->save();
 
         }catch (\Exception $e) {
@@ -712,5 +761,39 @@ class AssetProductService
             throw new \Exception($e->getMessage());
         }
         DB::commit();
+    }
+
+    public function printQrCode($request)
+    {
+        $itemIds = $request->input('item_id', []);
+        $qtys = $request->input('qty', []);
+        $data = [];
+
+        foreach ($itemIds as $index => $itemId) {
+            $qty = isset($qtys[$index]) ? (int) $qtys[$index] : 0;
+            if ($qty <= 0) {
+                continue;
+            }
+
+            $item = AssetProduct::select('id', 'name', 'code')
+                ->where('id', $itemId)
+                ->where('deleted', AssetProduct::DELETED_NO)
+                ->where('status', AssetProduct::STATUS_ACTIVE)
+                ->first();
+
+            if (!$item) {
+                continue;
+            }
+
+            for ($i = 0; $i < $qty; $i++) {
+                $data[] = [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'code' => $item->code,
+                ];
+            }
+        }
+
+        return $data;
     }
 }

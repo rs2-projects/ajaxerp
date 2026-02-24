@@ -22,14 +22,15 @@
                         <h4 class="d-table-title">{{ $products->firstItem() + $loop->iteration - 1 }}</h4>
                     </td>
                     <td class="erp-tbody-td text-start">
-                        <a href="#" class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                        <a href="javascript:void(0)" class="em-profile-wrap d-flex align-items-center flex-wrap w-100" onclick="viewAssetProductDetails({{ $product->id }})">
                             <div class="em-pro-img-box">
                                 <img src="{{ $product->show_image }}" alt="">
                             </div>
                             <div class="em-pro-details-box">
                                 <h5>{{ $product->name }}</h5>
-                                {{-- <p class="em-id">Code: <span> #{{ $product_material->code }}</span></p> --}}
-
+                                @if($product->code)
+                                    <p class="em-id">Code: <span> #{{ $product->code }}</span></p>
+                                @endif
                             </div>
                         </a>
                     </td>
@@ -60,6 +61,9 @@
                                         @if($product->total_purchased_qty == 0) 
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.asset-product.delete',$product->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
+                                        @if($product->total_purchased_qty > 0)
+                                            <a class="dropdown-item" href="javascript:void(0)" onclick="printQrCode({{ $product->id }}, @js($product->name), {{ (int) ($product->total_purchased_qty ?? 0) }})"><i class="fa fa-print m-r-5"></i> Print QR Code</a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -78,4 +82,3 @@
 </div>
 
 {{ $products->links('vendor.pagination.common_ajax_pagination') }}
-
