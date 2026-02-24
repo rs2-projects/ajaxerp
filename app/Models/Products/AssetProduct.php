@@ -29,6 +29,7 @@ class AssetProduct extends BaseModel
     protected $fillable = [
         'asset_product_category_id',
         'name',
+        'code',
         'image',
         'description',
         'comments',

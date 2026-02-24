@@ -89,8 +89,10 @@
     @include('inventory.assets.asset-product._sell_product_modal')
     @include('inventory.assets.asset-product._disposed_product_modal')
     @include('inventory.assets.asset-product._assign_details_modal')
+    @include('inventory.assets.asset-product._asset_product_details_modal')
     @include('inventory.assets.asset-product._return_product_modal')
     @include('inventory.assets.asset-product._repair_product_modal')
+    @include('inventory.assets.asset-product._print_qr_code_modal')
 @endsection
 
 @section('css')
@@ -353,6 +355,19 @@
             }, 'default');
         }
 
+        function viewAssetProductDetails(id){
+            let url = "{{route('inventory.asset-product.product-details', ':id')}}";
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#asset_product_details_modal_body").html(response.view);
+                    $("#asset_product_details_modal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
         function assignItem(id){
             $("#assign_product_modal").modal('show');
             $("#assign_id").val(id);
@@ -381,6 +396,13 @@
         function repairedItem(id){
             $("#repair_product_modal").modal('show');
             $("#repair_id").val(id);
+        }
+
+        function printQrCode(id, name, totalPurchasedQty){
+            $("#print_qr_item_id").val(id);
+            $("#print_qr_product_name").val(name);
+            $("#print_qr_qty").val(totalPurchasedQty > 0 ? totalPurchasedQty : 1);
+            $("#printQrCodeModal").modal('show');
         }
 
         function assignToMaintenanceItem(id, asset_id, type){
@@ -467,6 +489,22 @@
             });
         }
     </script>
-@endsection
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('printQrCodeForm');
+            if (!form) {
+                return;
+            }
+
+            form.addEventListener('submit', function() {
+                var modalEl = document.getElementById('printQrCodeModal');
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                    modal.hide();
+                }
+            });
+        });
+    </script>
+@endsection
 

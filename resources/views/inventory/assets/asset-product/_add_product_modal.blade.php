@@ -18,6 +18,11 @@
                             <span class="name_error ie-span"></span>
                         </div>
                         <div class="input-block mb-2">
+                            <label class="col-form-label">Product Code <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text" name="code">
+                            <span class="code_error ie-span"></span>
+                        </div>
+                        <div class="input-block mb-2">
                             <label class="col-form-label">Category <span class="text-danger">*</span></label>
                             <select class="select floating select2-box" name="asset_product_category_id">
                                 <option value="">Select Category</option>

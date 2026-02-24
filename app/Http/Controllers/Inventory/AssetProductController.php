@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Inventory\AssetProduct\StoreAssetProductRequest;
 use App\Http\Requests\Inventory\AssetProduct\UpdateAssetProductRequest;
 use App\Services\Inventory\AssetProductService;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
 class AssetProductController extends BackendController
 {
@@ -87,6 +88,19 @@ class AssetProductController extends BackendController
             return $this->returnAjaxSuccess(['view' => $view]);
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());
+        }
+    }
+
+    public function assetProductDetails($id)
+    {
+        try {
+            $data = $this->service->assetProductDetails($id);
+            $view = $this->view('inventory.assets.asset-product._asset_product_details_data')
+                ->with($data)
+                ->render();
+            return $this->returnAjaxSuccess(['view' => $view]);
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([], $e->getMessage());
         }
     }
 
@@ -172,5 +186,23 @@ class AssetProductController extends BackendController
             return $this->returnAjaxError([],$e->getMessage());
         }
         return $this->returnAjaxSuccess([], 'Asset Product Repaired Successfully');
+    }
+
+    public function printQrCode(Request $request)
+    {
+        try {
+            $data = $this->service->printQrCode($request);
+
+            $pdf = PDF::loadView('inventory.assets.asset-product._print_qrcode_pdf', compact('data'));
+            $pdf->setPaper('a4');
+            $pdf->setOrientation('portrait');
+            $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
+
+            return $pdf->inline();
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([], $e->getMessage());
+        }
+
+        return $this->returnAjaxSuccess([], 'QR Code printed successfully');
     }
 }
