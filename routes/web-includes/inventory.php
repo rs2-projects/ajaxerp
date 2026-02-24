@@ -138,9 +138,11 @@ Route::group(['prefix' => 'inventory'], function () {
         Route::post('/{id}/sell-product', [AssetProductController::class, 'sellProduct'])->name('inventory.asset-product.sell-asset-product');
         Route::post('/{id}/dispose-product', [AssetProductController::class, 'disposeProduct'])->name('inventory.asset-product.disposed-asset-product');
         Route::get('/{id}/details/{type}', [AssetProductController::class, 'assetDetails'])->name('inventory.asset-product.asset-details');
+        Route::get('/{id}/asset-product-details', [AssetProductController::class, 'assetProductDetails'])->name('inventory.asset-product.product-details')->middleware('permission:view-asset-product');
         Route::post('/{id}/return-product', [AssetProductController::class, 'returnProduct'])->name('inventory.asset-product.return-asset-product');
         Route::get('/{id}/assign-details', [AssetProductController::class, 'assignedDetails'])->name('inventory.asset-product.assigned-details');
         Route::post('/{id}/repair-product', [AssetProductController::class, 'repairProduct'])->name('inventory.asset-product.repair-asset-product');
+        Route::post('/print-qr-code', [AssetProductController::class, 'printQrCode'])->name('inventory.asset-product.print-qr-code');
     });
 
     // boards
