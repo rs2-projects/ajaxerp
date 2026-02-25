@@ -13,7 +13,12 @@
         <div class="col-lg-4">
             <div class="text-center d-flex flex-column justify-content-center align-items-center">
                 @if($item->code)
-                    <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(120)->generate($item->code)) !!}" alt="QR Code" style="max-width: 120px; width: 100%; height: auto;">
+                    @php
+                        $qrPayload = "Name: " . ($item->name ?? 'N/A') . "\n"
+                            . "Code: " . ($item->code ?? 'N/A') . "\n"
+                            . "Category: " . ($item->category->name ?? 'N/A');
+                    @endphp
+                    <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(120)->generate($qrPayload)) !!}" alt="QR Code" style="max-width: 120px; width: 100%; height: auto;">
                     <p class="mb-0 mt-1 small">{{ $item->code }}</p>
                 @else
                     <p class="mb-0 text-muted">No QR code available</p>
