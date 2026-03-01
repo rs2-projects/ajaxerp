@@ -61,9 +61,9 @@
                                         @if($product->total_purchased_qty == 0)
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAjax('{{ route('inventory.asset-product.delete',$product->id) }}', 'reloadAjaxGetData') "><i class="fa-regular fa-trash-can m-r-5"></i> Delete</a>
                                         @endif
-                                        @if($product->total_purchased_qty > 0)
+                                        {{-- @if($product->total_purchased_qty > 0) --}}
                                             <a class="dropdown-item" href="javascript:void(0)" onclick="printQrCode({{ $product->id }}, @js($product->name), {{ (int) ($product->total_purchased_qty ?? 0) }})"><i class="fa fa-print m-r-5"></i> Print QR Code</a>
-                                        @endif
+                                        {{-- @endif --}}
                                         {{-- <a class="dropdown-item" href="javascript:void(0)" onclick="assignItem({{$product->id}})"><i class="fa-solid fa-people-arrows m-r-5"></i></i> Assign</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="maintenceItem({{$product->id}})"><i class="fa-solid fa-gears m-r-5"></i></i> Maintenance</a>
                                         <a class="dropdown-item" href="javascript:void(0)" onclick="sellItem({{$product->id}})"><i class="fa-solid fa-cart-shopping m-r-5"></i></i> Sell</a>

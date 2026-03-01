@@ -497,14 +497,50 @@
                 return;
             }
 
-            form.addEventListener('submit', function() {
-                var modalEl = document.getElementById('printQrCodeModal');
-                var modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) {
-                    modal.hide();
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    const contentType = response.headers.get('content-type') || '';
+
+                    if (contentType.includes('application/pdf')) {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        window.open(blobUrl, '_blank');
+
+                        setTimeout(function () {
+                            URL.revokeObjectURL(blobUrl);
+                        }, 1000);
+
+                        var modalEl = document.getElementById('printQrCodeModal');
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) {
+                            modal.hide();
+                        }
+                        return;
+                    }
+
+                    let data = {};
+                    try {
+                        data = await response.json();
+                    } catch (jsonError) {
+                        data = {};
+                    }
+
+                    toastr.error(data.message || 'Unable to print QR code.');
+                } catch (error) {
+                    toastr.error('Unable to print QR code.');
                 }
             });
         });
     </script>
 @endsection
-
