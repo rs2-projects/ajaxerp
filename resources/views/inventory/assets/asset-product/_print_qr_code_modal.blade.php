@@ -8,7 +8,7 @@
 
             <form action="{{ route('inventory.asset-product.print-qr-code') }}" method="post" id="printQrCodeForm" target="_blank">
                 @csrf
-                <input type="hidden" name="item_id[0]" id="print_qr_item_id">
+                <input type="hidden" name="item_id" id="print_qr_item_id">
 
                 <div class="modal-body">
                     <div class="mb-3">
@@ -18,7 +18,7 @@
 
                     <div>
                         <label for="print_qr_qty" class="form-label">Print Qty</label>
-                        <input class="form-control" id="print_qr_qty" name="qty[0]" type="number" min="1" required>
+                        <input class="form-control" id="print_qr_qty" name="qty" type="number" min="1" required>
                     </div>
                 </div>
 

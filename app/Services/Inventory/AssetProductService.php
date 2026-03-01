@@ -765,33 +765,38 @@ class AssetProductService
 
     public function printQrCode($request)
     {
-        $itemIds = $request->input('item_id', []);
-        $qtys = $request->input('qty', []);
+        $itemId = (int) $request->input('item_id');
+        $qty = (int) $request->input('qty');
+
+        if ($itemId <= 0) {
+            throw new \Exception('No asset product selected for QR print');
+        }
+
+        if ($qty <= 0) {
+            throw new \Exception('Print quantity must be greater than 0');
+        }
+
+        $item = AssetProduct::select('id', 'name', 'code')
+            ->where('id', $itemId)
+            ->where('deleted', AssetProduct::DELETED_NO)
+            ->where('status', AssetProduct::STATUS_ACTIVE)
+            ->first();
+
+        if (!$item) {
+            throw new \Exception('Asset Product not found');
+        }
+
+        if (empty($item->code)) {
+            throw new \Exception('Asset product code is missing. Please update the product code first.');
+        }
+
         $data = [];
-
-        foreach ($itemIds as $index => $itemId) {
-            $qty = isset($qtys[$index]) ? (int) $qtys[$index] : 0;
-            if ($qty <= 0) {
-                continue;
-            }
-
-            $item = AssetProduct::select('id', 'name', 'code')
-                ->where('id', $itemId)
-                ->where('deleted', AssetProduct::DELETED_NO)
-                ->where('status', AssetProduct::STATUS_ACTIVE)
-                ->first();
-
-            if (!$item) {
-                continue;
-            }
-
-            for ($i = 0; $i < $qty; $i++) {
-                $data[] = [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'code' => $item->code,
-                ];
-            }
+        for ($i = 0; $i < $qty; $i++) {
+            $data[] = [
+                'id' => $item->id,
+                'name' => $item->name,
+                'code' => $item->code,
+            ];
         }
 
         return $data;
