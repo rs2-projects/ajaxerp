@@ -52,7 +52,7 @@ Route::prefix('invoice')->group(function(){
     Route::get('{id}/download-pdf',[InvoiceController::class,'downloadPdf'])->name('sales.invoice.download-pdf')->middleware('permission:view-invoices');
 
     
-    //Invoice delivered
+    //Invoice delivered (not in use)
     Route::get('/{id}/deliver', [InvoiceDeliveredController::class, 'deliver'])->name('sales.invoice.deliver')->middleware('permission:deliver-items');
     Route::post('/{id}/deliver', [InvoiceDeliveredController::class, 'deliverStore'])->name('sales.invoice.deliver.store')->middleware('permission:deliver-items');
     Route::get('/{id}/finished-goods', [InvoiceDeliveredController::class, 'getFinishedGoods'])->name('sales.invoice.deliver.get-all-finished-goods')->middleware('permission:deliver-items');

@@ -1151,7 +1151,7 @@ class ProductionService
 
             $finishedGoods = $pre_production->finishedGoods;
             $finishedGoods->total_finished_qty += $request->dispatched_qty;
-            $finishedGoods->available_qty += $request->dispatched_qty;
+            // $finishedGoods->available_qty += $request->dispatched_qty;
             $finishedGoods->save();
 
         }catch (\Exception $e) {
