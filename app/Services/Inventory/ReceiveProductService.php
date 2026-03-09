@@ -118,14 +118,18 @@ class ReceiveProductService
             $finished_goods_category = FinishedGoodsCategory::find($dispatch->finished_goods_id);
             $finished_good_cateagory_id = $finished_goods_category->id ??0;
 
-            $finished_goods = new InventoryFinishedGoods();
-            $finished_goods->finished_goods_category_id = $finished_good_cateagory_id;
-            $finished_goods->finished_goods_id = $dispatch->finished_goods_id;
-            $finished_goods->type = InventoryFinishedGoods::TYPE_IN;
-            $finished_goods->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_PRODUCTION;
-            $finished_goods->reference_id = $dispatch->id;
-            $finished_goods->quantity = $request->received_qty;
+            $finished_goods = $dispatch->finishedGoods;
+            $finished_goods->available_qty += $request->received_qty;
             $finished_goods->save();
+
+            $inv_finished_goods = new InventoryFinishedGoods();
+            $inv_finished_goods->finished_goods_category_id = $finished_good_cateagory_id;
+            $inv_finished_goods->finished_goods_id = $dispatch->finished_goods_id;
+            $inv_finished_goods->type = InventoryFinishedGoods::TYPE_IN;
+            $inv_finished_goods->reference_type = InventoryFinishedGoods::REFERENCE_TYPE_FROM_PRODUCTION;
+            $inv_finished_goods->reference_id = $dispatch->id;
+            $inv_finished_goods->quantity = $request->received_qty;
+            $inv_finished_goods->save();
 
             $pre_production = PreProduction::where('id', $dispatch->pre_production_id)
                 ->where('deleted', PreProduction::DELETED_NO)
