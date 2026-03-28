@@ -158,8 +158,16 @@
         });
         //Upload design modal show
         function showDesignUploadModal(id){
-            $("#design_upload_modal").find('input[name="invoice_id"]').val(id);
-            $("#design_upload_modal").modal('show');
+            let url = "{{ route('sales.invoice.design', ':id') }}"
+            url = url.replace(':id', id);
+            ajaxGet(url, {}, function (response) {
+                if (response.status == 200) {
+                    $("#design_upload_modal_body").html(response.upload_view || '');
+                    $("#design_upload_modal").modal('show');
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
         }
         //Design Upload form submit
         $(document).on("submit", "#designUploadFormSubmit", function(e) {
@@ -181,6 +189,7 @@
                 }
             }, 'show_input_error');
         });
+
         //show design modal
         function showDesign(id) {
             let url = "{{ route('sales.invoice.design', ':id') }}"

@@ -5,7 +5,7 @@
             <th class="erp-th">SL</th>
             <th class="erp-th">Invouce No. </th>
             <th class="erp-th text-center">Customer </th>
-            <th class="erp-th text-center">Design </th>
+            <th class="erp-th text-center">Uploads </th>
             <th class="erp-th text-center">Amount </th>
             <th class="erp-th text-center">Payment Status </th>
             <th class="erp-th text-center">Record Payment </th>
@@ -34,9 +34,14 @@
                 </div>
             </td>
             <td class="erp-tbody-td text-center">
-                <a href="#" class="document-view-status-btn" onclick="showDesign({{ $invoice->id }})">
-                    <img src="{{ asset('/') }}assets/img/product/documents.png" alt="" class="document-img-box"><small>View</small>
-                </a>
+                @php
+                    $hasUploads = ($invoice->designs_count ?? 0) > 0 || !empty($invoice->delivery_receipt_img) || !empty($invoice->gatepass_img);
+                @endphp
+                @if($hasUploads)
+                    <a href="#" class="document-view-status-btn" onclick="showDesign({{ $invoice->id }})">
+                        <img src="{{ asset('/') }}assets/img/product/documents.png" alt="" class="document-img-box"><small>View</small>
+                    </a>
+                @endif
             </td>
             <td class="erp-tbody-td text-center">
                 <h4 class="text-center d-table-title"><span class="in-t-amount-text">Total - </span>{{ getCurrencySymbol().formatNumber($invoice->payable_amount) }}</h4>
@@ -73,7 +78,7 @@
                                     @endif
                                 @endif --}}
                                 @if(hasPermission('manage-invoices'))
-                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Design Upload</a>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" onclick="showDesignUploadModal({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> File Upload</a>
                                 
                                     @if($invoice->payment_status == $invoice::PAYMENT_STATUS_UNPAID)
                                         <a class="dropdown-item" href="{{ route('sales.invoice.edit',$invoice->id) }}"><i class="fa-solid fa-pencil m-r-5"></i> Edit</a>
