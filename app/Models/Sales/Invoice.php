@@ -83,6 +83,8 @@ class Invoice extends BaseModel
         'cancelled_at',
         'notes',
         'invoice_footer',
+        'delivery_receipt_img',
+        'gatepass_img',
         'created_by',
         'created_at',
         'deleted',

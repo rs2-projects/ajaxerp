@@ -84,7 +84,7 @@
                                         <div class="d-flex justify-content-center">
                                             <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
                                                 @if ($pre_production->is_verified ==$pre_production::VERIFIED_NO)
-                                                    <button class=" erp-search-btn text-center" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_YES]) }}">Verify</button>
+                                                    <button class=" erp-search-btn text-center" onclick="preProductionUpdateStatus(this)" data-status="{{ \App\Models\Production\PreProduction::VERIFIED_YES }}" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_YES]) }}">Verify</button>
                                                 @elseif ($pre_production->is_verified ==$pre_production::VERIFIED_YES)
                                                     <h4 class="erp-search-btn">Verified</h4>
                                                 @endif
@@ -92,7 +92,7 @@
                                             @if ($pre_production->is_verified !=$pre_production::VERIFIED_YES)
                                                 <div class="production-instrucion-output-selection-wrapper mt-3 p-2 text-center">
                                                     @if($pre_production->is_verified ==$pre_production::VERIFIED_NO)
-                                                        <button class=" erp-search-btn text-center rejectBtn" onclick="preProductionUpdateStatus(this)" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_REJECTED]) }}">
+                                                        <button class=" erp-search-btn text-center rejectBtn" onclick="preProductionUpdateStatus(this)" data-status="{{ \App\Models\Production\PreProduction::VERIFIED_REJECTED }}" data-href="{{ route('production.board-production.pending-verification.change-status',[$pre_production->id, \App\Models\Production\PreProduction::VERIFIED_REJECTED]) }}">
                                                             Reject</button>
                                                     @elseif($pre_production->is_verified ==$pre_production::VERIFIED_REJECTED)
                                                         <h4 class="erp-search-btn rejectBtn">Rejected</h4>
@@ -101,6 +101,15 @@
                                             @endif
                                         </div>
                                     {{-- @endif --}}
+
+                                    @if(!empty($pre_production->reject_reason))
+                                        <div class="pgib-item flex-100 pd-item">
+                                            <div class="input-block erp-step-input-block mb-0">
+                                                <label class="col-form-label">Reject Reason</label>
+                                                <h4>{{ $pre_production->reject_reason }}</h4>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -146,9 +155,44 @@
 
 @section('js')
     <script>
+        function sendPreProductionStatusUpdate(url, data = {}) {
+            ajaxGet(url, data, function (response) {
+                if (response.status == 200) {
+                    setTimeout(function () {
+                        location.reload();
+                    }, 100);
+                    showSuccessAlert('Success', response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            }, 'default');
+        }
+
         function preProductionUpdateStatus(button){
             let url = $(button).attr('data-href');
-            
+            let status = parseInt($(button).attr('data-status'));
+            const rejectedStatus = {{ \App\Models\Production\PreProduction::VERIFIED_REJECTED }};
+
+            if (status === rejectedStatus) {
+                Swal.fire({
+                    title: '',
+                    input: 'textarea',
+                    inputLabel: 'Reject Reason',
+                    inputPlaceholder: 'Write reject reason...',
+                    inputAttributes: {
+                        'aria-label': 'Write reject reason'
+                    },
+                    showDenyButton: true,
+                    confirmButtonText: 'Submit',
+                    denyButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        sendPreProductionStatusUpdate(url, {reject_reason: (result.value || '').trim()});
+                    }
+                });
+                return;
+            }
+
             Swal.fire({
                 title: '',
                 html: 'Are you sure to update status?',
@@ -157,16 +201,7 @@
                 denyButtonText: `No`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    ajaxGet(url, {}, function (response) {
-                        if (response.status == 200) {
-                            setTimeout(function () {
-                                location.reload();
-                            }, 100);
-                            showSuccessAlert('Success',response.message)
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    }, 'default');
+                    sendPreProductionStatusUpdate(url);
                 } else if (result.isDenied) {
 
                 }
@@ -174,5 +209,3 @@
         }
     </script>
 @endsection
-
-
