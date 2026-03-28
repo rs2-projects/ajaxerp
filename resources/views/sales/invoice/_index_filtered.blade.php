@@ -81,6 +81,8 @@
                                     @endif
                                     <a class="dropdown-item" href="#" onclick="getProductionStatus({{ $invoice->id }})"><i class="fa-solid fa-upload m-r-5"></i> Check Status</a>
                                     <a class="dropdown-item" href="{{ route('sales.invoice.download-pdf', $invoice->id) }}" target="_blank"><i class="fa-solid fa-file-pdf m-r-5"></i> PDF</a>
+                                    <a class="dropdown-item" href="{{ route('sales.invoice.download-delivery-receipt-pdf', $invoice->id) }}" target="_blank"><i class="fa-solid fa-file-pdf m-r-5"></i> Delivery Receipt</a>
+                                    <a class="dropdown-item" href="{{ route('sales.invoice.download-gatepass-pdf', $invoice->id) }}" target="_blank"><i class="fa-solid fa-file-pdf m-r-5"></i> Gatepass</a>
                                 @endif
                             </div>
                         </div>

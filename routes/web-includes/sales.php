@@ -50,6 +50,8 @@ Route::prefix('invoice')->group(function(){
     Route::get('/{id}/production-status',[InvoiceController::class,'getProductionStatus'])->name('sales.invoice.production-status')->middleware('permission:view-invoices');
 
     Route::get('{id}/download-pdf',[InvoiceController::class,'downloadPdf'])->name('sales.invoice.download-pdf')->middleware('permission:view-invoices');
+    Route::get('{id}/download-delivery-receipt-pdf',[InvoiceController::class,'downloadDeliveryReceiptPdf'])->name('sales.invoice.download-delivery-receipt-pdf')->middleware('permission:view-invoices');
+    Route::get('{id}/download-gatepass-pdf',[InvoiceController::class,'downloadGatepassPdf'])->name('sales.invoice.download-gatepass-pdf')->middleware('permission:view-invoices');
 
     
     //Invoice delivered (not in use)
