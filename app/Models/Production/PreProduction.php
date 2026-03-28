@@ -103,6 +103,7 @@ class PreProduction extends BaseModel
         'estimated_production_qty',
         'notes',
         'is_verified',
+        'reject_reason',
         'process_status',
         'delivery_status',
         'received_status',

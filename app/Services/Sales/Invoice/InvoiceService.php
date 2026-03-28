@@ -54,13 +54,18 @@ class InvoiceService
         $start_date_filtered = $request->start_date_filtered ?? null;
         $end_date_filtered = $request->end_date_filtered ?? null;
         $authUser = auth()->user();
-        $data['invoices'] = Invoice::where('deleted', Invoice::DELETED_NO)
+        $data['invoices'] = Invoice::with('customer')
+            ->withCount([
+                'designs as designs_count' => function ($q) {
+                    $q->where('deleted', InvoiceDesigns::DELETED_NO)
+                        ->where('status', InvoiceDesigns::STATUS_ACTIVE);
+                }
+            ])
+            ->where('deleted', Invoice::DELETED_NO)
             ->where(function ($q) use ($invoice_id) {
                 if ($invoice_id != '') {
                     $q->where('invoice_no', 'like', '%' . $invoice_id . '%');
                 }
-
-
             })
             ->where(function ($q) use ($status_filter) {
                 if ($status_filter != '') {
@@ -93,8 +98,19 @@ class InvoiceService
         $data['invoice'] = Invoice::where('deleted', Invoice::DELETED_NO)
             ->where('id', $id)
             ->first();
-        $data['designs'] = InvoiceDesigns::where('invoice_id', $id)->get();
+
+        if (!$data['invoice']) {
+            throw new \Exception('Invalid Invoice!');
+        }
+
+        $data['designs'] = InvoiceDesigns::where('invoice_id', $id)
+            ->where('deleted', InvoiceDesigns::DELETED_NO)
+            ->where('status', InvoiceDesigns::STATUS_ACTIVE)
+            ->orderBy('id', 'desc')
+            ->get();
+
         $data['view'] = view('sales.invoice.__design_modal_data', $data)->render();
+        $data['upload_view'] = view('sales.invoice._design_upload_modal_data', $data)->render();
         return $data;
     }
 

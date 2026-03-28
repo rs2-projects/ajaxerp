@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\BaseControllers\BackendController;
-use App\Http\Requests\Sales\StoreInvoiceDesignRequest;
 use App\Services\Sales\InvoiceDesignService;
+use Illuminate\Http\Request;
 
 class InvoiceDesignController extends BackendController
 {
@@ -14,7 +14,7 @@ class InvoiceDesignController extends BackendController
         $this->service = new InvoiceDesignService();
     }
 
-    public function uploadDesign(StoreInvoiceDesignRequest $request)
+    public function uploadDesign(Request $request)
     {
         try {
             $this->service->uploadDesign($request);
