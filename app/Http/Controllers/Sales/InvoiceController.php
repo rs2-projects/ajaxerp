@@ -191,4 +191,36 @@ class InvoiceController extends BackendController
         //     return redirect()->back()->with(['failed' => $e->getMessage()]);
         // }
     }
+
+    public function downloadDeliveryReceiptPdf($id)
+    {
+        $data = $this->service->getDownloadPdfData($id);
+
+        $pdf = PDF::loadView('sales.invoice.delivery-receipt-pdf', $data);
+        $pdf->setPaper('a4');
+        $pdf->setOrientation('portrait');
+        $pdf->setOption('margin-bottom', 15);
+        $pdf->setOption('margin-top', 15);
+        if($data['invoice']->invoice_footer != "") {
+            $pdf->setOption('footer-center', $data['invoice']->invoice_footer);
+        }
+
+        return $pdf->inline('Delivery-Receipt-'.$data['invoice']->invoice_no.'.pdf');
+    }
+
+    public function downloadGatepassPdf($id)
+    {
+        $data = $this->service->getDownloadPdfData($id);
+
+        $pdf = PDF::loadView('sales.invoice.gatepass-pdf', $data);
+        $pdf->setPaper('a4');
+        $pdf->setOrientation('portrait');
+        $pdf->setOption('margin-bottom', 15);
+        $pdf->setOption('margin-top', 15);
+        if($data['invoice']->invoice_footer != "") {
+            $pdf->setOption('footer-center', $data['invoice']->invoice_footer);
+        }
+
+        return $pdf->inline('Gatepass-'.$data['invoice']->invoice_no.'.pdf');
+    }
 }
