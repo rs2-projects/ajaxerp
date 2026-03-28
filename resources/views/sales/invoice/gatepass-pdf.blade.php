@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ __('Invoice') }}</title>
+    <title>{{ __('Gatepass') }}</title>
 
     <style>
         /* @font-face {
@@ -266,7 +266,7 @@
             <img src="{{ asset('assets/img/logo-pdf.png') }}" alt="{{ config('app.name') }}" style="max-width: 250px;">
         </div>
         <div class="h-right" style="text-align: right;float:right;">
-            <h1 style="margin-top: 15px; margin-bottom:0px !important;">Invoice</h1>
+            <h1 style="margin-top: 15px; margin-bottom:0px !important;">Gatepass</h1>
         </div>
     </div>
     {{-- <div class="top-content">
@@ -332,10 +332,7 @@
             <tr>
                 <th class="invt-item" style="text-align: left;">{{ __('Item') }}</th>
                 <th class="invt-description" style="text-align: left;">{{ __('Description') }}</th>
-                <th class="invt-price">{{ __('Price') }}</th>
-                <th class="invt-vat">{{ __('Vat') }}</th>
                 <th class="invt-qty">{{ __('Qty') }}</th>
-                <th class="invt-total" style="width: 120px;">{{ __('Total') }} (PHP)</th>
             </tr>
             </thead>
             <tbody>
@@ -350,63 +347,12 @@
                         {{$productInfo->description}}
                         <br>
                     </td>
-                    <td class="tm_width_2" style="text-align: center;">{{ formatNumber($productInfo->unit_price) }}</td>
-                    <td class="tm_width_1" style="text-align: center;">{{ formatNumber($productInfo->tax_amount) }}</td>
                     <td class="tm_width_1" style="text-align: center;">{{ $productInfo->quantity }}</td>
-                    <td class="tm_width_2 tm_text_right" style="text-align: right;">{{ formatNumber($productInfo->net_total) }}</td>
 
                 </tr>
             @endforeach
 
             </tbody>
-            <tfoot>
-            <tr class="invt-footer-row subtotal-tr">
-                <td colspan="4" class="invfr-left invt-subtotal">
-                    {{ __('Subtotal') }}:
-                </td>
-                <td colspan="2" class="invfr-right invt-subtotal-amount">
-                     {{ formatNumber($invoice->subtotal_amount) }}
-                </td>
-            </tr>
-
-            <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
-
-                    {{ __('Vat') }}
-                </td>
-                <td colspan="2" class="invfr-right">
-                    {{ formatNumber($invoice->vat_amount) }}
-                </td>
-            </tr>
-
-            <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
-                    {{ __('Discount') }}:
-                </td>
-                <td colspan="2" class="invfr-right">
-                    {{ formatNumber($invoice->discount_amount) }}
-                </td>
-            </tr>
-
-            <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
-                    {{ __('Unloading Cost') }}:
-                </td>
-                <td colspan="2" class="invfr-right">
-                    {{ formatNumber($invoice->unloading_cost) }}
-                </td>
-            </tr>
-
-            <tr class="invt-footer-row total-tr">
-                <td colspan="4" class="invfr-left">
-                    {{ __('Total') }}:
-                </td>
-                <td colspan="2" class="invfr-right">
-                    PHP {{ formatNumber($invoice->payable_amount) }}
-                </td>
-            </tr>
-
-            </tfoot>
         </table>
     </div>
 
