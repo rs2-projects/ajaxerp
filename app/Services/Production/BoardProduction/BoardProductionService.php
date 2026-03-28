@@ -298,7 +298,7 @@ class BoardProductionService
         return $data;
     }
 
-    public function verificationStatusUpdate($id, $status)
+    public function verificationStatusUpdate($id, $status, $rejectReason = null)
     {
         try {
             $pre_production = PreProduction::where('id', $id)
@@ -307,7 +307,11 @@ class BoardProductionService
             if (!$pre_production) {
                 throw new \Exception('Pre Production not found');
             }
+
+            $status = (int)$status;
+            $rejectReason = is_string($rejectReason) ? trim($rejectReason) : null;
             $pre_production->is_verified = $status;
+            $pre_production->reject_reason = $status === PreProduction::VERIFIED_REJECTED ? $rejectReason : null;
             $pre_production->updated_by = auth()->user()->id;
             $pre_production->updated_at = now();
             $pre_production->save();
