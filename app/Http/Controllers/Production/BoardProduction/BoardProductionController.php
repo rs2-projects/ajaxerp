@@ -83,10 +83,10 @@ class BoardProductionController extends BackendController
         return $this->view('production.pending-board-production._details')->with($data);
     }
 
-    public function statusUpdate($id, $status)
+    public function statusUpdate(Request $request, $id, $status)
     {
         try {
-            $data = $this->service->verificationStatusUpdate($id, $status);
+            $data = $this->service->verificationStatusUpdate($id, $status, $request->reject_reason);
             return $this->returnAjaxSuccess([$data], 'Status Update Successfully');
         }catch (\Exception $e) {
             return $this->returnAjaxError([],$e->getMessage());

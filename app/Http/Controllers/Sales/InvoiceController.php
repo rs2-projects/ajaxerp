@@ -37,8 +37,15 @@ class InvoiceController extends BackendController
     //getDesign
     public function getDesign($id)
     {
-        $data = $this->service->getDesign($id);
-        return$this->returnAjaxSuccess(['view'=>$data['view']], 'Data Fetch Successfully');
+        try {
+            $data = $this->service->getDesign($id);
+            return$this->returnAjaxSuccess([
+                'view' => $data['view'],
+                'upload_view' => $data['upload_view'] ?? '',
+            ], 'Data Fetch Successfully');
+        } catch (\Exception $e) {
+            return $this->returnAjaxError([], $e->getMessage());
+        }
     }
 
     //Create Invoice
