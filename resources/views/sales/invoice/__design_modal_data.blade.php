@@ -14,14 +14,11 @@
         @endphp
 
         @if($hasDesigns)
-            @php
-                $designCount = count($designs);
-            @endphp
             @foreach($designs as $index => $design)
                 <div class="modal-do-document-item">
                     <a href="{{ $design->show_image }}" target="_blank" class="modal-do-document-item-img">
                         <img src="{{ asset('/')}}assets/img/product/documents.png" alt="file">
-                        <h5>{{ $designCount == 1 ? 'Design File' : 'Design' . ($index + 1) . ' File' }}</h5>
+                        <h5>{{ 'Design' . ($index + 1) }}</h5>
                     </a>
                 </div>
             @endforeach
