@@ -162,6 +162,7 @@ class DispatchInvoiceService
                         $dispatch_detail->invoice_dispatch_id = $dispatch->id;
                         $dispatch_detail->invoice_id = $invoice->id;
                         $dispatch_detail->invoice_detail_id = $id;
+                        $dispatch_detail->item_type = isset($request->item_type[$key]) ? (int) $request->item_type[$key] : 0;
                         $dispatch_detail->finished_good_id = $request->item_id[$key];
                         $dispatch_detail->quantity = $request->delivery_qty[$key];
                         $dispatch_detail->created_by = auth()->id();
