@@ -60,7 +60,9 @@ class PreProductionService
             ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -77,7 +79,9 @@ class PreProductionService
             ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -94,7 +98,9 @@ class PreProductionService
             ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -111,7 +117,9 @@ class PreProductionService
             ->where('type', PreProduction::TYPE_OTHERS)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
