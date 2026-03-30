@@ -59,7 +59,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -76,7 +78,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -93,7 +97,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered) {
                 if ($keyword_filtered != '') {
-                    $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%' . $keyword_filtered . '%');
                 }
             })
             ->has('pendingPreProductionMaterialDeliveries')
@@ -111,7 +117,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -128,7 +136,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -145,7 +155,9 @@ class BoardProductionService
             ->where('type', PreProduction::TYPE_BOARD)
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('pre_production_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                        $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                    })->orWhere('pre_production_no', 'like', '%'.$keyword_filtered.'%');
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -250,7 +262,9 @@ class BoardProductionService
 
         $query->where(function ($q) use ($keyword_filtered) {
             if ($keyword_filtered != '') {
-                $q->where('pre_production_no', 'like', '%' . $keyword_filtered . '%');
+                $q->whereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                    $finishedGoodsQuery->where('name', 'like', '%' . $keyword_filtered . '%');
+                })->orWhere('pre_production_no', 'like', '%' . $keyword_filtered . '%');
             }
         });
         $data['pre_productions'] = $query->orderBy('id', 'desc')->paginate($this->paginate_limit);
