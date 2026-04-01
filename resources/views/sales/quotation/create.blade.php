@@ -177,7 +177,11 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <textarea class="form-control auto-grow-input" name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
+                                                                <textarea class="d-none" name="description[]" v-model="cartItem.description"></textarea>
+                                                                <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2" @click.prevent="openItemDescriptionEditor(cartItemIndex)">
+                                                                    <i class="fa-solid fa-pen-to-square"></i> Add Description
+                                                                </button>
+                                                                <small v-if="cartItem.description && cartItem.description.trim() !== ''" class="text-success d-block mt-1">Description added</small>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -618,6 +622,29 @@
                 </div>
             </div>
         </div>
+        {{-- item description modal --}}
+        <div id="itemDescriptionModal" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header erp-modal-header">
+                        <h5 class="modal-title">Item Description</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body erp-modal-body">
+                        <div class="erp-modal-body-content">
+                            <textarea id="item-description-editor"></textarea>
+                            <small class="text-muted d-block mt-2">Tip: Use image resize handles and image style width to show 1 or 2 images per row.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary btn-sm" @click="saveItemDescriptionEditor">Save Description</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     <!--End::row-1 -->
@@ -644,6 +671,9 @@
         #quotation-notes-editor-wrapper .tox .tox-statusbar {
             border-top: 1px solid #e5e5e5;
         }
+        #itemDescriptionModal .tox-tinymce {
+            min-height: 260px;
+        }
     </style>
 @endsection
 
@@ -667,6 +697,8 @@
 
     <script>
         let quotationNotesEditor = null;
+        let itemDescriptionEditor = null;
+        let itemDescriptionEditorOpenIndex = null;
 
         $(document).ready(function () {
             initializeDatepicker();
@@ -688,6 +720,14 @@
 
             $('.gallery-wrapper .dropify').dropify();
             initQuotationNotesEditor();
+            initItemDescriptionEditor();
+
+            $("#itemDescriptionModal").on('hidden.bs.modal', function() {
+                itemDescriptionEditorOpenIndex = null;
+                if (typeof vueApp !== 'undefined' && vueApp) {
+                    vueApp.activeDescriptionItemIndex = null;
+                }
+            });
         });
 
         function initPaymentMethodSelect2() {
@@ -739,12 +779,6 @@
                 return;
             }
 
-            let csrfToken = '';
-            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-            if (csrfMeta) {
-                csrfToken = csrfMeta.getAttribute('content') || '';
-            }
-
             tinymce.remove('#quotation-notes-editor');
             tinymce.init({
                 selector: '#quotation-notes-editor',
@@ -778,49 +812,108 @@
                     }
                 ],
                 content_style: 'img { max-width: 100%; height: auto; vertical-align: top; } figure.image { margin: 0; }',
-                images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', "{{ route('sales.quotation.notes-image-upload') }}");
-                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) {
-                            progress((e.loaded / e.total) * 100);
-                        }
-                    };
-
-                    xhr.onload = () => {
-                        if (xhr.status < 200 || xhr.status >= 300) {
-                            reject('Image upload failed: HTTP ' + xhr.status);
-                            return;
-                        }
-
-                        let json = {};
-                        try {
-                            json = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            reject('Invalid upload response');
-                            return;
-                        }
-
-                        if (!json || (!json.location && !json.url)) {
-                            reject('Invalid upload response format');
-                            return;
-                        }
-
-                        resolve(json.location || json.url);
-                    };
-
-                    xhr.onerror = () => reject('Image upload failed due to a network error.');
-
-                    const formData = new FormData();
-                    formData.append('file', blobInfo.blob(), blobInfo.filename());
-                    xhr.send(formData);
-                })
+                images_upload_handler: tinyMceImageUploadHandler
             }).then((editors) => {
                 quotationNotesEditor = editors && editors.length ? editors[0] : null;
             }).catch((error) => {
                 console.error('TinyMCE init failed:', error);
+            });
+        }
+
+        function initItemDescriptionEditor() {
+            if (typeof tinymce === 'undefined') {
+                return;
+            }
+
+            tinymce.remove('#item-description-editor');
+            tinymce.init({
+                selector: '#item-description-editor',
+                license_key: 'gpl',
+                height: 280,
+                menubar: 'edit view insert format table tools',
+                plugins: 'link image table lists advlist autoresize code',
+                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | code',
+                object_resizing: 'img',
+                image_dimensions: true,
+                image_advtab: true,
+                automatic_uploads: true,
+                relative_urls: false,
+                remove_script_host: false,
+                convert_urls: false,
+                style_formats: [
+                    {
+                        title: 'Image Full Width',
+                        selector: 'img',
+                        styles: { width: '100%', display: 'block', margin: '0 0 8px 0' }
+                    },
+                    {
+                        title: 'Image Half Width',
+                        selector: 'img',
+                        styles: { width: '49%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    },
+                    {
+                        title: 'Image One Third',
+                        selector: 'img',
+                        styles: { width: '32%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    }
+                ],
+                content_style: 'img { max-width: 100%; height: auto; vertical-align: top; } figure.image { margin: 0; }',
+                images_upload_handler: tinyMceImageUploadHandler
+            }).then((editors) => {
+                itemDescriptionEditor = editors && editors.length ? editors[0] : null;
+            }).catch((error) => {
+                console.error('Item description editor init failed:', error);
+            });
+        }
+
+        function getCsrfToken() {
+            let csrfToken = '';
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            if (csrfMeta) {
+                csrfToken = csrfMeta.getAttribute('content') || '';
+            }
+            return csrfToken;
+        }
+
+        function tinyMceImageUploadHandler(blobInfo, progress) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', "{{ route('sales.quotation.notes-image-upload') }}");
+                xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        progress((e.loaded / e.total) * 100);
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        reject('Image upload failed: HTTP ' + xhr.status);
+                        return;
+                    }
+
+                    let json = {};
+                    try {
+                        json = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        reject('Invalid upload response');
+                        return;
+                    }
+
+                    if (!json || (!json.location && !json.url)) {
+                        reject('Invalid upload response format');
+                        return;
+                    }
+
+                    resolve(json.location || json.url);
+                };
+
+                xhr.onerror = () => reject('Image upload failed due to a network error.');
+
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
             });
         }
 
@@ -846,6 +939,7 @@
                     paying_amount: 0,
                     unloading_cost: 0,
                     down_payment_percent: 0,
+                    activeDescriptionItemIndex: null,
 
                 }
             },
@@ -1112,6 +1206,40 @@
                         this.cartItems[cartItemIndex].tax = this.system_tax_items[taxIndex];
                         this.updateCartItemPrice(cartItemIndex);
                     }
+                },
+                openItemDescriptionEditor(index) {
+                    this.activeDescriptionItemIndex = index;
+                    itemDescriptionEditorOpenIndex = index;
+                    $("#itemDescriptionModal").modal('show');
+
+                    setTimeout(() => {
+                        let currentDescription = '';
+                        if (this.cartItems[index] && this.cartItems[index].description) {
+                            currentDescription = this.cartItems[index].description;
+                        }
+                        if (itemDescriptionEditor) {
+                            itemDescriptionEditor.setContent(currentDescription);
+                            itemDescriptionEditor.focus();
+                        } else {
+                            $("#item-description-editor").val(currentDescription);
+                        }
+                    }, 200);
+                },
+                saveItemDescriptionEditor() {
+                    if (itemDescriptionEditorOpenIndex === null || itemDescriptionEditorOpenIndex < 0) {
+                        $("#itemDescriptionModal").modal('hide');
+                        return;
+                    }
+
+                    let htmlContent = '';
+                    if (itemDescriptionEditor) {
+                        htmlContent = itemDescriptionEditor.getContent();
+                    } else {
+                        htmlContent = $("#item-description-editor").val() || '';
+                    }
+
+                    this.cartItems[itemDescriptionEditorOpenIndex].description = htmlContent;
+                    $("#itemDescriptionModal").modal('hide');
                 }
             },
             created() {

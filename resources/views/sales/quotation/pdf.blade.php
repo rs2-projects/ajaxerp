@@ -145,9 +145,70 @@
         }
         .inv-table .invt-description {
             width: 30%;
+            vertical-align: top;
         }
         .inv-table .invt-description p {
             margin: 0 0 4px 0;
+        }
+        .inv-table .invt-description .item-description-html {
+            white-space: normal;
+        }
+        .inv-table .invt-description .item-description-html p {
+            margin: 0 0 4px 0;
+        }
+        .inv-table .invt-description .item-description-html img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+            vertical-align: top;
+            margin: 4px 1% 0 0;
+        }
+        .inv-table .invt-description .item-description-html figure {
+            display: inline-block;
+            vertical-align: top;
+            margin: 4px 1% 0 0;
+            max-width: 100%;
+        }
+        .inv-table .invt-description .item-description-html figure img {
+            width: 100%;
+        }
+        .inv-table .item-description-row td {
+            padding-top: 2px;
+            padding-bottom: 8px;
+        }
+        .inv-table .invt-item-description-full {
+            border-bottom: 1px solid #ddd;
+            white-space: normal;
+        }
+        .inv-table .invt-item-description-full .item-description-label {
+            font-weight: 600;
+            margin-right: 6px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        .inv-table .invt-item-description-full .item-description-html {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - 90px);
+        }
+        .inv-table .invt-item-description-full .item-description-html p {
+            margin: 0 0 4px 0;
+        }
+        .inv-table .invt-item-description-full .item-description-html img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+            vertical-align: top;
+            margin: 4px 1% 0 0;
+        }
+        .inv-table .invt-item-description-full .item-description-html figure {
+            display: inline-block;
+            vertical-align: top;
+            margin: 4px 1% 0 0;
+            max-width: 100%;
+        }
+        .inv-table .invt-item-description-full .item-description-html figure img {
+            width: 100%;
         }
         .inv-table .invt-description .extra-invt-description-info {
             padding: 4px 15px;
@@ -362,7 +423,6 @@
             <thead>
             <tr>
                 <th class="invt-item" style="text-align: left;">{{ __('Item') }}</th>
-                <th class="invt-description">{{ __('Description') }}</th>
                 <th class="invt-price">{{ __('Price') }}</th>
                 <th class="invt-vat">{{ __('Vat') }}</th>
                 <th class="invt-qty">{{ __('Qty') }}</th>
@@ -371,15 +431,164 @@
             </thead>
             <tbody>
             {{--{{dd($invoice)}}--}}
+            @php
+                $formatItemDescriptionHtmlForPdf = function ($description) {
+                    $description = (string) $description;
+                    $hasHtml = $description !== strip_tags($description);
+                    if (!$hasHtml) {
+                        return [
+                            'has_html' => false,
+                            'html' => $description,
+                        ];
+                    }
+
+                    $formattedHtml = $description;
+
+                    if (class_exists('DOMDocument')) {
+                        libxml_use_internal_errors(true);
+                        $dom = new \DOMDocument();
+                        $loaded = $dom->loadHTML(
+                            '<?xml encoding="utf-8" ?><div id="item-desc-root">' . $formattedHtml . '</div>',
+                            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+                        );
+
+                        if ($loaded) {
+                            $appendStyle = function ($element, $styleToAdd) {
+                                $existingStyle = trim((string) $element->getAttribute('style'));
+                                if ($existingStyle !== '' && !str_ends_with($existingStyle, ';')) {
+                                    $existingStyle .= ';';
+                                }
+                                $element->setAttribute('style', $existingStyle . $styleToAdd);
+                            };
+
+                            $xpath = new \DOMXPath($dom);
+                            $paragraphNodes = $xpath->query('//p');
+
+                            if ($paragraphNodes !== false) {
+                                foreach ($paragraphNodes as $paragraphNode) {
+                                    $imageNodes = $paragraphNode->getElementsByTagName('img');
+                                    $imageCount = $imageNodes->length;
+
+                                    if ($imageCount <= 0) {
+                                        continue;
+                                    }
+
+                                    $textContent = trim(html_entity_decode((string) $paragraphNode->textContent, ENT_QUOTES | ENT_HTML5));
+                                    if ($textContent !== '') {
+                                        continue;
+                                    }
+
+                                    if ($imageCount === 1) {
+                                        $targetWidth = '100%';
+                                    } elseif ($imageCount === 2) {
+                                        $targetWidth = '49%';
+                                    } elseif ($imageCount === 3) {
+                                        $targetWidth = '32%';
+                                    } else {
+                                        $targetWidth = '24%';
+                                    }
+
+                                    $styleSuffix = 'width:' . $targetWidth . ';max-width:' . $targetWidth . ';height:auto;display:inline-block;vertical-align:top;float:none;';
+
+                                    foreach ($imageNodes as $imageNode) {
+                                        $imageNode->removeAttribute('width');
+                                        $imageNode->removeAttribute('height');
+                                        $appendStyle($imageNode, $styleSuffix);
+                                    }
+
+                                    $childNodes = [];
+                                    foreach ($paragraphNode->childNodes as $childNode) {
+                                        $childNodes[] = $childNode;
+                                    }
+                                    foreach ($childNodes as $childNode) {
+                                        if ($childNode->nodeType === XML_TEXT_NODE && trim(html_entity_decode((string) $childNode->textContent, ENT_QUOTES | ENT_HTML5)) === '') {
+                                            $paragraphNode->removeChild($childNode);
+                                        }
+                                    }
+                                    $appendStyle($paragraphNode, 'margin:0 0 8px 0;');
+                                }
+                            }
+
+                            $rootNode = $dom->getElementById('item-desc-root');
+                            if ($rootNode) {
+                                $normalizedHtml = '';
+                                foreach ($rootNode->childNodes as $childNode) {
+                                    $normalizedHtml .= $dom->saveHTML($childNode);
+                                }
+                                $formattedHtml = $normalizedHtml;
+                            }
+                        }
+                        libxml_clear_errors();
+                    }
+
+                    $formattedHtml = preg_replace_callback(
+                        '/(<img[^>]+src=["\'])([^"\']+)(["\'])/i',
+                        function ($matches) {
+                            $prefix = $matches[1];
+                            $src = trim($matches[2]);
+                            $suffix = $matches[3];
+                            $srcPath = parse_url($src, PHP_URL_PATH);
+
+                            if ($srcPath == null || $srcPath == '') {
+                                $srcPath = $src;
+                            }
+
+                            if (str_starts_with($srcPath, '/storage/')) {
+                                $absolutePath = public_path(ltrim($srcPath, '/'));
+                            } elseif (str_starts_with($srcPath, 'storage/')) {
+                                $absolutePath = public_path($srcPath);
+                            } else {
+                                return $matches[0];
+                            }
+
+                            if (!file_exists($absolutePath)) {
+                                return $matches[0];
+                            }
+
+                            $extension = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
+                            if ($extension === 'webp' && function_exists('imagecreatefromwebp') && function_exists('imagepng')) {
+                                $cacheDir = storage_path('app/public/quotation/item-description/pdf-cache');
+                                if (!file_exists($cacheDir)) {
+                                    mkdir($cacheDir, 0777, true);
+                                }
+
+                                $cacheFilePath = $cacheDir . '/' . md5($absolutePath) . '.png';
+
+                                if (!file_exists($cacheFilePath) || filemtime($cacheFilePath) < filemtime($absolutePath)) {
+                                    $image = @imagecreatefromwebp($absolutePath);
+                                    if ($image !== false) {
+                                        imagepng($image, $cacheFilePath);
+                                        imagedestroy($image);
+                                    }
+                                }
+
+                                if (file_exists($cacheFilePath)) {
+                                    return $prefix . $cacheFilePath . $suffix;
+                                }
+                            }
+
+                            return $prefix . $absolutePath . $suffix;
+                        },
+                        $formattedHtml
+                    );
+
+                    return [
+                        'has_html' => true,
+                        'html' => $formattedHtml,
+                    ];
+                };
+            @endphp
 
             @foreach($quotationDetails as $productInfo)
+                @php
+                    $formattedDescription = $formatItemDescriptionHtmlForPdf($productInfo->description);
+                    $rawDescription = (string) $productInfo->description;
+                    $descriptionHasContent = (preg_match('/<img\b/i', $rawDescription) === 1)
+                        || (trim(html_entity_decode(strip_tags($rawDescription), ENT_QUOTES | ENT_HTML5)) !== '');
+                @endphp
                 <tr>
                     <td class="tm_width_3">
                         {{ $productInfo->itemName() }}
-                    </td>
-                    <td class="tm_width_4 invt-description">
-                        {{$productInfo->description}}
-                        <br>
                     </td>
                     <td class="tm_width_2" style="text-align: center;">{{ formatNumber($productInfo->unit_price) }}</td>
                     <td class="tm_width_1" style="text-align: center;">{{ formatNumber($productInfo->tax_amount) }}</td>
@@ -387,12 +596,23 @@
                     <td class="tm_width_2 tm_text_right" style="text-align: right;">{{ formatNumber($productInfo->net_total) }}</td>
 
                 </tr>
+                @if($descriptionHasContent)
+                    <tr class="item-description-row">
+                        <td colspan="5" class="invt-item-description-full">
+                            @if($formattedDescription['has_html'])
+                                <div class="item-description-html">{!! $formattedDescription['html'] !!}</div>
+                            @else
+                                <div class="item-description-html">{{ $productInfo->description }}</div>
+                            @endif
+                        </td>
+                    </tr>
+                @endif
             @endforeach
 
             </tbody>
             <tfoot>
             <tr class="invt-footer-row subtotal-tr">
-                <td colspan="4" class="invfr-left invt-subtotal">
+                <td colspan="3" class="invfr-left invt-subtotal">
                     {{ __('Subtotal') }}:
                 </td>
                 <td colspan="2" class="invfr-right invt-subtotal-amount">
@@ -401,7 +621,7 @@
             </tr>
 
             <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
+                <td colspan="3" class="invfr-left">
 
                     {{ __('Vat') }}
                 </td>
@@ -411,7 +631,7 @@
             </tr>
 
             <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
+                <td colspan="3" class="invfr-left">
                     {{ __('Discount') }}:
                 </td>
                 <td colspan="2" class="invfr-right">
@@ -420,7 +640,7 @@
             </tr>
 
             {{-- <tr class="invt-footer-row">
-                <td colspan="4" class="invfr-left">
+                <td colspan="3" class="invfr-left">
                     {{ __('Unloading Cost') }}:
                 </td>
                 <td colspan="2" class="invfr-right">
@@ -429,7 +649,7 @@
             </tr> --}}
 
             <tr class="invt-footer-row total-tr">
-                <td colspan="4" class="invfr-left">
+                <td colspan="3" class="invfr-left">
                     {{ __('Total') }}:
                 </td>
                 <td colspan="2" class="invfr-right">
