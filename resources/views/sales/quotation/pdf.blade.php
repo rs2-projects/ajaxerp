@@ -209,6 +209,35 @@
             font-size: 13px;
             margin: 0;
         }
+        .invoice-note .terms-html {
+            font-size: 13px;
+        }
+        .invoice-note .terms-html img {
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 8px 8px 0;
+        }
+        .invoice-note .terms-html figure {
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 8px 8px 0;
+            max-width: 100%;
+        }
+        .invoice-note .terms-html figure img {
+            width: 100%;
+        }
+        .invoice-note .terms-html table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .invoice-note .terms-html table th,
+        .invoice-note .terms-html table td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            vertical-align: top;
+        }
         .invoice-return-wrapper {
             margin-top: 30px;
         }
@@ -457,7 +486,75 @@
         <h6>
             {{ __('Notes') }} / {{ __('Terms') }}
         </h6>
-        <p style="white-space: pre-line;">{{$quotation->notes}}</p>
+        @php
+            $hasHtmlContent = $quotation->notes !== strip_tags($quotation->notes);
+            $notesHtmlForPdf = $quotation->notes;
+
+            if ($hasHtmlContent) {
+                // Normalize editor HTML so image-only paragraphs don't force one-image-per-row in PDF.
+                $notesHtmlForPdf = preg_replace('/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/i', '', $notesHtmlForPdf);
+                $notesHtmlForPdf = preg_replace('/<p>\s*((?:<img\b[^>]*>\s*)+)<\/p>/i', '$1', $notesHtmlForPdf);
+                $notesHtmlForPdf = preg_replace('/<p>\s*((?:<figure\b[^>]*>.*?<\/figure>\s*)+)<\/p>/is', '$1', $notesHtmlForPdf);
+
+                $notesHtmlForPdf = preg_replace_callback(
+                    '/(<img[^>]+src=["\'])([^"\']+)(["\'])/i',
+                    function ($matches) {
+                        $prefix = $matches[1];
+                        $src = trim($matches[2]);
+                        $suffix = $matches[3];
+                        $srcPath = parse_url($src, PHP_URL_PATH);
+
+                        if ($srcPath == null || $srcPath == '') {
+                            $srcPath = $src;
+                        }
+
+                        if (str_starts_with($srcPath, '/storage/')) {
+                            $absolutePath = public_path(ltrim($srcPath, '/'));
+                        } elseif (str_starts_with($srcPath, 'storage/')) {
+                            $absolutePath = public_path($srcPath);
+                        } else {
+                            return $matches[0];
+                        }
+
+                        if (!file_exists($absolutePath)) {
+                            return $matches[0];
+                        }
+
+                        // wkhtmltopdf often fails with WebP; convert once to PNG for PDF rendering.
+                        $extension = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
+                        if ($extension === 'webp' && function_exists('imagecreatefromwebp') && function_exists('imagepng')) {
+                            $cacheDir = storage_path('app/public/quotation/notes/pdf-cache');
+                            if (!file_exists($cacheDir)) {
+                                mkdir($cacheDir, 0777, true);
+                            }
+
+                            $cacheFilePath = $cacheDir . '/' . md5($absolutePath) . '.png';
+
+                            if (!file_exists($cacheFilePath) || filemtime($cacheFilePath) < filemtime($absolutePath)) {
+                                $image = @imagecreatefromwebp($absolutePath);
+                                if ($image !== false) {
+                                    imagepng($image, $cacheFilePath);
+                                    imagedestroy($image);
+                                }
+                            }
+
+                            if (file_exists($cacheFilePath)) {
+                                return $prefix . $cacheFilePath . $suffix;
+                            }
+                        }
+
+                        return $prefix . $absolutePath . $suffix;
+                    },
+                    $notesHtmlForPdf
+                );
+            }
+        @endphp
+
+        @if($hasHtmlContent)
+            <div class="terms-html">{!! $notesHtmlForPdf !!}</div>
+        @else
+            <p style="white-space: pre-line;">{{ $quotation->notes }}</p>
+        @endif
     </div>
 
 @endif

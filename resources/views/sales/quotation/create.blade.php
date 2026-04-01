@@ -499,12 +499,23 @@
                                           
                                         </div>
                                         
-                                        <div class="po-order-product-payment-status">
+                                        {{-- <div class="po-order-product-payment-status">
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
                                                     <div class="input-block erp-step-input-block mb-0">
                                                         <label class="col-form-label pt-0">Terms and Conditions</label>
                                                         <textarea class="form-control" name="notes" rows="2" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> --}}
+                                        <div class="po-order-product-payment-status">
+                                            <div class="po-order-product-note-terms-inner">
+                                                <div class="po-order-product-note-terms-item">
+                                                    <div class="input-block erp-step-input-block mb-0" id="quotation-notes-editor-wrapper">
+                                                        <label class="col-form-label pt-0">Terms and Conditions</label>
+                                                        <textarea class="form-control" id="quotation-notes-editor" name="notes" rows="6" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
+                                                        <small class="text-muted d-block mt-2">Tip: Select image and drag corner to resize. Use <strong>Styles &gt; Image Half Width</strong> for 2 images per row.</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -626,7 +637,14 @@
 @endsection
 
 @section('css')
-
+    <style>
+        #quotation-notes-editor-wrapper .tox-tinymce {
+            min-height: 260px;
+        }
+        #quotation-notes-editor-wrapper .tox .tox-statusbar {
+            border-top: 1px solid #e5e5e5;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -640,6 +658,7 @@
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7.9.1/tinymce.min.js" referrerpolicy="origin"></script>
 @endsection
 
 @section('js')
@@ -647,6 +666,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+        let quotationNotesEditor = null;
 
         $(document).ready(function () {
             initializeDatepicker();
@@ -667,6 +687,7 @@
             });
 
             $('.gallery-wrapper .dropify').dropify();
+            initQuotationNotesEditor();
         });
 
         function initPaymentMethodSelect2() {
@@ -710,6 +731,97 @@
         }
         function removeImage(button) {
             $(button).parent().remove();
+        }
+
+        function initQuotationNotesEditor() {
+            const editorElement = document.querySelector('#quotation-notes-editor');
+            if (!editorElement || typeof tinymce === 'undefined') {
+                return;
+            }
+
+            let csrfToken = '';
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            if (csrfMeta) {
+                csrfToken = csrfMeta.getAttribute('content') || '';
+            }
+
+            tinymce.remove('#quotation-notes-editor');
+            tinymce.init({
+                selector: '#quotation-notes-editor',
+                license_key: 'gpl',
+                height: 300,
+                menubar: 'edit view insert format table tools',
+                plugins: 'link image table lists advlist autoresize code',
+                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | code',
+                object_resizing: 'img',
+                image_dimensions: true,
+                image_advtab: true,
+                automatic_uploads: true,
+                relative_urls: false,
+                remove_script_host: false,
+                convert_urls: false,
+                style_formats: [
+                    {
+                        title: 'Image Full Width',
+                        selector: 'img',
+                        styles: { width: '100%', display: 'block', margin: '0 0 8px 0' }
+                    },
+                    {
+                        title: 'Image Half Width',
+                        selector: 'img',
+                        styles: { width: '49%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    },
+                    {
+                        title: 'Image One Third',
+                        selector: 'img',
+                        styles: { width: '32%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    }
+                ],
+                content_style: 'img { max-width: 100%; height: auto; vertical-align: top; } figure.image { margin: 0; }',
+                images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', "{{ route('sales.quotation.notes-image-upload') }}");
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable) {
+                            progress((e.loaded / e.total) * 100);
+                        }
+                    };
+
+                    xhr.onload = () => {
+                        if (xhr.status < 200 || xhr.status >= 300) {
+                            reject('Image upload failed: HTTP ' + xhr.status);
+                            return;
+                        }
+
+                        let json = {};
+                        try {
+                            json = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            reject('Invalid upload response');
+                            return;
+                        }
+
+                        if (!json || (!json.location && !json.url)) {
+                            reject('Invalid upload response format');
+                            return;
+                        }
+
+                        resolve(json.location || json.url);
+                    };
+
+                    xhr.onerror = () => reject('Image upload failed due to a network error.');
+
+                    const formData = new FormData();
+                    formData.append('file', blobInfo.blob(), blobInfo.filename());
+                    xhr.send(formData);
+                })
+            }).then((editors) => {
+                quotationNotesEditor = editors && editors.length ? editors[0] : null;
+            }).catch((error) => {
+                console.error('TinyMCE init failed:', error);
+            });
         }
 
         var { createApp } = Vue;
@@ -1026,6 +1138,9 @@
         }
 
         function quotationStoreFormSubmit(){
+            if (typeof tinymce !== 'undefined') {
+                tinymce.triggerSave();
+            }
 
             var self = $("#invoiceStoreForm");
             var formData = new FormData($(self)[0]);
@@ -1046,5 +1161,3 @@
 
     </script>
 @endsection
-
-
