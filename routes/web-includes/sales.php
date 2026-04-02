@@ -67,6 +67,7 @@ Route::prefix('invoice')->group(function(){
 Route::prefix('quotation')->group(function(){
     Route::get('/',[QuotationController::class,'index'])->name('sales.quotation.index')->middleware('permission:view-invoices');
     Route::post('/filtered',[QuotationController::class,'indexFilteredData'])->name('sales.quotation.filtered')->middleware('permission:view-invoices');
+    Route::post('/notes-image-upload',[QuotationController::class,'uploadNotesImage'])->name('sales.quotation.notes-image-upload')->middleware('permission:manage-invoices');
     //create invoice data
     Route::get('/create',[QuotationController::class,'create'])->name('sales.quotation.create')->middleware('permission:manage-invoices');
     Route::post('/create',[QuotationController::class,'store'])->name('sales.quotation.store')->middleware('permission:manage-invoices');

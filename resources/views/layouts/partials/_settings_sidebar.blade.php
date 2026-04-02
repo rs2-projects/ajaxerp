@@ -7,6 +7,9 @@
                     <a href="{{ route('dashboard') }}"><i class="fa fa-home erp-back-home"></i> <span>Back To Home</span></a>
                 </li>
                 @if(hasPermission( 'manage-administration-settings'))
+                    <li>
+                        <a href="{{ route('settings.company') }}" class="{{ ($activeMenu == 'settings.company') ? 'active' : '' }}"><i class="la la-building"></i> <span>Company</span></a>
+                    </li>
                     <li class="menu-title">
                         <span>Administration</span>
                     </li>

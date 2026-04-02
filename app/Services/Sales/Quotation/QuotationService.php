@@ -6,6 +6,7 @@ use App\Models\Accounting\AccCoaAccount;
 use App\Models\Accounting\AccCoaSubCategory;
 use App\Models\Accounting\Transaction;
 use App\Models\Accounting\TransactionReceipt;
+use App\Models\Company;
 use App\Models\Products\FinishedGoods;
 use App\Models\Products\ProductMaterial;
 use App\Models\Products\ProductMaterialSet;
@@ -886,7 +887,11 @@ class QuotationService
             ->first();
         $data['quotationDetails'] = QuotationDetails::where('quotation_id', $id)
             ->where('deleted', QuotationDetails::DELETED_NO)
+            ->with(['product_material', 'finishedGood'])
             ->get();
+        $data['company'] = Company::where('deleted', 0)
+            ->where('status', 1)
+            ->first();
         return $data;
      }
 

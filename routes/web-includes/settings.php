@@ -3,6 +3,7 @@
 use App\Http\Controllers\Settings\AbsentPenaltySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSalarySettingsController;
 use App\Http\Controllers\Settings\BonusTypeSettingsController;
+use App\Http\Controllers\Settings\CompanySettingsController;
 use App\Http\Controllers\Settings\GeoLocationSettingsController;
 use App\Http\Controllers\Settings\HolidaySettingsController;
 use App\Http\Controllers\Settings\LatePenaltySettingsController;
@@ -21,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 
 //setting route start
 Route::group(['prefix' => 'settings'], function () {
+    // company settings route start
+    Route::group(['prefix' => 'company', 'middleware' => 'permission:manage-administration-settings'], function () {
+        Route::get('/', [CompanySettingsController::class, 'edit'])->name('settings.company');
+        Route::post('/update', [CompanySettingsController::class, 'update'])->name('settings.company.update');
+    });
+    // company settings route end
+
     // office time route start
     Route::group(['prefix' => 'office-time', 'middleware' => 'permission:manage-administration-settings'], function () {
         Route::get('/', [OfficeTimeSettingsController::class, 'showOfficeTimeSettings'])->name('settings.office-time');
