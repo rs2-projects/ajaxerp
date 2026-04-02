@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Sales;
 use App\Http\Controllers\BaseControllers\BackendController;
 use App\Http\Requests\Sales\StoreQuotationRequest;
 use App\Http\Requests\Sales\UpdateQuotationRequest;
+use App\Services\Common\FileUploadService;
 use App\Services\Sales\Quotation\QuotationService;
 use Illuminate\Http\Request;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
@@ -136,6 +137,7 @@ class QuotationController extends BackendController
             $pdf->setOrientation('portrait');
             $pdf->setOption('margin-bottom', 15);
             $pdf->setOption('margin-top', 15);
+            $pdf->setOption('enable-local-file-access', true);
             // $pdf->setOption('footer-center', "Powered By: Retinasoft | Hotline: +8801877756677 | http://www.retinasoft.com.bd");
             return $pdf->inline('Quotation-'.$data['quotation']->ref_no.'.pdf');
 
@@ -144,6 +146,52 @@ class QuotationController extends BackendController
         //     return redirect()->back()->with(['failed' => $e->getMessage()]);
         // }
 
+    }
+
+    public function uploadNotesImage(Request $request)
+    {
+        try {
+            $fileKey = null;
+            if ($request->hasFile('upload')) {
+                $fileKey = 'upload';
+            } elseif ($request->hasFile('file')) {
+                $fileKey = 'file';
+            }
+
+            if ($fileKey == null) {
+                return response()->json([
+                    'error' => [
+                        'message' => 'No image file was provided.',
+                    ],
+                ], 422);
+            }
+
+            $request->validate([
+                $fileKey => 'required|image|mimes:jpeg,jpg,png,gif,webp,bmp|max:5120',
+            ]);
+
+            $fileUploadService = new FileUploadService();
+            $uploaded = $fileUploadService->store($request->file($fileKey), 'quotation/notes');
+
+            return response()->json([
+                'uploaded' => true,
+                'fileName' => $uploaded['name'],
+                'url' => asset($uploaded['path']),
+                'location' => asset($uploaded['path']),
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => [
+                    'message' => collect($e->errors())->flatten()->first() ?? 'Invalid image.',
+                ],
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => [
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
     }
 
     public function pendingQuotations()
