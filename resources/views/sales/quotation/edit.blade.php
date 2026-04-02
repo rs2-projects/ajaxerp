@@ -110,7 +110,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="poitb-item">
+                                {{-- <div class="poitb-item">
                                     <div class="poitb-header">
                                         <h4 class="title">Gallery</h4>
                                     </div>
@@ -121,9 +121,7 @@
                                                     <div class="gw-item col-12 col-sm-6 col-md-4 p-1 mb-1">
                                                         <input type="hidden" name="pre_gallery_id[]" value="{{ $gallery->id }}">
                                                         <input type="file" name="gallery[]" class="dropify" data-default-file="{{ asset($gallery->image) }}" data-show-remove="false">
-                                                        {{-- @if ($loop->iteration > 1) --}}
-                                                            <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
-                                                        {{-- @endif --}}
+                                                        <button onclick="removeImage(this)" type="button" class="remove-gw-item-btn"><i class="fa fa-times"></i></button>
                                                     </div>
                                                 @endforeach
                                             @else
@@ -141,7 +139,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class="purchase-order-invoice-body-box">
@@ -190,7 +188,11 @@
                                                     <div class="purchase-order-product-body-item-inner">
                                                         <div class="purchase-order-product-body-item-inner-content">
                                                             <div class="input-block mb-0 erp-step-input-block ">
-                                                                <textarea class="form-control auto-grow-input" name="description[]" v-model="cartItem.description" placeholder="Description"></textarea>
+                                                                <textarea class="d-none" name="description[]" v-model="cartItem.description"></textarea>
+                                                                <button type="button" class="btn btn-outline-primary btn-sm py-0 px-2" @click.prevent="openItemDescriptionEditor(cartItemIndex)">
+                                                                    <i class="fa-solid fa-pen-to-square"></i> Add Description
+                                                                </button>
+                                                                <small v-if="cartItem.description && cartItem.description.trim() !== ''" class="text-success d-block mt-1">Description added</small>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -515,9 +517,10 @@
                                         <div class="po-order-product-payment-status">
                                             <div class="po-order-product-note-terms-inner">
                                                 <div class="po-order-product-note-terms-item">
-                                                    <div class="input-block erp-step-input-block mb-0">
+                                                    <div class="input-block erp-step-input-block mb-0" id="quotation-notes-editor-wrapper">
                                                         <label class="col-form-label pt-0">Terms and Conditions</label>
-                                                        <textarea class="form-control" name="notes" rows="2" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
+                                                        @php($quotationNotesValue = $quotation->notes ?: 'The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.')
+                                                        <textarea class="form-control" id="quotation-notes-editor" name="notes" rows="6" placeholder="Enter Terms and Conditions of service that you are visible to your customer">{!! $quotationNotesValue !!}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -620,6 +623,28 @@
                 </div>
             </div>
         </div>
+        {{-- item description modal --}}
+        <div id="itemDescriptionModal" class="modal custom-modal fade" role="dialog">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header erp-modal-header">
+                        <h5 class="modal-title">Item Description</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body erp-modal-body">
+                        <div class="erp-modal-body-content">
+                            <textarea id="item-description-editor"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary btn-sm" @click="saveItemDescriptionEditor">Save Description</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="d-none">
@@ -637,7 +662,17 @@
 @endsection
 
 @section('css')
-
+    <style>
+        #quotation-notes-editor-wrapper .tox-tinymce {
+            min-height: 260px;
+        }
+        #quotation-notes-editor-wrapper .tox .tox-statusbar {
+            border-top: 1px solid #e5e5e5;
+        }
+        #itemDescriptionModal .tox-tinymce {
+            min-height: 420px;
+        }
+    </style>
 @endsection
 
 @section('css_plugins')
@@ -651,6 +686,7 @@
     <script src="{{asset('assets/js/moment.min.js')}}"></script>
     <script src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7.9.1/tinymce.min.js" referrerpolicy="origin"></script>
 @endsection
 
 @section('js')
@@ -658,10 +694,22 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
     <script>
+        let quotationNotesEditor = null;
+        let itemDescriptionEditor = null;
+        let itemDescriptionEditorOpenIndex = null;
 
         $(document).ready(function () {
             initializeDatepicker();
             $('.gallery-wrapper .dropify').dropify();
+            initQuotationNotesEditor();
+            initItemDescriptionEditor();
+
+            $("#itemDescriptionModal").on('hidden.bs.modal', function() {
+                itemDescriptionEditorOpenIndex = null;
+                if (typeof vueApp !== 'undefined' && vueApp) {
+                    vueApp.activeDescriptionItemIndex = null;
+                }
+            });
         });
 
         function initTaxSelect2() {
@@ -705,6 +753,195 @@
             $(button).parent().remove();
         }
 
+        function initQuotationNotesEditor() {
+            const editorElement = document.querySelector('#quotation-notes-editor');
+            if (!editorElement || typeof tinymce === 'undefined') {
+                return;
+            }
+
+            tinymce.remove('#quotation-notes-editor');
+            tinymce.init({
+                selector: '#quotation-notes-editor',
+                license_key: 'gpl',
+                height: 300,
+                promotion: false,
+                branding: false,
+                statusbar: false,
+                menubar: 'edit view format table',
+                plugins: 'table lists advlist autoresize',
+                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | uploadimageonly table',
+                object_resizing: 'img',
+                automatic_uploads: true,
+                relative_urls: false,
+                remove_script_host: false,
+                convert_urls: false,
+                setup: function (editor) {
+                    editor.ui.registry.addButton('uploadimageonly', {
+                        icon: 'image',
+                        tooltip: 'Upload image',
+                        onAction: function () {
+                            openImageUploaderForEditor(editor);
+                        }
+                    });
+                },
+                style_formats: [
+                    {
+                        title: 'Image Full Width',
+                        selector: 'img',
+                        styles: { width: '100%', display: 'block', margin: '0 0 8px 0' }
+                    },
+                    {
+                        title: 'Image Half Width',
+                        selector: 'img',
+                        styles: { width: '49%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    },
+                    {
+                        title: 'Image One Third',
+                        selector: 'img',
+                        styles: { width: '32%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    }
+                ],
+                content_style: 'img { max-width: 100%; height: auto; vertical-align: top; } figure.image { margin: 0; }',
+                images_upload_handler: tinyMceImageUploadHandler
+            }).then((editors) => {
+                quotationNotesEditor = editors && editors.length ? editors[0] : null;
+            }).catch((error) => {
+                console.error('TinyMCE init failed:', error);
+            });
+        }
+
+        function initItemDescriptionEditor() {
+            if (typeof tinymce === 'undefined') {
+                return;
+            }
+
+            tinymce.remove('#item-description-editor');
+            tinymce.init({
+                selector: '#item-description-editor',
+                license_key: 'gpl',
+                height: 420,
+                promotion: false,
+                branding: false,
+                statusbar: false,
+                menubar: 'edit view format table',
+                plugins: 'table lists advlist autoresize',
+                toolbar: 'undo redo | uploadimageonly table | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist',
+                object_resizing: 'img',
+                automatic_uploads: true,
+                relative_urls: false,
+                remove_script_host: false,
+                convert_urls: false,
+                setup: function (editor) {
+                    editor.ui.registry.addButton('uploadimageonly', {
+                        icon: 'image',
+                        tooltip: 'Upload image',
+                        onAction: function () {
+                            openImageUploaderForEditor(editor);
+                        }
+                    });
+                },
+                style_formats: [
+                    {
+                        title: 'Image Full Width',
+                        selector: 'img',
+                        styles: { width: '100%', display: 'block', margin: '0 0 8px 0' }
+                    },
+                    {
+                        title: 'Image Half Width',
+                        selector: 'img',
+                        styles: { width: '49%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    },
+                    {
+                        title: 'Image One Third',
+                        selector: 'img',
+                        styles: { width: '32%', display: 'inline-block', margin: '0 1% 8px 0', verticalAlign: 'top' }
+                    }
+                ],
+                content_style: 'img { max-width: 100%; height: auto; vertical-align: top; } figure.image { margin: 0; }',
+                images_upload_handler: tinyMceImageUploadHandler
+            }).then((editors) => {
+                itemDescriptionEditor = editors && editors.length ? editors[0] : null;
+            }).catch((error) => {
+                console.error('Item description editor init failed:', error);
+            });
+        }
+
+        function getCsrfToken() {
+            let csrfToken = '';
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            if (csrfMeta) {
+                csrfToken = csrfMeta.getAttribute('content') || '';
+            }
+            return csrfToken;
+        }
+
+        function uploadImageFileToServer(file, fileName, progressCallback) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', "{{ route('sales.quotation.notes-image-upload') }}");
+                xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable && typeof progressCallback === 'function') {
+                        progressCallback((e.loaded / e.total) * 100);
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        reject('Image upload failed: HTTP ' + xhr.status);
+                        return;
+                    }
+
+                    let json = {};
+                    try {
+                        json = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        reject('Invalid upload response');
+                        return;
+                    }
+
+                    if (!json || (!json.location && !json.url)) {
+                        reject('Invalid upload response format');
+                        return;
+                    }
+
+                    resolve(json.location || json.url);
+                };
+
+                xhr.onerror = () => reject('Image upload failed due to a network error.');
+
+                const formData = new FormData();
+                formData.append('file', file, fileName || 'image.png');
+                xhr.send(formData);
+            });
+        }
+
+        function openImageUploaderForEditor(editor) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async function () {
+                if (!input.files || !input.files[0]) {
+                    return;
+                }
+
+                try {
+                    const file = input.files[0];
+                    const imageUrl = await uploadImageFileToServer(file, file.name);
+                    editor.insertContent('<img src="' + imageUrl + '" alt="">');
+                } catch (error) {
+                    console.error(error);
+                    showErrorAlert('Error', 'Image upload failed. Please try again.');
+                }
+            };
+            input.click();
+        }
+
+        function tinyMceImageUploadHandler(blobInfo, progress) {
+            return uploadImageFileToServer(blobInfo.blob(), blobInfo.filename(), progress);
+        }
+
         var { createApp } = Vue;
 
         var vueApp = createApp({
@@ -729,6 +966,7 @@
                     paying_amount: 0,
                     unloading_cost: {{ $quotation->unloading_cost ?? 0 }},
                     down_payment_percent: {{ $quotation->first_down_payment_percent ?? 0 }},
+                    activeDescriptionItemIndex: null,
 
                 }
             },
@@ -1006,6 +1244,40 @@
                         this.updateCartItemPrice(cartItemIndex);
                     }
                 },
+                openItemDescriptionEditor(index) {
+                    this.activeDescriptionItemIndex = index;
+                    itemDescriptionEditorOpenIndex = index;
+                    $("#itemDescriptionModal").modal('show');
+
+                    setTimeout(() => {
+                        let currentDescription = '';
+                        if (this.cartItems[index] && this.cartItems[index].description) {
+                            currentDescription = this.cartItems[index].description;
+                        }
+                        if (itemDescriptionEditor) {
+                            itemDescriptionEditor.setContent(currentDescription);
+                            itemDescriptionEditor.focus();
+                        } else {
+                            $("#item-description-editor").val(currentDescription);
+                        }
+                    }, 200);
+                },
+                saveItemDescriptionEditor() {
+                    if (itemDescriptionEditorOpenIndex === null || itemDescriptionEditorOpenIndex < 0) {
+                        $("#itemDescriptionModal").modal('hide');
+                        return;
+                    }
+
+                    let htmlContent = '';
+                    if (itemDescriptionEditor) {
+                        htmlContent = itemDescriptionEditor.getContent();
+                    } else {
+                        htmlContent = $("#item-description-editor").val() || '';
+                    }
+
+                    this.cartItems[itemDescriptionEditorOpenIndex].description = htmlContent;
+                    $("#itemDescriptionModal").modal('hide');
+                },
                 getInvoiceData() {
                     axios
                         .get('{{ route('sales.quotation.get-edit-quotation-data',$quotation->id) }}')
@@ -1050,6 +1322,9 @@
         }
 
         function invoiceUpdateFormSubmit(){
+            if (typeof tinymce !== 'undefined') {
+                tinymce.triggerSave();
+            }
 
             var self = $("#invoiceUpdateForm");
             var formData = new FormData($(self)[0]);
@@ -1070,5 +1345,3 @@
 
     </script>
 @endsection
-
-

@@ -110,7 +110,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="poitb-item">
+                                {{-- <div class="poitb-item">
                                     <div class="poitb-header">
                                         <h4 class="title">Gallery</h4>
                                     </div>
@@ -129,7 +129,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class="purchase-order-invoice-body-box">
@@ -519,7 +519,6 @@
                                                     <div class="input-block erp-step-input-block mb-0" id="quotation-notes-editor-wrapper">
                                                         <label class="col-form-label pt-0">Terms and Conditions</label>
                                                         <textarea class="form-control" id="quotation-notes-editor" name="notes" rows="6" placeholder="Enter Terms and Conditions of service that you are visible to your customer">The above mentioned prices are subject to change as per price fluctuation of raw materials used and the accessories required.</textarea>
-                                                        <small class="text-muted d-block mt-2">Tip: Select image and drag corner to resize. Use <strong>Styles &gt; Image Half Width</strong> for 2 images per row.</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -635,7 +634,6 @@
                     <div class="modal-body erp-modal-body">
                         <div class="erp-modal-body-content">
                             <textarea id="item-description-editor"></textarea>
-                            <small class="text-muted d-block mt-2">Tip: Use image resize handles and image style width to show 1 or 2 images per row.</small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -672,7 +670,7 @@
             border-top: 1px solid #e5e5e5;
         }
         #itemDescriptionModal .tox-tinymce {
-            min-height: 260px;
+            min-height: 420px;
         }
     </style>
 @endsection
@@ -784,16 +782,26 @@
                 selector: '#quotation-notes-editor',
                 license_key: 'gpl',
                 height: 300,
-                menubar: 'edit view insert format table tools',
-                plugins: 'link image table lists advlist autoresize code',
-                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | code',
+                promotion: false,
+                branding: false,
+                statusbar: false,
+                menubar: 'edit view format table',
+                plugins: 'table lists advlist autoresize',
+                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | uploadimageonly table',
                 object_resizing: 'img',
-                image_dimensions: true,
-                image_advtab: true,
                 automatic_uploads: true,
                 relative_urls: false,
                 remove_script_host: false,
                 convert_urls: false,
+                setup: function (editor) {
+                    editor.ui.registry.addButton('uploadimageonly', {
+                        icon: 'image',
+                        tooltip: 'Upload image',
+                        onAction: function () {
+                            openImageUploaderForEditor(editor);
+                        }
+                    });
+                },
                 style_formats: [
                     {
                         title: 'Image Full Width',
@@ -829,17 +837,27 @@
             tinymce.init({
                 selector: '#item-description-editor',
                 license_key: 'gpl',
-                height: 280,
-                menubar: 'edit view insert format table tools',
-                plugins: 'link image table lists advlist autoresize code',
-                toolbar: 'undo redo | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image table | code',
+                height: 420,
+                promotion: false,
+                branding: false,
+                statusbar: false,
+                menubar: 'edit view format table',
+                plugins: 'table lists advlist autoresize',
+                toolbar: 'undo redo | uploadimageonly table | blocks styles | bold italic underline | alignleft aligncenter alignright | bullist numlist',
                 object_resizing: 'img',
-                image_dimensions: true,
-                image_advtab: true,
                 automatic_uploads: true,
                 relative_urls: false,
                 remove_script_host: false,
                 convert_urls: false,
+                setup: function (editor) {
+                    editor.ui.registry.addButton('uploadimageonly', {
+                        icon: 'image',
+                        tooltip: 'Upload image',
+                        onAction: function () {
+                            openImageUploaderForEditor(editor);
+                        }
+                    });
+                },
                 style_formats: [
                     {
                         title: 'Image Full Width',
@@ -875,15 +893,15 @@
             return csrfToken;
         }
 
-        function tinyMceImageUploadHandler(blobInfo, progress) {
+        function uploadImageFileToServer(file, fileName, progressCallback) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', "{{ route('sales.quotation.notes-image-upload') }}");
                 xhr.setRequestHeader('X-CSRF-TOKEN', getCsrfToken());
 
                 xhr.upload.onprogress = (e) => {
-                    if (e.lengthComputable) {
-                        progress((e.loaded / e.total) * 100);
+                    if (e.lengthComputable && typeof progressCallback === 'function') {
+                        progressCallback((e.loaded / e.total) * 100);
                     }
                 };
 
@@ -912,9 +930,34 @@
                 xhr.onerror = () => reject('Image upload failed due to a network error.');
 
                 const formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                formData.append('file', file, fileName || 'image.png');
                 xhr.send(formData);
             });
+        }
+
+        function openImageUploaderForEditor(editor) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async function () {
+                if (!input.files || !input.files[0]) {
+                    return;
+                }
+
+                try {
+                    const file = input.files[0];
+                    const imageUrl = await uploadImageFileToServer(file, file.name);
+                    editor.insertContent('<img src="' + imageUrl + '" alt="">');
+                } catch (error) {
+                    console.error(error);
+                    showErrorAlert('Error', 'Image upload failed. Please try again.');
+                }
+            };
+            input.click();
+        }
+
+        function tinyMceImageUploadHandler(blobInfo, progress) {
+            return uploadImageFileToServer(blobInfo.blob(), blobInfo.filename(), progress);
         }
 
         var { createApp } = Vue;
