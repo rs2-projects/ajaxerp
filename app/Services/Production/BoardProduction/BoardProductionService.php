@@ -267,6 +267,7 @@ class BoardProductionService
                 })->orWhere('pre_production_no', 'like', '%' . $keyword_filtered . '%');
             }
         });
+        $data['verification_status'] = $verification_status;
         $data['pre_productions'] = $query->orderBy('id', 'desc')->paginate($this->paginate_limit);
         $data['view'] = view('production.pending-board-production._index_filtered', $data)->render();
 
