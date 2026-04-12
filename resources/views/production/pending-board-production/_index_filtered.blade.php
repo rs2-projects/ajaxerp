@@ -1,14 +1,18 @@
 
-    <div class="big-table pt-4">
-        <div class="de-table-wrapper">
-            <div class="table-responsives">
-                <table class="table mb-0 erp-table">
+<div class="big-table pt-4">
+    @php($tableColspan = (($verification_status ?? null) === 'rejected') ? 6 : 5)
+    <div class="de-table-wrapper">
+        <div class="table-responsives">
+            <table class="table mb-0 erp-table">
                     <thead class="erp-thead">
                         <tr class="erp-tr">
                             <th class="erp-th">SL</th>
                             <th class="erp-th">Items </th>
                             <th class="erp-th text-center">Raw Materials </th>
                             <th class="erp-th text-center">Estimated QTY </th>
+                            @if(($verification_status ?? null) === 'rejected')
+                                <th class="erp-th text-center">Rejection Reason</th>
+                            @endif
                             <th class="erp-th text-center">Action </th>
                         </tr>
                     </thead>
@@ -35,6 +39,11 @@
                                 <td class="erp-tbody-td text-center">
                                     <h4 class="text-center d-table-title">{{$data->estimated_production_qty}}</h4>
                                 </td>
+                                @if(($verification_status ?? null) === 'rejected')
+                                    <td class="erp-tbody-td text-center">
+                                        <h4 class="text-center d-table-title">{{ $data->reject_reason ?? 'N/A' }}</h4>
+                                    </td>
+                                @endif
                                 <td class="text-end erp-tbody-td">
                                     <div class="erp-action-t">
                                         <div class="dropdown dropdown-action">
@@ -51,7 +60,7 @@
                             </tr>
                         @empty
                             <tr class="erp-tbody-tr">
-                                <td class="erp-tbody-td text-center text-primary" colspan="8">
+                                <td class="erp-tbody-td text-center text-primary" colspan="{{ $tableColspan }}">
                                     No data found...!
                                 </td>
                             </tr>
