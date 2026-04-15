@@ -468,14 +468,14 @@
 				return sum;
 			},
 
-			checkValidation(e) {
-				e.preventDefault();
-				if (this.materials.every(material => material.deliver_items.length === 0)) {
-					showErrorAlert('Opps!', 'Please add delivery items!');
-				}else {
-					deliverStoreForm();
-				}
-			},
+				checkValidation(e) {
+					e.preventDefault();
+					if (this.materials.every(material => material.deliver_items.length === 0)) {
+						showErrorAlert('Opps!', 'Please add delivery items!');
+					}else {
+						deliverStoreForm();
+					}
+				},
 
 			scanItem() {
 				let material = this.materials[this.selected_material_index].material;
@@ -498,6 +498,14 @@
 
 	function deliverStoreForm(){
 		var self = $("#deliverStoreForm");
+		var submitBtn = self.find('button[type="submit"]');
+		if (submitBtn.prop('disabled')) {
+			return;
+		}
+		var originalHtml = submitBtn.html();
+		submitBtn.data('original-html', originalHtml);
+		submitBtn.html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Delivering...');
+		submitBtn.prop('disabled', true);
 		var formData = new FormData($(self)[0]);
 		var url = $(self).attr('action');
 
@@ -508,10 +516,23 @@
 					window.location.href = "{{route('inventory.material-request.index')}}";
 				}, 1000);
 			}else{
+				submitBtn.prop('disabled', false);
+				submitBtn.html(submitBtn.data('original-html') || originalHtml);
 				showErrorAlert('Error',res.message)
 			}
-		}, 'show_input_error');
-	}
+		}, function (xhr) {
+			submitBtn.prop('disabled', false);
+			submitBtn.html(submitBtn.data('original-html') || originalHtml);
+			if (xhr.status == 422) {
+				$.each(xhr.responseJSON.errors, function (key, value) {
+					$("." + key + "_error").text(value).show();
+					toastr.error(value);
+				});
+				} else {
+					toastr.error(xhr.responseText || xhr.message);
+				}
+			});
+		}
 
 	function getBarcodePrintDetails() {
 		let route = "{{ route('inventory.material-request.barcode-details',$pre_production->id) }}";
@@ -529,5 +550,3 @@
 
 
 @endsection
-
-
