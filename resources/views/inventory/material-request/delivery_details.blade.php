@@ -29,7 +29,7 @@
                     </div>
                     <div class="pgib-item flex-32 pd-item">
                         <div class="input-block erp-step-input-block mb-0">
-                            <label class="col-form-label">Product(Finished Product) Selection</label>
+                            <label class="col-form-label">Product(Finished Product)</label>
                             <h4>{{$pre_production->finishedGoods->name}}</h4>
                         </div>
                     </div>
