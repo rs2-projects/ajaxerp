@@ -98,7 +98,7 @@
                         </form>
                     </div>
                 </div>
-                <div v-else> No Data Found </div>
+                <div v-else> No item has been sent yet. </div>
             </div>
         </div>
     </div>
