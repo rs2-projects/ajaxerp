@@ -1,6 +1,6 @@
 <!-- Add Department Modal -->
 <div id="verifyOutputModal" class="modal custom-modal fade" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header erp-modal-header">
                 <h5 class="modal-title">Quality Control</h5>
