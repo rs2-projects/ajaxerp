@@ -39,6 +39,27 @@ class QuotationService
         $this->paginate_limit = config('commonData.paginate_limit');
     }
 
+    private function getQuotationItemUnitLabel($item, string $itemType): string
+    {
+        if ($itemType === 'set_items') {
+            return 'SET';
+        }
+
+        if ($item == null) {
+            return '';
+        }
+
+        if (in_array($itemType, ['raw_materials', 'raw_boards', 'papers'])) {
+            return ProductMaterial::UNIT_TYPES[$item->unit_type] ?? '';
+        }
+
+        if (in_array($itemType, ['finished_goods', 'finished_boards'])) {
+            return FinishedGoods::UNIT_TYPES[$item->unit_type] ?? '';
+        }
+
+        return '';
+    }
+
     // index data
     public function indexData()
     {
@@ -204,6 +225,7 @@ class QuotationService
                         'length' => $item?->length,
                         'width' => $item?->width,
                         'thickness' => $item?->thickness,
+                        'unit_type' => $this->getQuotationItemUnitLabel($item, $typeData['type']),
                         'show_image' => asset($item->show_image)??null,
                         'tax' => $itemTax,
                         'srp' => $srp,
@@ -287,6 +309,7 @@ class QuotationService
                     $price = $request->price[$key];
                     $tax_id = $request->tax[$key];
                     $item_name = $request->item_name[$key];
+                    $unit = $request->unit[$key] ?? null;
 
                     $amount_without_tax = $qty * $price;
                     $amount_with_tax = $amount_without_tax;
@@ -331,6 +354,7 @@ class QuotationService
                     $quotationDetails->item_type = $item_type;
                     $quotationDetails->item_name = $item_name;
                     $quotationDetails->description = $request->description[$key];
+                    $quotationDetails->unit = $unit;
                     $quotationDetails->quantity = $qty;
                     $quotationDetails->unit_price = $price;
                     $quotationDetails->total = $qty * $price;
@@ -499,6 +523,7 @@ class QuotationService
                     'length' => $product?->length,
                     'width' => $product?->width,
                     'thickness' => $product?->thickness,
+                    'unit_type' => $item->unit ?? $this->getQuotationItemUnitLabel($product, $item_type),
                     'description' => $item->description,
                     'qty' => $item->quantity,
                     'price' => formatNumber($item->unit_price),
@@ -576,6 +601,7 @@ class QuotationService
                     $price = $request->price[$key];
                     $tax_id = $request->tax[$key];
                     $item_name = $request->item_name[$key];
+                    $unit = $request->unit[$key] ?? null;
 
                     $amount_without_tax = $qty * $price;
                     $amount_with_tax = 0;
@@ -614,11 +640,21 @@ class QuotationService
                         $item_type = QuotationDetails::TYPE_CUSTOM_ITEM;
                     }
 
-                    $quotationDetails = QuotationDetails::where('quotation_id', $quotation->id)
-                        ->where('item_id', $product)
-                        ->where('item_type', $item_type)
-                        ->where('deleted', QuotationDetails::DELETED_NO)
-                        ->first();
+                    $quotationDetails = null;
+                    if (!empty($request->quotation_details_id[$key])) {
+                        $quotationDetails = QuotationDetails::where('quotation_id', $quotation->id)
+                            ->where('id', $request->quotation_details_id[$key])
+                            ->where('deleted', QuotationDetails::DELETED_NO)
+                            ->first();
+                    }
+
+                    if (empty($quotationDetails) && $item_type != QuotationDetails::TYPE_CUSTOM_ITEM) {
+                        $quotationDetails = QuotationDetails::where('quotation_id', $quotation->id)
+                            ->where('item_id', $product)
+                            ->where('item_type', $item_type)
+                            ->where('deleted', QuotationDetails::DELETED_NO)
+                            ->first();
+                    }
 
                     if (empty($quotationDetails)) {
                         $quotationDetails = new QuotationDetails();
@@ -631,6 +667,7 @@ class QuotationService
                     $quotationDetails->item_type = $item_type;
                     $quotationDetails->item_name = $item_name;
                     $quotationDetails->description = $request->description[$key];
+                    $quotationDetails->unit = $unit;
                     $quotationDetails->quantity = $qty;
                     $quotationDetails->unit_price = $price;
                     $quotationDetails->total = $qty * $price;

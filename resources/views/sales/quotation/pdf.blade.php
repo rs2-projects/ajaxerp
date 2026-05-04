@@ -186,6 +186,21 @@
             padding-bottom: 30px;
             vertical-align: top;
         }
+        .inv-table .item-description-row.text-only td {
+            padding-top: 2px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        .inv-table .item-description-row.has-media td,
+        .inv-table .item-description-row.has-media .invt-item-description-full {
+            border-bottom: none !important;
+        }
+        .inv-table .item-description-row.text-only .item-description-html {
+            margin: 0;
+        }
+        .inv-table .item-description-row.text-only .item-description-html p {
+            margin: 0 0 4px 0;
+        }
         .inv-table .item-description-row.media-only td {
             padding-top: 34px;
             padding-bottom: 24px;
@@ -277,6 +292,9 @@
         }
         .inv-table .item-row-with-description td {
             border-bottom: none;
+        }
+        .inv-table .item-row-with-description.text-only-description td {
+            padding-bottom: 6px;
         }
         .invfr-left {
             text-align: right;
@@ -805,6 +823,10 @@
                         return '-';
                     }
 
+                    if ($item->unit != null && trim($item->unit) !== '') {
+                        return $item->unit;
+                    }
+
                     if ($item->item_type == \App\Models\Sales\QuotationDetails::TYPE_RAW_MATERIAL
                         || $item->item_type == \App\Models\Sales\QuotationDetails::TYPE_RAW_BOARD
                         || $item->item_type == \App\Models\Sales\QuotationDetails::TYPE_PAPER) {
@@ -832,12 +854,13 @@
                     $rawDescription = (string) $productInfo->description;
                     $descriptionHasContent = (preg_match('/<img\b/i', $rawDescription) === 1)
                         || (trim(html_entity_decode(strip_tags($rawDescription), ENT_QUOTES | ENT_HTML5)) !== '');
+                    $descriptionHasMedia = (preg_match('/<(img|figure|table)\b/i', $rawDescription) === 1);
                     $descriptionHtmlBlocks = [];
                     if ($formattedDescription['has_html']) {
                         $descriptionHtmlBlocks = $splitDescriptionHtmlBlocksForPdf($formattedDescription['html']);
                     }
                 @endphp
-                <tr class="{{ $descriptionHasContent ? 'item-row-with-description' : '' }}">
+                <tr class="{{ $descriptionHasContent ? 'item-row-with-description' : '' }}{{ ($descriptionHasContent && !$descriptionHasMedia) ? ' text-only-description' : '' }}">
                     <td style="text-align: center;">
                         {{ $loop->iteration }}
                     </td>
@@ -859,18 +882,20 @@
                             @php
                                 $blockHtml = is_array($descriptionBlock) ? ((string) ($descriptionBlock['html'] ?? '')) : (string) $descriptionBlock;
                                 $isMediaOnlyBlock = is_array($descriptionBlock) ? ((bool) ($descriptionBlock['is_media_only'] ?? false)) : false;
+                                $hasMediaInBlock = (preg_match('/<(img|figure|table)\b/i', $blockHtml) === 1);
+                                $isTextOnlyBlock = !$descriptionHasMedia && !$isMediaOnlyBlock && !$hasMediaInBlock;
                             @endphp
                             @if(trim($blockHtml) === '')
                                 @continue
                             @endif
-                            <tr class="item-description-row{{ $isMediaOnlyBlock ? ' media-only' : '' }}">
+                            <tr class="item-description-row{{ $descriptionHasMedia ? ' has-media' : '' }}{{ $isMediaOnlyBlock ? ' media-only' : '' }}{{ $isTextOnlyBlock ? ' text-only' : '' }}">
                                 <td colspan="7" class="invt-item-description-full">
                                     <div class="item-description-html">{!! $blockHtml !!}</div>
                                 </td>
                             </tr>
                         @endforeach
                     @else
-                        <tr class="item-description-row">
+                        <tr class="item-description-row text-only">
                             <td colspan="7" class="invt-item-description-full">
                                 <div class="item-description-html">{{ $productInfo->description }}</div>
                             </td>

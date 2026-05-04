@@ -144,12 +144,15 @@
 
                             <div class="purchase-order-invoice-body-box">
                                 <div class="purchase-order-invoice-body-product-wrap">
-                                    <div class="purchase-order-product-header-wrapper d-flex flex-wrap align-items-center">
+                                    <div class="purchase-order-product-header-wrapper quotation-product-header-wrapper d-flex flex-wrap align-items-center">
                                         <div class="po-product-header-item">
                                             <h4>Name</h4>
                                         </div>
                                         <div class="po-product-header-item">
                                             <h4 class="text-center">Description</h4>
+                                        </div>
+                                        <div class="po-product-header-item">
+                                            <h4 class="text-center">Unit</h4>
                                         </div>
                                         <div class="po-product-header-item">
                                             <h4 class="text-center">QTY</h4>
@@ -163,7 +166,7 @@
                                     </div>
                                     <div class="purchase-order-product-body-wrapper">
                                         <div class="po-order-product-body-inner-main-wrapper" v-for="(cartItem, cartItemIndex) in cartItems" :key="cartItemIndex">
-                                            <div class="po-order-product-body-inner-wrapper d-flex flex-wrap align-items-center">
+                                            <div class="po-order-product-body-inner-wrapper quotation-product-row d-flex flex-wrap align-items-center">
                                                 <div class="purchase-order-product-body-item">
                                                     <input type="hidden" name="quotation_details_id[]" v-bind:value="cartItem.quotation_details_id">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
@@ -193,6 +196,17 @@
                                                                     <i class="fa-solid fa-pen-to-square"></i> Add Description
                                                                 </button>
                                                                 <small v-if="cartItem.description && cartItem.description.trim() !== ''" class="text-success d-block mt-1">Description added</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="purchase-order-product-body-item">
+                                                    <div class="purchase-order-product-body-item-inner">
+                                                        <div class="purchase-order-product-body-item-inner-content">
+                                                            <div class="input-block mb-0 erp-step-input-block ">
+                                                                <input v-if="cartItem.item_type == 'custom_item'" type="text" name="unit[]" v-model="cartItem.unit_type" required class="form-control text-center" placeholder="Unit">
+                                                                <input v-else type="hidden" name="unit[]" v-bind:value="cartItem.unit_type">
+                                                                <h4 v-if="cartItem.item_type != 'custom_item'" class="text-center total-amount-product pe-2">@{{ cartItem.unit_type || '-' }}</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -671,6 +685,33 @@
         }
         #itemDescriptionModal .tox-tinymce {
             min-height: 420px;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(1),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(1) {
+            flex-basis: 22%;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(2),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(2) {
+            flex-basis: 18%;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(3),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(3) {
+            flex-basis: 10%;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(4),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(4) {
+            flex-basis: 8%;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(5),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(5) {
+            flex-basis: 12% !important;
+        }
+        .quotation-product-header-wrapper .po-product-header-item:nth-child(6),
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(6) {
+            flex-basis: 13%;
+        }
+        .quotation-product-row > .purchase-order-product-body-item:nth-child(7) {
+            flex-basis: 5% !important;
         }
     </style>
 @endsection
