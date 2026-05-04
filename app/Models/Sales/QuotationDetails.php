@@ -44,6 +44,7 @@ class QuotationDetails extends BaseModel
         'item_id',
         'item_name',
         'description',
+        'unit',
         'quantity',
         'unit_price',
         'total',
