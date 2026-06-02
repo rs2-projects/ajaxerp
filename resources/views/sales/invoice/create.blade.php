@@ -119,12 +119,20 @@
                                                 <div class="purchase-order-product-body-item">
                                                     <input type="hidden" name="product_id[]" v-bind:value="cartItem.id">
                                                     <input type="hidden" name="item_type[]" v-bind:value="cartItem.item_type">
-                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100">
+                                                    <input v-if="cartItem.item_type != 'custom_item'" type="hidden" name="item_name[]" v-bind:value="cartItem.name">
+                                                    <input type="hidden" name="unit[]" v-bind:value="cartItem.unit_type">
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-if="cartItem.item_type != 'custom_item'">
                                                         <div class="em-pro-img-box">
                                                             <img :src="cartItem.show_image" alt="">
                                                         </div>
                                                         <div class="em-pro-details-box po-product">
                                                             <h5>@{{ cartItem.name }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="em-profile-wrap d-flex align-items-center flex-wrap w-100" v-else>
+                                                        <div class="em-pro-details-box po-product">
+                                                            <input type="text" name="item_name[]" v-model="cartItem.name" class="form-control mb-1" placeholder="Item Name" required>
+                                                            <h5 class="mb-0 text-muted">Unit: @{{ cartItem.unit_type || '-' }}</h5>
                                                         </div>
                                                     </div>
 
@@ -176,7 +184,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="purchase-order-product-body-mesurement flex-100">
+                                                <div class="purchase-order-product-body-mesurement flex-100" v-if="cartItem.item_type != 'custom_item'">
                                                     <div class="purchase-order-product-body-mesurement-wrapper d-flex flex-wrap align-items-center">
                                                         
                                                         <div class="po-order-product-body-mesurement-item" v-if="cartItem.material_items != null">
@@ -995,5 +1003,3 @@
 
     </script>
 @endsection
-
-
