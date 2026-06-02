@@ -352,7 +352,7 @@
                     </td>
                     <td class="tm_width_2" style="text-align: center;">{{ formatNumber($productInfo->unit_price) }}</td>
                     <td class="tm_width_1" style="text-align: center;">{{ formatNumber($productInfo->tax_amount) }}</td>
-                    <td class="tm_width_1" style="text-align: center;">{{ $productInfo->quantity }}</td>
+                    <td class="tm_width_1" style="text-align: center;">{{ $productInfo->quantityWithUnit() }}</td>
                     <td class="tm_width_2 tm_text_right" style="text-align: right;">{{ formatNumber($productInfo->net_total) }}</td>
 
                 </tr>

@@ -347,7 +347,7 @@
                         {{$productInfo->description}}
                         <br>
                     </td>
-                    <td class="tm_width_1" style="text-align: center;">{{ $productInfo->quantity }}</td>
+                    <td class="tm_width_1" style="text-align: center;">{{ $productInfo->quantityWithUnit() }}</td>
 
                 </tr>
             @endforeach
