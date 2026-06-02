@@ -21,6 +21,7 @@ class InvoiceDetails extends BaseModel
     CONST TYPE_FINISHED_GOODS = 3;
     CONST TYPE_FINISHED_BOARD = 4;
     CONST TYPE_SET_ITEM = 5;
+    CONST TYPE_CUSTOM_ITEM = 6;
 
     //Delete status const
     const DELETED_NO = 0;
@@ -51,8 +52,10 @@ class InvoiceDetails extends BaseModel
     protected $fillable = [
         'invoice_id',
         'item_id',
+        'item_name',
         'item_type',
         'description',
+        'unit',
         'quantity',
         'unit_price',
         'total',
@@ -135,6 +138,7 @@ class InvoiceDetails extends BaseModel
             case self::TYPE_SET_ITEM:
                 return $this->set_item;
 
+            case self::TYPE_CUSTOM_ITEM:
             default:
                 return null;
         }
@@ -143,17 +147,66 @@ class InvoiceDetails extends BaseModel
 
     public function itemName()
     {
+        if ($this->item_type == self::TYPE_CUSTOM_ITEM) {
+            return $this->item_name ?? '';
+        }
+
         return $this->getItem()->name ?? '';
     }
 
     public function itemCode()
     {
+        if ($this->item_type == self::TYPE_CUSTOM_ITEM) {
+            return '';
+        }
+
         return $this->getItem()->code ?? '';
     }
 
     public function itemAvailableQty()
     {
+        if ($this->item_type == self::TYPE_CUSTOM_ITEM) {
+            return 0;
+        }
+
         return $this->getItem()->available_qty ?? 0;
+    }
+
+    public function itemUnit()
+    {
+        if ($this->item_type == self::TYPE_CUSTOM_ITEM) {
+            return $this->unit ?: '-';
+        }
+
+        if ($this->item_type == self::TYPE_RAW_MATERIAL
+            || $this->item_type == self::TYPE_RAW_BOARD
+            || $this->item_type == self::TYPE_PAPER) {
+            $unitType = $this->product_material?->unit_type ?? null;
+            return ProductMaterial::UNIT_TYPES[$unitType] ?? '-';
+        }
+
+        if ($this->item_type == self::TYPE_FINISHED_GOODS
+            || $this->item_type == self::TYPE_FINISHED_BOARD) {
+            $unitType = $this->getItem()?->unit_type ?? null;
+            return FinishedGoods::UNIT_TYPES[$unitType] ?? '-';
+        }
+
+        if ($this->item_type == self::TYPE_SET_ITEM) {
+            return 'SET';
+        }
+
+        return '-';
+    }
+
+    public function quantityWithUnit()
+    {
+        $unit = $this->itemUnit();
+
+        if ($unit == '' || $unit == '-') {
+            return $this->quantity;
+        }
+
+        return $this->quantity . ' ' . $unit;
     }
 
 

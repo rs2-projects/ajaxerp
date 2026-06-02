@@ -821,7 +821,6 @@ class QuotationService
          //invoice details
          $cartItems = QuotationDetails::where('quotation_id', $id)
              ->where('deleted', QuotationDetails::DELETED_NO)
-             ->where('item_type', '!=', QuotationDetails::TYPE_CUSTOM_ITEM)
              ->get()
              ->map(function ($item) {
                  if ($item->tax == null) {
@@ -861,7 +860,7 @@ class QuotationService
                      $product->name = $item->item_name;
                      $product->code = '';
                      $product->item_type = 'custom_item';
-                     $product->show_image = asset('assets/img/placeholder.jpg');
+                     $product->show_image = 'assets/img/placeholder.jpg';
                      $product->length = 0;
                      $product->width = 0;
                      $product->thickness = 0;
@@ -894,7 +893,8 @@ class QuotationService
                      'length' => $product?->length,
                      'width' => $product?->width,
                      'thickness' => $product?->thickness,
-                     'description' => $item->description,
+                     'unit_type' => $item->unit ?? $this->getQuotationItemUnitLabel($product, $item_type),
+                     'description' => '',
                      'qty' => $item->quantity,
                      'price' => formatNumber($item->unit_price),
                      'unit_price' => formatNumber($item->unit_price),
