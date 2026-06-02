@@ -38,6 +38,42 @@ class InvoiceService
         $this->paginate_limit = config('commonData.paginate_limit');
     }
 
+    private function getInvoiceItemType($type)
+    {
+        $itemTypes = [
+            'raw_materials' => InvoiceDetails::TYPE_RAW_MATERIAL,
+            'raw_boards' => InvoiceDetails::TYPE_RAW_BOARD,
+            'papers' => InvoiceDetails::TYPE_PAPER,
+            'finished_goods' => InvoiceDetails::TYPE_FINISHED_GOODS,
+            'finished_boards' => InvoiceDetails::TYPE_FINISHED_BOARD,
+            'set_items' => InvoiceDetails::TYPE_SET_ITEM,
+            'custom_item' => InvoiceDetails::TYPE_CUSTOM_ITEM,
+        ];
+
+        if (!array_key_exists($type, $itemTypes)) {
+            throw new \Exception("Invalid invoice item type");
+        }
+
+        return $itemTypes[$type];
+    }
+
+    private function getInvoiceItemUnitLabel($item, string $itemType): string
+    {
+        if ($itemType == 'set_items') {
+            return 'SET';
+        }
+
+        if ($itemType == 'raw_materials' || $itemType == 'raw_boards' || $itemType == 'papers') {
+            return ProductMaterial::UNIT_TYPES[$item?->unit_type] ?? '';
+        }
+
+        if ($itemType == 'finished_goods' || $itemType == 'finished_boards') {
+            return FinishedGoods::UNIT_TYPES[$item?->unit_type] ?? '';
+        }
+
+        return '';
+    }
+
     // index data
     public function indexData()
     {
@@ -233,6 +269,7 @@ class InvoiceService
                         'tax' => $itemTax,
                         'srp' => $srp,
                         'item_type' => $typeData['type'],
+                        'unit_type' => $this->getInvoiceItemUnitLabel($item, $typeData['type']),
                         'material_items' => $material_items,
                     ];
 
@@ -327,6 +364,8 @@ class InvoiceService
                     $qty = $request->qty[$key];
                     $price = $request->price[$key];
                     $tax_id = $request->tax[$key];
+                    $item_name = $request->item_name[$key] ?? null;
+                    $unit = $request->unit[$key] ?? null;
 
                     $amount_without_tax = $qty * $price;
                     $amount_with_tax = $amount_without_tax;
@@ -349,25 +388,16 @@ class InvoiceService
                     }
 
                     $type = $request->item_type[$key];
-                    if($type == 'raw_materials'){
-                        $item_type = InvoiceDetails::TYPE_RAW_MATERIAL;
-                    }else if($type == 'raw_boards'){
-                        $item_type = InvoiceDetails::TYPE_RAW_BOARD;
-                    }else if($type == 'papers'){
-                        $item_type = InvoiceDetails::TYPE_PAPER;
-                    }else if($type == 'finished_goods'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_GOODS;
-                    }else if($type == 'finished_boards'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_BOARD;
-                    }else if($type == 'set_items'){
-                        $item_type = InvoiceDetails::TYPE_SET_ITEM;
-                    }
+                    $item_type = $this->getInvoiceItemType($type);
+                    $isCustomItem = $item_type == InvoiceDetails::TYPE_CUSTOM_ITEM;
 
                     $invoiceDetails = new InvoiceDetails();
                     $invoiceDetails->invoice_id = $invoice->id;
-                    $invoiceDetails->item_id = $product;
+                    $invoiceDetails->item_id = $isCustomItem ? 0 : $product;
+                    $invoiceDetails->item_name = $isCustomItem ? $item_name : null;
                     $invoiceDetails->item_type = $item_type;
                     $invoiceDetails->description = $request->description[$key];
+                    $invoiceDetails->unit = $isCustomItem ? $unit : null;
                     $invoiceDetails->quantity = $qty;
                     $invoiceDetails->unit_price = $price;
                     $invoiceDetails->total = $qty * $price;
@@ -375,6 +405,10 @@ class InvoiceService
                     $invoiceDetails->tax_rate = $tax_rate;
                     $invoiceDetails->tax_amount = $tax_amount;
                     $invoiceDetails->net_total = $amount_with_tax;
+                    if ($isCustomItem) {
+                        $invoiceDetails->dispatched = InvoiceDetails::DISPATCHED_YES;
+                        $invoiceDetails->dispatched_qty = $qty;
+                    }
                     $invoiceDetails->created_at = Carbon::now();
                     $invoiceDetails->created_by = auth()->id();
                     $invoiceDetails->updated_at = Carbon::now();
@@ -733,6 +767,20 @@ class InvoiceService
                 }else if($type == InvoiceDetails::TYPE_SET_ITEM){
                     $product = $item->set_item;
                     $item_type = 'set_items';
+                }else if($type == InvoiceDetails::TYPE_CUSTOM_ITEM){
+                    $product = new \stdClass();
+                    $product->id = 0;
+                    $product->name = $item->item_name;
+                    $product->code = '';
+                    $product->show_image = 'assets/img/placeholder.jpg';
+                    $product->length = 0;
+                    $product->width = 0;
+                    $product->thickness = 0;
+                    $product->unit_type = $item->unit;
+                    $item_type = 'custom_item';
+                }else{
+                    $product = null;
+                    $item_type = '';
                 }
 
                 if ($type == InvoiceDetails::TYPE_SET_ITEM && $item?->set_item?->set_items != null) {
@@ -755,6 +803,7 @@ class InvoiceService
                     'length' => $product?->length,
                     'width' => $product?->width,
                     'thickness' => $product?->thickness,
+                    'unit_type' => $item->unit ?? $this->getInvoiceItemUnitLabel($product, $item_type),
                     'description' => $item->description,
                     'qty' => $item->quantity,
                     'price' => formatNumber($item->unit_price),
@@ -814,7 +863,7 @@ class InvoiceService
 
             if (isset($request->product_id) && is_array($request->product_id)) {
                 // $invoice_details_ids = $request->invoice_details_id ?? [];
-                $invoice_details_ids = array_filter($request->invoice_details_id, function ($value) {
+                $invoice_details_ids = array_filter($request->invoice_details_id ?? [], function ($value) {
                     return !is_null($value);
                 });
                 $delete_not_exist_product = InvoiceDetails::where('invoice_id', $invoice->id)
@@ -831,9 +880,11 @@ class InvoiceService
                     $qty = $request->qty[$key];
                     $price = $request->price[$key];
                     $tax_id = $request->tax[$key];
+                    $item_name = $request->item_name[$key] ?? null;
+                    $unit = $request->unit[$key] ?? null;
 
                     $amount_without_tax = $qty * $price;
-                    $amount_with_tax = 0;
+                    $amount_with_tax = $amount_without_tax;
                     $tax_rate = 0;
                     $tax_amount = 0;
                     if ($tax_id != null) {
@@ -853,36 +904,40 @@ class InvoiceService
                     }
 
                     $type = $request->item_type[$key];
-                    if($type == 'raw_materials'){
-                        $item_type = InvoiceDetails::TYPE_RAW_MATERIAL;
-                    }else if($type == 'raw_boards'){
-                        $item_type = InvoiceDetails::TYPE_RAW_BOARD;
-                    }else if($type == 'papers'){
-                        $item_type = InvoiceDetails::TYPE_PAPER;
-                    }else if($type == 'finished_goods'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_GOODS;
-                    }else if($type == 'finished_boards'){
-                        $item_type = InvoiceDetails::TYPE_FINISHED_BOARD;
-                    }else if($type == 'set_items'){
-                        $item_type = InvoiceDetails::TYPE_SET_ITEM;
+                    $item_type = $this->getInvoiceItemType($type);
+                    $isCustomItem = $item_type == InvoiceDetails::TYPE_CUSTOM_ITEM;
+
+                    $invoiceDetails = null;
+
+                    $invoiceDetailsId = $request->invoice_details_id[$key] ?? null;
+
+                    if (!empty($invoiceDetailsId)) {
+                        $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->id)
+                            ->where('id', $invoiceDetailsId)
+                            ->where('deleted', InvoiceDetails::DELETED_NO)
+                            ->first();
                     }
 
-                    $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->id)
-                        ->where('item_id', $product)
-                        ->where('item_type', $item_type)
-                        ->where('deleted', InvoiceDetails::DELETED_NO)
-                        ->first();
+                    if (empty($invoiceDetails) && !$isCustomItem) {
+                        $invoiceDetails = InvoiceDetails::where('invoice_id', $invoice->id)
+                            ->where('item_id', $product)
+                            ->where('item_type', $item_type)
+                            ->where('deleted', InvoiceDetails::DELETED_NO)
+                            ->first();
+                    }
 
                     if (empty($invoiceDetails)) {
                         $invoiceDetails = new InvoiceDetails();
                         $invoiceDetails->invoice_id = $invoice->id;
-                        $invoiceDetails->item_id = $product;
                         $invoiceDetails->created_at = Carbon::now();
                         $invoiceDetails->created_by = auth()->id();
                     }
 
+                    $invoiceDetails->item_id = $isCustomItem ? 0 : $product;
+                    $invoiceDetails->item_name = $isCustomItem ? $item_name : null;
                     $invoiceDetails->item_type = $item_type;
                     $invoiceDetails->description = $request->description[$key];
+                    $invoiceDetails->unit = $isCustomItem ? $unit : null;
                     $invoiceDetails->quantity = $qty;
                     $invoiceDetails->unit_price = $price;
                     $invoiceDetails->total = $qty * $price;
@@ -890,6 +945,10 @@ class InvoiceService
                     $invoiceDetails->tax_rate = $tax_rate;
                     $invoiceDetails->tax_amount = $tax_amount;
                     $invoiceDetails->net_total = $amount_with_tax;
+                    if ($isCustomItem) {
+                        $invoiceDetails->dispatched = InvoiceDetails::DISPATCHED_YES;
+                        $invoiceDetails->dispatched_qty = $qty;
+                    }
                     $invoiceDetails->updated_at = Carbon::now();
                     $invoiceDetails->updated_by = auth()->id();
                     $invoiceDetails->save();
