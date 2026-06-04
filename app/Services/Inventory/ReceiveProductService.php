@@ -40,7 +40,11 @@ class ReceiveProductService
             ->whereRaw('received_qty = 0')
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%')
+                        ->orWhereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                            $finishedGoodsQuery->where('name', 'like', '%'.$keyword_filtered.'%')
+                                ->orWhere('code', 'like', '%'.$keyword_filtered.'%');
+                        });
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -56,7 +60,11 @@ class ReceiveProductService
             ->whereRaw('received_qty > 0')
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%')
+                        ->orWhereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                            $finishedGoodsQuery->where('name', 'like', '%'.$keyword_filtered.'%')
+                                ->orWhere('code', 'like', '%'.$keyword_filtered.'%');
+                        });
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
@@ -71,7 +79,11 @@ class ReceiveProductService
             ->whereRaw('(dispatched_qty - received_qty) = 0')
             ->where(function ($q) use ($keyword_filtered){
                 if ($keyword_filtered !=''){
-                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%');
+                    $q->where('dispatch_no', 'like', '%'.$keyword_filtered.'%')
+                        ->orWhereHas('finishedGoods', function ($finishedGoodsQuery) use ($keyword_filtered) {
+                            $finishedGoodsQuery->where('name', 'like', '%'.$keyword_filtered.'%')
+                                ->orWhere('code', 'like', '%'.$keyword_filtered.'%');
+                        });
                 }
             })
             ->orderBy('id', 'desc')->paginate($this->paginate_limit);
