@@ -629,7 +629,13 @@ class PreProductionMaterialRequestService
                     ->where('available_qty', '>', 0)
                     ->get();
                 $product_material->purchase_details = $purchase_details;
-                $product_material->pre_production_material = $pre_production_product_materials->where('product_material_id', $product_material->id)->first();
+
+                $pre_production_materials = $pre_production_product_materials->where('product_material_id', $product_material->id);
+                $product_material->pre_production_material = $pre_production_materials->first();
+                if($product_material->pre_production_material){
+                    $product_material->pre_production_material->quantity = $pre_production_materials->sum('quantity');
+                    $product_material->pre_production_material->delivered_qty = $pre_production_materials->sum('delivered_qty');
+                }
                 return $product_material;
             });
         
@@ -656,7 +662,13 @@ class PreProductionMaterialRequestService
                     ->where('status', PreProduction::STATUS_ACTIVE)
                     ->get();
                 $finished_board->purchase_details = $availableProductions;
-                $finished_board->pre_production_board = $pre_production_boards->where('finished_board_id', $finished_board->id)->first();
+
+                $pre_production_board_items = $pre_production_boards->where('finished_board_id', $finished_board->id);
+                $finished_board->pre_production_board = $pre_production_board_items->first();
+                if($finished_board->pre_production_board){
+                    $finished_board->pre_production_board->quantity = $pre_production_board_items->sum('quantity');
+                    $finished_board->pre_production_board->delivered_qty = $pre_production_board_items->sum('delivered_qty');
+                }
                 return $finished_board;
             });
         
