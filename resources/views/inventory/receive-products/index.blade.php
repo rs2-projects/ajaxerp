@@ -21,7 +21,7 @@
                                     </div>
                                     <div class="erp-filter-item"> 
                                         <div class="erp-search-btn-wrap">
-                                            <button class=" erp-search-btn" onclick="getData()">Search</button>
+                                            <button type="button" class=" erp-search-btn" onclick="getData()">Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -98,6 +98,7 @@
         });
 
         function getData(){
+            filterData.keyword_filtered = $("#keyword_filtered").val();
             getPaginatedListData("{{ route('inventory.receive-product.filtered') }}", "#ajax-data-load", filterData);
         }
 
@@ -106,5 +107,3 @@
         }
     </script>
 @endsection
-
-
